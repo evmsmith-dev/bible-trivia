@@ -2672,14 +2672,10 @@ function startCountdownThenGame() {
 }
   </script>
   <div id="countdown-overlay" style="display:none;">
-     <div id="game-start-text"><h1>Round Starts in: </h1></div>
+     <div id="game-start-text"><h1>Round starts in: </h1></div>
     <div id="countdown-number">3</div>
   </div>
 <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js');
-  }
-
 document.addEventListener("DOMContentLoaded", () => {
   const howToPlayLink = document.getElementById("how-to-play-link");
   const howToPlayOverlay = document.getElementById("how-to-play-overlay");
@@ -2750,6 +2746,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
  loadData();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
 </script>
 
 <!-- How to Play Overlay -->
@@ -2789,7 +2789,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </label>
         <p class="setting-description">
           When &#x2714, harder questions (🔴) appear and give more points (up to 300 pts each).  
-          Turn OFF for an easier game focused on easy & medium questions only.
+          &#9744 for an easier game focused on easy & medium questions only.
         </p>
       </div>
     </div>
@@ -2798,3 +2798,4 @@ document.addEventListener("DOMContentLoaded", () => {
 <input type="checkbox" id="hard-toggle" checked style="position:absolute; left:-9999px; opacity:0;">
 </body>
 </html>
+
