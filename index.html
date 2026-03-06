@@ -1,0 +1,2800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#4CAF50">
+  <title>Bible Trivia – Fun Bible Questions!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --primary:     #4CAF50;
+      --primary-dark:#388E3C;
+      --accent:      #FFCA28;
+      --bg-light:    #E8F5E9;
+      --card:        #FFFFFF;
+      --text:        #2E7D32;
+      --gray:        #616161;
+      --shadow-soft: 0 6px 18px rgba(0,0,0,0.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Fredoka', Arial, sans-serif;
+      color: var(--text);
+      margin: 0;
+      padding: 12px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 12px;
+      width: 100%;
+      max-width: 700px;
+      background: white;
+      padding: 12px 16px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    h1 {
+      color: var(--primary);
+      font-size: 2.6rem;
+      margin: 0.2em 0;
+    }
+
+    #progress {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    #progress-dots {
+      font-size: 2.2rem;
+      letter-spacing: 6px;
+      line-height: 1;
+      margin: 8px 0;
+    }
+
+    #progress-dots .current { font-size: 2.8rem; color: var(--accent); font-weight: 700; }
+    #progress-dots .done { color: var(--primary); }
+    #progress-dots .pending { color: #BDBDBD; }
+
+    #timer-display {
+      font-size: 2.8rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 8px 0;
+      transition: color 0.4s ease;
+    }
+    #timer-display.green  { color: var(--primary); }
+    #timer-display.yellow { color: #FFB300; }
+    #timer-display.red    { color: #EF5350; }
+
+    #timer-bar {
+      height: 10px;
+      background: #E0F2F1;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    #timer-fill {
+      height: 100%;
+      background: linear-gradient(to right, #66BB6A, #4CAF50);
+      transition: width 0.3s linear, background 0.5s;
+      border-radius: 8px;
+    }
+    #timer-fill.warning { background: linear-gradient(to right, #FFB300, #FFCA28); }
+    #timer-fill.danger  { background: linear-gradient(to right, #EF5350, #E53935); }
+
+    #question-container {
+      background: white;
+      padding: 16px;
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      width: 100%;
+      max-width: 700px;
+      position: relative;
+    }
+
+    #question {
+      font-size: 2.0rem;
+      line-height: 1.3;
+      font-weight: 600;
+      margin-bottom: 0.6em;
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.2rem;
+      font-size: 1.1rem;
+      color: var(--gray);
+      font-style: italic;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .question-meta .verse-ref {
+      flex: 1 1 auto;
+    }
+
+    .question-meta .right-side {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+
+    .tag.category {
+      background: #E3F2FD;
+      border-color: #90CAF9;
+      color: #1565C0;
+    }
+
+    .tag.difficulty.easy   { background: #FFFDE7; border-color: #FFCA28; color: #F57F17; }
+    .tag.difficulty.medium { background: #FFECB3; border-color: #FFB300; color: #EF6C00; }
+    .tag.difficulty.hard   { background: #FFEBEE; border-color: #EF5350; color: #B71C1C; }
+
+    #options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    @media (min-width: 580px) {
+      #options {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .option {
+      font-size: 1.35rem;
+      padding: 18px 20px;
+      border-radius: 18px;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+      background: #E3F2FD;
+      border: 3px solid #90CAF9;
+      color: #1565C0;
+      font-weight: 500;
+    }
+
+    .option:hover {
+      background: #BBDEFB;
+      border-color: #42A5F5;
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 10px 28px rgba(66,165,245,0.28);
+    }
+
+    .option.correct {
+      background: #E8F5E9;
+      border-color: #66BB6A;
+      color: #1B5E20;
+      font-weight: 700;
+      box-shadow: 0 5px 16px rgba(102,187,106,0.3);
+    }
+
+    .option.incorrect {
+      background: #FFEBEE;
+      border-color: #EF5350;
+      color: #B71C1C;
+      box-shadow: 0 5px 16px rgba(239,83,80,0.3);
+    }
+
+    .option.grayed {
+      opacity: 0.5;
+      background: #FAFAFA;
+      border-color: #BDBDBD;
+      color: #757575;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    #feedback {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4rem;
+      font-weight: 700;
+      padding: 28px 56px;
+      border-radius: 28px;
+      z-index: 20;
+      pointer-events: none;
+      text-align: center;
+      min-width: 65%;
+      max-width: 92%;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.35);
+      opacity: 0;
+      transition: opacity 0.6s ease, transform 0.4s ease;
+      white-space: nowrap;
+    }
+
+    #feedback.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    #feedback.correct {
+      background: rgba(76, 175, 80, 0.94);
+      color: white;
+    }
+
+    #feedback.incorrect,
+    #feedback.timeout {
+      background: rgba(244, 67, 54, 0.88);
+      color: white;
+    }
+
+    #summary {
+      text-align: center;
+      font-size: 1.5rem;
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+
+    #summary h2 {
+      color: var(--primary);
+      font-size: 3rem;
+    }
+
+    #category-breakdown {
+      margin: 16px 0;
+      font-size: 1.3rem;
+      color: var(--primary-dark);
+    }
+
+    #category-breakdown strong {
+      color: var(--primary);
+    }
+
+    #history {
+      margin-top: 24px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    details {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    summary {
+      font-size: 1.4rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 12px;
+      background: #E8F5E9;
+      border-radius: 12px;
+      color: var(--primary-dark);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1.1rem;
+      margin-top: 12px;
+    }
+
+    th, td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid #E0E0E0;
+    }
+
+    th {
+      background: #E8F5E9;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    button {
+      padding: 16px 50px;
+      font-size: 1.4rem;
+      margin: 12px 8px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.22s;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+
+    #restart-same {
+      background: var(--accent);
+      color: #333;
+      box-shadow: 0 8px 24px rgba(255,202,40,0.4);
+    }
+
+    #restart-same:hover {
+      transform: scale(1.08);
+      box-shadow: 0 12px 32px rgba(255,202,40,0.5);
+    }
+
+    #restart-change {
+      background: #42A5F5;
+      color: white;
+      box-shadow: 0 8px 24px rgba(66,165,245,0.4);
+    }
+
+    #restart-change:hover {
+      transform: scale(1.08);
+      box-shadow: 0 12px 32px rgba(66,165,245,0.5);
+    }
+
+    #clear-history {
+      background: #EF5350;
+      color: white;
+      margin-top: 20px;
+    }
+
+    #clear-history:hover {
+      background: #E53935;
+    }
+
+    #welcome {
+      background: white;
+      border-radius: 32px;
+      padding: 40px 30px;
+      box-shadow: var(--shadow-soft);
+      max-width: 800px;
+      text-align: center;
+    }
+
+    #welcome h1 { font-size: 3.8rem; color: var(--primary); }
+    #welcome h2 { font-size: 2.6rem; color: var(--accent); margin: 0.4em 0; }
+    #welcome p  { font-size: 1.4rem; color: #424242; line-height: 1.5; }
+
+    #start-btn {
+      background: var(--accent);
+      color: #333;
+      font-size: 2rem;
+      padding: 22px 80px;
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(255,202,40,0.4);
+      margin-top: 20px;
+    }
+
+    #start-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 14px 40px rgba(255,202,40,0.5);
+    }
+
+    #hard-toggle-section {
+      background: #FFF8E1;
+      border: 3px solid var(--accent);
+      border-radius: 20px;
+      padding: 24px;
+      margin: 28px auto;
+      max-width: 520px;
+      box-shadow: 0 8px 24px rgba(255,202,40,0.4);
+    }
+
+    #hard-toggle-section label {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    #hard-toggle {
+      width: 32px;
+      height: 32px;
+      accent-color: var(--accent);
+    }
+
+    #hard-toggle:checked + label {
+      color: var(--primary-dark);
+    }
+
+    #hard-toggle-explain {
+      font-size: 1.2rem;
+      color: #444;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
+    #encouraging-verse {
+      font-style: italic;
+      color: var(--primary);
+      font-size: 1.3rem;
+      margin: 20px 0;
+      padding: 12px;
+      background: rgba(200, 230, 201, 0.4);
+      border-radius: 12px;
+    }
+
+#countdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  color: white;
+  font-size: 8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+#game-start-text {
+      text-align: center;
+      font-size: 1.5rem;
+      line-height: 1.5;
+      padding-bottom: 40px;
+}
+
+#countdown-number {
+  animation: pop 0.6s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      #question-container { padding: 16px; }
+      #question { font-size: 1.9rem; }
+      .option { font-size: 1.25rem; padding: 18px 16px; min-height: 70px; }
+      button { width: 100%; margin: 10px 0; padding: 16px; font-size: 1.4rem; }
+      #feedback { font-size: 2.6rem; padding: 20px 36px; min-width: 90%; }
+      #options { gap: 8px; }
+      #progress-dots { font-size: 1.8rem; letter-spacing: 4px; }
+      #progress-dots .current { font-size: 2.2rem; }
+      .question-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .question-meta .right-side { justify-content: flex-end; width: 100%; flex-wrap: wrap; }
+      #hard-toggle-section { padding: 18px; margin: 20px auto; }
+      #hard-toggle-section label { font-size: 1.4rem; }
+      #hard-toggle-explain { font-size: 1.1rem; }
+    }
+
+/* --- How to Play Overlay --- */
+
+#how-to-play-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#how-to-play-overlay .overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+}
+
+#how-to-play-overlay .overlay-card {
+  position: relative;
+  background: white;
+  padding: 28px 32px;
+  border-radius: 20px;
+  max-width: 520px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  z-index: 2;
+  text-align: left;
+}
+
+#how-to-play-overlay h2 {
+  margin-top: 0;
+  color: var(--primary);
+  font-size: 2.2rem;
+}
+
+#how-to-play-overlay .overlay-content {
+  font-size: 1.35rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+#how-to-play-overlay .overlay-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  /* border-radius: 50%; */
+  border: none;
+  /*background: var(--primary);
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;*/
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.overlay-close-button {
+  padding: 0px;
+  margin: 0px;
+  color: black;
+}
+/* --- Settings Overlay --- */
+
+#settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#settings-overlay .settings-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 1;
+}
+
+#settings-overlay .settings-card {
+  position: relative;
+  background: white;
+  padding: 28px 32px;
+  border-radius: 20px;
+  max-width: 520px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  z-index: 2;
+  text-align: left;
+}
+
+#settings-overlay h2 {
+  margin-top: 0;
+  color: var(--primary);
+  font-size: 2.2rem;
+}
+
+.settings-content {
+  font-size: 1.35rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+.setting-item {
+  margin-bottom: 24px;
+}
+
+.setting-label {
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.setting-description {
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 8px;
+}
+
+#settings-overlay .settings-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  /*border-radius: 50%;*/
+  border: none;
+  /*background: var(--primary);
+  font-size: 1.8rem;
+  font-weight: 700;*/
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+  </style>
+</head>
+<body>
+
+  <div id="welcome">
+    <h1>Bible Trivia</h1>
+    <h2>Fun Bible Questions!</h2>
+    <p>Test your knowledge of God's Word!</p>
+
+    <!-- <div id="hard-toggle-section">
+      <label for="hard-toggle">
+        <input type="checkbox" id="hard-toggle" checked>
+        Include Hard questions?
+      </label>
+      <div id="hard-toggle-explain">
+        When turned ON, harder questions (🔴) appear and give more points (up to 300 pts each).<br>
+        Turn OFF for an easier game focused on easy & medium questions only.
+      </div>
+    </div> -->
+
+    <button id="start-btn">Start</button>
+<a id="how-to-play-link"
+   style="color: var(--primary);
+          font-size: 1.4rem;
+          cursor: pointer;
+          display: block;
+          margin-top: 16px;">
+  Game Play
+</a>
+<a id="settings-link"
+   style="color: var(--primary);
+          font-size: 1.4rem;
+          cursor: pointer;
+          display: block;
+          margin-top: 10px;">
+  Settings
+</a>
+  </div>
+
+  <div id="question-container" style="display:none;">
+    <header>
+      <h1>Bible Trivia</h1>
+      <div id="progress">Question 1 of 10 | Correct: 0 | Score: 0</div>
+      <div id="progress-dots"></div>
+      <div id="timer-display" class="green">25</div>
+      <div id="timer-bar"><div id="timer-fill"></div></div>
+    </header>
+
+    <div id="question"></div>
+    <div class="question-meta">
+      <span id="verse-ref" class="verse-ref"></span>
+      <div class="right-side">
+        <span id="difficulty-tag" class="tag difficulty"></span>
+        <span id="category-tag" class="tag category"></span>
+      </div>
+    </div>
+    <div id="options"></div>
+    <div id="summary" style="display:none;"></div>
+
+    <div id="feedback"></div>
+  </div>
+
+  <script>
+const allQuestions = [
+{ q: "Who was the first man created by God?", opts: ["Noah", "Adam", "Abraham", "Moses"], ans: 1, ref: "Genesis 2:7", category: "Old Testament", difficulty: "easy" },
+      { q: "How many books are in the New Testament?", opts: ["27", "39", "66", "12"], ans: 0, ref: "", category: "General", difficulty: "easy" },
+      { q: "What was the name of the garden where Adam and Eve lived?", opts: ["Gethsemane", "Eden", "Zion", "Bethlehem"], ans: 1, ref: "Genesis 2:8", category: "Old Testament", difficulty: "easy" },
+      { q: "Who built the ark to survive the flood?", opts: ["Moses", "David", "Noah", "Joseph"], ans: 2, ref: "Genesis 6-9", category: "Old Testament", difficulty: "easy" },
+      { q: "In what city was Jesus born?", opts: ["Nazareth", "Jerusalem", "Bethlehem", "Jericho"], ans: 2, ref: "Luke 2:4-7", category: "New Testament", difficulty: "easy" },
+      { q: "Who was thrown into a lions' den but survived?", opts: ["Daniel", "Jonah", "Elijah", "Samson"], ans: 0, ref: "Daniel 6", category: "Old Testament", difficulty: "easy" },
+      { q: "What is the first book of the Bible?", opts: ["Exodus", "Matthew", "Genesis", "Psalms"], ans: 2, ref: "", category: "General", difficulty: "easy" },
+      { q: "Who denied knowing Jesus three times before the rooster crowed?", opts: ["Judas", "Peter", "John", "Thomas"], ans: 1, ref: "Matthew 26:69-75", category: "New Testament", difficulty: "easy" },
+      { q: "How many plagues did God send on Egypt?", opts: ["7", "10", "12", "40"], ans: 1, ref: "Exodus 7-12", category: "Old Testament", difficulty: "medium" },
+      { q: "What did Jesus turn water into at the wedding in Cana?", opts: ["Milk", "Wine", "Oil", "Bread"], ans: 1, ref: "John 2:1-11", category: "New Testament", difficulty: "easy" },
+      { q: "Who was the strongest man in the Bible, known for his long hair?", opts: ["Goliath", "Samson", "David", "Saul"], ans: 1, ref: "Judges 13-16", category: "Old Testament", difficulty: "medium" },
+      { q: "Which disciple doubted Jesus' resurrection until he saw the scars?", opts: ["Thomas", "Matthew", "Andrew", "Philip"], ans: 0, ref: "John 20:24-29", category: "New Testament", difficulty: "easy" },
+      { q: "What animal spoke to Balaam in the Old Testament?", opts: ["Lion", "Donkey", "Serpent", "Raven"], ans: 1, ref: "Numbers 22:28-30", category: "Old Testament", difficulty: "medium" },
+      { q: "Who wrote most of the letters (epistles) in the New Testament?", opts: ["Peter", "John", "Paul", "James"], ans: 2, ref: "", category: "New Testament", difficulty: "easy" },
+      { q: "What is the last book of the Bible?", opts: ["Acts", "Revelation", "Hebrews", "Jude"], ans: 1, ref: "", category: "General", difficulty: "easy" },
+      { q: "Who parted the Red Sea?", opts: ["Moses", "Joshua", "Elijah", "Aaron"], ans: 0, ref: "Exodus 14:21-22", category: "Old Testament", difficulty: "easy" },
+      { q: "What was the name of Abraham's wife?", opts: ["Rebekah", "Sarah", "Rachel", "Leah"], ans: 1, ref: "Genesis 17:15", category: "Old Testament", difficulty: "easy" },
+      { q: "How many disciples did Jesus have?", opts: ["10", "12", "7", "40"], ans: 1, ref: "", category: "New Testament", difficulty: "easy" },
+      { q: "Who betrayed Jesus for 30 pieces of silver?", opts: ["Peter", "Judas Iscariot", "Thomas", "John"], ans: 1, ref: "Matthew 26:14-16", category: "New Testament", difficulty: "easy" },
+      { q: "What fruit did Eve eat in the Garden of Eden?", opts: ["Apple", "Fig", "The Bible doesn't specify", "Grape"], ans: 2, ref: "Genesis 3:6", category: "Old Testament", difficulty: "easy" },
+      { q: "Who was swallowed by a great fish?", opts: ["Daniel", "Jonah", "Elijah", "Samson"], ans: 1, ref: "Jonah 1:17", category: "Old Testament", difficulty: "easy" },
+      { q: "What is the shortest verse in the Bible?", opts: ["God is love", "Jesus wept", "Pray without ceasing", "Rejoice always"], ans: 1, ref: "John 11:35", category: "New Testament", difficulty: "easy" },
+      { q: "Who was the wisest king of Israel?", opts: ["David", "Solomon", "Saul", "Hezekiah"], ans: 1, ref: "1 Kings 4:29-34", category: "Old Testament", difficulty: "medium" },
+      { q: "In what mountain did Moses receive the Ten Commandments?", opts: ["Mount Zion", "Mount Sinai", "Mount Olives", "Mount Carmel"], ans: 1, ref: "Exodus 19-20", category: "Old Testament", difficulty: "medium" },
+      { q: "Who walked on water with Jesus?", opts: ["John", "James", "Peter", "Andrew"], ans: 2, ref: "Matthew 14:28-31", category: "New Testament", difficulty: "medium" },
+      { q: "What was Paul's original name before conversion?", opts: ["Simon", "Saul", "Barnabas", "Timothy"], ans: 1, ref: "Acts 13:9", category: "New Testament", difficulty: "easy" },
+      { q: "How many days was Lazarus dead before Jesus raised him?", opts: ["3", "4", "7", "1"], ans: 1, ref: "John 11:17", category: "New Testament", difficulty: "medium" },
+      { q: "Who was the mother of John the Baptist?", opts: ["Mary", "Elizabeth", "Martha", "Anna"], ans: 1, ref: "Luke 1:5-13", category: "New Testament", difficulty: "easy" },
+      { q: "What did God create on the seventh day?", opts: ["Animals", "Man", "He rested", "Stars"], ans: 2, ref: "Genesis 2:2-3", category: "Old Testament", difficulty: "easy" },
+      { q: "Which prophet was taken up to heaven in a whirlwind?", opts: ["Isaiah", "Jeremiah", "Elijah", "Elisha"], ans: 2, ref: "2 Kings 2:11", category: "Old Testament", difficulty: "medium" },
+      { q: "Who was the first woman created by God?", opts: ["Sarah", "Eve", "Mary", "Ruth"], ans: 1, ref: "Genesis 2:22", category: "Old Testament", difficulty: "easy" },
+      { q: "How many days and nights did it rain during the flood?", opts: ["30", "40", "7", "150"], ans: 1, ref: "Genesis 7:12", category: "Old Testament", difficulty: "easy" },
+      { q: "Who interpreted Pharaoh's dreams in Egypt?", opts: ["Moses", "Joseph", "Daniel", "Jacob"], ans: 1, ref: "Genesis 41", category: "Old Testament", difficulty: "medium" },
+      { q: "What was the name of David's father?", opts: ["Saul", "Jesse", "Samuel", "Nathan"], ans: 1, ref: "1 Samuel 16:1", category: "Old Testament", difficulty: "easy" },
+      { q: "Who built the walls of Jericho that fell down?", opts: ["Canaanites", "Hitites", "Babylonians", "Amalekites"], ans: 0, ref: "Joshua 6", category: "Old Testament", difficulty: "hard" },
+      { q: "What is the first miracle Jesus performed?", opts: ["Healing a blind man", "Turning water into wine", "Feeding 5000", "Walking on water"], ans: 1, ref: "John 2:1-11", category: "New Testament", difficulty: "easy" },
+      { q: "Who was the forerunner of Jesus (prepared the way)?", opts: ["Paul", "John the Baptist", "Peter", "Stephen"], ans: 1, ref: "Matthew 3:1-3", category: "New Testament", difficulty: "easy" },
+      { q: "How many commandments did God give Moses?", opts: ["7", "10", "12", "40"], ans: 1, ref: "Exodus 20", category: "Old Testament", difficulty: "easy" },
+      { q: "Who was sold into slavery by his brothers?", opts: ["Joseph", "Benjamin", "Reuben", "Judah"], ans: 0, ref: "Genesis 37", category: "Old Testament", difficulty: "medium" },
+      { q: "What did Jesus say is the greatest commandment?", opts: ["Love your neighbor", "Love God with all your heart", "Honor parents", "Do not murder"], ans: 1, ref: "Matthew 22:37", category: "New Testament", difficulty: "medium" },
+      { q: "Who wrote the book of Acts?", opts: ["Paul", "Luke", "John", "Peter"], ans: 1, ref: "", category: "New Testament", difficulty: "medium" },
+      { q: "What city did Jesus grow up in?", opts: ["Bethlehem", "Jerusalem", "Nazareth", "Capernaum"], ans: 2, ref: "Luke 2:39-40", category: "New Testament", difficulty: "easy" },
+      { q: "Who was the first king of Israel?", opts: ["David", "Saul", "Solomon", "Samuel"], ans: 1, ref: "1 Samuel 10", category: "Old Testament", difficulty: "medium" },
+      { q: "What was the name of the mountain where Jesus was transfigured?", opts: ["Sinai", "Tabor", "Olives", "Hermon"], ans: 1, ref: "Matthew 17", category: "New Testament", difficulty: "medium" },
+      { q: "How many apostles did Jesus choose?", opts: ["10", "12", "70", "120"], ans: 1, ref: "Luke 6:13", category: "New Testament", difficulty: "easy" },
+      { q: "Who cut off the ear of the high priest's servant?", opts: ["Judas", "Peter", "John", "Thomas"], ans: 1, ref: "John 18:10", category: "New Testament", difficulty: "easy" },
+      { q: "What is the fruit of the Spirit listed first in Galatians?", opts: ["Joy", "Love", "Peace", "Patience"], ans: 1, ref: "Galatians 5:22", category: "New Testament", difficulty: "medium" },
+      { q: "Who was the high priest when Jesus was crucified?", opts: ["Annas", "Caiaphas", "Pilate", "Herod"], ans: 1, ref: "John 18:13", category: "New Testament", difficulty: "medium" },
+      { q: "What did the wise men bring to baby Jesus?", opts: ["Gold, frankincense, myrrh", "Gold, silver, spices", "Gifts of food", "Animals"], ans: 0, ref: "Matthew 2:11", category: "New Testament", difficulty: "easy" },
+      { q: "Who denied Jesus three times?", opts: ["Judas", "Peter", "Thomas", "John"], ans: 1, ref: "Matthew 26:69-75", category: "New Testament", difficulty: "easy" },
+      { q: "Who was the father of Isaac?", opts: ["Jacob", "Abraham", "Noah", "Joseph"], ans: 1, ref: "Genesis 21:1-3", category: "Old Testament", difficulty: "easy" },
+      { q: "What was the name of the sea that God parted for Moses?", opts: ["Dead Sea", "Red Sea", "Mediterranean Sea", "Jordan River"], ans: 1, ref: "Exodus 14:21-22", category: "Old Testament", difficulty: "easy" },
+      { q: "Who was the judge who defeated the Midianites with 300 men?", opts: ["Samson", "Gideon", "Deborah", "Barak"], ans: 1, ref: "Judges 7", category: "Old Testament", difficulty: "medium" },
+      { q: "Who was the woman who helped the spies in Jericho?", opts: ["Rahab", "Ruth", "Esther", "Deborah"], ans: 0, ref: "Joshua 2", category: "Old Testament", difficulty: "medium" },
+      { q: "What was the name of the tower people built to reach heaven?", opts: ["Tower of Babel", "Tower of David", "Tower of Jericho", "Tower of Zion"], ans: 0, ref: "Genesis 11", category: "Old Testament", difficulty: "easy" },
+      { q: "Who was the queen who saved her people from Haman?", opts: ["Esther", "Ruth", "Rahab", "Deborah"], ans: 0, ref: "", category: "Old Testament", difficulty: "medium" },
+      { q: "What was the name of the baby saved in a basket on the Nile?", opts: ["Joseph", "Moses", "Samuel", "David"], ans: 1, ref: "Exodus 2", category: "Old Testament", difficulty: "easy" },
+      { q: "Who was the king who saw the handwriting on the wall?", opts: ["Nebuchadnezzar", "Belshazzar", "Cyrus", "Darius"], ans: 1, ref: "Daniel 5", category: "Old Testament", difficulty: "medium" },
+      { q: "Who was the prophet fed by ravens?", opts: ["Elijah", "Elisha", "Isaiah", "Jeremiah"], ans: 0, ref: "1 Kings 17", category: "Old Testament", difficulty: "medium" },
+      { q: "What was the name of the son of David who became king?", opts: ["Absalom", "Solomon", "Adonijah", "Amnon"], ans: 1, ref: "1 Kings 1-2", category: "Old Testament", difficulty: "easy" },
+      { q: "Who was the first person to see the risen Jesus?", opts: ["Peter", "Mary Magdalene", "John", "Thomas"], ans: 1, ref: "John 20:11-18", category: "New Testament", difficulty: "easy" },
+      { q: "What was the name of the town where Jesus turned water into wine?", opts: ["Bethlehem", "Nazareth", "Cana", "Capernaum"], ans: 2, ref: "John 2:1-11", category: "New Testament", difficulty: "easy" },
+      { q: "Who was the tax collector Jesus called to follow him?", opts: ["Peter", "Matthew", "Thomas", "Andrew"], ans: 1, ref: "Matthew 9:9", category: "New Testament", difficulty: "easy" },
+      { q: "What was the name of the man Jesus raised from the dead after 4 days?", opts: ["Lazarus", "Jairus' daughter", "Widow's son", "Eutychus"], ans: 0, ref: "John 11", category: "New Testament", difficulty: "medium" },
+      { q: "Who was the Roman man whose servant Jesus healed?", opts: ["Pilate", "Cornelius", "The centurion", "Herod"], ans: 2, ref: "Matthew 8:5-13", category: "New Testament", difficulty: "medium" },
+      { q: "What did Jesus feed 5000 people with?", opts: ["5 loaves and 2 fish", "7 loaves and few fish", "12 baskets", "Manna"], ans: 0, ref: "Matthew 14:13-21", category: "New Testament", difficulty: "easy" },
+      { q: "Who was the woman at the well?", opts: ["Mary", "Martha", "The Samaritan woman", "Mary Magdalene"], ans: 2, ref: "John 4", category: "New Testament", difficulty: "medium" },
+      { q: "What was the name of the garden where Jesus prayed before his arrest?", opts: ["Gethsemane", "Eden", "Olives", "Zion"], ans: 0, ref: "Matthew 26:36", category: "New Testament", difficulty: "easy" },
+      { q: "Who was the Roman governor who sentenced Jesus?", opts: ["Herod", "Pilate", "Caiaphas", "Annas"], ans: 1, ref: "Matthew 27", category: "New Testament", difficulty: "easy" },
+      { q: "What was the name of the island where Paul was shipwrecked?", opts: ["Crete", "Malta", "Cyprus", "Patmos"], ans: 1, ref: "Acts 27-28", category: "New Testament", difficulty: "medium" },
+      { q: "Which prophet prophesied that the Messiah would be born of a virgin?", opts: ["Isaiah", "Micah", "Jeremiah", "Daniel"], ans: 0, ref: "Isaiah 7:14", category: "Old Testament", difficulty: "hard" },
+      { q: "What was the name of the high priest who questioned Jesus after his arrest?", opts: ["Annas", "Caiaphas", "Ananias", "Gamaliel"], ans: 0, ref: "John 18:13,19", category: "New Testament", difficulty: "hard" },
+      { q: "In the parable of the sower, what did the seed among thorns represent?", opts: ["Those who hear but are choked by worries and riches", "Those who receive the word with joy but fall away", "Those who hear and produce fruit", "Those who hear but do not understand"], ans: 0, ref: "Matthew 13:22", category: "New Testament", difficulty: "hard" },
+      { q: "Who was the only female judge mentioned in the Book of Judges?", opts: ["Deborah", "Jael", "Delilah", "Rahab"], ans: 0, ref: "Judges 4–5", category: "Old Testament", difficulty: "hard" },
+      { q: "What was the name of the place where the Israelites camped after crossing the Jordan?", opts: ["Gilgal", "Shittim", "Jericho", "Ai"], ans: 0, ref: "Joshua 4:19", category: "Old Testament", difficulty: "hard" },
+      { q: "Which king of Judah attempted to destroy the bronze serpent Moses had made?", opts: ["Hezekiah", "Josiah", "Manasseh", "Ahaz"], ans: 0, ref: "2 Kings 18:4", category: "Old Testament", difficulty: "hard" },
+      { q: "Who was the only person in the Bible to be called 'friend of God'?", opts: ["Moses", "Abraham", "David", "Daniel"], ans: 1, ref: "James 2:23; Isaiah 41:8", category: "General", difficulty: "hard" },
+      { q: "In Revelation, what are the four living creatures around the throne full of?", opts: ["Eyes in front and behind", "Wings and faces", "Crowns and harps", "Fire and smoke"], ans: 0, ref: "Revelation 4:6–8", category: "New Testament", difficulty: "hard" },
+      { q: "Which prophet was commanded to marry a prostitute as a sign?", opts: ["Hosea", "Jeremiah", "Ezekiel", "Amos"], ans: 0, ref: "Hosea 1:2", category: "Old Testament", difficulty: "hard" },
+      { q: "Who was the high priest during the time of David?", opts: ["Abiathar", "Zadok", "Eli", "Samuel"], ans: 1, ref: "2 Samuel 8:17", category: "Old Testament", difficulty: "hard" },
+      { q: "What was the name of the Roman procurator who succeeded Pontius Pilate?", opts: ["Felix", "Festus", "Gallio", "Herod Agrippa"], ans: 0, ref: "Acts 24", category: "New Testament", difficulty: "hard" },
+      { q: "In the Book of Job, which friend accused Job of secret sin?", opts: ["Eliphaz", "Bildad", "Zophar", "Elihu"], ans: 0, ref: "Job 4–5", category: "Old Testament", difficulty: "hard" },
+      { q: "Who was the only woman to lead an army in the Bible?", opts: ["Deborah", "Jael", "Esther", "Judith"], ans: 0, ref: "Judges 4", category: "Old Testament", difficulty: "hard" },
+      { q: "Which apostle wrote the majority of the New Testament letters?", opts: ["Paul", "John", "Peter", "James"], ans: 0, ref: "", category: "General", difficulty: "hard" },
+      { q: "What was the name of the place where Jesus was crucified?", opts: ["Golgotha", "Gethsemane", "Calvary", "Golgotha and Calvary"], ans: 3, ref: "Matthew 27:33; Luke 23:33", category: "New Testament", difficulty: "hard" },
+      { q: "Who was the first person resurrected by Jesus in the Gospels?", opts: ["Jairus' daughter", "Widow of Nain's son", "Lazarus"], ans: 0, ref: "Mark 5:21–43", category: "New Testament", difficulty: "hard" },
+      { q: "Which Old Testament book contains the longest chapter in the Bible?", opts: ["Psalms", "Isaiah", "Jeremiah", "Ezekiel"], ans: 0, ref: "", category: "General", difficulty: "hard" },
+      { q: "Who was the only disciple present at the crucifixion besides John?", opts: ["Peter", "No one else named", "Mary Magdalene", "Joseph of Arimathea"], ans: 1, ref: "John 19:25–27", category: "New Testament", difficulty: "hard" },
+      { q: "What was the name of the mountain where Elijah confronted the prophets of Baal?", opts: ["Mount Carmel", "Mount Sinai", "Mount Tabor", "Mount Hermon"], ans: 0, ref: "1 Kings 18", category: "Old Testament", difficulty: "hard" },
+      { q: "Which book of the Bible ends with the words 'The grace of the Lord Jesus be with all. Amen.'?", opts: ["Revelation", "Romans", "Hebrews", "Jude"], ans: 0, ref: "", category: "General", difficulty: "hard" },
+{ 
+  q: "Which judge of Israel made a rash vow that resulted in sacrificing his only daughter?",
+  opts: ["Gideon", "Jephthah", "Samson", "Ehud"],
+  ans: 1,
+  ref: "Judges 11:30–39",
+  category: "Old Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "Who was the only woman mentioned in the Bible as having been a prophetess and judge at the same time?",
+  opts: ["Deborah", "Huldah", "Miriam", "Anna"],
+  ans: 0,
+  ref: "Judges 4:4",
+  category: "Old Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "In the Book of Daniel, what were the names of Daniel’s three friends who were thrown into the fiery furnace?",
+  opts: ["Shadrach, Meshach, and Abednego", "Hananiah, Mishael, and Azariah", "Ham, Shem, and Japheth", "Belteshazzar, Shadrach, and Meshach"],
+  ans: 0,
+  ref: "Daniel 1:6–7; 3:12",
+  category: "Old Testament",
+  difficulty: "medium"
+},
+{ 
+  q: "Which Old Testament prophet was told by God to lie on his left side for 390 days and then on his right side for 40 days?",
+  opts: ["Isaiah", "Jeremiah", "Ezekiel", "Hosea"],
+  ans: 2,
+  ref: "Ezekiel 4:4–6",
+  category: "Old Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "Who was the high priest that tore his clothes when Jesus claimed to be the Son of God?",
+  opts: ["Annas", "Caiaphas", "Ananias", "Gamaliel"],
+  ans: 1,
+  ref: "Matthew 26:63–65",
+  category: "New Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "Which high priest was retired at the time Jesus was brought before him on Good Friday?",
+  opts: ["Annas", "Caiaphas", "Ananias", "Gamaliel"],
+  ans: 0,
+  ref: "Matthew 26:63–65",
+  category: "New Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "Which disciple is traditionally believed to have been skinned alive and then beheaded?",
+  opts: ["Peter", "Andrew", "Bartholomew", "Thomas"],
+  ans: 2,
+  ref: "Church tradition (not directly in Scripture)",
+  category: "New Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "In the Book of Revelation, what is the number of the beast?",
+  opts: ["666", "656", "555", "777"],
+  ans: 0,
+  ref: "Revelation 13:18 (note: 616 in some early manuscripts though scholars debate this)",
+  category: "New Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "Which epistle contains the longest single sentence in the Greek New Testament?",
+  opts: ["Romans", "Ephesians", "Colossians", "Hebrews"],
+  ans: 1,
+  ref: "",
+  category: "New Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "Who was the Roman governor before whom Paul appealed to Caesar?",
+  opts: ["Felix", "Festus", "Gallio", "Sergius Paulus"],
+  ans: 1,
+  ref: "Acts 25:11–12",
+  category: "New Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "Which minor prophet contains the only Old Testament reference to the Messiah being pierced?",
+  opts: ["Zechariah", "Malachi", "Haggai", "Zephaniah"],
+  ans: 0,
+  ref: "Zechariah 12:10",
+  category: "Old Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "What was the name of the place outside Jerusalem where the bodies of executed criminals were burned?",
+  opts: ["Gehenna", "Topheth", "Valley of Hinnom", "All of the above refer to the same place"],
+  ans: 3,
+  ref: "Multiple references (e.g. Jeremiah 7:31–32, Matthew 5:22)",
+  category: "General",
+  difficulty: "hard"
+},
+{ 
+  q: "Which book of the Bible is the only one that does not mention the name of God?",
+  opts: ["Esther", "Song of Solomon", "Ruth", "Obadiah"],
+  ans: 0,
+  ref: "",
+  category: "General",
+  difficulty: "hard"
+},
+{ 
+  q: "Who was the only person in the New Testament recorded as having laughed at Jesus?",
+  opts: ["The crowd at Jairus' house", "Herod", "Pilate", "The chief priests"],
+  ans: 0,
+  ref: "Mark 5:40 / Luke 8:53",
+  category: "New Testament",
+  difficulty: "hard"
+},
+{ 
+  q: "Which Old Testament character is called 'the father of many nations' in both Genesis and Romans?",
+  opts: ["Abraham", "Jacob", "Isaac", "Noah"],
+  ans: 0,
+  ref: "Genesis 17:4–5; Romans 4:17",
+  category: "General",
+  difficulty: "medium"
+},
+{ 
+  q: "In the Book of Acts, who was the first Gentile convert officially recorded after Pentecost?",
+  opts: ["Cornelius", "The Ethiopian eunuch", "Lydia", "Sergius Paulus"],
+  ans: 0,
+  ref: "Acts 10",
+  category: "New Testament",
+  difficulty: "hard"
+},
+  {
+    "q": "On which day did God rest from all His work of creation?",
+    "opts": ["Fifth day", "Sixth day", "Seventh day", "First day"],
+    "ans": 2,
+    "ref": "Genesis 2:2-3",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "How many days did it take God to create the world?",
+    "opts": ["6 days", "7 days", "8 days", "9 days"],
+    "ans": 0,
+    "ref": "Genesis 1:1-2:3",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which tree's fruit did God say was forbidden in the Garden of Eden?",
+    "opts": ["The tree of the knowledge of good and evil", "The tree of life", "The fig tree", "The palm tree"],
+    "ans": 0,
+    "ref": "Genesis 2:16-17",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which animal spoke with Adam and Eve?",
+    "opts": ["The serpent", "The cattle", "The lion", "The hippopotamus"],
+    "ans": 0,
+    "ref": "Genesis 3:1",
+    "category": "General",
+    "difficulty": "easy"
+  },
+    {
+    "q": "How long did Methuselah live ?",
+    "opts": ["692 years", "969 years", "1000 years", "587 years"],
+    "ans": 1,
+    "ref": "Genesis 5:27",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Who was thrown into a den of lions for praying to God despite the king’s decree?",
+    "opts": ["Daniel", "David", "Elijah", "Nehemiah"],
+    "ans": 0,
+    "ref": "Daniel 6:10-16",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "What was the name of the garden where Jesus prayed before His arrest?",
+    "opts": ["Garden of Eden", "Garden of Gethsemane", "Garden of Joseph", "Garden of Olives"],
+    "ans": 1,
+    "ref": "Matthew 26:36",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which apostle is known as the 'doubter' because he wanted to see Jesus’ wounds before believing?",
+    "opts": ["Peter", "Andrew", "Thomas", "Philip"],
+    "ans": 2,
+    "ref": "John 20:24-29",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "What did God use as a sign of His covenant with Noah that He would never again destroy the earth with a flood?",
+    "opts": ["A burning bush", "A rainbow", "A pillar of cloud", "A dove"],
+    "ans": 1,
+    "ref": "Genesis 9:12-15",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Who interpreted Pharaoh’s dreams about seven years of plenty followed by seven years of famine?",
+    "opts": ["Moses", "Joseph", "Aaron", "Samuel"],
+    "ans": 1,
+    "ref": "Genesis 41:14-32",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which Old Testament prophet confronted King Ahab and the prophets of Baal on Mount Carmel?",
+    "opts": ["Elisha", "Isaiah", "Jeremiah", "Elijah"],
+    "ans": 3,
+    "ref": "1 Kings 18:17-40",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "In the parable of the Good Samaritan, who was the first person to pass by the injured man?",
+    "opts": ["A Levite", "A priest", "A tax collector", "A Pharisee"],
+    "ans": 1,
+    "ref": "Luke 10:30-32",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which New Testament letter speaks extensively about faith and uses Abraham as an example of justification by faith?",
+    "opts": ["James", "Romans", "Galatians", "Hebrews"],
+    "ans": 1,
+    "ref": "",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Who was the first Christian martyr recorded in the book of Acts?",
+    "opts": ["Stephen", "James", "Philip", "Barnabas"],
+    "ans": 0,
+    "ref": "Acts 7:54-60",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which Old Testament book contains the line, 'The fear of the Lord is the beginning of wisdom'?",
+    "opts": ["Psalms", "Proverbs", "Ecclesiastes", "Job"],
+    "ans": 1,
+    "ref": "",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which prophet saw a vision of a valley of dry bones coming to life?",
+    "opts": ["Ezekiel", "Isaiah", "Jeremiah", "Daniel"],
+    "ans": 0,
+    "ref": "",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "In which New Testament letter is Christ described as 'the radiance of the glory of God and the exact imprint of his nature'?",
+    "opts": ["Colossians", "Hebrews", "Ephesians", "Philippians"],
+    "ans": 1,
+    "ref": "",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which minor prophet’s book focuses on a prophet who is angry that God shows mercy to a great city?",
+    "opts": ["Amos", "Micah", "Jonah", "Nahum"],
+    "ans": 2,
+    "ref": "",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which Old Testament figure made a vow that if God granted him victory, he would dedicate the first thing that came out of his house to the Lord?",
+    "opts": ["Gideon", "Jephthah", "Samson", "Saul"],
+    "ans": 1,
+    "ref": "Judges 11:30-31",
+    "category": "General",
+    "difficulty": "hard"
+  },
+    {
+    "q": "Which king did Elijah confront on Mount Carmel?",
+    "opts": ["Ahab", "Herod", "Saul", "Hezekiah"],
+    "ans": 0,
+    "ref": "1 Kings 18:17-19",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which Old Testament book contains the vision of the valley of dry bones?",
+    "opts": ["Jeremiah", "Ezekiel", "Daniel", "Job"],
+    "ans": 1,
+    "ref": "",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Who was the priest that blessed Abram after his victory over the kings?",
+    "opts": ["Melchizedek", "Aaron", "Samuel", "Eleazar"],
+    "ans": 0,
+    "ref": "Genesis 14:18-20",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which king discovered the Book of the Law during temple repairs?",
+    "opts": ["Hezekiah", "Josiah", "Jehoshaphat", "Uzziah"],
+    "ans": 1,
+    "ref": "2 Kings 22:8-11",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which prophet saw a vision of the Lord high and lifted up, with seraphim crying 'Holy, holy, holy'?",
+    "opts": ["Isaiah", "Ezekiel", "Amos", "Hosea"],
+    "ans": 0,
+    "ref": "",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Who baptized Jesus in the Jordan River?",
+    "opts": ["John the Baptist", "Peter", "James", "John the Apostle"],
+    "ans": 0,
+    "ref": "Matthew 3:13-17",
+    "category": "New Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which apostle was a tax collector before following Jesus?",
+    "opts": ["Matthew", "Thomas", "Philip", "Andrew"],
+    "ans": 0,
+    "ref": "Matthew 9:9",
+    "category": "New Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Where were Jesus’ followers first called Christians?",
+    "opts": ["Jerusalem", "Antioch", "Corinth", "Ephesus"],
+    "ans": 1,
+    "ref": "Acts 11:26",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which New Testament letter emphasizes that faith without works is dead?",
+    "opts": ["Romans", "Galatians", "James", "Hebrews"],
+    "ans": 2,
+    "ref": "",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Who delivered the sermon on the Day of Pentecost?",
+    "opts": ["Peter", "John", "Stephen", "Paul"],
+    "ans": 0,
+    "ref": "Acts 2:14-41",
+    "category": "New Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which missionary companion of Paul was the son of a Jewish mother and Greek father?",
+    "opts": ["Titus", "Timothy", "Silas", "Barnabas"],
+    "ans": 1,
+    "ref": "Acts 16:1-3",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which New Testament book contains the vision of the New Jerusalem?",
+    "opts": ["Revelation", "Hebrews", "1 Peter"],
+    "ans": 0,
+    "ref": "",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+
+  {
+    "q": "Which ancient empire destroyed the First Temple in Jerusalem?",
+    "opts": ["Assyrian Empire", "Babylonian Empire", "Persian Empire"],
+    "ans": 1,
+    "ref": "2 Kings 25:8-10",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "What sea did the Israelites cross during the Exodus?",
+    "opts": ["Red Sea", "Dead Sea", "Sea of Galilee"],
+    "ans": 0,
+    "ref": "Exodus 14:21-22",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which city was known as the center of early Christian missionary activity and Paul's home base?",
+    "opts": ["Antioch", "Rome", "Jerusalem", "Alexandria"],
+    "ans": 0,
+    "ref": "Acts 13:1-3",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which ancient group of people were descendants of Esau?",
+    "opts": ["Moabites", "Edomites", "Ammonites", "Philistines"],
+    "ans": 1,
+    "ref": "Genesis 36:1",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which mountain is traditionally identified as the location of the Sermon on the Mount?",
+    "opts": ["Mount Tabor", "Mount of Beatitudes", "Mount Carmel"],
+    "ans": 1,
+    "ref": "Matthew 5:1",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which river runs through the region of Mesopotamia and is mentioned in the Garden of Eden narrative?",
+    "opts": ["Euphrates", "Jordan", "Nile", "Kishon"],
+    "ans": 0,
+    "ref": "Genesis 2:14",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "What was Barabas engaged in at the time he committed murder?",
+    "opts": ["Revolt against Roman rule", "Defying religious laws", "Temple robbery", "None of the above"],
+    "ans": 0,
+    "ref": "Luke 23:19",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which prophet married a woman named Gomer as a symbolic act commanded by God?",
+    "opts": ["Hosea", "Joel", "Amos", "Micah"],
+    "ans": 0,
+    "ref": "Hosea 1:2-3",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Who was the mother of Samuel?",
+    "opts": ["Hannah", "Deborah", "Ruth", "Naomi"],
+    "ans": 0,
+    "ref": "1 Samuel 1:20",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which king of Judah was struck with leprosy for unlawfully burning incense in the temple?",
+    "opts": ["Uzziah", "Ahaz", "Manasseh", "Rehoboam"],
+    "ans": 0,
+    "ref": "2 Chronicles 26:16-21",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which Old Testament book contains the story of Balaam and his talking donkey?",
+    "opts": ["Numbers", "Deuteronomy", "Joshua", "Judges"],
+    "ans": 0,
+    "ref": "",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which judge made a vow that resulted in his daughter being dedicated to the Lord?",
+    "opts": ["Jephthah", "Gideon", "Samson", "Othniel"],
+    "ans": 0,
+    "ref": "Judges 11:30-40",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which New Testament book contains the 'Armor of God' passage?",
+    "opts": ["Ephesians", "Philippians", "Colossians", "Romans"],
+    "ans": 0,
+    "ref": "",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Who was the first Christian martyr?",
+    "opts": ["Stephen", "James", "Philip", "Barnabas"],
+    "ans": 0,
+    "ref": "Acts 7:54-60",
+    "category": "New Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which New Testament writer was a physician?",
+    "opts": ["Luke", "Mark", "John", "Paul"],
+    "ans": 0,
+    "ref": "Colossians 4:14",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which church received a letter from Paul addressing divisions, lawsuits, and misuse of spiritual gifts?",
+    "opts": ["Corinth", "Ephesus", "Philippi", "Thessalonica"],
+    "ans": 0,
+    "ref": "1 Corinthians",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which apostle had a vision of a sheet filled with animals, symbolizing the inclusion of Gentiles?",
+    "opts": ["Peter", "Paul", "John", "James"],
+    "ans": 0,
+    "ref": "Acts 10:9-16",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Who wrote the Book of Revelation while exiled on Patmos?",
+    "opts": ["John", "Peter", "Paul", "James"],
+    "ans": 0,
+    "ref": "Revelation 1:9",
+    "category": "New Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which region, known for its fertile land, was home to the Philistines?",
+    "opts": ["The coastal plain of Canaan", "The Judean hills", "The Negev desert", "Samaria"],
+    "ans": 0,
+    "ref": "1 Samuel 6:17",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which body of water lies at the lowest elevation on earth and is mentioned in connection with Sodom and Gomorrah?",
+    "opts": ["Dead Sea", "Red Sea", "Mediterranean Sea"],
+    "ans": 0,
+    "ref": "Genesis 14:3",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which ancient empire allowed the Jews to return from exile and rebuild the temple?",
+    "opts": ["Persian Empire", "Babylonian Empire", "Greek Empire"],
+    "ans": 0,
+    "ref": "Ezra 1:1-4",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which ancient road connected major Roman cities and aided the spread of early Christianity?",
+    "opts": ["Via Egnatia", "King’s Highway", "Silk Road", "Via Appia"],
+    "ans": 0,
+    "ref": "Historical context",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which city served as the capital of the northern kingdom of Israel after the division of the monarchy?",
+    "opts": ["Samaria", "Shechem", "Bethel", "Dan"],
+    "ans": 0,
+    "ref": "1 Kings 16:24",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Who was the first high priest of Israel?",
+    "opts": ["Aaron", "Eleazar", "Phinehas", "Moses"],
+    "ans": 0,
+    "ref": "Exodus 28:1",
+    "category": "Old Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which Old Testament book contains the story of Naomi and her daughters?",
+    "opts": ["Ruth", "Esther", "Judges","Numbers"],
+    "ans": 0,
+    "ref": "",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which king wrote many of the Psalms and was known as a man after God's own heart?",
+    "opts": ["David", "Solomon", "Hezekiah", "Josiah"],
+    "ans": 0,
+    "ref": "1 Samuel 13:14",
+    "category": "Old Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which prophet confronted King David about his sin with Bathsheba?",
+    "opts": ["Nathan", "Gad", "Samuel", "Elijah"],
+    "ans": 0,
+    "ref": "2 Samuel 12:1-7",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which Old Testament figure wrestled with a mysterious man until daybreak?",
+    "opts": ["Jacob", "Esau", "Joseph", "Moses"],
+    "ans": 0,
+    "ref": "Genesis 32:24-30",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which prophet saw a vision of four beasts rising from the sea?",
+    "opts": ["Daniel", "Ezekiel", "Zechariah", "Isaiah"],
+    "ans": 0,
+    "ref": "Daniel 7:1-8",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which king of Israel built an ivory palace and expanded Samaria?",
+    "opts": ["Ahab", "Jeroboam II", "Omri", "Jehu"],
+    "ans": 2,
+    "ref": "1 Kings 16:23-28",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which Old Testament book contains the story of the prophet Jonah?",
+    "opts": ["Jonah", "Micah", "Nahum","Zephaniah"],
+    "ans": 0,
+    "ref": "",
+    "category": "Old Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Who succeeded Moses as the leader of Israel?",
+    "opts": ["Joshua", "Caleb", "Aaron"],
+    "ans": 0,
+    "ref": "Deuteronomy 31:7",
+    "category": "Old Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which prophet had a vision of a flying scroll?",
+    "opts": ["Zechariah", "Habakkuk", "Malachi", "Haggai"],
+    "ans": 0,
+    "ref": "Zechariah 5:1-4",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which apostle was known as the 'son of thunder' along with his brother?",
+    "opts": ["John", "James", "Peter", "Andrew"],
+    "ans": 1,
+    "ref": "Mark 3:17",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Who was the first Gentile convert recorded in the New Testament?",
+    "opts": ["Cornelius", "Lydia", "Sergius Paulus", "The Ethiopian eunuch"],
+    "ans": 0,
+    "ref": "Acts 10:1-48",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which apostle wrote to a man named Theophilus in two separate books?",
+    "opts": ["Luke", "Paul", "John", "Peter"],
+    "ans": 0,
+    "ref": "Acts 1:1",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which New Testament figure was struck blind on the road to Damascus?",
+    "opts": ["Saul", "Peter", "Barnabas", "Silas"],
+    "ans": 0,
+    "ref": "Acts 9:1-9",
+    "category": "New Testament",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which church received a warning for being lukewarm?",
+    "opts": ["Laodicea", "Sardis", "Thyatira", "Pergamum"],
+    "ans": 0,
+    "ref": "Revelation 3:14-16",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which New Testament letter focuses heavily on Christ’s superiority over angels, Moses, and the priesthood?",
+    "opts": ["Hebrews", "Romans", "Colossians", "1 Peter"],
+    "ans": 0,
+    "ref": "Hebrews 1–10",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which apostle was the only one NOT martyred?",
+    "opts": ["Matthew", "John", "Peter", "Paul"],
+    "ans": 1,
+    "ref": "Revelation 1:9",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which apostle was exiled to the island of Patmos?",
+    "opts": ["Matthew", "John", "Peter", "Paul"],
+    "ans": 1,
+    "ref": "Revelation 1:9",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which ancient city was famous for its library and was a major center of learning in the ancient world?",
+    "opts": ["Alexandria", "Athens", "Babylon", "Rome"],
+    "ans": 0,
+    "ref": "Historical context",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which river is associated with the baptism of Jesus?",
+    "opts": ["Jordan River", "Euphrates River", "Nile River", "Tigris River"],
+    "ans": 0,
+    "ref": "Matthew 3:13",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which ancient empire used Aramaic as a common administrative language, influencing the language of parts of the Bible?",
+    "opts": ["Persian Empire", "Greek Empire", "Roman Empire", "Assyrian Empire"],
+    "ans": 0,
+    "ref": "Historical context",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which city was known for its massive walls and was conquered by Joshua and the Israelites?",
+    "opts": ["Sodom","Jericho", "Ai", "Hazor"],
+    "ans": 1,
+    "ref": "Joshua 6:1-20",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which false god's priests did Elijah win a contest against?",
+    "opts": ["Baal", "Ashtoreth", "Golden Calf", "Dagon"],
+    "ans": 0,
+    "ref": "1 Kings 18:19-20",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which ancient people group lived east of the Jordan and were descendants of Lot?",
+    "opts": ["Moabites", "Edomites", "Philistines", "Amalekites"],
+    "ans": 0,
+    "ref": "Genesis 19:36-37",
+    "category": "General",
+    "difficulty": "hard"
+  },
+  {
+    "q": "Which sea is also called Lake Tiberias and Lake Gennesaret?",
+    "opts": ["Sea of Galilee", "Dead Sea", "Mediterranean Sea", "Red Sea"],
+    "ans": 0,
+    "ref": "Luke 5:1",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+    "q": "Which ancient city was the capital of the Assyrian Empire during Jonah’s ministry?",
+    "opts": ["Nineveh", "Babylon", "Ur", "Haran"],
+    "ans": 0,
+    "ref": "Jonah 1:1-2",
+    "category": "General",
+    "difficulty": "medium"
+  },
+  {
+    "q": "Which region between the Tigris and Euphrates rivers is often called the cradle of civilization?",
+    "opts": ["Mesopotamia", "Canaan", "Anatolia", "Arabia"],
+    "ans": 0,
+    "ref": "Historical context",
+    "category": "General",
+    "difficulty": "easy"
+  },
+  {
+  "q": "Who led the Israelites out of Egypt?",
+  "opts": ["Joshua", "Moses", "Aaron", "Joseph"],
+  "ans": 1,
+  "ref": "Exodus 3–14",
+  "category": "Old Testament",
+  "difficulty": "easy"
+},
+{
+  "q": "Who defeated Goliath with a sling and a stone?",
+  "opts": ["Saul", "David", "Jonathan", "Samuel"],
+  "ans": 1,
+  "ref": "1 Samuel 17",
+  "category": "Old Testament",
+  "difficulty": "easy"
+},
+{
+  "q": "What city’s walls fell after Israel marched around it for seven days?",
+  "opts": ["Jericho", "Ai", "Bethel", "Nineveh"],
+  "ans": 0,
+  "ref": "Joshua 6",
+  "category": "Old Testament",
+  "difficulty": "easy"
+},
+{
+  "q": "Who received the Ten Commandments from God?",
+  "opts": ["Moses", "Joshua", "Aaron", "Caleb"],
+  "ans": 0,
+  "ref": "Exodus 20",
+  "category": "Old Testament",
+  "difficulty": "easy"
+},
+{
+  "q": "Which king asked God for wisdom instead of riches or long life?",
+  "opts": ["David", "Solomon", "Hezekiah", "Josiah"],
+  "ans": 1,
+  "ref": "1 Kings 3",
+  "category": "Old Testament",
+  "difficulty": "medium"
+},
+{
+  "q": "Which Old Testament woman became queen of Persia and saved her people?",
+  "opts": ["Ruth", "Esther", "Deborah", "Hannah"],
+  "ans": 1,
+  "ref": "",
+  "category": "Old Testament",
+  "difficulty": "medium"
+},
+{
+  "q": "Who succeeded Moses as the leader of Israel?",
+  "opts": ["Caleb", "Joshua", "Aaron", "Gideon"],
+  "ans": 1,
+  "ref": "Joshua 1",
+  "category": "Old Testament",
+  "difficulty": "medium"
+},
+{
+  "q": "Who was the mother of Samuel?",
+  "opts": ["Hannah", "Naomi", "Abigail", "Michal"],
+  "ans": 0,
+  "ref": "1 Samuel 1",
+  "category": "Old Testament",
+  "difficulty": "medium"
+},
+{
+  "q": "Which king of Judah was struck with leprosy after unlawfully burning incense in the temple?",
+  "opts": ["Uzziah", "Ahaz", "Manasseh", "Jehoiakim"],
+  "ans": 0,
+  "ref": "2 Chronicles 26:16–21",
+  "category": "Old Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Which judge vowed to sacrifice the first thing that came out of his house if God granted him victory?",
+  "opts": ["Gideon", "Jephthah", "Samson", "Ehud"],
+  "ans": 1,
+  "ref": "Judges 11:30–39",
+  "category": "Old Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Which prophet delivered a message to Nineveh long before Jonah?",
+  "opts": ["Nahum", "Micah", "Amos", "Obadiah"],
+  "ans": 0,
+  "ref": "",
+  "category": "Old Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Who was the mother of Jesus?",
+  "opts": ["Mary", "Martha", "Elizabeth", "Anna"],
+  "ans": 0,
+  "ref": "Luke 1",
+  "category": "New Testament",
+  "difficulty": "easy"
+},
+{
+  "q": "Who climbed a sycamore tree to see Jesus?",
+  "opts": ["Zacchaeus", "Bartimaeus", "Nicodemus", "Cornelius"],
+  "ans": 0,
+  "ref": "Luke 19:1–10",
+  "category": "New Testament",
+  "difficulty": "easy"
+},
+{
+  "q": "Which Pharisee visited Jesus at night to ask questions?",
+  "opts": ["Nicodemus", "Gamaliel", "Joseph of Arimathea", "Simon"],
+  "ans": 0,
+  "ref": "John 3",
+  "category": "New Testament",
+  "difficulty": "medium"
+},
+{
+  "q": "Which couple lied about the price of their land and died as a result?",
+  "opts": ["Ananias and Sapphira", "Aquila and Priscilla", "Mary and Joseph", "Felix and Drusilla"],
+  "ans": 0,
+  "ref": "Acts 5:1–11",
+  "category": "New Testament",
+  "difficulty": "medium"
+},
+{
+  "q": "Who fell asleep during Paul’s sermon and fell from a window?",
+  "opts": ["Eutychus", "Tychicus", "Silas", "Timothy"],
+  "ans": 0,
+  "ref": "Acts 20:7–12",
+  "category": "New Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Who carried Jesus’ cross part of the way to Golgotha?",
+  "opts": ["Simon of Cyrene", "Joseph of Arimathea", "Nicodemus", "Barabbas"],
+  "ans": 0,
+  "ref": "Luke 23:26",
+  "category": "New Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Which prophetess is mentioned in Luke as living in the temple and meeting the infant Jesus?",
+  "opts": ["Anna", "Elizabeth", "Martha", "Salome"],
+  "ans": 0,
+  "ref": "Luke 2:36–38",
+  "category": "New Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Which Roman governor succeeded Felix and heard Paul’s defense?",
+  "opts": ["Festus", "Pilate", "Herod Agrippa", "Gallio"],
+  "ans": 0,
+  "ref": "Acts 24–25",
+  "category": "New Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Which early church leader was known for his eloquence and was instructed by Priscilla and Aquila?",
+  "opts": ["Apollos", "Barnabas", "Silas", "Titus"],
+  "ans": 0,
+  "ref": "Acts 18:24–28",
+  "category": "New Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Which apostle wrote to 'the elect lady and her children'?",
+  "opts": ["John", "Peter", "Paul", "Jude"],
+  "ans": 0,
+  "ref": "2 John 1",
+  "category": "New Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Which New Testament figure was struck blind for opposing Paul and Barnabas?",
+  "opts": ["Elymas the sorcerer", "Demas", "Alexander", "Diotrephes"],
+  "ans": 0,
+  "ref": "Acts 13:6–12",
+  "category": "New Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "What is the first commandment?",
+  "opts": ["Do not steal", "Honor your father and mother", "You shall have no other gods before Me", "Do not murder"],
+  "ans": 2,
+  "ref": "Exodus 20:3",
+  "category": "General",
+  "difficulty": "easy"
+},
+{
+  "q": "Who is traditionally credited with writing the Psalms?",
+  "opts": ["Moses", "David", "Solomon", "Asaph"],
+  "ans": 1,
+  "ref": "Psalms",
+  "category": "Old Testament",
+  "difficulty": "easy"
+},
+{
+  "q": "What is the longest chapter in the Bible?",
+  "opts": ["Psalm 119", "Psalm 23", "Isaiah 53", "Genesis 1"],
+  "ans": 0,
+  "ref": "Psalm 119",
+  "category": "General",
+  "difficulty": "medium"
+},
+{
+  "q": "What is the final word of the Bible in many translations?",
+  "opts": ["Amen", "Forever", "Jesus", "Grace"],
+  "ans": 0,
+  "ref": "Revelation 22:21",
+  "category": "General",
+  "difficulty": "easy"
+},
+{
+  "q": "How many Gospels are in the New Testament?",
+  "opts": ["Two", "Three", "Four", "Five"],
+  "ans": 2,
+  "ref": "General Knowledge",
+  "category": "General",
+  "difficulty": "medium"
+},
+{
+  "q": "What is another name for the Pentateuch?",
+  "opts": ["The Prophets", "The Writings", "The Law", "The Gospels"],
+  "ans": 2,
+  "ref": "General Knowledge",
+  "category": "General",
+  "difficulty": "hard"
+},
+{
+  "q": "What day of the week did Jesus rise from the dead?",
+  "opts": ["Friday", "Saturday", "Sunday", "Monday"],
+  "ans": 2,
+  "ref": "Matthew 28:1",
+  "category": "General",
+  "difficulty": "easy"
+},
+{
+  "q": "Which Old Testament book contains the line 'The fear of the Lord is the beginning of wisdom'?",
+  "opts": ["Job", "Psalms", "Proverbs", "Ecclesiastes"],
+  "ans": 2,
+  "ref": "Proverbs 9:10",
+  "category": "Old Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Which city is often called the 'City of David'?",
+  "opts": ["Bethlehem", "Jerusalem", "Hebron", "Nazareth"],
+  "ans": 0,
+  "ref": "Luke 2:4",
+  "category": "General",
+  "difficulty": "medium"
+},
+{
+  "q": "Which biblical figure is known for great patience in suffering?",
+  "opts": ["Job", "Moses", "Jeremiah", "Paul"],
+  "ans": 0,
+  "ref": "Book of Job",
+  "category": "General",
+  "difficulty": "medium"
+},
+{
+  "q": "Which festival commemorates Israel’s deliverance from Egypt?",
+  "opts": ["Pentecost", "Passover", "Tabernacles", "Purim"],
+  "ans": 1,
+  "ref": "Exodus 12",
+  "category": "General",
+  "difficulty": "medium"
+},
+{
+  "q": "Which tribe of Israel was not assigned a territorial inheritance?",
+  "opts": ["Levi", "Benjamin", "Simeon", "Gad"],
+  "ans": 0,
+  "ref": "Numbers 18:20–24",
+  "category": "General",
+  "difficulty": "hard"
+},
+{
+  "q": "Which ancient translation of the Hebrew Scriptures into Greek was widely used in the early church?",
+  "opts": ["Vulgate", "Septuagint", "Peshitta", "Targum"],
+  "ans": 1,
+  "ref": "General Knowledge",
+  "category": "General",
+  "difficulty": "hard"
+},
+{
+  "q": "Which Old Testament prophet served during the reigns of Uzziah, Jotham, Ahaz, and Hezekiah?",
+  "opts": ["Isaiah", "Micah", "Amos", "Hosea"],
+  "ans": 0,
+  "ref": "Isaiah 1:1",
+  "category": "Old Testament",
+  "difficulty": "hard"
+},
+{
+  "q": "Which biblical manuscript discovery in 1947 significantly confirmed the reliability of Old Testament texts?",
+  "opts": ["Codex Vaticanus", "Dead Sea Scrolls", "Codex Sinaiticus", "Masoretic Text"],
+  "ans": 1,
+  "ref": "Qumran Caves",
+  "category": "General",
+  "difficulty": "hard"
+},
+{
+  "q": "Which early Christian creed begins with the words 'I believe in God, the Father Almighty'?",
+  "opts": ["Nicene Creed", "Apostles’ Creed", "Athanasian Creed", "Chalcedonian Definition"],
+  "ans": 1,
+  "ref": "Apostles’ Creed",
+  "category": "General",
+  "difficulty": "hard"
+}
+    ];
+
+
+    let gameQuestions = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let totalScore = 0;
+    let gameHistory = [];
+    let highScores = [];
+    let timerInterval;
+    let timeLeftAtAnswer = 0;
+    let includeHard = true;
+    const TIME_LIMIT = 25;
+    const AUTO_ADVANCE_CORRECT_MS = 2200;
+    const AUTO_ADVANCE_WRONG_MS = 2800;
+    const QUESTIONS_PER_GAME = 10;
+    const MAX_HIGH_SCORES_SHOWN = 5;
+    const STORAGE_KEY_HISTORY = "bibleTriviaHistory";
+    const STORAGE_KEY_HIGHSCORES = "bibleTriviaHighScores";
+    const STORAGE_KEY_HARD_TOGGLE = "bibleTriviaIncludeHard";
+    const FEEDBACK_SHOW_MS = 2200;
+
+    const incorrectMessages = [
+      "Not quite!",
+      "Good try!",
+      "Almost!"
+    ];
+
+    const encouragingVerses = [
+      { minPercent: 0,  text: "Keep going! You can do all things through Christ who strengthens you. – Philippians 4:13" },
+      { minPercent: 50, text: "Great effort! Let’s keep learning God’s Word together. – 2 Timothy 2:15" },
+      { minPercent: 80, text: "Fantastic! Well done, good and faithful servant! – Matthew 25:21" }
+    ];
+
+    const difficultyBase = {
+      easy: 50,
+      medium: 100,
+      hard: 150
+    };
+
+    const progressEl      = document.getElementById("progress");
+    const progressDotsEl  = document.getElementById("progress-dots");
+    const timerDisplayEl  = document.getElementById("timer-display");
+    const timerFill       = document.getElementById("timer-fill");
+    const questionEl      = document.getElementById("question");
+    const verseRefEl      = document.getElementById("verse-ref");
+    const difficultyTagEl = document.getElementById("difficulty-tag");
+    const categoryTagEl   = document.getElementById("category-tag");
+    const optionsEl       = document.getElementById("options");
+    const feedbackEl      = document.getElementById("feedback");
+    const summaryEl       = document.getElementById("summary");
+    const hardToggle      = document.getElementById("hard-toggle");
+
+    function loadData() {
+      const savedHistory = localStorage.getItem(STORAGE_KEY_HISTORY);
+      if (savedHistory) {
+        try { gameHistory = JSON.parse(savedHistory); } catch(e) { gameHistory = []; }
+      }
+
+      const savedHigh = localStorage.getItem(STORAGE_KEY_HIGHSCORES);
+      if (savedHigh) {
+        try { highScores = JSON.parse(savedHigh); } catch(e) { highScores = []; }
+      }
+
+      const savedHard = localStorage.getItem(STORAGE_KEY_HARD_TOGGLE);
+      if (savedHard !== null) {
+        includeHard = savedHard === "true";
+        //hardToggle.checked = includeHard;
+      }
+    }
+
+    function saveData() {
+      console.log("I am in save data.")
+      localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(gameHistory));
+      localStorage.setItem(STORAGE_KEY_HIGHSCORES, JSON.stringify(highScores));
+      localStorage.setItem(STORAGE_KEY_HARD_TOGGLE, includeHard.toString());
+    }
+
+    // hardToggle.addEventListener("change", () => {
+    //   includeHard = hardToggle.checked;
+    //   saveData();
+    // });
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+//========= CoPilot version ========
+function selectBalancedQuestions() {
+  console.log("=== MATRIX SELECTION START ===");
+
+  const difficulties = includeHard ? ['easy', 'medium', 'hard'] : ['easy', 'medium'];
+  const categories = ['Old Testament', 'New Testament', 'General'];
+
+  // Target totals
+  const catRemaining = {
+    'Old Testament': 4,
+    'New Testament': 4,
+    'General': 2
+  };
+
+  const diffRemaining = {
+    easy: includeHard ? 4 : 5,
+    medium: includeHard ? 3: 5,
+    hard: includeHard ? 3 : 0
+  };
+
+  // Difficulty × Category matrix
+  const matrix = {
+    easy:   { 'Old Testament': 2, 'New Testament': 1, 'General': 1 },
+    medium: { 'Old Testament': 1, 'New Testament': 1, 'General': 1 },
+    hard:   { 'Old Testament': 1, 'New Testament': 1, 'General': 1 }
+  };
+
+  if (!includeHard) delete matrix.hard;
+
+  console.log("Matrix targets:", JSON.stringify(matrix, null, 2));
+
+  // Filter available questions
+  const available = includeHard
+    ? [...allQuestions]
+    : allQuestions.filter(q => q.difficulty !== "hard");
+
+  console.log(`Available questions: ${available.length}`);
+
+  // Build pools
+  const pools = {};
+  for (let d of difficulties) {
+    for (let c of categories) {
+      pools[`${d}|${c}`] = [];
+    }
+  }
+
+  available.forEach(q => {
+    const key = `${q.difficulty}|${q.category}`;
+    if (pools[key]) pools[key].push(q);
+  });
+
+  console.log("Pool sizes:");
+  for (let key in pools) console.log(`  ${key}: ${pools[key].length}`);
+
+  // Shuffle each pool once
+  for (let key in pools) shuffle(pools[key]);
+
+  const selectedIds = new Set();
+  const shortages = [];
+
+  // 1. Primary matrix selection
+  console.log("Selecting from matrix cells...");
+  for (let d of difficulties) {
+    for (let c of categories) {
+      const needed = matrix[d][c] ?? 0;
+      const key = `${d}|${c}`;
+      const pool = pools[key];
+
+      if (needed === 0) continue;
+
+      console.log(`  Cell ${key}: need ${needed}, have ${pool.length}`);
+
+      const take = Math.min(needed, pool.length);
+
+      for (let i = 0; i < take; i++) {
+        const q = pool[i];
+        selectedIds.add(q.id);
+        catRemaining[c]--;
+        diffRemaining[d]--;
+      }
+
+      if (take < needed) {
+        shortages.push({
+          missing: needed - take,
+          difficulty: d,
+          category: c
+        });
+        console.log(`    Shortage: missing ${needed - take}`);
+      }
+    }
+  }
+
+  console.log("Shortages:", shortages);
+
+  // 2. Strict quota-safe fallback
+  let remaining = shuffle(available.filter(q => !selectedIds.has(q.id)));
+
+  for (let s of shortages) {
+    let needed = s.missing;
+    console.log(`Filling shortage for ${s.difficulty}|${s.category}: need ${needed}`);
+
+    while (needed > 0) {
+      // Only candidates that still fit BOTH quotas
+      let candidates = remaining.filter(q =>
+        catRemaining[q.category] > 0 &&
+        diffRemaining[q.difficulty] > 0
+      );
+
+      if (candidates.length === 0) {
+        console.log("  No quota-safe candidates left.");
+        break;
+      }
+
+      // Prioritize categories with most remaining capacity
+      candidates.sort((a, b) =>
+        catRemaining[b.category] - catRemaining[a.category]
+      );
+
+      // Prioritize difficulties with most remaining capacity
+      candidates.sort((a, b) =>
+        diffRemaining[b.difficulty] - diffRemaining[a.difficulty]
+      );
+
+      const q = candidates[0];
+
+      selectedIds.add(q.id);
+      catRemaining[q.category]--;
+      diffRemaining[q.difficulty]--;
+      needed--;
+
+      console.log(`  Selected fallback: ${q.id} (${q.difficulty}, ${q.category})`);
+
+      remaining = remaining.filter(x => x.id !== q.id);
+    }
+  }
+
+  // 3. Final shuffle
+  const final = shuffle(available.filter(q => selectedIds.has(q.id)));
+
+  console.log("Final category distribution:", {
+    OT: final.filter(q => q.category === "Old Testament").length,
+    NT: final.filter(q => q.category === "New Testament").length,
+    General: final.filter(q => q.category === "General").length
+  });
+
+  console.log("Final difficulty distribution:", {
+    easy: final.filter(q => q.difficulty === "easy").length,
+    medium: final.filter(q => q.difficulty === "medium").length,
+    hard: final.filter(q => q.difficulty === "hard").length
+  });
+
+  console.log("=== MATRIX SELECTION END ===");
+
+  return final.slice(0, QUESTIONS_PER_GAME);
+}
+//==================================
+
+
+    /*function selectBalancedQuestions() {
+      let available = [...allQuestions];
+
+      if (!includeHard) {
+        available = available.filter(q => q.difficulty !== "hard");
+      }
+
+      const difficulties = includeHard ? ['easy', 'medium', 'hard'] : ['easy', 'medium'];
+      const categories = ['Old Testament', 'New Testament', 'General'];
+
+      const availByDiff = { easy: [], medium: [], hard: [] };
+      const availByCat = { 'Old Testament': [], 'New Testament': [], 'General': [] };
+
+      available.forEach(q => {
+        if (availByDiff[q.difficulty]) availByDiff[q.difficulty].push(q);
+        if (availByCat[q.category]) availByCat[q.category].push(q);
+      });
+
+      const targetCounts = {
+        easy: includeHard ? 4 : 5,
+        medium: includeHard ? 3 : 5,
+        hard: includeHard ? 3 : 0,
+        'Old Testament': 4,
+        'New Testament': 4,
+        'General': 2
+      };
+
+      const selected = new Set();
+
+      difficulties.forEach(diff => {
+        const pool = shuffle([...availByDiff[diff]]);
+        let needed = targetCounts[diff];
+        for (let q of pool) {
+          if (selected.size >= QUESTIONS_PER_GAME) break;
+          if (!selected.has(q)) {
+            selected.add(q);
+            needed--;
+            if (needed <= 0) break;
+          }
+        }
+      });
+
+      while (selected.size < QUESTIONS_PER_GAME) {
+        const remaining = shuffle([...available]).filter(q => !selected.has(q));
+        if (remaining.length === 0) break;
+        selected.add(remaining[0]);
+      }
+
+      return shuffle(Array.from(selected)).slice(0, QUESTIONS_PER_GAME);
+    }*/
+
+    function resetQuestionScreen() {
+      questionEl.style.display = "block";
+      verseRefEl.style.display = "inline";
+      difficultyTagEl.style.display = "inline-flex";
+      categoryTagEl.style.display = "inline-flex";
+      optionsEl.style.display = "grid";
+      feedbackEl.style.display = "block";
+      summaryEl.style.display = "none";
+    }
+
+    function startNewGame() {
+      resetQuestionScreen();
+      gameQuestions = selectBalancedQuestions();
+      currentIndex = 0;
+      correctCount = 0;
+      totalScore = 0;
+      nextQuestion();
+    }
+
+    function updateProgressDots() {
+      let dots = '';
+      for (let i = 0; i < QUESTIONS_PER_GAME; i++) {
+        if (i < currentIndex) dots += '<span class="done">●</span>';
+        else if (i === currentIndex) dots += '<span class="current">○</span>';
+        else dots += '<span class="pending">○</span>';
+      }
+      progressDotsEl.innerHTML = dots;
+    }
+
+    function nextQuestion() {
+      if (currentIndex >= gameQuestions.length) {
+        endGame();
+        return;
+      }
+
+      const q = gameQuestions[currentIndex];
+      const shuffledOpts = shuffle([...q.opts]);
+      const correctIndex = shuffledOpts.indexOf(q.opts[q.ans]);
+
+      questionEl.textContent = q.q;
+      verseRefEl.textContent = q.ref ? `(${q.ref})` : "";
+      difficultyTagEl.textContent = getDifficultyEmoji(q.difficulty) + " " + (q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1));
+      difficultyTagEl.className = "tag difficulty " + q.difficulty;
+      categoryTagEl.textContent = getCategoryEmoji(q.category) + " " + q.category;
+      categoryTagEl.className = "tag category";
+      optionsEl.innerHTML = "";
+
+      const labels = ['A', 'B', 'C', 'D'];
+      shuffledOpts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.textContent = `${labels[i]}) ${opt}`;
+        btn.onclick = () => handleAnswer(i === correctIndex, btn);
+        optionsEl.appendChild(btn);
+      });
+
+      updateProgress();
+      updateProgressDots();
+      startTimer();
+    }
+
+    function getDifficultyEmoji(diff) {
+      if (diff === "easy") return "🟢";
+      if (diff === "medium") return "🟠";
+      if (diff === "hard") return "🔴";
+      return "";
+    }
+
+    function getCategoryEmoji(cat) {
+      if (cat === "Old Testament") return "📜";
+      if (cat === "New Testament") return "✝️";
+      if (cat === "General") return "📖";
+      return "";
+    }
+
+    function updateProgress() {
+      progressEl.textContent = `Question ${currentIndex + 1} of ${QUESTIONS_PER_GAME} | Correct: ${correctCount} | Score: ${totalScore}`;
+      updateProgressDots();
+    }
+
+    function startTimer() {
+      let timeLeft = TIME_LIMIT;
+      timerFill.style.width = "100%";
+      timerFill.className = "";
+      timerDisplayEl.textContent = Math.ceil(timeLeft);
+      timerDisplayEl.className = "green";
+      clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        timeLeft -= 0.1;
+        timeLeftAtAnswer = timeLeft;
+        timerDisplayEl.textContent = Math.ceil(timeLeft);
+
+        const percent = (timeLeft / TIME_LIMIT) * 100;
+        timerFill.style.width = `${Math.max(percent, 0)}%`;
+
+        if (timeLeft <= 4) {
+          timerFill.className = "danger";
+          timerDisplayEl.className = "red";
+        } else if (timeLeft <= 8) {
+          timerFill.className = "warning";
+          timerDisplayEl.className = "yellow";
+        } else {
+          timerDisplayEl.className = "green";
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          handleTimeout();
+        }
+      }, 100);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerFill.style.width = "0%";
+      timerDisplayEl.textContent = "0";
+      timerDisplayEl.className = "red";
+    }
+
+    function calculatePoints(difficulty) {
+      const base = difficultyBase[difficulty] || 100;
+      const maxBonus = base;
+      // Bonus is proportional to time left, with a small grace period (+0.75 seconds) 
+      // to reward quick answers without being too harsh on near-misses
+      const bonus = Math.max(0, maxBonus * ((timeLeftAtAnswer + 0.75) / TIME_LIMIT));
+      return Math.round(base + bonus);
+    }
+
+    function showFeedback(message, className) {
+      feedbackEl.textContent = message;
+      feedbackEl.className = className;
+      feedbackEl.offsetHeight;
+      feedbackEl.classList.add("visible");
+
+      setTimeout(() => {
+        feedbackEl.classList.remove("visible");
+        feedbackEl.classList.add("fading");
+      }, FEEDBACK_SHOW_MS);
+    }
+
+function celebrateNewHighScore(score) {
+  // Create overlay element
+  const overlay = document.createElement('div');
+  overlay.id = 'highscore-celebration';
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(0,0,0,0.65)';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.zIndex = '1000';
+  overlay.style.opacity = '0';
+  overlay.style.transition = 'opacity 0.8s ease';
+
+  const messageBox = document.createElement('div');
+  messageBox.style.background = 'white';
+  messageBox.style.padding = '40px 50px';
+  messageBox.style.borderRadius = '24px';
+  messageBox.style.boxShadow = '0 12px 60px rgba(0,0,0,0.4)';
+  messageBox.style.textAlign = 'center';
+  messageBox.style.maxWidth = '90%';
+  messageBox.style.fontFamily = "'Fredoka', sans-serif";
+
+  const title = document.createElement('h2');
+  title.textContent = 'Great!';
+  title.style.color = 'var(--primary)';
+  title.style.fontSize = '3.2rem';
+  title.style.margin = '0 0 16px 0';
+
+  const subtitle = document.createElement('p');
+  subtitle.textContent = `New High Score Achieved!`;
+  subtitle.style.fontSize = '2.1rem';
+  subtitle.style.margin = '0 0 20px 0';
+  subtitle.style.color = '#333';
+
+  const scoreDisplay = document.createElement('p');
+  scoreDisplay.textContent = `${score} points`;
+  scoreDisplay.style.fontSize = '4.2rem';
+  scoreDisplay.style.fontWeight = '700';
+  scoreDisplay.style.color = 'var(--accent)';
+  scoreDisplay.style.margin = '0 0 30px 0';
+
+  messageBox.appendChild(title);
+  messageBox.appendChild(subtitle);
+  messageBox.appendChild(scoreDisplay);
+  overlay.appendChild(messageBox);
+
+  document.body.appendChild(overlay);
+
+  // Fade in
+  setTimeout(() => {
+    overlay.style.opacity = '1';
+  }, 100);
+
+  // Confetti sequence - more prominent than regular correct answer
+  const confettiSettings = {
+    particleCount: 120,
+    spread: 80,
+    startVelocity: 45,
+    origin: { y: 0.6 }
+  };
+
+  // Burst 1
+  confetti(confettiSettings);
+
+  // Burst 2 - slightly delayed & different color emphasis
+  setTimeout(() => {
+    confetti({
+      ...confettiSettings,
+      colors: ['#4CAF50', '#FFCA28', '#2196F3', '#F44336', '#9C27B0'],
+      particleCount: 100
+    });
+  }, 400);
+
+  // Burst 3 - final big one
+  setTimeout(() => {
+    confetti({
+      particleCount: 150,
+      spread: 100,
+      origin: { y: 0.4 }
+    });
+  }, 900);
+
+  // Auto-remove after 3 seconds
+  setTimeout(() => {
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+      overlay.remove();
+    }, 800); // wait for fade-out
+  }, 3000);
+}
+
+    function getRandomIncorrectMessage() {
+      const idx = Math.floor(Math.random() * incorrectMessages.length);
+      return incorrectMessages[idx];
+    }
+
+    function handleAnswer(isCorrect, selectedBtn) {
+      stopTimer();
+      const buttons = optionsEl.querySelectorAll(".option");
+      buttons.forEach(b => b.onclick = null);
+
+      const q = gameQuestions[currentIndex];
+      const correctText = q.opts[q.ans];
+      const correctBtn = [...buttons].find(b => b.textContent.includes(correctText));
+      correctBtn?.classList.add("correct");
+
+      if (isCorrect) {
+        selectedBtn.classList.add("correct");
+        const points = calculatePoints(q.difficulty);
+        totalScore += points;
+        showFeedback(`+${points} pts`, "correct");
+        correctCount++;
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+      } else {
+        selectedBtn.classList.add("incorrect");
+        showFeedback(getRandomIncorrectMessage(), "incorrect");
+      }
+
+      buttons.forEach(b => {
+        if (!b.classList.contains("correct")) b.classList.add("grayed");
+      });
+
+      updateProgress();
+
+      setTimeout(() => {
+        currentIndex++;
+        nextQuestion();
+      }, isCorrect ? AUTO_ADVANCE_CORRECT_MS : AUTO_ADVANCE_WRONG_MS);
+    }
+
+    function handleTimeout() {
+      stopTimer();
+      const buttons = optionsEl.querySelectorAll(".option");
+      buttons.forEach(b => b.onclick = null);
+
+      const q = gameQuestions[currentIndex];
+      const correctText = q.opts[q.ans];
+      const correctBtn = [...buttons].find(b => b.textContent.includes(correctText));
+      correctBtn?.classList.add("correct");
+
+      buttons.forEach(b => {
+        if (!b.classList.contains("correct")) b.classList.add("grayed");
+      });
+
+      showFeedback(getRandomIncorrectMessage(), "timeout");
+      updateProgress();
+
+      setTimeout(() => {
+        currentIndex++;
+        nextQuestion();
+      }, AUTO_ADVANCE_WRONG_MS);
+    }
+
+    function saveHighScore() {
+      highScores.push({ score: totalScore, timestamp: new Date().toLocaleString(), correct: correctCount, total: QUESTIONS_PER_GAME });
+      highScores.sort((a, b) => b.score - a.score);
+      highScores = highScores.slice(0, MAX_HIGH_SCORES_SHOWN);
+      saveData();
+    }
+
+    function endGame() {
+      const percent = Math.round((correctCount / QUESTIONS_PER_GAME) * 100);
+
+      gameHistory.push({
+        timestamp: new Date().toLocaleString(),
+        correct: correctCount,
+        total: QUESTIONS_PER_GAME,
+        score: totalScore,
+        percent: percent
+      });
+      saveData();
+
+// ── NEW HIGH SCORE CHECK ────────────────────────────────────────────────
+  let isNewHighScore = false;
+  if (highScores.length > 0) {
+    const previousBest = highScores[0].score;
+    if (totalScore > previousBest) {
+      isNewHighScore = true;
+    }
+  }
+  // ────────────────────────────────────────────────────────────────────────
+
+  saveHighScore();
+
+      const verseObj = encouragingVerses.find(v => percent >= v.minPercent) || encouragingVerses[0];
+
+      const categoryCount = { "Old Testament": 0, "New Testament": 0, "General": 0 };
+      gameQuestions.forEach(q => {
+        if (categoryCount[q.category] !== undefined) {
+          categoryCount[q.category]++;
+        }
+      });
+
+      let categoryHtml = `
+        <div id="category-breakdown">
+          <strong>Categories asked in this game:</strong><br>
+          • Old Testament: ${categoryCount["Old Testament"]} questions<br>
+          • New Testament: ${categoryCount["New Testament"]} questions<br>
+          • General: ${categoryCount["General"]} questions
+        </div>
+      `;
+
+      let leaderboardHtml = `
+        <h3>High Scores (Top 5)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Score</th>
+              <th>Date / Time</th>
+              <th>Correct</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      highScores.forEach((hs, i) => {
+        leaderboardHtml += `
+          <tr>
+            <td>${i+1}</td>
+            <td>${hs.score}</td>
+            <td>${hs.timestamp}</td>
+            <td>${hs.correct} / ${hs.total}</td>
+          </tr>
+        `;
+      });
+      leaderboardHtml += `</tbody></table>`;
+
+      let historyHtml = `
+        <details>
+          <summary>Past Games History (all games)</summary>
+          <table>
+            <thead>
+              <tr>
+                <th>Game</th>
+                <th>Date / Time</th>
+                <th>Correct</th>
+                <th>Score</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      gameHistory.slice().reverse().forEach((g, i) => {
+        historyHtml += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${g.timestamp}</td>
+            <td>${g.correct} / ${g.total}</td>
+            <td>${g.score}</td>
+            <td>${g.percent}%</td>
+          </tr>
+        `;
+      });
+      historyHtml += `</tbody></table></details>`;
+
+      let statsHtml = "";
+      if (gameHistory.length > 0) {
+        const scores = gameHistory.map(g => g.score);
+        const avg = Math.round(scores.reduce((a,b)=>a+b,0) / scores.length);
+        const best = Math.max(...scores);
+        statsHtml = `<p style="font-size:1.4rem; margin-top:16px;"><strong>Average Score: ${avg}</strong> • Best Score: ${best}</p>`;
+      }
+
+      // Determine if hard questions were used in this game
+      const hadHard = gameQuestions.some(q => q.difficulty === "hard");
+
+      summaryEl.innerHTML = `
+        <h2>Game Complete!</h2>
+        <p>You got <strong>${correctCount}</strong> right out of ${QUESTIONS_PER_GAME} (${percent}%).</p>
+        <p><strong>Total Score: ${totalScore} points</strong></p>
+        ${categoryHtml}
+        <p id="encouraging-verse">${verseObj.text}</p>
+        <p>Great job learning about God's Word!</p>
+        ${statsHtml}
+        ${leaderboardHtml}
+        ${historyHtml}
+        <div style="margin-top: 30px;">
+          <button id="restart-same">&#8635; Restart</button>
+          <button id="restart-change">&#x1F3E0; Home</button>
+        </div>
+        <button id="clear-history" style="margin-top: 20px;">Clear Scores & History</button>
+      `;
+
+// Trigger celebration if applicable
+  if (isNewHighScore) {
+    celebrateNewHighScore(totalScore);
+  }
+
+      document.getElementById("restart-same")?.addEventListener("click", () => {
+        //startNewGame();
+        startCountdownThenGame();
+      });
+
+      document.getElementById("restart-change").addEventListener("click", () => {
+        document.getElementById("question-container").style.display = "none";
+        document.getElementById("welcome").style.display = "block";
+      });
+
+      document.getElementById("clear-history").onclick = () => {
+        gameHistory = [];
+        highScores = [];
+        saveData();
+        document.getElementById("question-container").style.display = "none";
+        document.getElementById("welcome").style.display = "block";
+        //location.reload();
+      };
+
+      questionEl.style.display = "none";
+      verseRefEl.style.display = "none";
+      difficultyTagEl.style.display = "none";
+      categoryTagEl.style.display = "none";
+      optionsEl.style.display = "none";
+      feedbackEl.style.display = "none";
+      summaryEl.style.display = "block";
+    }
+
+    document.addEventListener('keydown', e => {
+      if (!['1','2','3','4'].includes(e.key)) return;
+      const index = parseInt(e.key) - 1;
+      const btn = optionsEl.querySelector(`.option:nth-child(${index+1})`);
+      if (btn && !btn.disabled) btn.click();
+    });
+
+    document.getElementById("start-btn").onclick = () => {
+      document.getElementById("welcome").style.display = "none";
+      document.getElementById("question-container").style.display = "block";
+      //startNewGame();
+      startCountdownThenGame();
+    };
+
+function startCountdownThenGame() {
+  const overlay = document.getElementById("countdown-overlay");
+  const number = document.getElementById("countdown-number");
+
+  let count = 3;
+  number.textContent = count;
+  overlay.style.display = "flex";
+
+  const interval = setInterval(() => {
+    count--;
+
+    if (count <= 0) {
+      clearInterval(interval);
+      overlay.style.display = "none";
+      startNewGame(); // your existing game-start logic
+      return;
+    }
+
+    number.textContent = count;
+    number.style.animation = "none";
+    void number.offsetWidth; // restart animation
+    number.style.animation = "";
+  }, 1000);
+}
+  </script>
+  <div id="countdown-overlay" style="display:none;">
+     <div id="game-start-text"><h1>Game Starts in: </h1></div>
+    <div id="countdown-number">3</div>
+  </div>
+<script>
+  // if ('serviceWorker' in navigator) {
+  //   navigator.serviceWorker.register('service-worker.js');
+  // }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const howToPlayLink = document.getElementById("how-to-play-link");
+  const howToPlayOverlay = document.getElementById("how-to-play-overlay");
+  const howToPlayClose = document.querySelector(".overlay-close");
+  const howToPlayBackdrop = document.querySelector("#how-to-play-overlay .overlay-backdrop");
+
+  if (!howToPlayLink) return; // safety guard
+
+  // Open overlay
+  howToPlayLink.addEventListener("click", () => {
+    howToPlayOverlay.style.display = "flex";
+  });
+
+  // Close overlay (X button)
+  howToPlayClose.addEventListener("click", () => {
+    howToPlayOverlay.style.display = "none";
+  });
+
+  // Close overlay (click outside card)
+  howToPlayBackdrop.addEventListener("click", () => {
+    howToPlayOverlay.style.display = "none";
+  });
+});
+// --- Settings Overlay Logic ---
+document.addEventListener("DOMContentLoaded", () => {
+  const settingsLink = document.getElementById("settings-link");
+  const settingsOverlay = document.getElementById("settings-overlay");
+  const settingsClose = document.querySelector(".settings-close");
+  const settingsBackdrop = document.querySelector("#settings-overlay .settings-backdrop");
+
+  const hardToggleMaster   = document.getElementById("hard-toggle");           // hidden master
+  const hardToggleSettings = document.getElementById("settings-hard-toggle");  // visible in overlay
+
+  // Safety guard: if for some reason master is missing, bail out
+  if (!hardToggleMaster || !hardToggleSettings) return;
+  hardToggleMaster.checked = includeHard;
+  // Sync initial state from master to settings overlay
+  hardToggleSettings.checked = hardToggleMaster.checked;
+
+  // Open overlay
+  settingsLink.addEventListener("click", () => {
+    settingsOverlay.style.display = "flex";
+  });
+
+  // Close overlay (X button)
+  settingsClose.addEventListener("click", () => {
+    settingsOverlay.style.display = "none";
+  });
+
+  // Close overlay (click outside card)
+  settingsBackdrop.addEventListener("click", () => {
+    settingsOverlay.style.display = "none";
+  });
+
+    hardToggleMaster.addEventListener("change", () => {
+      includeHard = hardToggle.checked;
+      console.log("Master toggle changed. includeHard:", includeHard);
+      saveData();
+    });
+
+  // When user changes the setting, update the master checkbox
+  hardToggleSettings.addEventListener("change", () => {
+    hardToggleMaster.checked = hardToggleSettings.checked;
+    includeHard = hardToggleSettings.checked;
+    console.log("Settings toggle changed. includeHard:", includeHard);
+    saveData();
+  });
+
+});
+ loadData();
+</script>
+
+<!-- How to Play Overlay -->
+<div id="how-to-play-overlay" style="display:none;">
+  <div class="overlay-backdrop"></div>
+
+  <div class="overlay-card">
+    <button class="overlay-close overlay-close-button">x</button>
+
+    <h2>Game Play</h2>
+
+    <div class="overlay-content">
+      <ul>
+        <li>10 multiple choice questions per round</li>
+        <li>25 seconds to answer </li>
+        <li>Questions are randomly selected from a set of over <b>200</b> of all difficulties (easy, medium, hard) and categories</li>
+        <li>Answer quickly to earn more points!</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!-- Settings Overlay -->
+<div id="settings-overlay" style="display:none;">
+  <div class="settings-backdrop"></div>
+
+  <div class="settings-card">
+    <button class="settings-close overlay-close-button">x</button>
+
+    <h2>Settings</h2>
+
+    <div class="settings-content">
+      <!-- Hard Questions Toggle -->
+      <div class="setting-item">
+        <label class="setting-label">
+          <input type="checkbox" id="settings-hard-toggle" checked>
+          Include Hard Questions?
+        </label>
+        <p class="setting-description">
+          When &#x2714, harder questions (🔴) appear and give more points (up to 300 pts each).  
+          Turn OFF for an easier game focused on easy & medium questions only.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<input type="checkbox" id="hard-toggle" checked style="position:absolute; left:-9999px; opacity:0;">
+</body>
+</html>
