@@ -4,8 +4,11 @@ const ASSETS_TO_CACHE = [
   "index.html",
   "manifest.json",
   "service-worker.js",
-  "icons/icon-192.png",
-  "icons/icon-512.png",
+  "icons/bibletrivia_x192.png",
+  "icons/bibletrivia_icon.png",
+  "icons/bibletrivia_icon_x96.png",
+  "icons/bibletrivia_icon_x128.png",
+  "icons/bibletrivia_icon_x512.png",
   "https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap",
   "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"
 ];
