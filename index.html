@@ -270,6 +270,178 @@
       padding-bottom: 40px;
     }
 
+    #round-review {
+      display: none;
+      text-align: left;
+      padding-bottom: 24px;
+    }
+
+    #round-review h2 {
+      color: var(--primary);
+      font-size: 2.7rem;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    #round-review-subtitle {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #4e6b50;
+      margin-bottom: 18px;
+    }
+
+    #review-questions-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .review-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f5fff6 100%);
+      border: 1px solid #d9ecd8;
+      border-radius: 14px;
+      padding: 14px 14px 12px;
+      box-shadow: 0 4px 14px rgba(76, 175, 80, 0.12);
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .review-question-title {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #1b5e20;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .review-result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .review-result-badge.correct {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border-color: #a5d6a7;
+    }
+
+    .review-result-badge.incorrect {
+      background: #ffebee;
+      color: #b71c1c;
+      border-color: #ef9a9a;
+    }
+
+    .review-row {
+      margin: 6px 0;
+      font-size: 1.06rem;
+      color: #2f3a30;
+      line-height: 1.35;
+    }
+
+    .review-row strong {
+      color: #1b5e20;
+    }
+
+    .review-link {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 1rem;
+      color: #1565c0;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .review-link:hover {
+      text-decoration: underline;
+    }
+
+    #round-review-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #review-continue {
+      background: var(--accent);
+      color: #333;
+      box-shadow: 0 8px 24px rgba(255,202,40,0.4);
+    }
+
+    #review-choice-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #review-choice-overlay .review-choice-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+    }
+
+    #review-choice-overlay .review-choice-card {
+      position: relative;
+      width: min(520px, 92vw);
+      background: white;
+      border-radius: 20px;
+      padding: 24px 22px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.28);
+      z-index: 1;
+      text-align: center;
+    }
+
+    #review-choice-overlay h3 {
+      margin: 0;
+      color: var(--primary);
+      font-size: 2rem;
+    }
+
+    #review-choice-overlay p {
+      margin: 10px 0 0;
+      color: #4e6b50;
+      font-size: 1.15rem;
+      line-height: 1.45;
+    }
+
+    #review-choice-overlay .review-choice-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    #overlay-review-btn {
+      background: var(--accent);
+      color: #333;
+      box-shadow: 0 8px 24px rgba(255,202,40,0.36);
+    }
+
+    #overlay-skip-btn {
+      background: #90a4ae;
+      color: white;
+      box-shadow: 0 8px 24px rgba(120,144,156,0.3);
+    }
+
     #summary h2 {
       color: var(--primary);
       font-size: 3rem;
@@ -560,6 +732,10 @@
       #progress-dots .current { font-size: 2.2rem; }
       .question-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
       .question-meta .right-side { justify-content: flex-end; width: 100%; flex-wrap: wrap; }
+      #round-review h2 { font-size: 2.1rem; }
+      .review-card { padding: 12px; }
+      .review-question-title { font-size: 1.1rem; }
+      .review-row { font-size: 1rem; }
       #hard-toggle-section { padding: 18px; margin: 20px auto; }
       #hard-toggle-section label { font-size: 1.4rem; }
       #hard-toggle-explain { font-size: 1.1rem; }
@@ -914,6 +1090,36 @@
   font-weight: 600;
 }
 
+.review-pref-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.review-pref-btn {
+  flex: 1 1 30%;
+  min-width: 120px;
+  padding: 10px 12px;
+  margin: 0;
+  border-radius: 999px;
+  border: 2px solid #c8e6c9;
+  background: #f5fff6;
+  color: #1b5e20;
+  box-shadow: none;
+  font-size: 1rem;
+}
+
+.review-pref-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.28);
+}
+
+#review-pref-description {
+  margin: 10px 0 0;
+}
+
 @media (max-width: 480px) {
   .difficulty-btn {
     padding: 14px 10px;
@@ -1031,6 +1237,7 @@
     </div>
     <div id="options"></div>
     <div id="summary" style="display:none;"></div>
+    <div id="round-review" style="display:none;"></div>
 
     <div id="feedback"></div>
   </div>
@@ -3146,6 +3353,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 ];
 
     const DIFFICULTY_MODE_KEYS = ['easy', 'medium', 'hard', 'superHard'];
+    const ROUND_REVIEW_PREFERENCE_KEYS = ['ask', 'alwaysReview', 'alwaysSkip'];
 
     function normalizeDifficultyMode(mode) {
       if (typeof mode !== 'string') return 'medium';
@@ -3159,6 +3367,17 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       if (lower === 'super hard' || lower === 'superhard') return 'superHard';
 
       return 'medium';
+    }
+
+    function normalizeRoundReviewPreference(value) {
+      if (typeof value !== 'string') return 'ask';
+
+      const normalized = value.trim().toLowerCase();
+      if (normalized === 'alwaysreview' || normalized === 'always review') return 'alwaysReview';
+      if (normalized === 'alwaysskip' || normalized === 'always skip') return 'alwaysSkip';
+      if (normalized === 'ask') return 'ask';
+
+      return 'ask';
     }
 
     function isValidHighScoreRecord(record) {
@@ -3237,6 +3456,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         },
         setting: (key, value) => {
           if (key === 'difficultyMode') return DIFFICULTY_MODE_KEYS.includes(normalizeDifficultyMode(value));
+          if (key === 'roundReviewPreference') return ROUND_REVIEW_PREFERENCE_KEYS.includes(normalizeRoundReviewPreference(value));
           return false;
         }
       };
@@ -3725,9 +3945,11 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     let totalScore = 0;
     let gameHistory = [];
     let highScores = [];
+    let lastRoundReview = [];
     let timerInterval;
     let timeLeftAtAnswer = 0;
     let difficultyMode = 'medium';  // 'easy' | 'medium' | 'hard' | 'superHard'
+    let roundReviewPreference = 'ask'; // 'ask' | 'alwaysReview' | 'alwaysSkip'
     const AUTO_ADVANCE_CORRECT_MS = 2200;
     const AUTO_ADVANCE_WRONG_MS = 2800;
     const QUESTIONS_PER_GAME = 10;
@@ -3735,6 +3957,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const STORAGE_KEY_HISTORY = "bibleTriviaHistory";
     const STORAGE_KEY_HIGHSCORES = "bibleTriviaHighScores";
     const STORAGE_KEY_DIFFICULTY_MODE = "bibleTriviaDifficultyMode";
+    const STORAGE_KEY_ROUND_REVIEW_PREFERENCE = "bibleTriviaRoundReviewPreference";
     const FEEDBACK_SHOW_MS = 2200;
 
     const incorrectMessages = [
@@ -3776,6 +3999,148 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const optionsEl       = document.getElementById("options");
     const feedbackEl      = document.getElementById("feedback");
     const summaryEl       = document.getElementById("summary");
+    const roundReviewEl   = document.getElementById("round-review");
+
+    function showReviewChoiceOverlay() {
+      if (roundReviewPreference === 'alwaysReview') {
+        return Promise.resolve('review');
+      }
+
+      if (roundReviewPreference === 'alwaysSkip') {
+        return Promise.resolve('skip');
+      }
+
+      const overlayEl = document.getElementById('review-choice-overlay');
+      const reviewBtn = document.getElementById('overlay-review-btn');
+      const skipBtn = document.getElementById('overlay-skip-btn');
+
+      if (!overlayEl || !reviewBtn || !skipBtn) {
+        return Promise.resolve('review');
+      }
+
+      return new Promise((resolve) => {
+        const onKeydown = (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            choose('review');
+          }
+        };
+
+        const cleanup = () => {
+          reviewBtn.removeEventListener('click', onReviewClick);
+          skipBtn.removeEventListener('click', onSkipClick);
+          document.removeEventListener('keydown', onKeydown);
+          overlayEl.style.display = 'none';
+        };
+
+        const choose = (choice) => {
+          cleanup();
+          resolve(choice);
+        };
+
+        const onReviewClick = () => choose('review');
+        const onSkipClick = () => choose('skip');
+
+        overlayEl.style.display = 'flex';
+        reviewBtn.addEventListener('click', onReviewClick);
+        skipBtn.addEventListener('click', onSkipClick);
+        document.addEventListener('keydown', onKeydown);
+        reviewBtn.focus();
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function normalizeSelectedAnswer(rawText) {
+      if (!rawText) return "No answer selected";
+      return rawText.replace(/^[A-D]\)\s*/, "").trim();
+    }
+
+    function hasScriptureReference(referenceText) {
+      const ref = String(referenceText || "").trim();
+      if (!ref) return false;
+      if (/not\s+directly\s+in\s+scripture|church\s+tradition|n\/a|none|unknown/i.test(ref)) {
+        return false;
+      }
+      return /\d/.test(ref);
+    }
+
+    function buildBibleGatewayNivUrl(referenceText) {
+      const query = encodeURIComponent(String(referenceText || "").trim());
+      return `https://www.biblegateway.com/passage/?search=${query}&version=NIV`;
+    }
+
+    function recordRoundReviewEntry(q, selectedAnswer, isCorrect) {
+      lastRoundReview.push({
+        question: q.q,
+        selectedAnswer: selectedAnswer || "No answer selected",
+        isCorrect: Boolean(isCorrect),
+        correctAnswer: q.opts[q.ans],
+        scriptureRef: String(q.ref || "").trim()
+      });
+    }
+
+    function showResultsSummary() {
+      questionEl.style.display = "none";
+      verseRefEl.style.display = "none";
+      difficultyTagEl.style.display = "none";
+      categoryTagEl.style.display = "none";
+      optionsEl.style.display = "none";
+      feedbackEl.style.display = "none";
+      roundReviewEl.style.display = "none";
+      summaryEl.style.display = "block";
+    }
+
+    function renderRoundReviewScreen() {
+      const cardsHtml = lastRoundReview.map((entry, idx) => {
+        const showLink = hasScriptureReference(entry.scriptureRef);
+        const referenceText = entry.scriptureRef || "No scripture reference provided";
+
+        return `
+          <article class="review-card">
+            <div class="review-header">
+              <h3 class="review-question-title">Q${idx + 1}. ${escapeHtml(entry.question)}</h3>
+              <span class="review-result-badge ${entry.isCorrect ? "correct" : "incorrect"}">
+                ${entry.isCorrect ? "Correct" : "Incorrect"}
+              </span>
+            </div>
+            <p class="review-row"><strong>Your answer:</strong> ${escapeHtml(entry.selectedAnswer)}</p>
+            <p class="review-row"><strong>Correct answer:</strong> ${escapeHtml(entry.correctAnswer)}</p>
+            <p class="review-row"><strong>Verse(s):</strong> ${escapeHtml(referenceText)}</p>
+            ${showLink
+              ? `<a class="review-link" href="${buildBibleGatewayNivUrl(entry.scriptureRef)}" target="_blank" rel="noopener noreferrer">Open in Bible Gateway (NIV)</a>`
+              : ""}
+          </article>
+        `;
+      }).join("");
+
+      roundReviewEl.innerHTML = `
+        <h2>Round Review</h2>
+        <p id="round-review-subtitle">Review the questions from your last completed round.</p>
+        <section id="review-questions-list">${cardsHtml}</section>
+        <div id="round-review-actions">
+          <button id="review-continue">Continue to Results</button>
+        </div>
+      `;
+
+      document.getElementById("review-continue")?.addEventListener("click", showResultsSummary);
+
+      questionEl.style.display = "none";
+      verseRefEl.style.display = "none";
+      difficultyTagEl.style.display = "none";
+      categoryTagEl.style.display = "none";
+      optionsEl.style.display = "none";
+      feedbackEl.style.display = "none";
+      summaryEl.style.display = "none";
+      roundReviewEl.style.display = "block";
+    }
 
     async function loadData() {
       try {
@@ -3785,8 +4150,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             gameHistory = await DBManager.loadGameHistory();
             highScores = await DBManager.loadHighScores();
             const savedMode = await DBManager.loadSetting('difficultyMode');
+            const savedReviewPref = await DBManager.loadSetting('roundReviewPreference');
             if (savedMode !== null && savedMode !== undefined) {
               difficultyMode = normalizeDifficultyMode(savedMode);
+            }
+            if (savedReviewPref !== null && savedReviewPref !== undefined) {
+              roundReviewPreference = normalizeRoundReviewPreference(savedReviewPref);
             }
 
             highScores = normalizeAndTrimHighScores(highScores);
@@ -3865,12 +4234,18 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
           difficultyMode = 'medium';  // Both true and false map to 'medium'
         }
       }
+
+      const savedReviewPref = localStorage.getItem(STORAGE_KEY_ROUND_REVIEW_PREFERENCE);
+      if (savedReviewPref) {
+        roundReviewPreference = normalizeRoundReviewPreference(savedReviewPref);
+      }
     }
 
     async function saveData() {
       try {
         highScores = normalizeAndTrimHighScores(highScores);
         difficultyMode = normalizeDifficultyMode(difficultyMode);
+        roundReviewPreference = normalizeRoundReviewPreference(roundReviewPreference);
 
         if (DBManager.isReady()) {
           // Save to IndexedDB
@@ -3885,6 +4260,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             await DBManager.replaceHighScores(highScores);
             // Save settings - explicitly save difficultyMode
             await DBManager.saveSetting('difficultyMode', difficultyMode);
+            await DBManager.saveSetting('roundReviewPreference', roundReviewPreference);
             DBManager.log('Data saved to IndexedDB');
           } catch (e) {
             DBManager.log('IndexedDB save failed, falling back to localStorage', e.message);
@@ -3904,9 +4280,11 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     function saveDataToLocalStorage() {
       highScores = normalizeAndTrimHighScores(highScores);
       difficultyMode = normalizeDifficultyMode(difficultyMode);
+      roundReviewPreference = normalizeRoundReviewPreference(roundReviewPreference);
       localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(gameHistory));
       localStorage.setItem(STORAGE_KEY_HIGHSCORES, JSON.stringify(highScores));
       localStorage.setItem(STORAGE_KEY_DIFFICULTY_MODE, difficultyMode);
+      localStorage.setItem(STORAGE_KEY_ROUND_REVIEW_PREFERENCE, roundReviewPreference);
     }
 
     function shuffle(array) {
@@ -4109,6 +4487,7 @@ function selectBalancedQuestions() {
       optionsEl.style.display = "grid";
       feedbackEl.style.display = "block";
       summaryEl.style.display = "none";
+      roundReviewEl.style.display = "none";
     }
 
     function startNewGame() {
@@ -4117,6 +4496,7 @@ function selectBalancedQuestions() {
       currentIndex = 0;
       correctCount = 0;
       totalScore = 0;
+      lastRoundReview = [];
       nextQuestion();
     }
 
@@ -4372,6 +4752,8 @@ function celebrateNewHighScore(score) {
         if (!b.classList.contains("correct")) b.classList.add("grayed");
       });
 
+      recordRoundReviewEntry(q, normalizeSelectedAnswer(selectedBtn?.textContent), isCorrect);
+
       updateProgress();
 
       setTimeout(() => {
@@ -4393,6 +4775,8 @@ function celebrateNewHighScore(score) {
       buttons.forEach(b => {
         if (!b.classList.contains("correct")) b.classList.add("grayed");
       });
+
+      recordRoundReviewEntry(q, "No answer selected (timed out)", false);
 
       showFeedback(getRandomIncorrectMessage(), "timeout");
       updateProgress();
@@ -4639,13 +5023,12 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
         //location.reload();
       };
 
-      questionEl.style.display = "none";
-      verseRefEl.style.display = "none";
-      difficultyTagEl.style.display = "none";
-      categoryTagEl.style.display = "none";
-      optionsEl.style.display = "none";
-      feedbackEl.style.display = "none";
-      summaryEl.style.display = "block";
+      const reviewChoice = await showReviewChoiceOverlay();
+      if (reviewChoice === 'skip') {
+        showResultsSummary();
+      } else {
+        renderRoundReviewScreen();
+      }
     }
 
     document.addEventListener('keydown', e => {
@@ -4784,6 +5167,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const settingsBackdrop = document.querySelector("#settings-overlay .settings-backdrop");
   const difficultyButtons = document.querySelectorAll('.difficulty-btn');
   const modeDescriptionEl = document.querySelector('.setting-description');
+  const reviewPrefButtons = document.querySelectorAll('.review-pref-btn');
+  const reviewPrefDescriptionEl = document.getElementById('review-pref-description');
 
   // Safety guard: if buttons are missing, bail out
   if (difficultyButtons.length === 0) return;
@@ -4794,6 +5179,12 @@ document.addEventListener("DOMContentLoaded", () => {
     medium: '<b>🟠 Medium:</b> 🟢 & 🟠 questions • 100 pts • 25 sec • Max 1000 per game',
     hard: '<b>🔴 Hard:</b> 🟠 & 🔴 questions • 150 pts • 21 sec • Max 1500 per game',
     superHard: '<b>⚫ Super Hard:</b> 🔴 questions only • 250 pts • 18 sec • Max 2500 per game — Elite Challenge!'
+  };
+
+  const reviewPreferenceDescriptions = {
+    ask: 'Ask each round whether to review or skip (recommended).',
+    alwaysReview: 'Always show the Round Review after each game.',
+    alwaysSkip: 'Always go straight to the summary results.'
   };
 
   // Update description to show only selected mode
@@ -4813,12 +5204,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     updateModeDescription(difficultyMode);
   }
+
+  function initializeReviewPreferenceButtons() {
+    reviewPrefButtons.forEach((btn) => {
+      const isActive = btn.dataset.value === roundReviewPreference;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+
+    if (reviewPrefDescriptionEl) {
+      reviewPrefDescriptionEl.textContent = reviewPreferenceDescriptions[roundReviewPreference] || reviewPreferenceDescriptions.ask;
+    }
+  }
+
   initializeDifficultyButtons();
+  initializeReviewPreferenceButtons();
 
   // Open overlay
   settingsLink.addEventListener("click", () => {
     settingsOverlay.style.display = "flex";
     initializeDifficultyButtons();  // Re-sync buttons when opening settings
+    initializeReviewPreferenceButtons();
   });
 
   // Close overlay (X button)
@@ -4848,6 +5254,15 @@ document.addEventListener("DOMContentLoaded", () => {
       initializeDifficultyButtons()
       // Save to IndexedDB
       await saveData().catch(e => DBManager.log('Failed to save difficulty mode', e.message));
+    });
+  });
+
+  reviewPrefButtons.forEach((btn) => {
+    btn.addEventListener('click', async (event) => {
+      const selected = event.currentTarget.dataset.value;
+      roundReviewPreference = normalizeRoundReviewPreference(selected);
+      initializeReviewPreferenceButtons();
+      await saveData().catch(e => DBManager.log('Failed to save round review preference', e.message));
     });
   });
 
@@ -4971,6 +5386,29 @@ document.addEventListener("DOMContentLoaded", () => {
           <b>⚫ Super Hard:</b> 🔴 only • 250 pts • 18 sec • Max 2500
         </p>
       </div>
+
+      <div class="setting-item">
+        <label style="font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-bottom: 12px; display: block;">Post-Round Review</label>
+        <div class="review-pref-selector" role="group" aria-label="Post round review preference">
+          <button type="button" class="review-pref-btn" data-value="ask" aria-pressed="true">Ask</button>
+          <button type="button" class="review-pref-btn" data-value="alwaysReview" aria-pressed="false">Always Review</button>
+          <button type="button" class="review-pref-btn" data-value="alwaysSkip" aria-pressed="false">Always Skip</button>
+        </div>
+        <p id="review-pref-description" class="setting-description">Ask each round whether to review or skip (recommended).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Round Review Choice Overlay -->
+<div id="review-choice-overlay" style="display:none;">
+  <div class="review-choice-backdrop"></div>
+  <div class="review-choice-card" role="dialog" aria-modal="true" aria-labelledby="review-choice-title">
+    <h3 id="review-choice-title">Review This Round?</h3>
+    <p>You can review your answers with scripture references, or skip directly to the summary.</p>
+    <div class="review-choice-actions">
+      <button id="overlay-review-btn" type="button">Review Round</button>
+      <button id="overlay-skip-btn" type="button">Skip to Results</button>
     </div>
   </div>
 </div>
