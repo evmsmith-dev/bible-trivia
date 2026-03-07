@@ -327,7 +327,8 @@
     }
 
     /* Per-mode leaderboard container and sections */
-    #leaderboard-container {
+    #leaderboard-container,
+    #welcome-leaderboard-container {
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -736,6 +737,137 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
+/* --- Leaderboard Overlay --- */
+
+#leaderboard-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#leaderboard-overlay .leaderboard-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 1;
+}
+
+#leaderboard-overlay .leaderboard-card {
+  position: relative;
+  background: white;
+  padding: 22px 20px 16px;
+  border-radius: 20px;
+  width: min(940px, 94vw);
+  max-height: 88vh;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  z-index: 2;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+#leaderboard-overlay h2 {
+  margin: 0 0 12px;
+  color: var(--primary);
+  font-size: 1.8rem;
+}
+
+#leaderboard-overlay .leaderboard-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.leaderboard-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.leaderboard-tab {
+  flex: 1;
+  margin: 0;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #c8e6c9;
+  border-radius: 999px;
+  background: #f5fff6;
+  color: #1b5e20;
+  box-shadow: none;
+}
+
+.leaderboard-tab.active {
+  background: linear-gradient(180deg, #43a047, #2e7d32);
+  color: white;
+  border-color: #2e7d32;
+}
+
+.leaderboard-panel {
+  display: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
+
+.leaderboard-panel.active {
+  display: block;
+}
+
+.leaderboard-empty {
+  text-align: center;
+  color: #666;
+  padding: 14px;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+}
+
+@media (max-width: 640px) {
+  #leaderboard-overlay {
+    align-items: flex-end;
+  }
+
+  #leaderboard-overlay .leaderboard-card {
+    width: 100%;
+    max-height: 92vh;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    padding: 18px 14px 12px;
+  }
+
+  #leaderboard-overlay h2 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+
+  .leaderboard-tabs {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding-bottom: 8px;
+    z-index: 2;
+  }
+
+  .leaderboard-tab {
+    padding: 10px 8px;
+    font-size: 0.95rem;
+  }
+}
+
 /* --- Difficulty Mode Buttons --- */
 .difficulty-selector {
   display: flex;
@@ -869,6 +1001,14 @@
           display: block;
           margin-top: 10px;">
   Settings
+</a>
+<a id="leaderboard-link"
+   style="color: var(--primary);
+          font-size: 1.4rem;
+          cursor: pointer;
+          display: block;
+          margin-top: 10px;">
+  🏆 Leaderboard &amp; History
 </a>
   </div>
 
@@ -3005,6 +3145,62 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 { "q": "Which Old Testament figures are cited in Hebrews as stopping the mouths of lions, quenching fire, and escaping the sword?", "opts": ["Unnamed heroes of faith", "Daniel and his friends", "Elijah and Elisha", "David and Jonathan"], "ans": 0, "ref": "Hebrews 11:32-34", "category": "General", "difficulty": "hard" }
 ];
 
+    const DIFFICULTY_MODE_KEYS = ['easy', 'medium', 'hard', 'superHard'];
+
+    function normalizeDifficultyMode(mode) {
+      if (typeof mode !== 'string') return 'medium';
+
+      const trimmed = mode.trim();
+      const lower = trimmed.toLowerCase();
+
+      if (lower === 'easy') return 'easy';
+      if (lower === 'medium') return 'medium';
+      if (lower === 'hard') return 'hard';
+      if (lower === 'super hard' || lower === 'superhard') return 'superHard';
+
+      return 'medium';
+    }
+
+    function isValidHighScoreRecord(record) {
+      const required = ['score', 'timestamp', 'correct', 'total'];
+      return !!record && typeof record === 'object' && required.every(k => k in record && typeof record[k] !== 'undefined');
+    }
+
+    function compareScoresDescending(a, b) {
+      const scoreDiff = Number(b.score) - Number(a.score);
+      if (scoreDiff !== 0) return scoreDiff;
+
+      const timeA = Date.parse(a.timestamp);
+      const timeB = Date.parse(b.timestamp);
+      const safeA = Number.isNaN(timeA) ? 0 : timeA;
+      const safeB = Number.isNaN(timeB) ? 0 : timeB;
+      return safeB - safeA;
+    }
+
+    function getTopScoresByMode(scores, mode, limit = 5) {
+      const normalizedMode = normalizeDifficultyMode(mode);
+      return (Array.isArray(scores) ? scores : [])
+        .filter(isValidHighScoreRecord)
+        .map((record) => ({
+          ...record,
+          difficultyMode: normalizeDifficultyMode(record.difficultyMode)
+        }))
+        .filter((record) => record.difficultyMode === normalizedMode)
+        .sort(compareScoresDescending)
+        .slice(0, limit);
+    }
+
+    function normalizeAndTrimHighScores(scores) {
+      const sanitized = (Array.isArray(scores) ? scores : [])
+        .filter(isValidHighScoreRecord)
+        .map((record) => ({
+          ...record,
+          difficultyMode: normalizeDifficultyMode(record.difficultyMode)
+        }));
+
+      return DIFFICULTY_MODE_KEYS.flatMap((mode) => getTopScoresByMode(sanitized, mode, MAX_HIGH_SCORES_SHOWN));
+    }
+
     // ==================== INDEXEDDB MANAGER ====================
     const DBManager = (() => {
       const DB_NAME = 'BibleTriviaDB';
@@ -3029,24 +3225,18 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
           const required = ['timestamp', 'correct', 'total', 'score', 'percent'];
           if (!record || typeof record !== 'object') return false;
           if (!required.every(k => k in record && typeof record[k] !== 'undefined')) return false;
-          // Lenient validation: auto-fix missing difficultyMode for old records
-          if (!record.difficultyMode) {
-            record.difficultyMode = 'medium';  // Conservative default for old records
-          }
-          return ['easy', 'medium', 'hard', 'superHard'].includes(record.difficultyMode);
+          record.difficultyMode = normalizeDifficultyMode(record.difficultyMode);
+          return DIFFICULTY_MODE_KEYS.includes(record.difficultyMode);
         },
         highScore: (record) => {
           const required = ['score', 'timestamp', 'correct', 'total'];
           if (!record || typeof record !== 'object') return false;
           if (!required.every(k => k in record && typeof record[k] !== 'undefined')) return false;
-          // Lenient validation: auto-fix missing difficultyMode for old records
-          if (!record.difficultyMode) {
-            record.difficultyMode = 'medium';  // Conservative default for old records
-          }
-          return ['easy', 'medium', 'hard', 'superHard'].includes(record.difficultyMode);
+          record.difficultyMode = normalizeDifficultyMode(record.difficultyMode);
+          return DIFFICULTY_MODE_KEYS.includes(record.difficultyMode);
         },
         setting: (key, value) => {
-          if (key === 'difficultyMode') return ['easy', 'medium', 'hard', 'superHard'].includes(value);
+          if (key === 'difficultyMode') return DIFFICULTY_MODE_KEYS.includes(normalizeDifficultyMode(value));
           return false;
         }
       };
@@ -3279,6 +3469,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             return;
           }
 
+          scoreRecord.difficultyMode = normalizeDifficultyMode(scoreRecord.difficultyMode);
+
           const transaction = db.transaction([STORE_SCORES], 'readwrite');
           const store = transaction.objectStore(STORE_SCORES);
           const request = store.add(scoreRecord);
@@ -3307,7 +3499,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
           const request = store.getAll();
 
           request.onsuccess = () => {
-            const results = request.result.filter(r => validators.highScore(r));
+            const results = request.result
+              .filter(r => validators.highScore(r))
+              .map((record) => ({
+                ...record,
+                difficultyMode: normalizeDifficultyMode(record.difficultyMode)
+              }));
             log('High scores loaded', results.length + ' records');
             resolve(results);
           };
@@ -3342,6 +3539,57 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         });
       };
 
+      const replaceHighScores = (scoreRecords) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          if (!Array.isArray(scoreRecords)) {
+            reject(new Error('Invalid high score list'));
+            return;
+          }
+
+          const sanitizedScores = scoreRecords.map((record) => ({
+            ...record,
+            difficultyMode: normalizeDifficultyMode(record.difficultyMode)
+          }));
+
+          if (!sanitizedScores.every((record) => validators.highScore(record))) {
+            reject(new Error('Invalid high score list'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_SCORES], 'readwrite');
+          const store = transaction.objectStore(STORE_SCORES);
+          const clearRequest = store.clear();
+
+          clearRequest.onerror = () => {
+            log('Failed to replace high scores while clearing', clearRequest.error);
+            reject(clearRequest.error);
+          };
+
+          clearRequest.onsuccess = () => {
+            sanitizedScores.forEach((record) => {
+              const scoreToStore = { ...record };
+              delete scoreToStore.id;
+              store.add(scoreToStore);
+            });
+          };
+
+          transaction.oncomplete = () => {
+            log('High scores replaced', sanitizedScores.length + ' records');
+            resolve();
+          };
+
+          transaction.onerror = () => {
+            log('Failed to replace high scores', transaction.error);
+            reject(transaction.error);
+          };
+        });
+      };
+
       // Settings operations
       const saveSetting = (key, value) => {
         return new Promise((resolve, reject) => {
@@ -3350,7 +3598,9 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             return;
           }
 
-          if (!validators.setting(key, value)) {
+          const normalizedValue = key === 'difficultyMode' ? normalizeDifficultyMode(value) : value;
+
+          if (!validators.setting(key, normalizedValue)) {
             log('Invalid setting rejected', { key, value });
             reject(new Error('Invalid setting'));
             return;
@@ -3358,10 +3608,10 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
           const transaction = db.transaction([STORE_SETTINGS], 'readwrite');
           const store = transaction.objectStore(STORE_SETTINGS);
-          const request = store.put({ key, value });
+          const request = store.put({ key, value: normalizedValue });
 
           request.onsuccess = () => {
-            log('Setting saved', { key, value });
+            log('Setting saved', { key, value: normalizedValue });
             resolve();
           };
 
@@ -3385,8 +3635,9 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
           request.onsuccess = () => {
             const result = request.result;
-            log('Setting loaded', { key, value: result ? result.value : 'not found' });
-            resolve(result ? result.value : null);
+            const normalizedValue = result ? (key === 'difficultyMode' ? normalizeDifficultyMode(result.value) : result.value) : null;
+            log('Setting loaded', { key, value: normalizedValue || 'not found' });
+            resolve(normalizedValue);
           };
 
           request.onerror = () => {
@@ -3458,6 +3709,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         addHighScore,
         loadHighScores,
         clearHighScores,
+        replaceHighScores,
         saveSetting,
         loadSetting,
         clearSettings,
@@ -3534,8 +3786,11 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             highScores = await DBManager.loadHighScores();
             const savedMode = await DBManager.loadSetting('difficultyMode');
             if (savedMode !== null && savedMode !== undefined) {
-              difficultyMode = savedMode;
+              difficultyMode = normalizeDifficultyMode(savedMode);
             }
+
+            highScores = normalizeAndTrimHighScores(highScores);
+            await DBManager.replaceHighScores(highScores);
             DBManager.log('Data loaded from IndexedDB');
           } catch (e) {
             DBManager.log('IndexedDB load failed, falling back to localStorage', e.message);
@@ -3568,7 +3823,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         if (DBManager.isReady()) {
           const savedMode = await DBManager.loadSetting('difficultyMode');
           if (savedMode !== null && savedMode !== undefined) {
-            difficultyMode = savedMode;
+            difficultyMode = normalizeDifficultyMode(savedMode);
             updateDifficultyButtonState();
             DBManager.log('Difficulty mode reloaded from IndexedDB', savedMode);
           }
@@ -3598,11 +3853,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       if (savedHigh) {
         try { highScores = JSON.parse(savedHigh); } catch(e) { highScores = []; }
       }
+      highScores = normalizeAndTrimHighScores(highScores);
 
       // Try loading new difficulty mode setting, fallback to old includeHard for backward compatibility
       const savedMode = localStorage.getItem(STORAGE_KEY_DIFFICULTY_MODE);
       if (savedMode) {
-        difficultyMode = savedMode;
+        difficultyMode = normalizeDifficultyMode(savedMode);
       } else {
         const savedHard = localStorage.getItem(STORAGE_KEY_HARD_TOGGLE);
         if (savedHard !== null) {
@@ -3613,6 +3869,9 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
     async function saveData() {
       try {
+        highScores = normalizeAndTrimHighScores(highScores);
+        difficultyMode = normalizeDifficultyMode(difficultyMode);
+
         if (DBManager.isReady()) {
           // Save to IndexedDB
           try {
@@ -3622,12 +3881,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
                 await DBManager.addGameRecord(record);
               }
             }
-            // Save high scores
-            for (const score of highScores) {
-              if (!score.id) {
-                await DBManager.addHighScore(score);
-              }
-            }
+            // Replace high scores with normalized top 5 per mode.
+            await DBManager.replaceHighScores(highScores);
             // Save settings - explicitly save difficultyMode
             await DBManager.saveSetting('difficultyMode', difficultyMode);
             DBManager.log('Data saved to IndexedDB');
@@ -3647,6 +3902,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     }
 
     function saveDataToLocalStorage() {
+      highScores = normalizeAndTrimHighScores(highScores);
+      difficultyMode = normalizeDifficultyMode(difficultyMode);
       localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(gameHistory));
       localStorage.setItem(STORAGE_KEY_HIGHSCORES, JSON.stringify(highScores));
       localStorage.setItem(STORAGE_KEY_DIFFICULTY_MODE, difficultyMode);
@@ -4147,7 +4404,7 @@ function celebrateNewHighScore(score) {
     }
 
 async function saveHighScore() {
-  const mode = difficultyMode;
+  const mode = normalizeDifficultyMode(difficultyMode);
 
   const newEntry = {
     score: totalScore,
@@ -4157,15 +4414,124 @@ async function saveHighScore() {
     difficultyMode: mode
   };
 
-    let highScoresForMode = highScores.filter(s => s.difficultyMode !== mode);
-    if (highScoresForMode.length >= MAX_HIGH_SCORES_SHOWN) {
-      highScoresForMode = highScoresForMode.slice(0, MAX_HIGH_SCORES_SHOWN - 1);
-    }
-    highScores.length = 0; // Clear original array while keeping reference
-    // Add back trimmed list
-    highScores.push(newEntry);
+  const otherModes = highScores
+    .filter(isValidHighScoreRecord)
+    .map((record) => ({
+      ...record,
+      difficultyMode: normalizeDifficultyMode(record.difficultyMode)
+    }))
+    .filter((record) => record.difficultyMode !== mode);
+
+  const topScoresForMode = getTopScoresByMode([...highScores, newEntry], mode, MAX_HIGH_SCORES_SHOWN);
+  highScores = [...otherModes, ...topScoresForMode];
 
   await saveData();
+}
+
+function buildLeaderboardHtml(scores, containerId = 'leaderboard-container') {
+  const modeEmojis = { easy: '🟢', medium: '🟠', hard: '🔴', superHard: '⚫' };
+  const modeNames = { easy: 'Easy', medium: 'Medium', hard: 'Hard', superHard: 'Super Hard' };
+
+  let leaderboardHtml = `<div id="${containerId}">`;
+
+  DIFFICULTY_MODE_KEYS.forEach(mode => {
+    const modeScores = getTopScoresByMode(scores, mode, MAX_HIGH_SCORES_SHOWN);
+    const emoji = modeEmojis[mode];
+    const name = modeNames[mode];
+
+    leaderboardHtml += `
+      <div class="leaderboard-mode">
+        <h4>${emoji} ${name} Mode Top Scores</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Score</th>
+              <th>Date / Time</th>
+              <th>Correct</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    if (modeScores.length === 0) {
+      leaderboardHtml += `<tr><td colspan="4" style="text-align: center; padding: 12px; color: #999;">No scores yet</td></tr>`;
+    } else {
+      modeScores.forEach((hs, i) => {
+        leaderboardHtml += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${hs.score}</td>
+            <td>${hs.timestamp}</td>
+            <td>${hs.correct} / ${hs.total}</td>
+          </tr>
+        `;
+      });
+    }
+
+    leaderboardHtml += `
+          </tbody>
+        </table>
+      </div>
+    `;
+  });
+
+  leaderboardHtml += '</div>';
+  return leaderboardHtml;
+}
+
+function buildGameHistoryHtml(history, { withDetails = true } = {}) {
+  const modeEmojis = { easy: '🟢', medium: '🟠', hard: '🔴', superHard: '⚫' };
+  const modeNames = { easy: 'Easy', medium: 'Medium', hard: 'Hard', superHard: 'Super Hard' };
+  const games = Array.isArray(history) ? history.slice().reverse() : [];
+
+  let tableHtml = `
+    <table>
+      <thead>
+        <tr>
+          <th>Game</th>
+          <th>Mode</th>
+          <th>Date / Time</th>
+          <th>Correct</th>
+          <th>Score</th>
+          <th>%</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (games.length === 0) {
+    tableHtml += `<tr><td colspan="6" style="text-align: center; padding: 12px; color: #999;">No game history yet</td></tr>`;
+  } else {
+    games.forEach((g, i) => {
+      const modeKey = normalizeDifficultyMode(g.difficultyMode);
+      const modeEmoji = modeEmojis[modeKey] || '❓';
+      const modeName = modeNames[modeKey] || 'Unknown';
+      tableHtml += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${modeEmoji} ${modeName}</td>
+          <td>${g.timestamp}</td>
+          <td>${g.correct} / ${g.total}</td>
+          <td>${g.score}</td>
+          <td>${g.percent}%</td>
+        </tr>
+      `;
+    });
+  }
+
+  tableHtml += '</tbody></table>';
+
+  if (!withDetails) {
+    return tableHtml;
+  }
+
+  return `
+    <details>
+      <summary>Past Games History (all games)</summary>
+      ${tableHtml}
+    </details>
+  `;
 }
 
 
@@ -4178,7 +4544,7 @@ async function saveHighScore() {
         total: QUESTIONS_PER_GAME,
         score: totalScore,
         percent: percent,
-        difficultyMode: difficultyMode
+        difficultyMode: normalizeDifficultyMode(difficultyMode)
       });
 
       await saveData();
@@ -4186,11 +4552,9 @@ async function saveHighScore() {
 
 // ── NEW HIGH SCORE CHECK ────────────────────────────────────────────────
   let isNewHighScore = false;
-  if (highScores.length > 0) {
-    const previousBest = highScores.filter(hs => hs.difficultyMode === difficultyMode)[0]?.score;
-    if (totalScore > previousBest) {
-      isNewHighScore = true;
-    }
+  const previousBest = getTopScoresByMode(highScores, difficultyMode, 1)[0]?.score;
+  if (previousBest === undefined || totalScore > previousBest) {
+    isNewHighScore = true;
   }
   // ────────────────────────────────────────────────────────────────────────
 
@@ -4214,89 +4578,8 @@ async function saveHighScore() {
         </div>
       `;
 
-      // Build per-mode leaderboards (Option 2: Segregated)
-      const modeEmojis = { 'easy': '🟢', 'medium': '🟠', 'hard': '🔴', 'superHard': '⚫' };
-      const modeNames = { 'easy': 'Easy', 'medium': 'Medium', 'hard': 'Hard', 'superHard': 'Super Hard' };
-      const modes = ['easy', 'medium', 'hard', 'superHard'];
-      
-      let leaderboardHtml = '<div id="leaderboard-container">';
-      
-      modes.forEach(mode => {
-        const modeScores = highScores.filter(hs => hs.difficultyMode === mode);
-        const emoji = modeEmojis[mode];
-        const name = modeNames[mode];
-        
-        leaderboardHtml += `
-        <div class="leaderboard-mode">
-          <h4>${emoji} ${name} Mode Top Scores</h4>
-          <table>
-            <thead>
-              <tr>
-                <th>Rank</th>
-                <th>Score</th>
-                <th>Date / Time</th>
-                <th>Correct</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
-        
-        if (modeScores.length === 0) {
-          leaderboardHtml += `<tr><td colspan="4" style="text-align: center; padding: 12px; color: #999;">No scores yet</td></tr>`;
-        } else {
-          modeScores.forEach((hs, i) => {
-            leaderboardHtml += `
-              <tr>
-                <td>${i+1}</td>
-                <td>${hs.score}</td>
-                <td>${hs.timestamp}</td>
-                <td>${hs.correct} / ${hs.total}</td>
-              </tr>
-            `;
-          });
-        }
-        
-        leaderboardHtml += `
-            </tbody>
-          </table>
-        </div>
-        `;
-      });
-      
-      leaderboardHtml += '</div>';
-
-      const modeEmojisHistory = { 'easy': '🟢', 'medium': '🟠', 'hard': '🔴', 'superHard': '⚫' };
-      let historyHtml = `
-        <details>
-          <summary>Past Games History (all games)</summary>
-          <table>
-            <thead>
-              <tr>
-                <th>Game</th>
-                <th>Mode</th>
-                <th>Date / Time</th>
-                <th>Correct</th>
-                <th>Score</th>
-                <th>%</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-      gameHistory.slice().reverse().forEach((g, i) => {
-        const modeEmoji = modeEmojisHistory[g.difficultyMode] || '❓';
-        const modeName = modeNames[g.difficultyMode] || 'Unknown';
-        historyHtml += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${modeEmoji} ${modeName}</td>
-            <td>${g.timestamp}</td>
-            <td>${g.correct} / ${g.total}</td>
-            <td>${g.score}</td>
-            <td>${g.percent}%</td>
-          </tr>
-        `;
-      });
-      historyHtml += `</tbody></table></details>`;
+      const leaderboardHtml = buildLeaderboardHtml(highScores, 'leaderboard-container');
+      const historyHtml = buildGameHistoryHtml(gameHistory, { withDetails: true });
 
       let statsHtml = "";
       if (gameHistory.length > 0) {
@@ -4305,9 +4588,6 @@ async function saveHighScore() {
         const best = Math.max(...scores);
         statsHtml = `<p style="font-size:1.4rem; margin-top:16px;"><strong>Average Score: ${avg}</strong> • Best Score: ${best}</p>`;
       }
-
-      // Determine if hard questions were used in this game
-      const hadHard = gameQuestions.some(q => q.difficulty === "hard");
 
       summaryEl.innerHTML = `
         <h2>Game Complete!</h2>
@@ -4435,6 +4715,67 @@ document.addEventListener("DOMContentLoaded", () => {
     howToPlayOverlay.style.display = "none";
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const leaderboardLink = document.getElementById("leaderboard-link");
+  const leaderboardOverlay = document.getElementById("leaderboard-overlay");
+  const leaderboardClose = document.querySelector("#leaderboard-overlay .leaderboard-close");
+  const leaderboardBackdrop = document.querySelector("#leaderboard-overlay .leaderboard-backdrop");
+  const tabs = document.querySelectorAll("#leaderboard-overlay .leaderboard-tab");
+  const panels = document.querySelectorAll("#leaderboard-overlay .leaderboard-panel");
+  const topScoresContent = document.getElementById("welcome-leaderboard-content");
+  const historyContent = document.getElementById("welcome-history-content");
+
+  if (!leaderboardLink || !leaderboardOverlay) return;
+
+  const setActivePanel = (panelId) => {
+    tabs.forEach((tab) => {
+      const isActive = tab.dataset.panel === panelId;
+      tab.classList.toggle('active', isActive);
+      tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+
+    panels.forEach((panel) => {
+      panel.classList.toggle('active', panel.id === panelId);
+    });
+  };
+
+  const renderLeaderboardOverlay = async () => {
+    await loadData();
+
+    if (topScoresContent) {
+      const hasScores = Array.isArray(highScores) && highScores.length > 0;
+      topScoresContent.innerHTML = hasScores
+        ? buildLeaderboardHtml(highScores, 'welcome-leaderboard-container')
+        : '<div class="leaderboard-empty">No high scores yet. Play a game to get on the board.</div>';
+    }
+
+    if (historyContent) {
+      historyContent.innerHTML = buildGameHistoryHtml(gameHistory, { withDetails: false });
+    }
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      setActivePanel(tab.dataset.panel);
+    });
+  });
+
+  leaderboardLink.addEventListener("click", async () => {
+    setActivePanel('leaderboard-top-scores');
+    await renderLeaderboardOverlay();
+    leaderboardOverlay.style.display = "flex";
+  });
+
+  leaderboardClose?.addEventListener("click", () => {
+    leaderboardOverlay.style.display = "none";
+  });
+
+  leaderboardBackdrop?.addEventListener("click", () => {
+    leaderboardOverlay.style.display = "none";
+  });
+});
+
 // --- Settings Overlay Logic ---
 document.addEventListener("DOMContentLoaded", () => {
   const settingsLink = document.getElementById("settings-link");
@@ -4502,7 +4843,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
       // Update difficulty mode
       const newMode = clickedBtn.dataset.mode;
-      difficultyMode = newMode;
+      difficultyMode = normalizeDifficultyMode(newMode);
       console.log("Difficulty mode changed to:", difficultyMode);
       initializeDifficultyButtons()
       // Save to IndexedDB
@@ -4567,6 +4908,31 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   </div>
 </div>
+
+<!-- Leaderboard Overlay -->
+<div id="leaderboard-overlay" style="display:none;">
+  <div class="leaderboard-backdrop"></div>
+
+  <div class="leaderboard-card">
+    <button class="leaderboard-close overlay-close-button">x</button>
+
+    <h2>🏆 Leaderboard &amp; History</h2>
+
+    <div class="leaderboard-tabs" role="tablist" aria-label="Leaderboard views">
+      <button class="leaderboard-tab active" role="tab" data-panel="leaderboard-top-scores" aria-selected="true">Top Scores</button>
+      <button class="leaderboard-tab" role="tab" data-panel="leaderboard-history" aria-selected="false">Game History</button>
+    </div>
+
+    <section id="leaderboard-top-scores" class="leaderboard-panel active" role="tabpanel">
+      <div id="welcome-leaderboard-content"></div>
+    </section>
+
+    <section id="leaderboard-history" class="leaderboard-panel" role="tabpanel">
+      <div id="welcome-history-content"></div>
+    </section>
+  </div>
+</div>
+
 <!-- Settings Overlay -->
 <div id="settings-overlay" style="display:none;">
   <div class="settings-backdrop"></div>
