@@ -1266,7 +1266,7 @@
 
     <div id="question"></div>
     <div class="question-meta">
-      <span id="verse-ref" class="verse-ref"></span>
+      <!--<span id="verse-ref" class="verse-ref"></span>-->
       <div class="right-side">
         <span id="difficulty-tag" class="tag difficulty"></span>
         <span id="category-tag" class="tag category"></span>
@@ -3983,6 +3983,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     let gameHistory = [];
     let highScores = [];
     let lastRoundReview = [];
+    let pendingHighScoreCelebrationScore = null;
+    let isHighScoreCelebrationActive = false;
     let timerInterval;
     let timeLeftAtAnswer = 0;
     let difficultyMode = 'medium';  // 'easy' | 'medium' | 'hard' | 'superHard'
@@ -4030,7 +4032,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const timerDisplayEl  = document.getElementById("timer-display");
     const timerFill       = document.getElementById("timer-fill");
     const questionEl      = document.getElementById("question");
-    const verseRefEl      = document.getElementById("verse-ref");
+    //const verseRefEl      = document.getElementById("verse-ref");
     const difficultyTagEl = document.getElementById("difficulty-tag");
     const categoryTagEl   = document.getElementById("category-tag");
     const optionsEl       = document.getElementById("options");
@@ -4133,13 +4135,19 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     function showResultsSummary() {
       setQuestionHeaderVisible(false);
       questionEl.style.display = "none";
-      verseRefEl.style.display = "none";
+      //verseRefEl.style.display = "none";
       difficultyTagEl.style.display = "none";
       categoryTagEl.style.display = "none";
       optionsEl.style.display = "none";
       feedbackEl.style.display = "none";
       roundReviewEl.style.display = "none";
       summaryEl.style.display = "block";
+
+      if (pendingHighScoreCelebrationScore !== null) {
+        const scoreToCelebrate = pendingHighScoreCelebrationScore;
+        pendingHighScoreCelebrationScore = null;
+        celebrateNewHighScore(scoreToCelebrate);
+      }
     }
 
     function renderRoundReviewScreen() {
@@ -4178,7 +4186,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
       setQuestionHeaderVisible(false);
       questionEl.style.display = "none";
-      verseRefEl.style.display = "none";
+      //verseRefEl.style.display = "none";
       difficultyTagEl.style.display = "none";
       categoryTagEl.style.display = "none";
       optionsEl.style.display = "none";
@@ -4527,7 +4535,7 @@ function selectBalancedQuestions() {
     function resetQuestionScreen() {
       setQuestionHeaderVisible(true);
       questionEl.style.display = "block";
-      verseRefEl.style.display = "inline";
+      //verseRefEl.style.display = "inline";
       difficultyTagEl.style.display = "inline-flex";
       categoryTagEl.style.display = "inline-flex";
       optionsEl.style.display = "grid";
@@ -4567,7 +4575,7 @@ function selectBalancedQuestions() {
       const correctIndex = shuffledOpts.indexOf(q.opts[q.ans]);
 
       questionEl.textContent = q.q;
-      verseRefEl.textContent = q.ref ? `(${q.ref})` : "";
+      //verseRefEl.textContent = q.ref ? `(${q.ref})` : "";
       difficultyTagEl.textContent = getDifficultyEmoji(q.difficulty) + " " + (q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1));
       difficultyTagEl.className = "tag difficulty " + q.difficulty;
       categoryTagEl.textContent = getCategoryEmoji(q.category) + " " + q.category;
@@ -4676,6 +4684,9 @@ function selectBalancedQuestions() {
     }
 
 function celebrateNewHighScore(score) {
+  if (isHighScoreCelebrationActive) return;
+  isHighScoreCelebrationActive = true;
+
   // Create overlay element
   const overlay = document.createElement('div');
   overlay.id = 'highscore-celebration';
@@ -4685,7 +4696,7 @@ function celebrateNewHighScore(score) {
   overlay.style.display = 'flex';
   overlay.style.alignItems = 'center';
   overlay.style.justifyContent = 'center';
-  overlay.style.zIndex = '1000';
+  overlay.style.zIndex = '11000';
   overlay.style.opacity = '0';
   overlay.style.transition = 'opacity 0.8s ease';
 
@@ -4763,6 +4774,7 @@ function celebrateNewHighScore(score) {
     overlay.style.opacity = '0';
     setTimeout(() => {
       overlay.remove();
+      isHighScoreCelebrationActive = false;
     }, 800); // wait for fade-out
   }, 3000);
 }
@@ -5037,7 +5049,7 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
       }
 
       summaryEl.innerHTML = `
-        <h2>Game Complete!</h2>
+        <h2>Round Summary</h2>
         <p>You got <strong>${correctCount}</strong> right out of ${QUESTIONS_PER_GAME} (${percent}%).</p>
         <p><strong>Total Score: ${totalScore} points</strong></p>
         ${categoryHtml}
@@ -5058,22 +5070,22 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
         </div>
       `;
 
-// Trigger celebration if applicable
-  if (isNewHighScore) {
-    celebrateNewHighScore(totalScore);
-  }
+      pendingHighScoreCelebrationScore = isNewHighScore ? totalScore : null;
 
       document.getElementById("restart-same")?.addEventListener("click", () => {
+        if (isHighScoreCelebrationActive) return;
         //startNewGame();
         startCountdownThenGame();
       });
 
       document.getElementById("restart-change").addEventListener("click", () => {
+        if (isHighScoreCelebrationActive) return;
         document.getElementById("question-container").style.display = "none";
         document.getElementById("welcome").style.display = "block";
       });
 
       document.getElementById("summary-leaderboard-link")?.addEventListener("click", () => {
+        if (isHighScoreCelebrationActive) return;
         document.getElementById("leaderboard-link")?.click();
       });
 
@@ -5093,6 +5105,7 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
     });
 
     document.getElementById("start-btn").onclick = () => {
+      if (isHighScoreCelebrationActive) return;
       document.getElementById("welcome").style.display = "none";
       document.getElementById("question-container").style.display = "block";
       //startNewGame();
