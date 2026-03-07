@@ -522,20 +522,7 @@
     }
 
     .leaderboard-mode table {
-      max-height: 240px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      display: block;
-    }
-
-    .leaderboard-mode tbody {
-      display: block;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .leaderboard-mode thead {
-      display: block;
+      width: 100%;
     }
 
     .leaderboard-mode th, .leaderboard-mode td {
@@ -602,13 +589,16 @@
       box-shadow: 0 12px 32px rgba(66,165,245,0.5);
     }
 
-    #clear-history {
+    .clear-history-btn {
       background: #EF5350;
       color: white;
-      margin-top: 20px;
+      margin: 0;
+      width: 100%;
+      max-width: 360px;
+      align-self: center;
     }
 
-    #clear-history:hover {
+    .clear-history-btn:hover {
       background: #E53935;
     }
 
@@ -756,12 +746,6 @@
       .leaderboard-mode h4 {
         font-size: 1.1rem;
         margin-bottom: 10px;
-      }
-      .leaderboard-mode table {
-        max-height: 200px;
-      }
-      .leaderboard-mode tbody {
-        max-height: 170px;
       }
     }
 
@@ -1001,6 +985,27 @@
   display: block;
 }
 
+#leaderboard-overlay table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+#leaderboard-overlay col.scores-rank { width: 12%; }
+#leaderboard-overlay col.scores-score { width: 16%; }
+#leaderboard-overlay col.scores-date { width: 44%; }
+#leaderboard-overlay col.scores-correct { width: 28%; }
+
+#leaderboard-overlay col.history-game { width: 10%; }
+#leaderboard-overlay col.history-mode { width: 18%; }
+#leaderboard-overlay col.history-date { width: 36%; }
+#leaderboard-overlay col.history-correct { width: 16%; }
+#leaderboard-overlay col.history-score { width: 10%; }
+#leaderboard-overlay col.history-percent { width: 10%; }
+
+#leaderboard-overlay td.table-date {
+  overflow-wrap: anywhere;
+}
+
 .leaderboard-empty {
   text-align: center;
   color: #666;
@@ -1008,6 +1013,46 @@
   background: #f8f8f8;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
+}
+
+.leaderboard-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+
+.leaderboard-status {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  pointer-events: none;
+}
+
+.leaderboard-status.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.leaderboard-status.success {
+  color: #1b5e20;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+}
+
+.leaderboard-status.error {
+  color: #b71c1c;
+  background: #ffebee;
+  border: 1px solid #ef9a9a;
 }
 
 @media (max-width: 640px) {
@@ -1167,14 +1212,6 @@
   .leaderboard-mode h4 {
     font-size: 1rem;
     margin-bottom: 8px;
-  }
-
-  .leaderboard-mode table {
-    max-height: 160px;
-  }
-
-  .leaderboard-mode tbody {
-    max-height: 140px;
   }
 
   .leaderboard-mode th, .leaderboard-mode td {
@@ -4000,6 +4037,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const feedbackEl      = document.getElementById("feedback");
     const summaryEl       = document.getElementById("summary");
     const roundReviewEl   = document.getElementById("round-review");
+    const questionHeaderEl = document.querySelector("#question-container > header");
+
+    function setQuestionHeaderVisible(isVisible) {
+      if (!questionHeaderEl) return;
+      questionHeaderEl.style.display = isVisible ? "" : "none";
+    }
 
     function showReviewChoiceOverlay() {
       if (roundReviewPreference === 'alwaysReview') {
@@ -4088,6 +4131,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     }
 
     function showResultsSummary() {
+      setQuestionHeaderVisible(false);
       questionEl.style.display = "none";
       verseRefEl.style.display = "none";
       difficultyTagEl.style.display = "none";
@@ -4132,6 +4176,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
       document.getElementById("review-continue")?.addEventListener("click", showResultsSummary);
 
+      setQuestionHeaderVisible(false);
       questionEl.style.display = "none";
       verseRefEl.style.display = "none";
       difficultyTagEl.style.display = "none";
@@ -4480,6 +4525,7 @@ function selectBalancedQuestions() {
 
 
     function resetQuestionScreen() {
+      setQuestionHeaderVisible(true);
       questionEl.style.display = "block";
       verseRefEl.style.display = "inline";
       difficultyTagEl.style.display = "inline-flex";
@@ -4812,6 +4858,11 @@ async function saveHighScore() {
   await saveData();
 }
 
+function formatTimestampForDisplay(timestamp) {
+  const parsed = Date.parse(timestamp);
+  return Number.isNaN(parsed) ? timestamp : new Date(parsed).toLocaleString();
+}
+
 function buildLeaderboardHtml(scores, containerId = 'leaderboard-container') {
   const modeEmojis = { easy: '🟢', medium: '🟠', hard: '🔴', superHard: '⚫' };
   const modeNames = { easy: 'Easy', medium: 'Medium', hard: 'Hard', superHard: 'Super Hard' };
@@ -4827,6 +4878,12 @@ function buildLeaderboardHtml(scores, containerId = 'leaderboard-container') {
       <div class="leaderboard-mode">
         <h4>${emoji} ${name} Mode Top Scores</h4>
         <table>
+          <colgroup>
+            <col class="scores-rank">
+            <col class="scores-score">
+            <col class="scores-date">
+            <col class="scores-correct">
+          </colgroup>
           <thead>
             <tr>
               <th>Rank</th>
@@ -4846,7 +4903,7 @@ function buildLeaderboardHtml(scores, containerId = 'leaderboard-container') {
           <tr>
             <td>${i + 1}</td>
             <td>${hs.score}</td>
-            <td>${hs.timestamp}</td>
+            <td class="table-date">${formatTimestampForDisplay(hs.timestamp)}</td>
             <td>${hs.correct} / ${hs.total}</td>
           </tr>
         `;
@@ -4871,6 +4928,14 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
 
   let tableHtml = `
     <table>
+      <colgroup>
+        <col class="history-game">
+        <col class="history-mode">
+        <col class="history-date">
+        <col class="history-correct">
+        <col class="history-score">
+        <col class="history-percent">
+      </colgroup>
       <thead>
         <tr>
           <th>Game</th>
@@ -4895,7 +4960,7 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
         <tr>
           <td>${i + 1}</td>
           <td>${modeEmoji} ${modeName}</td>
-          <td>${g.timestamp}</td>
+          <td class="table-date">${formatTimestampForDisplay(g.timestamp)}</td>
           <td>${g.correct} / ${g.total}</td>
           <td>${g.score}</td>
           <td>${g.percent}%</td>
@@ -4920,6 +4985,7 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
 
 
     async function endGame() {
+      setQuestionHeaderVisible(false);
       const percent = Math.round((correctCount / QUESTIONS_PER_GAME) * 100);
 
       gameHistory.push({
@@ -4962,9 +5028,6 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
         </div>
       `;
 
-      const leaderboardHtml = buildLeaderboardHtml(highScores, 'leaderboard-container');
-      const historyHtml = buildGameHistoryHtml(gameHistory, { withDetails: true });
-
       let statsHtml = "";
       if (gameHistory.length > 0) {
         const scores = gameHistory.map(g => g.score);
@@ -4981,13 +5044,18 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
         <p id="encouraging-verse">${verseObj.text}</p>
         <p>Great job learning about God's Word!</p>
         ${statsHtml}
-        ${leaderboardHtml}
-        ${historyHtml}
+        <a id="summary-leaderboard-link"
+           style="color: var(--primary);
+                  font-size: 1.4rem;
+                  cursor: pointer;
+                  display: block;
+                  margin-top: 10px;">
+          🏆 Leaderboard &amp; History
+        </a>
         <div style="margin-top: 30px;">
           <button id="restart-same">&#8635; Restart</button>
           <button id="restart-change">&#x1F3E0; Home</button>
         </div>
-        <button id="clear-history" style="margin-top: 20px;">Clear Scores & History</button>
       `;
 
 // Trigger celebration if applicable
@@ -5005,23 +5073,9 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
         document.getElementById("welcome").style.display = "block";
       });
 
-      document.getElementById("clear-history").onclick = async () => {
-        gameHistory = [];
-        highScores = [];
-        try {
-          if (DBManager.isReady()) {
-            await DBManager.clearGameHistory();
-            await DBManager.clearHighScores();
-            DBManager.log('Game history and high scores cleared from IndexedDB');
-          }
-        } catch (e) {
-          DBManager.log('Failed to clear IndexedDB data', e.message);
-        }
-        saveDataToLocalStorage();
-        document.getElementById("question-container").style.display = "none";
-        document.getElementById("welcome").style.display = "block";
-        //location.reload();
-      };
+      document.getElementById("summary-leaderboard-link")?.addEventListener("click", () => {
+        document.getElementById("leaderboard-link")?.click();
+      });
 
       const reviewChoice = await showReviewChoiceOverlay();
       if (reviewChoice === 'skip') {
@@ -5108,6 +5162,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const panels = document.querySelectorAll("#leaderboard-overlay .leaderboard-panel");
   const topScoresContent = document.getElementById("welcome-leaderboard-content");
   const historyContent = document.getElementById("welcome-history-content");
+  const clearHistoryOverlayBtn = document.getElementById("clear-history-overlay");
+  const leaderboardStatus = document.getElementById("leaderboard-status");
+  let leaderboardStatusTimer = null;
 
   if (!leaderboardLink || !leaderboardOverlay) return;
 
@@ -5138,6 +5195,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const showLeaderboardStatus = (message, type = 'success') => {
+    if (!leaderboardStatus) return;
+
+    leaderboardStatus.textContent = message;
+    leaderboardStatus.classList.remove('success', 'error', 'visible');
+    leaderboardStatus.classList.add(type === 'error' ? 'error' : 'success');
+
+    // Force reflow so repeated messages can retrigger the fade animation.
+    void leaderboardStatus.offsetWidth;
+    leaderboardStatus.classList.add('visible');
+
+    if (leaderboardStatusTimer) {
+      clearTimeout(leaderboardStatusTimer);
+    }
+
+    leaderboardStatusTimer = setTimeout(() => {
+      leaderboardStatus.classList.remove('visible');
+    }, 2800);
+  };
+
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       setActivePanel(tab.dataset.panel);
@@ -5147,6 +5224,7 @@ document.addEventListener("DOMContentLoaded", () => {
   leaderboardLink.addEventListener("click", async () => {
     setActivePanel('leaderboard-top-scores');
     await renderLeaderboardOverlay();
+    leaderboardStatus?.classList.remove('visible');
     leaderboardOverlay.style.display = "flex";
   });
 
@@ -5156,6 +5234,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   leaderboardBackdrop?.addEventListener("click", () => {
     leaderboardOverlay.style.display = "none";
+  });
+
+  clearHistoryOverlayBtn?.addEventListener("click", async () => {
+    const confirmed = confirm('Clear all saved high scores and game history? This cannot be undone.');
+    if (!confirmed) return;
+
+    gameHistory = [];
+    highScores = [];
+    let clearFailed = false;
+
+    try {
+      if (DBManager.isReady()) {
+        await DBManager.clearGameHistory();
+        await DBManager.clearHighScores();
+        DBManager.log('Game history and high scores cleared from IndexedDB');
+      }
+    } catch (e) {
+      clearFailed = true;
+      DBManager.log('Failed to clear IndexedDB data', e.message);
+    }
+
+    if (!clearFailed) {
+      saveDataToLocalStorage();
+    }
+
+    setActivePanel('leaderboard-top-scores');
+    await renderLeaderboardOverlay();
+
+    if (clearFailed) {
+      showLeaderboardStatus('Could not clear saved data. Please try again.', 'error');
+      return;
+    }
+
+    showLeaderboardStatus('Scores and history cleared.', 'success');
   });
 });
 
@@ -5345,6 +5457,11 @@ document.addEventListener("DOMContentLoaded", () => {
     <section id="leaderboard-history" class="leaderboard-panel" role="tabpanel">
       <div id="welcome-history-content"></div>
     </section>
+
+    <div class="leaderboard-actions">
+      <button id="clear-history-overlay" class="clear-history-btn">Clear Scores &amp; History</button>
+      <p id="leaderboard-status" class="leaderboard-status" role="status" aria-live="polite"></p>
+    </div>
   </div>
 </div>
 
