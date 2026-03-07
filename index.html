@@ -650,17 +650,6 @@
     <h2>Fun Bible Questions!</h2>
     <p>Test your knowledge of God's Word!</p>
 
-    <!-- <div id="hard-toggle-section">
-      <label for="hard-toggle">
-        <input type="checkbox" id="hard-toggle" checked>
-        Include Hard questions?
-      </label>
-      <div id="hard-toggle-explain">
-        When turned ON, harder questions (🔴) appear and give more points (up to 300 pts each).<br>
-        Turn OFF for an easier game focused on easy & medium questions only.
-      </div>
-    </div> -->
-
     <button id="start-btn">Start</button>
 <a id="how-to-play-link"
    style="color: var(--primary);
@@ -1878,6 +1867,448 @@ const allQuestions = [
 }
     ];
 
+    // ==================== INDEXEDDB MANAGER ====================
+    const DBManager = (() => {
+      const DB_NAME = 'BibleTriviaDB';
+      const DB_VERSION = 1;
+      const STORE_HISTORY = 'gameHistory';
+      const STORE_SCORES = 'highScores';
+      const STORE_SETTINGS = 'settings';
+      
+      let db = null;
+      let useIndexedDB = true;
+      let dbReady = false;
+
+      // Logging utility
+      const log = (action, data = null) => {
+        const timestamp = new Date().toISOString();
+        console.log(`[DBManager ${timestamp}] ${action}`, data || '');
+      };
+
+      // Data validation
+      const validators = {
+        gameRecord: (record) => {
+          const required = ['timestamp', 'correct', 'total', 'score', 'percent'];
+          if (!record || typeof record !== 'object') return false;
+          return required.every(k => k in record && typeof record[k] !== 'undefined');
+        },
+        highScore: (record) => {
+          const required = ['score', 'timestamp', 'correct', 'total'];
+          if (!record || typeof record !== 'object') return false;
+          return required.every(k => k in record && typeof record[k] !== 'undefined');
+        },
+        setting: (key, value) => {
+          if (key === 'includeHard') return typeof value === 'boolean';
+          return false;
+        }
+      };
+
+      // Check if IndexedDB is available and functional
+      const checkIndexedDBAvailable = async () => {
+        try {
+          const test = indexedDB.open('__test__');
+          return new Promise((resolve) => {
+            test.onsuccess = () => {
+              indexedDB.deleteDatabase('__test__');
+              resolve(true);
+            };
+            test.onerror = () => resolve(false);
+          });
+        } catch (e) {
+          log('IndexedDB availability check failed', e.message);
+          return false;
+        }
+      };
+
+      // Initialize database
+      const openDatabase = () => {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+          request.onerror = () => {
+            log('Database open failed', request.error);
+            useIndexedDB = false;
+            reject(request.error);
+          };
+
+          request.onsuccess = () => {
+            db = request.result;
+            log('Database opened successfully');
+            dbReady = true;
+            resolve(db);
+          };
+
+          request.onupgradeneeded = (event) => {
+            const database = event.target.result;
+            log('Database upgrade needed');
+
+            // Create object stores if they don't exist
+            if (!database.objectStoreNames.contains(STORE_HISTORY)) {
+              const historyStore = database.createObjectStore(STORE_HISTORY, { keyPath: 'id', autoIncrement: true });
+              historyStore.createIndex('timestamp', 'timestamp', { unique: false });
+              log('Created object store: gameHistory');
+            }
+
+            if (!database.objectStoreNames.contains(STORE_SCORES)) {
+              const scoresStore = database.createObjectStore(STORE_SCORES, { keyPath: 'id', autoIncrement: true });
+              scoresStore.createIndex('score', 'score', { unique: false });
+              log('Created object store: highScores');
+            }
+
+            if (!database.objectStoreNames.contains(STORE_SETTINGS)) {
+              database.createObjectStore(STORE_SETTINGS, { keyPath: 'key' });
+              log('Created object store: settings');
+            }
+          };
+        });
+      };
+
+      // Migrate from localStorage
+      const migrateFromLocalStorage = async () => {
+        try {
+          const lsHistory = localStorage.getItem(STORAGE_KEY_HISTORY);
+          const lsScores = localStorage.getItem(STORAGE_KEY_HIGHSCORES);
+          const lsHard = localStorage.getItem(STORAGE_KEY_HARD_TOGGLE);
+
+          let migrated = false;
+
+          // Migrate game history
+          if (lsHistory) {
+            try {
+              const historicalData = JSON.parse(lsHistory);
+              if (Array.isArray(historicalData) && historicalData.length > 0) {
+                for (const record of historicalData) {
+                  if (validators.gameRecord(record)) {
+                    await addGameRecord(record);
+                  }
+                }
+                migrated = true;
+                log('Migrated game history from localStorage', historicalData.length + ' records');
+              }
+            } catch (e) {
+              log('Failed to parse game history from localStorage', e.message);
+            }
+          }
+
+          // Migrate high scores
+          if (lsScores) {
+            try {
+              const scoresData = JSON.parse(lsScores);
+              if (Array.isArray(scoresData) && scoresData.length > 0) {
+                for (const record of scoresData) {
+                  if (validators.highScore(record)) {
+                    await addHighScore(record);
+                  }
+                }
+                migrated = true;
+                log('Migrated high scores from localStorage', scoresData.length + ' records');
+              }
+            } catch (e) {
+              log('Failed to parse high scores from localStorage', e.message);
+            }
+          }
+
+          // Migrate settings
+          if (lsHard !== null) {
+            try {
+              const value = lsHard === 'true';
+              await saveSetting('includeHard', value);
+              migrated = true;
+              log('Migrated settings from localStorage', { includeHard: value });
+            } catch (e) {
+              log('Failed to migrate settings from localStorage', e.message);
+            }
+          }
+
+          if (migrated) {
+            log('Migration from localStorage complete, removing old data');
+          }
+
+          return migrated;
+        } catch (e) {
+          log('Migration failed with error', e.message);
+          throw e;
+        }
+      };
+
+      // CRUD Operations for Game History
+      const addGameRecord = (record) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          if (!validators.gameRecord(record)) {
+            log('Invalid game record rejected', record);
+            reject(new Error('Invalid game record'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_HISTORY], 'readwrite');
+          const store = transaction.objectStore(STORE_HISTORY);
+          const request = store.add(record);
+
+          request.onsuccess = () => {
+            log('Game record added', { id: request.result });
+            resolve(request.result);
+          };
+
+          request.onerror = () => {
+            log('Failed to add game record', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const loadGameHistory = () => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_HISTORY], 'readonly');
+          const store = transaction.objectStore(STORE_HISTORY);
+          const request = store.getAll();
+
+          request.onsuccess = () => {
+            const results = request.result.filter(r => validators.gameRecord(r));
+            log('Game history loaded', results.length + ' records');
+            resolve(results);
+          };
+
+          request.onerror = () => {
+            log('Failed to load game history', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const clearGameHistory = () => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_HISTORY], 'readwrite');
+          const store = transaction.objectStore(STORE_HISTORY);
+          const request = store.clear();
+
+          request.onsuccess = () => {
+            log('Game history cleared');
+            resolve();
+          };
+
+          request.onerror = () => {
+            log('Failed to clear game history', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      // CRUD Operations for High Scores
+      const addHighScore = (scoreRecord) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          if (!validators.highScore(scoreRecord)) {
+            log('Invalid high score rejected', scoreRecord);
+            reject(new Error('Invalid high score'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_SCORES], 'readwrite');
+          const store = transaction.objectStore(STORE_SCORES);
+          const request = store.add(scoreRecord);
+
+          request.onsuccess = () => {
+            log('High score added', { id: request.result, score: scoreRecord.score });
+            resolve(request.result);
+          };
+
+          request.onerror = () => {
+            log('Failed to add high score', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const loadHighScores = () => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_SCORES], 'readonly');
+          const store = transaction.objectStore(STORE_SCORES);
+          const request = store.getAll();
+
+          request.onsuccess = () => {
+            const results = request.result.filter(r => validators.highScore(r));
+            log('High scores loaded', results.length + ' records');
+            resolve(results);
+          };
+
+          request.onerror = () => {
+            log('Failed to load high scores', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const clearHighScores = () => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_SCORES], 'readwrite');
+          const store = transaction.objectStore(STORE_SCORES);
+          const request = store.clear();
+
+          request.onsuccess = () => {
+            log('High scores cleared');
+            resolve();
+          };
+
+          request.onerror = () => {
+            log('Failed to clear high scores', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      // Settings operations
+      const saveSetting = (key, value) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          if (!validators.setting(key, value)) {
+            log('Invalid setting rejected', { key, value });
+            reject(new Error('Invalid setting'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_SETTINGS], 'readwrite');
+          const store = transaction.objectStore(STORE_SETTINGS);
+          const request = store.put({ key, value });
+
+          request.onsuccess = () => {
+            log('Setting saved', { key, value });
+            resolve();
+          };
+
+          request.onerror = () => {
+            log('Failed to save setting', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const loadSetting = (key) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_SETTINGS], 'readonly');
+          const store = transaction.objectStore(STORE_SETTINGS);
+          const request = store.get(key);
+
+          request.onsuccess = () => {
+            const result = request.result;
+            log('Setting loaded', { key, value: result ? result.value : 'not found' });
+            resolve(result ? result.value : null);
+          };
+
+          request.onerror = () => {
+            log('Failed to load setting', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const clearSettings = () => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_SETTINGS], 'readwrite');
+          const store = transaction.objectStore(STORE_SETTINGS);
+          const request = store.clear();
+
+          request.onsuccess = () => {
+            log('Settings cleared');
+            resolve();
+          };
+
+          request.onerror = () => {
+            log('Failed to clear settings', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      // Initialization
+      const init = async () => {
+        try {
+          const available = await checkIndexedDBAvailable();
+          if (!available) {
+            log('IndexedDB not available, using localStorage fallback');
+            useIndexedDB = false;
+            return false;
+          }
+
+          await openDatabase();
+          
+          // Attempt migration from localStorage
+          try {
+            await migrateFromLocalStorage();
+          } catch (e) {
+            log('Migration failed but continuing', e.message);
+          }
+
+          return true;
+        } catch (e) {
+          log('Database initialization failed, falling back to localStorage', e.message);
+          useIndexedDB = false;
+          return false;
+        }
+      };
+
+      const isReady = () => dbReady && useIndexedDB;
+
+      // Public API
+      return {
+        init,
+        isReady,
+        addGameRecord,
+        loadGameHistory,
+        clearGameHistory,
+        addHighScore,
+        loadHighScores,
+        clearHighScores,
+        saveSetting,
+        loadSetting,
+        clearSettings,
+        log
+      };
+    })();
+    // ==================== END INDEXEDDB MANAGER ====================
+
 
     let gameQuestions = [];
     let currentIndex = 0;
@@ -1929,7 +2360,45 @@ const allQuestions = [
     const summaryEl       = document.getElementById("summary");
     const hardToggle      = document.getElementById("hard-toggle");
 
-    function loadData() {
+    async function loadData() {
+      try {
+        if (DBManager.isReady()) {
+          // Load from IndexedDB with fallback to localStorage if needed
+          try {
+            gameHistory = await DBManager.loadGameHistory();
+            highScores = await DBManager.loadHighScores();
+            const savedHard = await DBManager.loadSetting('includeHard');
+            if (savedHard !== null && savedHard !== undefined) {
+              includeHard = savedHard;
+            }
+            DBManager.log('Data loaded from IndexedDB');
+          } catch (e) {
+            DBManager.log('IndexedDB load failed, falling back to localStorage', e.message);
+            loadDataFromLocalStorage();
+          }
+        } else {
+          // Fallback to localStorage only
+          DBManager.log('IndexedDB not available, loading from localStorage');
+          loadDataFromLocalStorage();
+        }
+      } catch (e) {
+        DBManager.log('loadData error', e.message);
+        loadDataFromLocalStorage();
+      }
+    }
+
+    async function reloadGameHistory() {
+      try {
+        if (DBManager.isReady()) {
+          gameHistory = await DBManager.loadGameHistory();
+          DBManager.log('Game history reloaded from IndexedDB');
+        }
+      } catch (e) {
+        DBManager.log('Failed to reload game history', e.message);
+      }
+    }
+
+    function loadDataFromLocalStorage() {
       const savedHistory = localStorage.getItem(STORAGE_KEY_HISTORY);
       if (savedHistory) {
         try { gameHistory = JSON.parse(savedHistory); } catch(e) { gameHistory = []; }
@@ -1943,21 +2412,49 @@ const allQuestions = [
       const savedHard = localStorage.getItem(STORAGE_KEY_HARD_TOGGLE);
       if (savedHard !== null) {
         includeHard = savedHard === "true";
-        //hardToggle.checked = includeHard;
       }
     }
 
-    function saveData() {
-      console.log("I am in save data.")
+    async function saveData() {
+      try {
+        if (DBManager.isReady()) {
+          // Save to IndexedDB
+          try {
+            // Save game history
+            for (const record of gameHistory) {
+              if (!record.id) {
+                await DBManager.addGameRecord(record);
+              }
+            }
+            // Save high scores
+            for (const score of highScores) {
+              if (!score.id) {
+                await DBManager.addHighScore(score);
+              }
+            }
+            // Save settings
+            await DBManager.saveSetting('includeHard', includeHard);
+            DBManager.log('Data saved to IndexedDB');
+          } catch (e) {
+            DBManager.log('IndexedDB save failed, falling back to localStorage', e.message);
+            saveDataToLocalStorage();
+          }
+        } else {
+          // Fallback to localStorage only
+          DBManager.log('IndexedDB not available, saving to localStorage');
+          saveDataToLocalStorage();
+        }
+      } catch (e) {
+        DBManager.log('saveData error', e.message);
+        saveDataToLocalStorage();
+      }
+    }
+
+    function saveDataToLocalStorage() {
       localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(gameHistory));
       localStorage.setItem(STORAGE_KEY_HIGHSCORES, JSON.stringify(highScores));
       localStorage.setItem(STORAGE_KEY_HARD_TOGGLE, includeHard.toString());
     }
-
-    // hardToggle.addEventListener("change", () => {
-    //   includeHard = hardToggle.checked;
-    //   saveData();
-    // });
 
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -2207,7 +2704,7 @@ function selectBalancedQuestions() {
 
     function nextQuestion() {
       if (currentIndex >= gameQuestions.length) {
-        endGame();
+        endGame().catch(e => DBManager.log('Error in endGame', e.message));
         return;
       }
 
@@ -2471,14 +2968,14 @@ function celebrateNewHighScore(score) {
       }, AUTO_ADVANCE_WRONG_MS);
     }
 
-    function saveHighScore() {
+    async function saveHighScore() {
       highScores.push({ score: totalScore, timestamp: new Date().toLocaleString(), correct: correctCount, total: QUESTIONS_PER_GAME });
       highScores.sort((a, b) => b.score - a.score);
       highScores = highScores.slice(0, MAX_HIGH_SCORES_SHOWN);
-      saveData();
+      await saveData();
     }
 
-    function endGame() {
+    async function endGame() {
       const percent = Math.round((correctCount / QUESTIONS_PER_GAME) * 100);
 
       gameHistory.push({
@@ -2488,7 +2985,9 @@ function celebrateNewHighScore(score) {
         score: totalScore,
         percent: percent
       });
-      saveData();
+
+      await saveData();
+      await reloadGameHistory();
 
 // ── NEW HIGH SCORE CHECK ────────────────────────────────────────────────
   let isNewHighScore = false;
@@ -2500,7 +2999,7 @@ function celebrateNewHighScore(score) {
   }
   // ────────────────────────────────────────────────────────────────────────
 
-  saveHighScore();
+  await saveHighScore();
 
       const verseObj = encouragingVerses.find(v => percent >= v.minPercent) || encouragingVerses[0];
 
@@ -2616,10 +3115,19 @@ function celebrateNewHighScore(score) {
         document.getElementById("welcome").style.display = "block";
       });
 
-      document.getElementById("clear-history").onclick = () => {
+      document.getElementById("clear-history").onclick = async () => {
         gameHistory = [];
         highScores = [];
-        saveData();
+        try {
+          if (DBManager.isReady()) {
+            await DBManager.clearGameHistory();
+            await DBManager.clearHighScores();
+            DBManager.log('Game history and high scores cleared from IndexedDB');
+          }
+        } catch (e) {
+          DBManager.log('Failed to clear IndexedDB data', e.message);
+        }
+        saveDataToLocalStorage();
         document.getElementById("question-container").style.display = "none";
         document.getElementById("welcome").style.display = "block";
         //location.reload();
@@ -2732,10 +3240,10 @@ document.addEventListener("DOMContentLoaded", () => {
     settingsOverlay.style.display = "none";
   });
 
-    hardToggleMaster.addEventListener("change", () => {
+    hardToggleMaster.addEventListener("change", async () => {
       includeHard = hardToggle.checked;
       console.log("Master toggle changed. includeHard:", includeHard);
-      saveData();
+      await saveData().catch(e => DBManager.log('Failed to save setting after toggle', e.message));
     });
 
   // When user changes the setting, update the master checkbox
@@ -2743,11 +3251,22 @@ document.addEventListener("DOMContentLoaded", () => {
     hardToggleMaster.checked = hardToggleSettings.checked;
     includeHard = hardToggleSettings.checked;
     console.log("Settings toggle changed. includeHard:", includeHard);
-    saveData();
+    saveData().catch(e => DBManager.log('Failed to save setting after toggle', e.message));
   });
 
 });
- loadData();
+
+// Initialize IndexedDB and load data
+(async () => {
+  try {
+    await DBManager.init();
+    await loadData();
+    DBManager.log('Application initialized successfully');
+  } catch (e) {
+    DBManager.log('Initialization error, using localStorage fallback', e.message);
+    loadData();
+  }
+})();
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js').then(registration =>{
