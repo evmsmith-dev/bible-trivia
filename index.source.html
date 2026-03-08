@@ -653,6 +653,37 @@
       box-shadow: 0 12px 32px rgba(66,165,245,0.5);
     }
 
+    .streak-carryover-banner {
+      margin: 14px auto 8px;
+      max-width: 620px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 2px solid #f9a825;
+      background: linear-gradient(135deg, #fff8e1 0%, #ffe082 100%);
+      color: #5d4037;
+      font-size: 1.08rem;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(249, 168, 37, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-align: center;
+    }
+
+    .streak-carryover-badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f57f17;
+      color: #fff;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
     .clear-history-btn {
       background: #EF5350;
       color: white;
@@ -678,6 +709,36 @@
     #welcome h1 { font-size: 3.8rem; color: var(--primary); }
     #welcome h2 { font-size: 2.6rem; color: var(--accent); margin: 0.4em 0; }
     #welcome p  { font-size: 1.4rem; color: #424242; line-height: 1.5; }
+
+    #daily-challenge-link {
+      position: relative;
+      transform-origin: center;
+      transition: transform 0.22s ease, text-shadow 0.22s ease;
+    }
+
+    #daily-challenge-link.daily-link-pulse {
+      animation: daily-link-pulse 1.6s ease-in-out infinite;
+      color: #1b5e20 !important;
+    }
+
+    @keyframes daily-link-pulse {
+      0% {
+        transform: scale(1);
+        text-shadow: 0 0 0 rgba(46, 125, 50, 0);
+      }
+      35% {
+        transform: scale(1.08);
+        text-shadow: 0 0 18px rgba(46, 125, 50, 0.52);
+      }
+      70% {
+        transform: scale(1.01);
+        text-shadow: 0 0 8px rgba(46, 125, 50, 0.28);
+      }
+      100% {
+        transform: scale(1);
+        text-shadow: 0 0 0 rgba(46, 125, 50, 0);
+      }
+    }
 
     #daily-challenge-overlay {
       position: fixed;
@@ -748,6 +809,7 @@
       padding: 14px 22px;
       border-radius: 12px;
       background: #2e7d32;
+      color: #ffffff;
       box-shadow: 0 8px 20px rgba(46,125,50,0.28);
     }
 
@@ -1441,7 +1503,7 @@
     <p>Test your knowledge of God's Word!</p>
 
 <a id="daily-challenge-link"
-  onclick="document.getElementById('daily-challenge-overlay').style.display='flex'; if (window.refreshDailyChallengeCard) { window.refreshDailyChallengeCard(); } return false;"
+  onclick="if (window.openDailyChallengeOverlay) { window.openDailyChallengeOverlay(); } return false;"
    style="color: var(--primary);
           font-size: 1.4rem;
           text-decoration: none;
@@ -4532,6 +4594,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const STORAGE_KEY_PLAYER_STATS = "bibleTriviaPlayerStats";
     const STORAGE_KEY_DAILY_STATS = "bibleTriviaDailyStats";
     const STORAGE_KEY_DAILY_CHALLENGES = "bibleTriviaDailyChallenges";
+    const STORAGE_KEY_DAILY_PULSE_ACK_DATE = "bibleTriviaDailyPulseAckDate";
+    const STORAGE_KEY_DAILY_PULSE_LAST_SHOWN_DATE = "bibleTriviaDailyPulseLastShownDate";
+    const STORAGE_KEY_DAILY_PULSE_SHOW_COUNT = "bibleTriviaDailyPulseShowCount";
+    const STORAGE_KEY_DAILY_PULSE_CLICK_COUNT = "bibleTriviaDailyPulseClickCount";
+    const STORAGE_KEY_STREAK_CARRYOVER_MSG_SHOWN_COUNT = "bibleTriviaStreakCarryoverMessageShownCount";
+    const STORAGE_KEY_STREAK_CARRYOVER_RESTART_CLICK_COUNT = "bibleTriviaStreakCarryoverRestartClickCount";
     const FEEDBACK_SHOW_MS = 2200;
     const DAILY_SUCCESS_PERCENT = 70;
     const DAILY_BASE_BONUS_MULTIPLIER = 0.05;
@@ -4546,6 +4614,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       9: 220,
       10: 260
     };
+    let dailyPulseResetTimer = null;
 
     function createZeroedModeMap() {
       return {
@@ -4780,6 +4849,81 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       const normalizedDateKey = String(dateKey || '').trim() || getLocalDateKey();
       const record = sanitizeDailyChallengeRecord(dailyChallengeMap[normalizedDateKey] || null);
       return Boolean(record.dateKey && record.completed);
+    }
+
+    function getStoredPulseDateKey(storageKey) {
+      const value = String(localStorage.getItem(storageKey) || '').trim();
+      return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : '';
+    }
+
+    function incrementLocalCounter(storageKey) {
+      const current = Number.parseInt(localStorage.getItem(storageKey) || '0', 10);
+      const next = Number.isFinite(current) ? current + 1 : 1;
+      localStorage.setItem(storageKey, String(next));
+      return next;
+    }
+
+    function incrementDailyPulseCounter(storageKey) {
+      return incrementLocalCounter(storageKey);
+    }
+
+    function isDailyChallengeCompletedForDate(dateKey = getLocalDateKey()) {
+      ensureDailyDataLoaded();
+      const normalizedDateKey = String(dateKey || '').trim() || getLocalDateKey();
+      const record = sanitizeDailyChallengeRecord(dailyChallengeMap[normalizedDateKey] || null);
+      return Boolean(record.dateKey && record.completed);
+    }
+
+    function shouldPulseDailyChallengeLink(dateKey = getLocalDateKey()) {
+      const normalizedDateKey = String(dateKey || '').trim() || getLocalDateKey();
+      const acknowledgedDateKey = getStoredPulseDateKey(STORAGE_KEY_DAILY_PULSE_ACK_DATE);
+      return acknowledgedDateKey !== normalizedDateKey && !isDailyChallengeCompletedForDate(normalizedDateKey);
+    }
+
+    function updateDailyChallengeLinkPulse(dateKey = getLocalDateKey()) {
+      const dailyChallengeLink = document.getElementById('daily-challenge-link');
+      if (!dailyChallengeLink) return;
+
+      const normalizedDateKey = String(dateKey || '').trim() || getLocalDateKey();
+      const shouldPulse = shouldPulseDailyChallengeLink(normalizedDateKey);
+      dailyChallengeLink.classList.toggle('daily-link-pulse', shouldPulse);
+
+      if (shouldPulse) {
+        const lastShownDateKey = getStoredPulseDateKey(STORAGE_KEY_DAILY_PULSE_LAST_SHOWN_DATE);
+        if (lastShownDateKey !== normalizedDateKey) {
+          localStorage.setItem(STORAGE_KEY_DAILY_PULSE_LAST_SHOWN_DATE, normalizedDateKey);
+          const showCount = incrementDailyPulseCounter(STORAGE_KEY_DAILY_PULSE_SHOW_COUNT);
+          DBManager.log('Daily challenge pulse shown', { dateKey: normalizedDateKey, showCount });
+        }
+      }
+    }
+
+    function acknowledgeDailyChallengeLinkClick(dateKey = getLocalDateKey()) {
+      const normalizedDateKey = String(dateKey || '').trim() || getLocalDateKey();
+      const acknowledgedDateKey = getStoredPulseDateKey(STORAGE_KEY_DAILY_PULSE_ACK_DATE);
+      if (acknowledgedDateKey === normalizedDateKey) {
+        return false;
+      }
+
+      localStorage.setItem(STORAGE_KEY_DAILY_PULSE_ACK_DATE, normalizedDateKey);
+      const clickCount = incrementDailyPulseCounter(STORAGE_KEY_DAILY_PULSE_CLICK_COUNT);
+      DBManager.log('Daily challenge link acknowledged', { dateKey: normalizedDateKey, clickCount });
+      return true;
+    }
+
+    function scheduleDailyChallengePulseReset() {
+      if (dailyPulseResetTimer) {
+        clearTimeout(dailyPulseResetTimer);
+      }
+
+      const now = new Date();
+      const nextChallengeTime = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 250);
+      const delayMs = Math.max(1000, nextChallengeTime.getTime() - now.getTime());
+
+      dailyPulseResetTimer = setTimeout(() => {
+        updateDailyChallengeLinkPulse(getLocalDateKey());
+        scheduleDailyChallengePulseReset();
+      }, delayMs);
     }
 
     function getDailyBaseBonusPoints(basePoints) {
@@ -6206,6 +6350,8 @@ function renderWelcomeDailyCard() {
       ? "Completed for Today"
       : "Start Today's Challenge";
   }
+
+  updateDailyChallengeLinkPulse(todayKey);
 }
 
 function buildDailyLeaderboardHtml(challenges, stats) {
@@ -6217,7 +6363,7 @@ function buildDailyLeaderboardHtml(challenges, stats) {
 
   let rows = '';
   if (records.length === 0) {
-    rows = '<tr><td colspan="5" style="text-align: center; padding: 12px; color: #999;">No daily challenges yet</td></tr>';
+    rows = '<tr><td colspan="3" style="text-align: center; padding: 12px; color: #999;">No daily challenges yet</td></tr>';
   } else {
     records.forEach((record) => {
       const safe = sanitizeDailyChallengeRecord(record);
@@ -6225,8 +6371,6 @@ function buildDailyLeaderboardHtml(challenges, stats) {
         <tr>
           <td>${escapeHtml(safe.dateKey)}</td>
           <td>${safe.completed ? 'Yes' : 'No'}</td>
-          <td>${safe.attempts}</td>
-          <td>${safe.bestScore}</td>
           <td>${safe.lastScore}</td>
         </tr>
       `;
@@ -6250,9 +6394,7 @@ function buildDailyLeaderboardHtml(challenges, stats) {
             <tr>
               <th>Date</th>
               <th>Completed</th>
-              <th>Attempts</th>
-              <th>Best</th>
-              <th>Last</th>
+              <th>Score</th>
             </tr>
           </thead>
           <tbody>
@@ -6300,6 +6442,12 @@ function renderLeaderboardOverlayFromCurrentState() {
 }
 
 async function openDailyChallengeOverlay() {
+  const todayKey = getLocalDateKey();
+  const didAcknowledgeToday = acknowledgeDailyChallengeLinkClick(todayKey);
+  if (didAcknowledgeToday) {
+    updateDailyChallengeLinkPulse(todayKey);
+  }
+
   const overlay = document.getElementById("daily-challenge-overlay");
   if (overlay) {
     overlay.style.display = "flex";
@@ -6349,6 +6497,13 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
       ensurePlayerStatsLoaded();
       playerStats.lastGameMaxStreak = currentGameMaxStreak;
 
+      const categoryCount = { "Old Testament": 0, "New Testament": 0, "General": 0 };
+      gameQuestions.forEach(q => {
+        if (categoryCount[q.category] !== undefined) {
+          categoryCount[q.category]++;
+        }
+      });
+
       let isNewHighScore = false;
 
       if (isDailyGame) {
@@ -6380,7 +6535,8 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
           total: QUESTIONS_PER_GAME,
           score: totalScore,
           percent: percent,
-          difficultyMode: activeMode
+          difficultyMode: activeMode,
+          categories: categoryCount
         });
 
         const previousBest = getTopScoresByMode(highScores, activeMode, 1)[0]?.score;
@@ -6394,22 +6550,6 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
       }
 
       const verseObj = encouragingVerses.find(v => percent >= v.minPercent) || encouragingVerses[0];
-
-      const categoryCount = { "Old Testament": 0, "New Testament": 0, "General": 0 };
-      gameQuestions.forEach(q => {
-        if (categoryCount[q.category] !== undefined) {
-          categoryCount[q.category]++;
-        }
-      });
-
-      let categoryHtml = `
-        <div id="category-breakdown">
-          <strong>Categories asked in this game:</strong><br>
-          • Old Testament: ${categoryCount["Old Testament"]} questions<br>
-          • New Testament: ${categoryCount["New Testament"]} questions<br>
-          • General: ${categoryCount["General"]} questions
-        </div>
-      `;
 
       let statsHtml = "";
       if (isDailyGame) {
@@ -6427,14 +6567,32 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
       }
 
       const showRestartSameButton = !isDailyGame;
+      const carryoverStreak = Math.max(0, Math.round(bonusCarryStreak || 0));
+      const carryoverBonus = getStreakBonus(carryoverStreak);
+      const showCarryoverBanner = showRestartSameButton && carryoverStreak > 0;
+      const carryoverBannerHtml = showCarryoverBanner
+        ? `
+          <div class="streak-carryover-banner" role="status" aria-live="polite">
+            <span class="streak-carryover-badge">Hot Streak</span>
+            <span><strong>Current Bonus: +${carryoverBonus}.</strong> Keep playing now to keep your streak bonus active.</span>
+          </div>
+        `
+        : '';
+
+      if (showCarryoverBanner) {
+        const shownCount = incrementLocalCounter(STORAGE_KEY_STREAK_CARRYOVER_MSG_SHOWN_COUNT);
+        DBManager.log('Carryover streak message shown', {
+          streak: carryoverStreak,
+          bonus: carryoverBonus,
+          shownCount
+        });
+      }
 
       summaryEl.innerHTML = `
-        <h2>${isDailyGame ? "Daily Challenge Summary" : "Round Summary"}</h2>
+        <h2>${isDailyGame ? "Daily Challenge Summary" : "Game Summary"}</h2>
         <p>You got <strong>${correctCount}</strong> right out of ${QUESTIONS_PER_GAME} (${percent}%).</p>
         <p><strong>Total Score: ${totalScore} points</strong></p>
-        ${categoryHtml}
         <p id="encouraging-verse">${verseObj.text}</p>
-        <p>Great job learning about God's Word!</p>
         ${statsHtml}
         <a id="summary-leaderboard-link"
            style="color: var(--primary);
@@ -6444,8 +6602,9 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
                   margin-top: 10px;">
           🏆 Leaderboard &amp; History
         </a>
+        ${carryoverBannerHtml}
         <div style="margin-top: 30px;">
-          ${showRestartSameButton ? '<button id="restart-same">&#8635; Restart</button>' : ''}
+          ${showRestartSameButton ? '<button id="restart-same">&#9654; Play</button>' : ''}
           <button id="restart-change">&#x1F3E0; Home</button>
         </div>
       `;
@@ -6455,6 +6614,14 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
 
       document.getElementById("restart-same")?.addEventListener("click", () => {
         if (isHighScoreCelebrationActive) return;
+        if (showCarryoverBanner) {
+          const restartClickCount = incrementLocalCounter(STORAGE_KEY_STREAK_CARRYOVER_RESTART_CLICK_COUNT);
+          DBManager.log('Carryover streak restart clicked', {
+            streak: carryoverStreak,
+            bonus: carryoverBonus,
+            restartClickCount
+          });
+        }
         startCountdownThenGame({ mode: currentGameMode, preserveBonusStreak: true });
       });
 
@@ -6575,6 +6742,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("question-container").style.display = "block";
     startCountdownThenGame({ mode: GAME_MODE_DAILY, preserveBonusStreak: false });
   });
+
+  updateDailyChallengeLinkPulse(getLocalDateKey());
+  scheduleDailyChallengePulseReset();
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -6996,7 +7166,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <summary>Bonus Points</summary>
         <ul>
           <li><b>Speed bonus</b> stacks with streak bonus on correct clicks.</li>
-          <li><b>Streak bonus rules:</b> Starts at 3 in a row, increases by tier, caps at streak 10, carries across Restart rounds, and breaks on incorrect answers, timeouts, or returning Home.</li>
+          <li><b>Streak bonus rules:</b> Starts at 3 in a row, increases by tier, caps at streak 10, carries across Play rounds, and breaks on incorrect answers, timeouts, or returning Home.</li>
         </ul>
       </details>
 
