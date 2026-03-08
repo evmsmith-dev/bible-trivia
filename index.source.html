@@ -1015,6 +1015,27 @@
   border-radius: 10px;
 }
 
+.stats-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.stats-card {
+  background: #f8fff8;
+  border: 1px solid #d7ecd8;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.stats-card h4 {
+  margin: 0 0 10px;
+  color: #1b5e20;
+}
+
+.stats-row {
+  margin: 6px 0;
+}
+
 .leaderboard-actions {
   margin-top: 12px;
   padding-top: 12px;
@@ -1086,6 +1107,10 @@
   .leaderboard-tab {
     padding: 10px 8px;
     font-size: 0.95rem;
+  }
+
+  .stats-card {
+    padding: 10px;
   }
 }
 
@@ -3460,10 +3485,11 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     // ==================== INDEXEDDB MANAGER ====================
     const DBManager = (() => {
       const DB_NAME = 'BibleTriviaDB';
-      const DB_VERSION = 1;
+      const DB_VERSION = 2;
       const STORE_HISTORY = 'gameHistory';
       const STORE_SCORES = 'highScores';
       const STORE_SETTINGS = 'settings';
+      const STORE_STATS = 'playerStats';
       
       let db = null;
       let useIndexedDB = true;
@@ -3495,6 +3521,18 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
           if (key === 'difficultyMode') return DIFFICULTY_MODE_KEYS.includes(normalizeDifficultyMode(value));
           if (key === 'roundReviewPreference') return ROUND_REVIEW_PREFERENCE_KEYS.includes(normalizeRoundReviewPreference(value));
           return false;
+        },
+        playerStats: (record) => {
+          if (!record || typeof record !== 'object') return false;
+          if (record.key !== 'lifetime') return false;
+          if (typeof record.totalCorrectClicks !== 'number') return false;
+          if (typeof record.currentStreak !== 'number') return false;
+          if (typeof record.allTimeBestStreak !== 'number') return false;
+          if (typeof record.lastGameMaxStreak !== 'number') return false;
+          if (!record.correctSecondsByMode || typeof record.correctSecondsByMode !== 'object') return false;
+          if (!record.correctCountByMode || typeof record.correctCountByMode !== 'object') return false;
+          if (!record.correctByCategory || typeof record.correctByCategory !== 'object') return false;
+          return true;
         }
       };
 
@@ -3553,6 +3591,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             if (!database.objectStoreNames.contains(STORE_SETTINGS)) {
               database.createObjectStore(STORE_SETTINGS, { keyPath: 'key' });
               log('Created object store: settings');
+            }
+
+            if (!database.objectStoreNames.contains(STORE_STATS)) {
+              const statsStore = database.createObjectStore(STORE_STATS, { keyPath: 'key' });
+              statsStore.createIndex('key', 'key', { unique: true });
+              log('Created object store: playerStats');
             }
           };
         });
@@ -3927,6 +3971,64 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         });
       };
 
+      const savePlayerStats = (statsRecord) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          if (!validators.playerStats(statsRecord)) {
+            log('Invalid player stats rejected', statsRecord);
+            reject(new Error('Invalid player stats'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_STATS], 'readwrite');
+          const store = transaction.objectStore(STORE_STATS);
+          const request = store.put(statsRecord);
+
+          request.onsuccess = () => {
+            log('Player stats saved', { key: statsRecord.key });
+            resolve();
+          };
+
+          request.onerror = () => {
+            log('Failed to save player stats', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const loadPlayerStats = () => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_STATS], 'readonly');
+          const store = transaction.objectStore(STORE_STATS);
+          const request = store.get('lifetime');
+
+          request.onsuccess = () => {
+            const result = request.result || null;
+            if (result && !validators.playerStats(result)) {
+              log('Invalid player stats found in database', result);
+              resolve(null);
+              return;
+            }
+            log('Player stats loaded', result ? 'found' : 'not found');
+            resolve(result);
+          };
+
+          request.onerror = () => {
+            log('Failed to load player stats', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
       // Initialization
       const init = async () => {
         try {
@@ -3970,6 +4072,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         saveSetting,
         loadSetting,
         clearSettings,
+        savePlayerStats,
+        loadPlayerStats,
         log
       };
     })();
@@ -3982,9 +4086,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     let totalScore = 0;
     let gameHistory = [];
     let highScores = [];
+    let playerStats = null;
     let lastRoundReview = [];
     let pendingHighScoreCelebrationScore = null;
     let isHighScoreCelebrationActive = false;
+    let currentGameStreak = 0;
+    let currentGameMaxStreak = 0;
     let timerInterval;
     let timeLeftAtAnswer = 0;
     let difficultyMode = 'medium';  // 'easy' | 'medium' | 'hard' | 'superHard'
@@ -3997,7 +4104,78 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const STORAGE_KEY_HIGHSCORES = "bibleTriviaHighScores";
     const STORAGE_KEY_DIFFICULTY_MODE = "bibleTriviaDifficultyMode";
     const STORAGE_KEY_ROUND_REVIEW_PREFERENCE = "bibleTriviaRoundReviewPreference";
+    const STORAGE_KEY_PLAYER_STATS = "bibleTriviaPlayerStats";
     const FEEDBACK_SHOW_MS = 2200;
+
+    function createZeroedModeMap() {
+      return {
+        easy: 0,
+        medium: 0,
+        hard: 0,
+        superHard: 0
+      };
+    }
+
+    function createDefaultPlayerStats() {
+      return {
+        key: 'lifetime',
+        totalCorrectClicks: 0,
+        correctSecondsByMode: createZeroedModeMap(),
+        correctCountByMode: createZeroedModeMap(),
+        correctByCategory: {
+          'Old Testament': 0,
+          'New Testament': 0,
+          'General': 0
+        },
+        currentStreak: 0,
+        allTimeBestStreak: 0,
+        lastGameMaxStreak: 0
+      };
+    }
+
+    function sanitizePlayerStats(rawStats) {
+      const defaults = createDefaultPlayerStats();
+      const raw = rawStats && typeof rawStats === 'object' ? rawStats : {};
+      const sanitized = {
+        key: 'lifetime',
+        totalCorrectClicks: Number.isFinite(raw.totalCorrectClicks) ? Math.max(0, Math.round(raw.totalCorrectClicks)) : 0,
+        correctSecondsByMode: createZeroedModeMap(),
+        correctCountByMode: createZeroedModeMap(),
+        correctByCategory: {
+          'Old Testament': 0,
+          'New Testament': 0,
+          'General': 0
+        },
+        currentStreak: Number.isFinite(raw.currentStreak) ? Math.max(0, Math.round(raw.currentStreak)) : 0,
+        allTimeBestStreak: Number.isFinite(raw.allTimeBestStreak) ? Math.max(0, Math.round(raw.allTimeBestStreak)) : 0,
+        lastGameMaxStreak: Number.isFinite(raw.lastGameMaxStreak) ? Math.max(0, Math.round(raw.lastGameMaxStreak)) : 0
+      };
+
+      DIFFICULTY_MODE_KEYS.forEach((mode) => {
+        const seconds = raw.correctSecondsByMode?.[mode];
+        const count = raw.correctCountByMode?.[mode];
+        sanitized.correctSecondsByMode[mode] = Number.isFinite(seconds) ? Math.max(0, Math.round(seconds)) : defaults.correctSecondsByMode[mode];
+        sanitized.correctCountByMode[mode] = Number.isFinite(count) ? Math.max(0, Math.round(count)) : defaults.correctCountByMode[mode];
+      });
+
+      ['Old Testament', 'New Testament', 'General'].forEach((category) => {
+        const value = raw.correctByCategory?.[category];
+        sanitized.correctByCategory[category] = Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
+      });
+
+      if (sanitized.allTimeBestStreak < sanitized.currentStreak) {
+        sanitized.allTimeBestStreak = sanitized.currentStreak;
+      }
+
+      return sanitized;
+    }
+
+    function getAverageCorrectSecondsByMode(mode, statsInput = playerStats) {
+      const stats = sanitizePlayerStats(statsInput);
+      const count = stats.correctCountByMode[mode] || 0;
+      if (count === 0) return null;
+      return Math.round((stats.correctSecondsByMode[mode] || 0) / count);
+    }
 
     const incorrectMessages = [
       "Not quite!",
@@ -4202,6 +4380,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
           try {
             gameHistory = await DBManager.loadGameHistory();
             highScores = await DBManager.loadHighScores();
+            const savedStats = await DBManager.loadPlayerStats();
             const savedMode = await DBManager.loadSetting('difficultyMode');
             const savedReviewPref = await DBManager.loadSetting('roundReviewPreference');
             if (savedMode !== null && savedMode !== undefined) {
@@ -4212,7 +4391,9 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             }
 
             highScores = normalizeAndTrimHighScores(highScores);
+            playerStats = sanitizePlayerStats(savedStats);
             await DBManager.replaceHighScores(highScores);
+            await DBManager.savePlayerStats(playerStats);
             DBManager.log('Data loaded from IndexedDB');
           } catch (e) {
             DBManager.log('IndexedDB load failed, falling back to localStorage', e.message);
@@ -4292,6 +4473,17 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       if (savedReviewPref) {
         roundReviewPreference = normalizeRoundReviewPreference(savedReviewPref);
       }
+
+      const savedStats = localStorage.getItem(STORAGE_KEY_PLAYER_STATS);
+      if (savedStats) {
+        try {
+          playerStats = sanitizePlayerStats(JSON.parse(savedStats));
+        } catch (e) {
+          playerStats = createDefaultPlayerStats();
+        }
+      } else {
+        playerStats = createDefaultPlayerStats();
+      }
     }
 
     async function saveData() {
@@ -4299,6 +4491,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         highScores = normalizeAndTrimHighScores(highScores);
         difficultyMode = normalizeDifficultyMode(difficultyMode);
         roundReviewPreference = normalizeRoundReviewPreference(roundReviewPreference);
+        playerStats = sanitizePlayerStats(playerStats);
 
         if (DBManager.isReady()) {
           // Save to IndexedDB
@@ -4314,6 +4507,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             // Save settings - explicitly save difficultyMode
             await DBManager.saveSetting('difficultyMode', difficultyMode);
             await DBManager.saveSetting('roundReviewPreference', roundReviewPreference);
+            await DBManager.savePlayerStats(playerStats);
             DBManager.log('Data saved to IndexedDB');
           } catch (e) {
             DBManager.log('IndexedDB save failed, falling back to localStorage', e.message);
@@ -4334,10 +4528,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       highScores = normalizeAndTrimHighScores(highScores);
       difficultyMode = normalizeDifficultyMode(difficultyMode);
       roundReviewPreference = normalizeRoundReviewPreference(roundReviewPreference);
+      playerStats = sanitizePlayerStats(playerStats);
       localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(gameHistory));
       localStorage.setItem(STORAGE_KEY_HIGHSCORES, JSON.stringify(highScores));
       localStorage.setItem(STORAGE_KEY_DIFFICULTY_MODE, difficultyMode);
       localStorage.setItem(STORAGE_KEY_ROUND_REVIEW_PREFERENCE, roundReviewPreference);
+      localStorage.setItem(STORAGE_KEY_PLAYER_STATS, JSON.stringify(playerStats));
     }
 
     function shuffle(array) {
@@ -4550,6 +4746,8 @@ function selectBalancedQuestions() {
       currentIndex = 0;
       correctCount = 0;
       totalScore = 0;
+      currentGameStreak = 0;
+      currentGameMaxStreak = 0;
       lastRoundReview = [];
       nextQuestion();
     }
@@ -4622,6 +4820,7 @@ function selectBalancedQuestions() {
     function startTimer() {
       const timeLimit = getCurrentTimeLimit();
       let timeLeft = timeLimit;
+      timeLeftAtAnswer = timeLimit;
       timerFill.style.width = "100%";
       timerFill.className = "";
       timerDisplayEl.textContent = Math.ceil(timeLeft);
@@ -4669,6 +4868,43 @@ function selectBalancedQuestions() {
       // to reward quick answers without being too harsh on near-misses
       const bonus = Math.max(0, maxBonus * ((timeLeftAtAnswer + 0.75) / timeLimit));
       return Math.round(base + bonus);
+    }
+
+    function ensurePlayerStatsLoaded() {
+      if (!playerStats) {
+        playerStats = createDefaultPlayerStats();
+      }
+      playerStats = sanitizePlayerStats(playerStats);
+    }
+
+    function registerCorrectAnswerStats(question, elapsedSecondsRounded) {
+      ensurePlayerStatsLoaded();
+      const mode = normalizeDifficultyMode(difficultyMode);
+      const category = question?.category;
+
+      playerStats.totalCorrectClicks += 1;
+      playerStats.correctCountByMode[mode] += 1;
+      playerStats.correctSecondsByMode[mode] += Math.max(0, Math.round(elapsedSecondsRounded));
+
+      if (category && playerStats.correctByCategory[category] !== undefined) {
+        playerStats.correctByCategory[category] += 1;
+      }
+
+      playerStats.currentStreak += 1;
+      if (playerStats.currentStreak > playerStats.allTimeBestStreak) {
+        playerStats.allTimeBestStreak = playerStats.currentStreak;
+      }
+
+      currentGameStreak += 1;
+      if (currentGameStreak > currentGameMaxStreak) {
+        currentGameMaxStreak = currentGameStreak;
+      }
+    }
+
+    function registerIncorrectAnswerStats() {
+      ensurePlayerStatsLoaded();
+      playerStats.currentStreak = 0;
+      currentGameStreak = 0;
     }
 
     function showFeedback(message, className) {
@@ -4797,11 +5033,14 @@ function celebrateNewHighScore(score) {
       if (isCorrect) {
         selectedBtn.classList.add("correct");
         const points = calculatePoints();
+        const elapsedSeconds = Math.round(Math.max(0, getCurrentTimeLimit() - timeLeftAtAnswer));
+        registerCorrectAnswerStats(q, elapsedSeconds);
         totalScore += points;
         showFeedback(`+${points} pts`, "correct");
         correctCount++;
         confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
       } else {
+        registerIncorrectAnswerStats();
         selectedBtn.classList.add("incorrect");
         showFeedback(getRandomIncorrectMessage(), "incorrect");
       }
@@ -4822,6 +5061,7 @@ function celebrateNewHighScore(score) {
 
     function handleTimeout() {
       stopTimer();
+      registerIncorrectAnswerStats();
       const buttons = optionsEl.querySelectorAll(".option");
       buttons.forEach(b => b.onclick = null);
 
@@ -4995,6 +5235,60 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
   `;
 }
 
+function buildLifetimeStatsHtml(stats) {
+  const normalized = sanitizePlayerStats(stats);
+  const modeEmojis = { easy: '🟢', medium: '🟠', hard: '🔴', superHard: '⚫' };
+  const modeNames = { easy: 'Easy', medium: 'Medium', hard: 'Hard', superHard: 'Super Hard' };
+
+  let timingRows = '';
+  DIFFICULTY_MODE_KEYS.forEach((mode) => {
+    const avg = getAverageCorrectSecondsByMode(mode, normalized);
+    const count = normalized.correctCountByMode[mode] || 0;
+    timingRows += `
+      <tr>
+        <td>${modeEmojis[mode]} ${modeNames[mode]}</td>
+        <td>${avg === null ? '-' : `${avg}s`}</td>
+        <td>${count}</td>
+      </tr>
+    `;
+  });
+
+  return `
+    <div class="stats-grid">
+      <article class="stats-card">
+        <h4>Average Correct Answer Time</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Mode</th>
+              <th>Avg Time</th>
+              <th>Correct</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${timingRows}
+          </tbody>
+        </table>
+      </article>
+
+      <article class="stats-card">
+        <h4>Correct Answers by Category</h4>
+        <p class="stats-row"><strong>Old Testament:</strong> ${normalized.correctByCategory['Old Testament']}</p>
+        <p class="stats-row"><strong>New Testament:</strong> ${normalized.correctByCategory['New Testament']}</p>
+        <p class="stats-row"><strong>General:</strong> ${normalized.correctByCategory['General']}</p>
+        <p class="stats-row"><strong>Total Correct:</strong> ${normalized.totalCorrectClicks}</p>
+      </article>
+
+      <article class="stats-card">
+        <h4>Correct-Answer Streaks</h4>
+        <p class="stats-row"><strong>Current:</strong> ${normalized.currentStreak}</p>
+        <p class="stats-row"><strong>Last Game Max:</strong> ${normalized.lastGameMaxStreak}</p>
+        <p class="stats-row"><strong>All-Time Best:</strong> ${normalized.allTimeBestStreak}</p>
+      </article>
+    </div>
+  `;
+}
+
 
     async function endGame() {
       setQuestionHeaderVisible(false);
@@ -5008,6 +5302,9 @@ function buildGameHistoryHtml(history, { withDetails = true } = {}) {
         percent: percent,
         difficultyMode: normalizeDifficultyMode(difficultyMode)
       });
+
+      ensurePlayerStatsLoaded();
+      playerStats.lastGameMaxStreak = currentGameMaxStreak;
 
       await saveData();
       await reloadGameHistory();
@@ -5175,6 +5472,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const panels = document.querySelectorAll("#leaderboard-overlay .leaderboard-panel");
   const topScoresContent = document.getElementById("welcome-leaderboard-content");
   const historyContent = document.getElementById("welcome-history-content");
+  const statsContent = document.getElementById("welcome-stats-content");
   const clearHistoryOverlayBtn = document.getElementById("clear-history-overlay");
   const leaderboardStatus = document.getElementById("leaderboard-status");
   let leaderboardStatusTimer = null;
@@ -5205,6 +5503,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (historyContent) {
       historyContent.innerHTML = buildGameHistoryHtml(gameHistory, { withDetails: false });
+    }
+
+    if (statsContent) {
+      statsContent.innerHTML = buildLifetimeStatsHtml(playerStats);
     }
   };
 
@@ -5250,7 +5552,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   clearHistoryOverlayBtn?.addEventListener("click", async () => {
-    const confirmed = confirm('Clear all saved high scores and game history? This cannot be undone.');
+    const confirmed = confirm('Clear all saved high scores and game history? Lifetime stats will be kept. This cannot be undone.');
     if (!confirmed) return;
 
     gameHistory = [];
@@ -5280,7 +5582,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    showLeaderboardStatus('Scores and history cleared.', 'success');
+    showLeaderboardStatus('Scores and history cleared. Lifetime stats were kept.', 'success');
   });
 });
 
@@ -5461,6 +5763,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="leaderboard-tabs" role="tablist" aria-label="Leaderboard views">
       <button class="leaderboard-tab active" role="tab" data-panel="leaderboard-top-scores" aria-selected="true">Top Scores</button>
       <button class="leaderboard-tab" role="tab" data-panel="leaderboard-history" aria-selected="false">Game History</button>
+      <button class="leaderboard-tab" role="tab" data-panel="leaderboard-stats" aria-selected="false">Stats</button>
     </div>
 
     <section id="leaderboard-top-scores" class="leaderboard-panel active" role="tabpanel">
@@ -5469,6 +5772,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     <section id="leaderboard-history" class="leaderboard-panel" role="tabpanel">
       <div id="welcome-history-content"></div>
+    </section>
+
+    <section id="leaderboard-stats" class="leaderboard-panel" role="tabpanel">
+      <div id="welcome-stats-content"></div>
     </section>
 
     <div class="leaderboard-actions">
