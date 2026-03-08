@@ -940,6 +940,45 @@
   line-height: 1.5;
 }
 
+#how-to-play-overlay .howto-section {
+  border: 1px solid #d9e9da;
+  border-radius: 14px;
+  background: #f7fff7;
+  margin: 0 0 10px;
+  overflow: hidden;
+}
+
+#how-to-play-overlay .howto-section summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+  color: #1e4c24;
+  padding: 12px 14px;
+}
+
+#how-to-play-overlay .howto-section summary::-webkit-details-marker {
+  display: none;
+}
+
+#how-to-play-overlay .howto-section summary::after {
+  content: '+';
+  float: right;
+  font-size: 1.1rem;
+}
+
+#how-to-play-overlay .howto-section[open] summary::after {
+  content: '-';
+}
+
+#how-to-play-overlay .howto-section ul {
+  margin: 0;
+  padding: 0 24px 14px 36px;
+}
+
+#how-to-play-overlay .howto-section li {
+  margin: 8px 0;
+}
+
 #how-to-play-overlay .overlay-close {
   position: absolute;
   top: 10px;
@@ -4495,6 +4534,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const STORAGE_KEY_DAILY_CHALLENGES = "bibleTriviaDailyChallenges";
     const FEEDBACK_SHOW_MS = 2200;
     const DAILY_SUCCESS_PERCENT = 70;
+    const DAILY_BASE_BONUS_MULTIPLIER = 0.05;
     const STREAK_BONUS_CAP = 10;
     const STREAK_BONUS_TABLE = {
       3: 25,
@@ -4733,6 +4773,21 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       return currentGameMode === GAME_MODE_DAILY
         ? DAILY_CHALLENGE_DIFFICULTY_MODE
         : normalizeDifficultyMode(difficultyMode);
+    }
+
+    function isDailyBaseBonusActive(dateKey = getLocalDateKey()) {
+      ensureDailyDataLoaded();
+      const normalizedDateKey = String(dateKey || '').trim() || getLocalDateKey();
+      const record = sanitizeDailyChallengeRecord(dailyChallengeMap[normalizedDateKey] || null);
+      return Boolean(record.dateKey && record.completed);
+    }
+
+    function getDailyBaseBonusPoints(basePoints) {
+      const safeBasePoints = Number.isFinite(basePoints) ? Math.max(0, basePoints) : 0;
+      if (!safeBasePoints || !isDailyBaseBonusActive()) {
+        return 0;
+      }
+      return Math.round(safeBasePoints * DAILY_BASE_BONUS_MULTIPLIER);
     }
 
     const incorrectMessages = [
@@ -5607,6 +5662,7 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
       // Scoring is base + speed bonus + streak bonus.
       const activeMode = getActiveDifficultyMode();
       const base = modeBase[activeMode] || 100;
+      const dailyBaseBonus = getDailyBaseBonusPoints(base);
       const maxBonus = base;
       const timeLimit = getCurrentTimeLimit();
       const speedBonus = Math.max(0, maxBonus * ((timeLeftAtAnswer + 0.75) / timeLimit));
@@ -5614,9 +5670,10 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
       const roundedStreakBonus = Math.max(0, Math.round(streakBonus));
       return {
         base,
+        dailyBaseBonus,
         speedBonus: roundedSpeedBonus,
         streakBonus: roundedStreakBonus,
-        total: Math.round(base + roundedSpeedBonus + roundedStreakBonus)
+        total: Math.round(base + dailyBaseBonus + roundedSpeedBonus + roundedStreakBonus)
       };
     }
 
@@ -6133,14 +6190,14 @@ function renderWelcomeDailyCard() {
   const todayKey = getLocalDateKey();
   const todayRecord = sanitizeDailyChallengeRecord(dailyChallengeMap[todayKey] || null);
   const statusText = getDailyChallengeStatusText(todayRecord.dateKey ? todayRecord : null);
-  const bestText = todayRecord.bestScore > 0 ? todayRecord.bestScore : '-';
   const isCompletedToday = Boolean(todayRecord.dateKey && todayRecord.completed);
+  const isDailyBonusActive = isDailyBaseBonusActive(todayKey);
 
   statusEl.innerHTML = [
     `<strong>${todayKey}</strong>`,
     `Status: ${statusText}`,
-    `Best Today: ${bestText}`,
-    `Daily Streak: ${dailyStats.currentDailyStreak}`
+    `Daily Streak: ${dailyStats.currentDailyStreak}`,
+    `Point Bonus: ${isDailyBonusActive ? 'Active (+5% base/question)' : 'Inactive'}`
   ].join('<br>');
 
   if (dailyStartBtn) {
@@ -6182,7 +6239,7 @@ function buildDailyLeaderboardHtml(challenges, stats) {
         <h4>Daily Streak</h4>
         <p class="stats-row"><strong>Current:</strong> ${sanitizedStats.currentDailyStreak}</p>
         <p class="stats-row"><strong>Best:</strong> ${sanitizedStats.bestDailyStreak}</p>
-        <p class="stats-row"><strong>Successful Completions (>=70%):</strong> ${successfulCompletions} 🏅</p>
+        <p class="stats-row"><strong>Total Wins:</strong> ${successfulCompletions} 🏅</p>
         <p class="stats-row"><strong>Total Attempts:</strong> ${sanitizedStats.totalDailyAttempts}</p>
       </article>
 
@@ -6367,12 +6424,9 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
           <p style="font-size:1.1rem; margin-top:8px;"><strong>${completionText}</strong></p>
           <p style="font-size:1.2rem;"><strong>Daily Streak:</strong> ${dailyStats.currentDailyStreak} (Best ${dailyStats.bestDailyStreak})</p>
         `;
-      } else if (gameHistory.length > 0) {
-        const scores = gameHistory.map(g => g.score);
-        const avg = Math.round(scores.reduce((a,b)=>a+b,0) / scores.length);
-        const best = Math.max(...scores);
-        statsHtml = `<p style="font-size:1.4rem; margin-top:16px;"><strong>Average Score: ${avg}</strong> • Best Score: ${best}</p>`;
       }
+
+      const showRestartSameButton = !isDailyGame;
 
       summaryEl.innerHTML = `
         <h2>${isDailyGame ? "Daily Challenge Summary" : "Round Summary"}</h2>
@@ -6391,7 +6445,7 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
           🏆 Leaderboard &amp; History
         </a>
         <div style="margin-top: 30px;">
-          <button id="restart-same">&#8635; Restart</button>
+          ${showRestartSameButton ? '<button id="restart-same">&#8635; Restart</button>' : ''}
           <button id="restart-change">&#x1F3E0; Home</button>
         </div>
       `;
@@ -6403,16 +6457,6 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
         if (isHighScoreCelebrationActive) return;
         startCountdownThenGame({ mode: currentGameMode, preserveBonusStreak: true });
       });
-
-      if (isDailyGame && isDailySuccess) {
-        const restartBtn = document.getElementById("restart-same");
-        if (restartBtn) {
-          restartBtn.disabled = true;
-          restartBtn.textContent = "Daily Completed";
-          restartBtn.style.opacity = "0.65";
-          restartBtn.style.cursor = "not-allowed";
-        }
-      }
 
       document.getElementById("restart-change").addEventListener("click", () => {
         if (isHighScoreCelebrationActive) return;
@@ -6538,11 +6582,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const howToPlayOverlay = document.getElementById("how-to-play-overlay");
   const howToPlayClose = document.querySelector("#how-to-play-overlay .overlay-close");
   const howToPlayBackdrop = document.querySelector("#how-to-play-overlay .overlay-backdrop");
+  const howToPlaySections = document.querySelectorAll("#how-to-play-overlay .howto-section");
 
   if (!howToPlayLink) return; // safety guard
 
+  const collapseHowToSections = () => {
+    howToPlaySections.forEach((section) => section.removeAttribute("open"));
+  };
+
   // Open overlay
   howToPlayLink.addEventListener("click", () => {
+    collapseHowToSections();
     howToPlayOverlay.style.display = "flex";
   });
 
@@ -6923,22 +6973,42 @@ document.addEventListener("DOMContentLoaded", () => {
     <h2>Game Play</h2>
 
     <div class="overlay-content">
-      <ul>
-        <li><b>10 questions per game</b> — Time varies by difficulty mode</li>
-        <li><b>Choose your difficulty mode:</b> Easy, Medium, Hard, or Super Hard</li>
-        <li><b>Mode-based scoring & timing:</b>
-          <ul style="margin-top: 8px;">
-            <li>🟢 Easy: 50 pts/question, 25 seconds (max 500 per game)</li>
-            <li>🟠 Medium: 100 pts/question, 25 seconds (max 1000 per game)</li>
-            <li>🔴 Hard: 150 pts/question, 21 seconds (max 1500 per game)</li>
-            <li>⚫ Super Hard: 250 pts/question, 18 seconds (max 2500 per game) — Elite Challenge!</li>
-          </ul>
-        </li>
-        <li><b>Bonus points:</b> Speed bonus stacks with streak bonus on correct clicks.</li>
-        <li><b>Streak bonus rules:</b> Starts at 3 in a row, increases by tier, caps at streak 10, carries across Restart rounds, and breaks on incorrect answers, timeouts, or returning Home.</li>
-        <li><b>Daily Challenge:</b> One deterministic challenge per local day, replayable for a better score; daily streak increases on first completion of each day.</li>
-        <li><b>Questions:</b> 1000+ questions across Old Testament, New Testament, and General categories</li>
-      </ul>
+      <details class="howto-section">
+        <summary>Game Basics</summary>
+        <ul>
+          <li><b>10 questions per game</b> — Time varies by difficulty mode.</li>
+          <li><b>Choose your difficulty mode:</b> Easy, Medium, Hard, or Super Hard.</li>
+          <li><b>Question pool:</b> 1000+ questions across Old Testament, New Testament, and General categories.</li>
+        </ul>
+      </details>
+
+      <details class="howto-section">
+        <summary>Mode Scoring And Timing</summary>
+        <ul>
+          <li>🟢 Easy: 50 pts/question, 25 seconds (max 500 per game).</li>
+          <li>🟠 Medium: 100 pts/question, 25 seconds (max 1000 per game).</li>
+          <li>🔴 Hard: 150 pts/question, 21 seconds (max 1500 per game).</li>
+          <li>⚫ Super Hard: 250 pts/question, 18 seconds (max 2500 per game) - Elite Challenge.</li>
+        </ul>
+      </details>
+
+      <details class="howto-section">
+        <summary>Bonus Points</summary>
+        <ul>
+          <li><b>Speed bonus</b> stacks with streak bonus on correct clicks.</li>
+          <li><b>Streak bonus rules:</b> Starts at 3 in a row, increases by tier, caps at streak 10, carries across Restart rounds, and breaks on incorrect answers, timeouts, or returning Home.</li>
+        </ul>
+      </details>
+
+      <details class="howto-section">
+        <summary>Daily Challenge</summary>
+        <ul>
+          <li>One challenge per day.</li>
+          <li>Daily streak increases on first completion of each day.</li>
+          <li>Reach 70%+ in the Daily Challenge to activate a <b>+5% bonus on base points per correct answer</b> for the rest of that day.</li>
+          <li>The daily +5% base-point bonus resets when the next day starts.</li>
+        </ul>
+      </details>
     </div>
   </div>
 </div>
