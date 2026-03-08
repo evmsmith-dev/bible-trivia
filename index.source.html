@@ -63,6 +63,55 @@
       margin-bottom: 8px;
     }
 
+    #streak-hud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 4px 0 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .streak-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #b7d9b9;
+      background: #f2fff2;
+      color: #1b5e20;
+      line-height: 1.2;
+    }
+
+    .streak-chip.is-bonus {
+      border-color: #ffe082;
+      background: #fff8e1;
+      color: #e65100;
+    }
+
+    .streak-chip.is-next {
+      border-color: #90caf9;
+      background: #e3f2fd;
+      color: #0d47a1;
+    }
+
+    #streak-hud.bump .streak-chip {
+      animation: streakChipPulse 420ms ease;
+    }
+
+    @keyframes streakChipPulse {
+      0% {
+        transform: scale(1);
+      }
+      40% {
+        transform: scale(1.08);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
     #progress-dots {
       font-size: 2.2rem;
       letter-spacing: 6px;
@@ -244,7 +293,22 @@
       box-shadow: 0 12px 48px rgba(0,0,0,0.35);
       opacity: 0;
       transition: opacity 0.6s ease, transform 0.4s ease;
-      white-space: nowrap;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      overflow-wrap: anywhere;
+    }
+
+    #feedback .feedback-main {
+      line-height: 1.05;
+    }
+
+    #feedback .feedback-detail {
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.15;
+      opacity: 0.95;
     }
 
     #feedback.visible {
@@ -615,6 +679,89 @@
     #welcome h2 { font-size: 2.6rem; color: var(--accent); margin: 0.4em 0; }
     #welcome p  { font-size: 1.4rem; color: #424242; line-height: 1.5; }
 
+    #daily-challenge-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #daily-challenge-overlay .overlay-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+    }
+
+    #daily-challenge-overlay .overlay-card {
+      position: relative;
+      background: white;
+      padding: 24px 26px;
+      border-radius: 20px;
+      max-width: 520px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      z-index: 2;
+      text-align: left;
+      border: 2px solid #c8e6c9;
+    }
+
+    #daily-challenge-overlay h2 {
+      margin-top: 0;
+      color: var(--primary);
+      font-size: 2rem;
+    }
+
+    #daily-challenge-overlay .daily-overlay-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    #daily-challenge-status {
+      margin: 0;
+      color: #2e7d32;
+      font-size: 1.08rem;
+      font-weight: 600;
+      line-height: 1.4;
+      background: #f5fff6;
+      border: 1px solid #c8e6c9;
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    #daily-start-btn {
+      width: 100%;
+      margin-top: 12px;
+      font-size: 1.2rem;
+      padding: 14px 22px;
+      border-radius: 12px;
+      background: #2e7d32;
+      box-shadow: 0 8px 20px rgba(46,125,50,0.28);
+    }
+
+    #daily-start-btn:hover {
+      background: #1b5e20;
+    }
+
+    #daily-start-btn:disabled {
+      background: #b0bec5;
+      box-shadow: none;
+      cursor: not-allowed;
+      color: #eceff1;
+    }
+
     #start-btn {
       background: var(--accent);
       color: #333;
@@ -717,6 +864,7 @@
       .option { font-size: 1.25rem; padding: 18px 16px; min-height: 70px; }
       button { width: 100%; margin: 10px 0; padding: 16px; font-size: 1.4rem; }
       #feedback { font-size: 2.6rem; padding: 20px 36px; min-width: 90%; }
+      #feedback .feedback-detail { display: none; }
       #options { gap: 8px; }
       #progress-dots { font-size: 1.8rem; letter-spacing: 4px; }
       #progress-dots .current { font-size: 2.2rem; }
@@ -1253,13 +1401,23 @@
     <h2>Fun Bible Questions!</h2>
     <p>Test your knowledge of God's Word!</p>
 
+<a id="daily-challenge-link"
+  onclick="document.getElementById('daily-challenge-overlay').style.display='flex'; if (window.refreshDailyChallengeCard) { window.refreshDailyChallengeCard(); } return false;"
+   style="color: var(--primary);
+          font-size: 1.4rem;
+          text-decoration: none;
+          cursor: pointer;
+          display: block;
+          margin-top: 16px;">
+  🎯 Daily Challenge
+</a>
     <button id="start-btn">Start</button>
 <a id="how-to-play-link"
    style="color: var(--primary);
           font-size: 1.4rem;
           cursor: pointer;
           display: block;
-          margin-top: 16px;">
+          margin-top: 10px;">
   Game Play
 </a>
 <a id="settings-link"
@@ -1271,8 +1429,10 @@
   Settings
 </a>
 <a id="leaderboard-link"
+  onclick="document.getElementById('leaderboard-overlay').style.display='flex'; if (window.openLeaderboardOverlay) { window.openLeaderboardOverlay(); } return false;"
    style="color: var(--primary);
           font-size: 1.4rem;
+          text-decoration: none;
           cursor: pointer;
           display: block;
           margin-top: 10px;">
@@ -1284,6 +1444,11 @@
     <header>
       <h1>Bible Trivia</h1>
       <div id="progress">Question 1 of 10 | Correct: 0 | Score: 0</div>
+      <div id="streak-hud" aria-live="polite">
+        <span id="streak-hud-count" class="streak-chip">Streak: 0</span>
+        <span id="streak-hud-bonus" class="streak-chip is-bonus">Bonus: +0</span>
+        <span id="streak-hud-next" class="streak-chip is-next">Next bonus at 3</span>
+      </div>
       <div id="progress-dots"></div>
       <div id="timer-display" class="green">25</div>
       <div id="timer-bar"><div id="timer-fill"></div></div>
@@ -1302,6 +1467,19 @@
     <div id="round-review" style="display:none;"></div>
 
     <div id="feedback"></div>
+  </div>
+
+  <!-- Daily Challenge Overlay -->
+  <div id="daily-challenge-overlay" style="display:none;">
+    <div class="overlay-backdrop"></div>
+
+    <div class="overlay-card">
+      <button class="daily-overlay-close overlay-close-button">x</button>
+
+      <h2>🎯 Daily Challenge</h2>
+      <p id="daily-challenge-status">Loading today's challenge...</p>
+      <button id="daily-start-btn" type="button">Start Today's Challenge</button>
+    </div>
   </div>
 
   <script>
@@ -3414,6 +3592,20 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 { "q": "Which Old Testament figures are cited in Hebrews as stopping the mouths of lions, quenching fire, and escaping the sword?", "opts": ["Unnamed heroes of faith", "Daniel and his friends", "Elijah and Elisha", "David and Jonathan"], "ans": 0, "ref": "Hebrews 11:32-34", "category": "General", "difficulty": "hard" }
 ];
 
+    allQuestions.forEach((question, index) => {
+      if (!Object.prototype.hasOwnProperty.call(question, 'id')) {
+        question.id = index + 1;
+      }
+    });
+
+    const allQuestionsById = new Map(allQuestions.map((question) => [question.id, question]));
+
+    const GAME_MODE_NORMAL = 'normal';
+    const GAME_MODE_DAILY = 'daily';
+    const DAILY_CHALLENGE_MODE_VERSION = 'v1';
+    const DAILY_CHALLENGE_DIFFICULTY_MODE = 'medium';
+    const DAILY_CHALLENGE_RECENT_LIMIT = 30;
+
     const DIFFICULTY_MODE_KEYS = ['easy', 'medium', 'hard', 'superHard'];
     const ROUND_REVIEW_PREFERENCE_KEYS = ['ask', 'alwaysReview', 'alwaysSkip'];
 
@@ -3485,11 +3677,13 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     // ==================== INDEXEDDB MANAGER ====================
     const DBManager = (() => {
       const DB_NAME = 'BibleTriviaDB';
-      const DB_VERSION = 2;
+      const DB_VERSION = 3;
       const STORE_HISTORY = 'gameHistory';
       const STORE_SCORES = 'highScores';
       const STORE_SETTINGS = 'settings';
       const STORE_STATS = 'playerStats';
+      const STORE_DAILY_CHALLENGES = 'dailyChallenges';
+      const STORE_DAILY_STATS = 'dailyStats';
       
       let db = null;
       let useIndexedDB = true;
@@ -3532,6 +3726,29 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
           if (!record.correctSecondsByMode || typeof record.correctSecondsByMode !== 'object') return false;
           if (!record.correctCountByMode || typeof record.correctCountByMode !== 'object') return false;
           if (!record.correctByCategory || typeof record.correctByCategory !== 'object') return false;
+          return true;
+        },
+        dailyChallenge: (record) => {
+          if (!record || typeof record !== 'object') return false;
+          if (typeof record.dateKey !== 'string' || !record.dateKey.trim()) return false;
+          if (typeof record.seed !== 'string') return false;
+          if (!Array.isArray(record.questionIds)) return false;
+          if (typeof record.attempts !== 'number') return false;
+          if (typeof record.bestScore !== 'number') return false;
+          if (typeof record.lastScore !== 'number') return false;
+          if (typeof record.completed !== 'boolean') return false;
+          if (!(record.completedAt === null || typeof record.completedAt === 'string')) return false;
+          if (typeof record.modeVersion !== 'string') return false;
+          return true;
+        },
+        dailyStats: (record) => {
+          if (!record || typeof record !== 'object') return false;
+          if (record.key !== 'lifetime') return false;
+          if (typeof record.currentDailyStreak !== 'number') return false;
+          if (typeof record.bestDailyStreak !== 'number') return false;
+          if (!(record.lastCompletedDateKey === null || typeof record.lastCompletedDateKey === 'string')) return false;
+          if (typeof record.totalDailyCompletions !== 'number') return false;
+          if (typeof record.totalDailyAttempts !== 'number') return false;
           return true;
         }
       };
@@ -3597,6 +3814,19 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
               const statsStore = database.createObjectStore(STORE_STATS, { keyPath: 'key' });
               statsStore.createIndex('key', 'key', { unique: true });
               log('Created object store: playerStats');
+            }
+
+            if (!database.objectStoreNames.contains(STORE_DAILY_CHALLENGES)) {
+              const dailyChallengesStore = database.createObjectStore(STORE_DAILY_CHALLENGES, { keyPath: 'dateKey' });
+              dailyChallengesStore.createIndex('completedAt', 'completedAt', { unique: false });
+              dailyChallengesStore.createIndex('bestScore', 'bestScore', { unique: false });
+              log('Created object store: dailyChallenges');
+            }
+
+            if (!database.objectStoreNames.contains(STORE_DAILY_STATS)) {
+              const dailyStatsStore = database.createObjectStore(STORE_DAILY_STATS, { keyPath: 'key' });
+              dailyStatsStore.createIndex('key', 'key', { unique: true });
+              log('Created object store: dailyStats');
             }
           };
         });
@@ -4029,6 +4259,149 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         });
       };
 
+      const saveDailyChallenge = (record) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          if (!validators.dailyChallenge(record)) {
+            log('Invalid daily challenge rejected', record);
+            reject(new Error('Invalid daily challenge'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_DAILY_CHALLENGES], 'readwrite');
+          const store = transaction.objectStore(STORE_DAILY_CHALLENGES);
+          const request = store.put(record);
+
+          request.onsuccess = () => {
+            log('Daily challenge saved', { dateKey: record.dateKey });
+            resolve();
+          };
+
+          request.onerror = () => {
+            log('Failed to save daily challenge', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const loadDailyChallenge = (dateKey) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_DAILY_CHALLENGES], 'readonly');
+          const store = transaction.objectStore(STORE_DAILY_CHALLENGES);
+          const request = store.get(dateKey);
+
+          request.onsuccess = () => {
+            const result = request.result || null;
+            if (result && !validators.dailyChallenge(result)) {
+              log('Invalid daily challenge found in database', result);
+              resolve(null);
+              return;
+            }
+            log('Daily challenge loaded', { dateKey, found: Boolean(result) });
+            resolve(result);
+          };
+
+          request.onerror = () => {
+            log('Failed to load daily challenge', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const listRecentDailyChallenges = (limit = 30) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_DAILY_CHALLENGES], 'readonly');
+          const store = transaction.objectStore(STORE_DAILY_CHALLENGES);
+          const request = store.getAll();
+
+          request.onsuccess = () => {
+            const sanitized = request.result
+              .filter((record) => validators.dailyChallenge(record))
+              .sort((a, b) => String(b.dateKey).localeCompare(String(a.dateKey)))
+              .slice(0, Math.max(1, Math.round(limit)));
+            log('Recent daily challenges loaded', sanitized.length + ' records');
+            resolve(sanitized);
+          };
+
+          request.onerror = () => {
+            log('Failed to list daily challenges', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const saveDailyStats = (record) => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          if (!validators.dailyStats(record)) {
+            log('Invalid daily stats rejected', record);
+            reject(new Error('Invalid daily stats'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_DAILY_STATS], 'readwrite');
+          const store = transaction.objectStore(STORE_DAILY_STATS);
+          const request = store.put(record);
+
+          request.onsuccess = () => {
+            log('Daily stats saved', { key: record.key });
+            resolve();
+          };
+
+          request.onerror = () => {
+            log('Failed to save daily stats', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
+      const loadDailyStats = () => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_DAILY_STATS], 'readonly');
+          const store = transaction.objectStore(STORE_DAILY_STATS);
+          const request = store.get('lifetime');
+
+          request.onsuccess = () => {
+            const result = request.result || null;
+            if (result && !validators.dailyStats(result)) {
+              log('Invalid daily stats found in database', result);
+              resolve(null);
+              return;
+            }
+            log('Daily stats loaded', result ? 'found' : 'not found');
+            resolve(result);
+          };
+
+          request.onerror = () => {
+            log('Failed to load daily stats', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
       // Initialization
       const init = async () => {
         try {
@@ -4074,6 +4447,11 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         clearSettings,
         savePlayerStats,
         loadPlayerStats,
+        saveDailyChallenge,
+        loadDailyChallenge,
+        listRecentDailyChallenges,
+        saveDailyStats,
+        loadDailyStats,
         log
       };
     })();
@@ -4087,11 +4465,18 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     let gameHistory = [];
     let highScores = [];
     let playerStats = null;
+    let dailyStats = null;
+    let dailyChallengeMap = {};
+    let currentGameMode = GAME_MODE_NORMAL;
+    let activeDailyChallengeDateKey = null;
+    let activeDailyChallengeRecord = null;
     let lastRoundReview = [];
     let pendingHighScoreCelebrationScore = null;
+    let pendingDailyCompletionCelebration = false;
     let isHighScoreCelebrationActive = false;
     let currentGameStreak = 0;
     let currentGameMaxStreak = 0;
+    let bonusCarryStreak = 0;
     let timerInterval;
     let timeLeftAtAnswer = 0;
     let difficultyMode = 'medium';  // 'easy' | 'medium' | 'hard' | 'superHard'
@@ -4102,10 +4487,25 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const MAX_HIGH_SCORES_SHOWN = 5;
     const STORAGE_KEY_HISTORY = "bibleTriviaHistory";
     const STORAGE_KEY_HIGHSCORES = "bibleTriviaHighScores";
+    const STORAGE_KEY_HARD_TOGGLE = "bibleTriviaIncludeHard";
     const STORAGE_KEY_DIFFICULTY_MODE = "bibleTriviaDifficultyMode";
     const STORAGE_KEY_ROUND_REVIEW_PREFERENCE = "bibleTriviaRoundReviewPreference";
     const STORAGE_KEY_PLAYER_STATS = "bibleTriviaPlayerStats";
+    const STORAGE_KEY_DAILY_STATS = "bibleTriviaDailyStats";
+    const STORAGE_KEY_DAILY_CHALLENGES = "bibleTriviaDailyChallenges";
     const FEEDBACK_SHOW_MS = 2200;
+    const DAILY_SUCCESS_PERCENT = 70;
+    const STREAK_BONUS_CAP = 10;
+    const STREAK_BONUS_TABLE = {
+      3: 25,
+      4: 50,
+      5: 80,
+      6: 115,
+      7: 150,
+      8: 185,
+      9: 220,
+      10: 260
+    };
 
     function createZeroedModeMap() {
       return {
@@ -4177,6 +4577,164 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       return Math.round((stats.correctSecondsByMode[mode] || 0) / count);
     }
 
+    function createDefaultDailyStats() {
+      return {
+        key: 'lifetime',
+        currentDailyStreak: 0,
+        bestDailyStreak: 0,
+        lastCompletedDateKey: null,
+        totalDailyCompletions: 0,
+        totalDailyAttempts: 0
+      };
+    }
+
+    function sanitizeDailyStats(rawStats) {
+      const raw = rawStats && typeof rawStats === 'object' ? rawStats : {};
+      const sanitized = {
+        key: 'lifetime',
+        currentDailyStreak: Number.isFinite(raw.currentDailyStreak) ? Math.max(0, Math.round(raw.currentDailyStreak)) : 0,
+        bestDailyStreak: Number.isFinite(raw.bestDailyStreak) ? Math.max(0, Math.round(raw.bestDailyStreak)) : 0,
+        lastCompletedDateKey: typeof raw.lastCompletedDateKey === 'string' && raw.lastCompletedDateKey ? raw.lastCompletedDateKey : null,
+        totalDailyCompletions: Number.isFinite(raw.totalDailyCompletions) ? Math.max(0, Math.round(raw.totalDailyCompletions)) : 0,
+        totalDailyAttempts: Number.isFinite(raw.totalDailyAttempts) ? Math.max(0, Math.round(raw.totalDailyAttempts)) : 0
+      };
+
+      if (sanitized.bestDailyStreak < sanitized.currentDailyStreak) {
+        sanitized.bestDailyStreak = sanitized.currentDailyStreak;
+      }
+
+      return sanitized;
+    }
+
+    function sanitizeDailyChallengeRecord(rawRecord) {
+      const raw = rawRecord && typeof rawRecord === 'object' ? rawRecord : {};
+      const questionIds = Array.isArray(raw.questionIds)
+        ? raw.questionIds.filter((id) => Number.isFinite(id)).map((id) => Math.round(id))
+        : [];
+
+      return {
+        dateKey: String(raw.dateKey || '').trim(),
+        seed: String(raw.seed || ''),
+        questionIds,
+        attempts: Number.isFinite(raw.attempts) ? Math.max(0, Math.round(raw.attempts)) : 0,
+        bestScore: Number.isFinite(raw.bestScore) ? Math.max(0, Math.round(raw.bestScore)) : 0,
+        lastScore: Number.isFinite(raw.lastScore) ? Math.max(0, Math.round(raw.lastScore)) : 0,
+        completed: Boolean(raw.completed),
+        completedAt: raw.completedAt ? String(raw.completedAt) : null,
+        modeVersion: String(raw.modeVersion || DAILY_CHALLENGE_MODE_VERSION)
+      };
+    }
+
+    function sanitizeDailyChallengeMap(rawMap) {
+      const map = rawMap && typeof rawMap === 'object' ? rawMap : {};
+      const sanitized = {};
+      Object.keys(map).forEach((dateKey) => {
+        const record = sanitizeDailyChallengeRecord(map[dateKey]);
+        if (record.dateKey) {
+          sanitized[record.dateKey] = record;
+        }
+      });
+      return sanitized;
+    }
+
+    function createDefaultDailyChallengeRecord(dateKey, questionIds, seed) {
+      return sanitizeDailyChallengeRecord({
+        dateKey,
+        seed,
+        questionIds,
+        attempts: 0,
+        bestScore: 0,
+        lastScore: 0,
+        completed: false,
+        completedAt: null,
+        modeVersion: DAILY_CHALLENGE_MODE_VERSION
+      });
+    }
+
+    function ensureDailyDataLoaded() {
+      dailyStats = sanitizeDailyStats(dailyStats);
+      dailyChallengeMap = sanitizeDailyChallengeMap(dailyChallengeMap);
+    }
+
+    function applyDailyCompletionToStats(dateKey, firstCompletionForDay) {
+      ensureDailyDataLoaded();
+      dailyStats.totalDailyCompletions += firstCompletionForDay ? 1 : 0;
+
+      if (!firstCompletionForDay) {
+        return;
+      }
+
+      const previousDateKey = dailyStats.lastCompletedDateKey;
+      const yesterdayDateKey = getDateKeyOffset(dateKey, -1);
+
+      if (previousDateKey === dateKey) {
+        return;
+      }
+
+      if (previousDateKey && previousDateKey === yesterdayDateKey) {
+        dailyStats.currentDailyStreak += 1;
+      } else {
+        dailyStats.currentDailyStreak = 1;
+      }
+
+      if (dailyStats.currentDailyStreak > dailyStats.bestDailyStreak) {
+        dailyStats.bestDailyStreak = dailyStats.currentDailyStreak;
+      }
+
+      dailyStats.lastCompletedDateKey = dateKey;
+    }
+
+    function getLocalDateKey(dateInput = new Date()) {
+      const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function getDateKeyOffset(dateKey, dayOffset) {
+      if (typeof dateKey !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) {
+        return null;
+      }
+      const [year, month, day] = dateKey.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      date.setDate(date.getDate() + dayOffset);
+      return getLocalDateKey(date);
+    }
+
+    function createDailySeed(dateKey) {
+      return `${dateKey}|${DAILY_CHALLENGE_MODE_VERSION}|daily`;
+    }
+
+    function createSeededRandom(seedText) {
+      let hash = 2166136261;
+      const text = String(seedText || 'daily-seed');
+      for (let i = 0; i < text.length; i++) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+      let state = hash >>> 0;
+      return () => {
+        state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        return state / 4294967296;
+      };
+    }
+
+    function shuffleWithRandom(array, randomFn = Math.random) {
+      const copy = Array.isArray(array) ? [...array] : [];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(randomFn() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function getActiveDifficultyMode() {
+      return currentGameMode === GAME_MODE_DAILY
+        ? DAILY_CHALLENGE_DIFFICULTY_MODE
+        : normalizeDifficultyMode(difficultyMode);
+    }
+
     const incorrectMessages = [
       "Not quite!",
       "Good try!",
@@ -4206,6 +4764,10 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     };
 
     const progressEl      = document.getElementById("progress");
+    const streakHudEl     = document.getElementById("streak-hud");
+    const streakHudCountEl = document.getElementById("streak-hud-count");
+    const streakHudBonusEl = document.getElementById("streak-hud-bonus");
+    const streakHudNextEl  = document.getElementById("streak-hud-next");
     const progressDotsEl  = document.getElementById("progress-dots");
     const timerDisplayEl  = document.getElementById("timer-display");
     const timerFill       = document.getElementById("timer-fill");
@@ -4218,6 +4780,63 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const summaryEl       = document.getElementById("summary");
     const roundReviewEl   = document.getElementById("round-review");
     const questionHeaderEl = document.querySelector("#question-container > header");
+
+    function getCappedStreak(streak) {
+      return Math.min(Math.max(0, Math.round(streak || 0)), STREAK_BONUS_CAP);
+    }
+
+    function getStreakBonus(streak) {
+      const capped = getCappedStreak(streak);
+      if (capped < 3) return 0;
+      return STREAK_BONUS_TABLE[capped] || 0;
+    }
+
+    function getNextStreakBonusInfo(streak) {
+      const current = Math.max(0, Math.round(streak || 0));
+      if (current >= STREAK_BONUS_CAP) {
+        return { label: `Cap reached at ${STREAK_BONUS_CAP}` };
+      }
+
+      const nextStreak = current + 1;
+      const nextBonus = getStreakBonus(nextStreak);
+      if (nextBonus <= 0) {
+        return { label: `Next bonus at 3` };
+      }
+
+      return { label: `Next: +${nextBonus} at ${nextStreak}` };
+    }
+
+    function animateStreakHud() {
+      if (!streakHudEl) return;
+      streakHudEl.classList.remove("bump");
+      void streakHudEl.offsetWidth;
+      streakHudEl.classList.add("bump");
+    }
+
+    function updateStreakHud({ animate = false } = {}) {
+      const streak = Math.max(0, Math.round(bonusCarryStreak || 0));
+      const bonus = getStreakBonus(streak);
+      const nextInfo = getNextStreakBonusInfo(streak);
+
+      if (streakHudCountEl) {
+        streakHudCountEl.textContent = `Streak: ${streak}`;
+      }
+      if (streakHudBonusEl) {
+        streakHudBonusEl.textContent = `Bonus: +${bonus}`;
+      }
+      if (streakHudNextEl) {
+        streakHudNextEl.textContent = nextInfo.label;
+      }
+
+      if (animate) {
+        animateStreakHud();
+      }
+    }
+
+    function resetBonusCarryStreak() {
+      bonusCarryStreak = 0;
+      updateStreakHud();
+    }
 
     function setQuestionHeaderVisible(isVisible) {
       if (!questionHeaderEl) return;
@@ -4326,6 +4945,11 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         pendingHighScoreCelebrationScore = null;
         celebrateNewHighScore(scoreToCelebrate);
       }
+
+      if (pendingDailyCompletionCelebration) {
+        pendingDailyCompletionCelebration = false;
+        celebrateDailyChallengeCompletion();
+      }
     }
 
     function renderRoundReviewScreen() {
@@ -4381,6 +5005,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             gameHistory = await DBManager.loadGameHistory();
             highScores = await DBManager.loadHighScores();
             const savedStats = await DBManager.loadPlayerStats();
+            const savedDailyStats = await DBManager.loadDailyStats();
+            const recentDailyChallenges = await DBManager.listRecentDailyChallenges(DAILY_CHALLENGE_RECENT_LIMIT);
             const savedMode = await DBManager.loadSetting('difficultyMode');
             const savedReviewPref = await DBManager.loadSetting('roundReviewPreference');
             if (savedMode !== null && savedMode !== undefined) {
@@ -4392,8 +5018,13 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
             highScores = normalizeAndTrimHighScores(highScores);
             playerStats = sanitizePlayerStats(savedStats);
+            dailyStats = sanitizeDailyStats(savedDailyStats);
+            dailyChallengeMap = sanitizeDailyChallengeMap(
+              Object.fromEntries((recentDailyChallenges || []).map((record) => [record.dateKey, record]))
+            );
             await DBManager.replaceHighScores(highScores);
             await DBManager.savePlayerStats(playerStats);
+            await DBManager.saveDailyStats(dailyStats);
             DBManager.log('Data loaded from IndexedDB');
           } catch (e) {
             DBManager.log('IndexedDB load failed, falling back to localStorage', e.message);
@@ -4484,6 +5115,30 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       } else {
         playerStats = createDefaultPlayerStats();
       }
+
+      const savedDailyStats = localStorage.getItem(STORAGE_KEY_DAILY_STATS);
+      if (savedDailyStats) {
+        try {
+          dailyStats = sanitizeDailyStats(JSON.parse(savedDailyStats));
+        } catch (e) {
+          dailyStats = createDefaultDailyStats();
+        }
+      } else {
+        dailyStats = createDefaultDailyStats();
+      }
+
+      const savedDailyChallenges = localStorage.getItem(STORAGE_KEY_DAILY_CHALLENGES);
+      if (savedDailyChallenges) {
+        try {
+          dailyChallengeMap = sanitizeDailyChallengeMap(JSON.parse(savedDailyChallenges));
+        } catch (e) {
+          dailyChallengeMap = {};
+        }
+      } else {
+        dailyChallengeMap = {};
+      }
+
+      ensureDailyDataLoaded();
     }
 
     async function saveData() {
@@ -4492,6 +5147,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         difficultyMode = normalizeDifficultyMode(difficultyMode);
         roundReviewPreference = normalizeRoundReviewPreference(roundReviewPreference);
         playerStats = sanitizePlayerStats(playerStats);
+        ensureDailyDataLoaded();
 
         if (DBManager.isReady()) {
           // Save to IndexedDB
@@ -4508,6 +5164,10 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
             await DBManager.saveSetting('difficultyMode', difficultyMode);
             await DBManager.saveSetting('roundReviewPreference', roundReviewPreference);
             await DBManager.savePlayerStats(playerStats);
+            await DBManager.saveDailyStats(dailyStats);
+            for (const record of Object.values(dailyChallengeMap)) {
+              await DBManager.saveDailyChallenge(record);
+            }
             DBManager.log('Data saved to IndexedDB');
           } catch (e) {
             DBManager.log('IndexedDB save failed, falling back to localStorage', e.message);
@@ -4529,11 +5189,14 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       difficultyMode = normalizeDifficultyMode(difficultyMode);
       roundReviewPreference = normalizeRoundReviewPreference(roundReviewPreference);
       playerStats = sanitizePlayerStats(playerStats);
+      ensureDailyDataLoaded();
       localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(gameHistory));
       localStorage.setItem(STORAGE_KEY_HIGHSCORES, JSON.stringify(highScores));
       localStorage.setItem(STORAGE_KEY_DIFFICULTY_MODE, difficultyMode);
       localStorage.setItem(STORAGE_KEY_ROUND_REVIEW_PREFERENCE, roundReviewPreference);
       localStorage.setItem(STORAGE_KEY_PLAYER_STATS, JSON.stringify(playerStats));
+      localStorage.setItem(STORAGE_KEY_DAILY_STATS, JSON.stringify(dailyStats));
+      localStorage.setItem(STORAGE_KEY_DAILY_CHALLENGES, JSON.stringify(dailyChallengeMap));
     }
 
     function shuffle(array) {
@@ -4584,14 +5247,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     // =====================================================================
 
 //========= CoPilot version ========
-function selectBalancedQuestions() {
-  console.log("=== MATRIX SELECTION START ===");
-
-  const modeConfig = difficultyModes[difficultyMode];
+function selectBalancedQuestionsForMode(modeKey, randomFn = Math.random, questionCount = QUESTIONS_PER_GAME) {
+  const normalizedMode = normalizeDifficultyMode(modeKey);
+  const modeConfig = difficultyModes[normalizedMode] || difficultyModes.medium;
   const difficulties = modeConfig.difficulties;
   const categories = ['Old Testament', 'New Testament', 'General'];
 
-  // Target totals
   const catRemaining = {
     'Old Testament': 4,
     'New Testament': 4,
@@ -4600,130 +5261,178 @@ function selectBalancedQuestions() {
 
   const diffRemaining = { ...modeConfig.difficultyTargets };
   const matrix = modeConfig.matrix;
+  const available = allQuestions.filter((question) => difficulties.includes(question.difficulty));
 
-  console.log("Matrix targets:", JSON.stringify(matrix, null, 2));
-
-  // Filter available questions to only those in the current mode's difficulty set
-  const available = allQuestions.filter(q => difficulties.includes(q.difficulty));
-
-  console.log(`Available questions: ${available.length}`);
-
-  // Build pools
   const pools = {};
-  for (let d of difficulties) {
-    for (let c of categories) {
-      pools[`${d}|${c}`] = [];
+  for (const difficulty of difficulties) {
+    for (const category of categories) {
+      pools[`${difficulty}|${category}`] = [];
     }
   }
 
-  available.forEach(q => {
-    const key = `${q.difficulty}|${q.category}`;
-    if (pools[key]) pools[key].push(q);
+  available.forEach((question) => {
+    const key = `${question.difficulty}|${question.category}`;
+    if (pools[key]) pools[key].push(question);
   });
 
-  console.log("Pool sizes:");
-  for (let key in pools) console.log(`  ${key}: ${pools[key].length}`);
-
-  // Shuffle each pool once
-  for (let key in pools) shuffle(pools[key]);
+  Object.keys(pools).forEach((key) => {
+    pools[key] = shuffleWithRandom(pools[key], randomFn);
+  });
 
   const selectedIds = new Set();
   const shortages = [];
 
-  // 1. Primary matrix selection
-  console.log("Selecting from matrix cells...");
-  for (let d of difficulties) {
-    for (let c of categories) {
-      const needed = matrix[d][c] ?? 0;
-      const key = `${d}|${c}`;
-      const pool = pools[key];
-
+  for (const difficulty of difficulties) {
+    for (const category of categories) {
+      const needed = matrix[difficulty][category] ?? 0;
       if (needed === 0) continue;
 
-      console.log(`  Cell ${key}: need ${needed}, have ${pool.length}`);
-
+      const pool = pools[`${difficulty}|${category}`] || [];
       const take = Math.min(needed, pool.length);
 
       for (let i = 0; i < take; i++) {
-        const q = pool[i];
-        selectedIds.add(q.id);
-        catRemaining[c]--;
-        diffRemaining[d]--;
+        const question = pool[i];
+        selectedIds.add(question.id);
+        catRemaining[category]--;
+        diffRemaining[difficulty]--;
       }
 
       if (take < needed) {
         shortages.push({
           missing: needed - take,
-          difficulty: d,
-          category: c
+          difficulty,
+          category
         });
-        console.log(`    Shortage: missing ${needed - take}`);
       }
     }
   }
 
-  console.log("Shortages:", shortages);
+  let remaining = shuffleWithRandom(available.filter((question) => !selectedIds.has(question.id)), randomFn);
 
-  // 2. Strict quota-safe fallback
-  let remaining = shuffle(available.filter(q => !selectedIds.has(q.id)));
-
-  for (let s of shortages) {
-    let needed = s.missing;
-    console.log(`Filling shortage for ${s.difficulty}|${s.category}: need ${needed}`);
-
+  for (const shortage of shortages) {
+    let needed = shortage.missing;
     while (needed > 0) {
-      // Only candidates that still fit BOTH quotas
-      let candidates = remaining.filter(q =>
-        catRemaining[q.category] > 0 &&
-        diffRemaining[q.difficulty] > 0
+      const candidates = remaining.filter((question) =>
+        catRemaining[question.category] > 0 && diffRemaining[question.difficulty] > 0
       );
 
       if (candidates.length === 0) {
-        console.log("  No quota-safe candidates left.");
         break;
       }
 
-      // Prioritize categories with most remaining capacity
-      candidates.sort((a, b) =>
-        catRemaining[b.category] - catRemaining[a.category]
-      );
+      candidates.sort((a, b) => {
+        const categoryDelta = catRemaining[b.category] - catRemaining[a.category];
+        if (categoryDelta !== 0) return categoryDelta;
+        return diffRemaining[b.difficulty] - diffRemaining[a.difficulty];
+      });
 
-      // Prioritize difficulties with most remaining capacity
-      candidates.sort((a, b) =>
-        diffRemaining[b.difficulty] - diffRemaining[a.difficulty]
-      );
-
-      const q = candidates[0];
-
-      selectedIds.add(q.id);
-      catRemaining[q.category]--;
-      diffRemaining[q.difficulty]--;
+      const chosen = candidates[0];
+      selectedIds.add(chosen.id);
+      catRemaining[chosen.category]--;
+      diffRemaining[chosen.difficulty]--;
       needed--;
-
-      console.log(`  Selected fallback: ${q.id} (${q.difficulty}, ${q.category})`);
-
-      remaining = remaining.filter(x => x.id !== q.id);
+      remaining = remaining.filter((question) => question.id !== chosen.id);
     }
   }
 
-  // 3. Final shuffle
-  const final = shuffle(available.filter(q => selectedIds.has(q.id)));
+  const finalSelection = shuffleWithRandom(
+    available.filter((question) => selectedIds.has(question.id)),
+    randomFn
+  );
 
-  console.log("Final category distribution:", {
-    OT: final.filter(q => q.category === "Old Testament").length,
-    NT: final.filter(q => q.category === "New Testament").length,
-    General: final.filter(q => q.category === "General").length
+  if (finalSelection.length < questionCount) {
+    const remainingPool = shuffleWithRandom(
+      available.filter((question) => !selectedIds.has(question.id)),
+      randomFn
+    );
+
+    for (const question of remainingPool) {
+      if (finalSelection.length >= questionCount) break;
+      selectedIds.add(question.id);
+      finalSelection.push(question);
+    }
+  }
+
+  return finalSelection.slice(0, questionCount);
+}
+
+function selectBalancedQuestions() {
+  return selectBalancedQuestionsForMode(difficultyMode, Math.random, QUESTIONS_PER_GAME);
+}
+
+function selectDailyChallengeQuestions(seed) {
+  const randomFn = createSeededRandom(seed);
+  return selectBalancedQuestionsForMode(DAILY_CHALLENGE_DIFFICULTY_MODE, randomFn, QUESTIONS_PER_GAME);
+}
+
+function hydrateDailyQuestions(questionIds) {
+  const resolved = [];
+  const seen = new Set();
+
+  (Array.isArray(questionIds) ? questionIds : []).forEach((id) => {
+    if (seen.has(id)) return;
+    const question = allQuestionsById.get(id);
+    if (!question) return;
+    seen.add(id);
+    resolved.push(question);
   });
 
-  console.log("Final difficulty distribution:", {
-    easy: final.filter(q => q.difficulty === "easy").length,
-    medium: final.filter(q => q.difficulty === "medium").length,
-    hard: final.filter(q => q.difficulty === "hard").length
-  });
+  if (resolved.length < QUESTIONS_PER_GAME) {
+    const fallback = selectDailyChallengeQuestions(createDailySeed(getLocalDateKey()));
+      fallback.forEach((question) => {
+      if (resolved.length >= QUESTIONS_PER_GAME) return;
+      if (seen.has(question.id)) return;
+      seen.add(question.id);
+      resolved.push(question);
+    });
+  }
 
-  console.log("=== MATRIX SELECTION END ===");
+  return resolved.slice(0, QUESTIONS_PER_GAME);
+}
 
-  return final.slice(0, QUESTIONS_PER_GAME);
+async function getOrCreateDailyChallengeRecord(dateKey) {
+  ensureDailyDataLoaded();
+  const normalizedDateKey = String(dateKey || '').trim();
+  if (!normalizedDateKey) {
+    throw new Error('Invalid daily challenge date key');
+  }
+
+  let record = dailyChallengeMap[normalizedDateKey] || null;
+
+  if (!record && DBManager.isReady()) {
+    try {
+      record = await DBManager.loadDailyChallenge(normalizedDateKey);
+    } catch (e) {
+      DBManager.log('Failed to load daily challenge from IndexedDB', e.message);
+    }
+  }
+
+  if (!record) {
+    const seed = createDailySeed(normalizedDateKey);
+    const questions = selectDailyChallengeQuestions(seed);
+    const questionIds = questions.map((question) => question.id);
+    record = createDefaultDailyChallengeRecord(normalizedDateKey, questionIds, seed);
+  }
+
+  record = sanitizeDailyChallengeRecord(record);
+
+  if (record.questionIds.length < QUESTIONS_PER_GAME) {
+    const recoverySeed = record.seed || createDailySeed(normalizedDateKey);
+    const recoveredQuestions = selectDailyChallengeQuestions(recoverySeed);
+    record = sanitizeDailyChallengeRecord({
+      ...record,
+      seed: recoverySeed,
+      questionIds: recoveredQuestions.map((question) => question.id)
+    });
+  }
+
+  dailyChallengeMap[normalizedDateKey] = record;
+
+  if (DBManager.isReady()) {
+    await DBManager.saveDailyChallenge(record).catch((e) => DBManager.log('Failed to persist daily challenge', e.message));
+  }
+
+  return record;
 }
 //==================================
 
@@ -4740,16 +5449,49 @@ function selectBalancedQuestions() {
       roundReviewEl.style.display = "none";
     }
 
-    function startNewGame() {
+    function startNewGame({ mode = GAME_MODE_NORMAL, questions = null, dailyRecord = null, preserveBonusStreak = false } = {}) {
       resetQuestionScreen();
-      gameQuestions = selectBalancedQuestions();
+      currentGameMode = mode;
+      activeDailyChallengeRecord = mode === GAME_MODE_DAILY ? dailyRecord : null;
+      activeDailyChallengeDateKey = dailyRecord?.dateKey || null;
+      gameQuestions = Array.isArray(questions) && questions.length > 0
+        ? questions.slice(0, QUESTIONS_PER_GAME)
+        : selectBalancedQuestions();
       currentIndex = 0;
       correctCount = 0;
       totalScore = 0;
       currentGameStreak = 0;
       currentGameMaxStreak = 0;
+      if (!preserveBonusStreak) {
+        resetBonusCarryStreak();
+      }
       lastRoundReview = [];
+      updateStreakHud();
       nextQuestion();
+    }
+
+    async function startDailyChallenge({ preserveBonusStreak = false } = {}) {
+      const dateKey = getLocalDateKey();
+      const dailyRecord = await getOrCreateDailyChallengeRecord(dateKey);
+
+      if (dailyRecord.completed) {
+        throw new Error('Today\'s daily challenge has already been completed.');
+      }
+
+      const hydratedQuestions = hydrateDailyQuestions(dailyRecord.questionIds);
+      const questions = hydratedQuestions.length >= QUESTIONS_PER_GAME
+        ? hydratedQuestions
+        : selectDailyChallengeQuestions(dailyRecord.seed || createDailySeed(dateKey));
+      if (questions.length < QUESTIONS_PER_GAME) {
+        throw new Error('Unable to build a full daily challenge');
+      }
+
+      startNewGame({
+        mode: GAME_MODE_DAILY,
+        questions,
+        dailyRecord,
+        preserveBonusStreak
+      });
     }
 
     function updateProgressDots() {
@@ -4809,11 +5551,13 @@ function selectBalancedQuestions() {
     }
 
     function getCurrentTimeLimit() {
-      return modeTiming[difficultyMode] || 25;  // Default to 25 if mode not found
+      const activeMode = getActiveDifficultyMode();
+      return modeTiming[activeMode] || 25;
     }
 
     function updateProgress() {
-      progressEl.textContent = `Question ${currentIndex + 1} of ${QUESTIONS_PER_GAME} | Correct: ${correctCount} | Score: ${totalScore}`;
+      const modePrefix = currentGameMode === GAME_MODE_DAILY ? 'Daily | ' : '';
+      progressEl.textContent = `${modePrefix}Question ${currentIndex + 1} of ${QUESTIONS_PER_GAME} | Correct: ${correctCount} | Score: ${totalScore}`;
       updateProgressDots();
     }
 
@@ -4859,15 +5603,21 @@ function selectBalancedQuestions() {
       timerDisplayEl.className = "red";
     }
 
-    function calculatePoints() {
-      // Use mode-based scoring: all questions worth the same points
-      const base = modeBase[difficultyMode] || 100;
+    function calculatePoints(streakBonus = 0) {
+      // Scoring is base + speed bonus + streak bonus.
+      const activeMode = getActiveDifficultyMode();
+      const base = modeBase[activeMode] || 100;
       const maxBonus = base;
       const timeLimit = getCurrentTimeLimit();
-      // Bonus is proportional to time left, with a small grace period (+0.75 seconds) 
-      // to reward quick answers without being too harsh on near-misses
-      const bonus = Math.max(0, maxBonus * ((timeLeftAtAnswer + 0.75) / timeLimit));
-      return Math.round(base + bonus);
+      const speedBonus = Math.max(0, maxBonus * ((timeLeftAtAnswer + 0.75) / timeLimit));
+      const roundedSpeedBonus = Math.round(speedBonus);
+      const roundedStreakBonus = Math.max(0, Math.round(streakBonus));
+      return {
+        base,
+        speedBonus: roundedSpeedBonus,
+        streakBonus: roundedStreakBonus,
+        total: Math.round(base + roundedSpeedBonus + roundedStreakBonus)
+      };
     }
 
     function ensurePlayerStatsLoaded() {
@@ -4879,7 +5629,7 @@ function selectBalancedQuestions() {
 
     function registerCorrectAnswerStats(question, elapsedSecondsRounded) {
       ensurePlayerStatsLoaded();
-      const mode = normalizeDifficultyMode(difficultyMode);
+      const mode = normalizeDifficultyMode(getActiveDifficultyMode());
       const category = question?.category;
 
       playerStats.totalCorrectClicks += 1;
@@ -4905,10 +5655,24 @@ function selectBalancedQuestions() {
       ensurePlayerStatsLoaded();
       playerStats.currentStreak = 0;
       currentGameStreak = 0;
+      resetBonusCarryStreak();
     }
 
-    function showFeedback(message, className) {
-      feedbackEl.textContent = message;
+    function showFeedback(message, className, detail = "") {
+      feedbackEl.innerHTML = "";
+
+      const mainLine = document.createElement("div");
+      mainLine.className = "feedback-main";
+      mainLine.textContent = message;
+      feedbackEl.appendChild(mainLine);
+
+      if (detail) {
+        const detailLine = document.createElement("div");
+        detailLine.className = "feedback-detail";
+        detailLine.textContent = detail;
+        feedbackEl.appendChild(detailLine);
+      }
+
       feedbackEl.className = className;
       feedbackEl.offsetHeight;
       feedbackEl.classList.add("visible");
@@ -5015,6 +5779,67 @@ function celebrateNewHighScore(score) {
   }, 3000);
 }
 
+function celebrateDailyChallengeCompletion() {
+  const existingOverlay = document.getElementById('daily-completion-celebration');
+  if (existingOverlay) {
+    existingOverlay.remove();
+  }
+
+  const overlay = document.createElement('div');
+  overlay.id = 'daily-completion-celebration';
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(0,0,0,0.65)';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.zIndex = '11000';
+  overlay.style.opacity = '0';
+  overlay.style.transition = 'opacity 0.45s ease';
+  overlay.style.pointerEvents = 'none';
+
+  const card = document.createElement('div');
+  card.style.background = 'white';
+  card.style.padding = '34px 42px';
+  card.style.borderRadius = '22px';
+  card.style.boxShadow = '0 12px 56px rgba(0,0,0,0.35)';
+  card.style.textAlign = 'center';
+  card.style.maxWidth = '92%';
+  card.style.fontFamily = "'Fredoka', sans-serif";
+
+  const icon = document.createElement('div');
+  icon.textContent = '🏅';
+  icon.style.fontSize = '3.4rem';
+  icon.style.marginBottom = '10px';
+
+  const title = document.createElement('h2');
+  title.textContent = 'Daily Challenge Complete!';
+  title.style.color = 'var(--primary)';
+  title.style.fontSize = '2.2rem';
+  title.style.margin = '0 0 10px';
+
+  const subtitle = document.createElement('p');
+  subtitle.textContent = 'Great job! Your daily result has been recorded.';
+  subtitle.style.color = '#2f3d2f';
+  subtitle.style.fontSize = '1.2rem';
+  subtitle.style.margin = '0';
+
+  card.appendChild(icon);
+  card.appendChild(title);
+  card.appendChild(subtitle);
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  setTimeout(() => {
+    overlay.style.opacity = '1';
+  }, 40);
+
+  setTimeout(() => {
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.remove(), 500);
+  }, 2200);
+}
+
     function getRandomIncorrectMessage() {
       const idx = Math.floor(Math.random() * incorrectMessages.length);
       return incorrectMessages[idx];
@@ -5032,11 +5857,14 @@ function celebrateNewHighScore(score) {
 
       if (isCorrect) {
         selectedBtn.classList.add("correct");
-        const points = calculatePoints();
         const elapsedSeconds = Math.round(Math.max(0, getCurrentTimeLimit() - timeLeftAtAnswer));
         registerCorrectAnswerStats(q, elapsedSeconds);
-        totalScore += points;
-        showFeedback(`+${points} pts`, "correct");
+        bonusCarryStreak += 1;
+        const streakBonus = getStreakBonus(bonusCarryStreak);
+        const pointBreakdown = calculatePoints(streakBonus);
+        totalScore += pointBreakdown.total;
+        showFeedback(`+${pointBreakdown.total} pts`, "correct");
+        updateStreakHud({ animate: true });
         correctCount++;
         confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
       } else {
@@ -5086,7 +5914,7 @@ function celebrateNewHighScore(score) {
     }
 
 async function saveHighScore() {
-  const mode = normalizeDifficultyMode(difficultyMode);
+  const mode = normalizeDifficultyMode(getActiveDifficultyMode());
 
   const newEntry = {
     score: totalScore,
@@ -5289,35 +6117,224 @@ function buildLifetimeStatsHtml(stats) {
   `;
 }
 
+function getDailyChallengeStatusText(record) {
+  if (!record) return 'Not started';
+  if (record.completed) return 'Completed';
+  if ((record.attempts || 0) > 0) return 'In progress';
+  return 'Not started';
+}
+
+function renderWelcomeDailyCard() {
+  ensureDailyDataLoaded();
+  const statusEl = document.getElementById('daily-challenge-status');
+  const dailyStartBtn = document.getElementById('daily-start-btn');
+  if (!statusEl) return;
+
+  const todayKey = getLocalDateKey();
+  const todayRecord = sanitizeDailyChallengeRecord(dailyChallengeMap[todayKey] || null);
+  const statusText = getDailyChallengeStatusText(todayRecord.dateKey ? todayRecord : null);
+  const bestText = todayRecord.bestScore > 0 ? todayRecord.bestScore : '-';
+  const isCompletedToday = Boolean(todayRecord.dateKey && todayRecord.completed);
+
+  statusEl.innerHTML = [
+    `<strong>${todayKey}</strong>`,
+    `Status: ${statusText}`,
+    `Best Today: ${bestText}`,
+    `Daily Streak: ${dailyStats.currentDailyStreak}`
+  ].join('<br>');
+
+  if (dailyStartBtn) {
+    dailyStartBtn.disabled = isCompletedToday;
+    dailyStartBtn.textContent = isCompletedToday
+      ? "Completed for Today"
+      : "Start Today's Challenge";
+  }
+}
+
+function buildDailyLeaderboardHtml(challenges, stats) {
+  const records = (Array.isArray(challenges) ? challenges : [])
+    .slice()
+    .sort((a, b) => String(b.dateKey).localeCompare(String(a.dateKey)));
+  const sanitizedStats = sanitizeDailyStats(stats);
+  const successfulCompletions = records.filter((record) => sanitizeDailyChallengeRecord(record).completed).length;
+
+  let rows = '';
+  if (records.length === 0) {
+    rows = '<tr><td colspan="5" style="text-align: center; padding: 12px; color: #999;">No daily challenges yet</td></tr>';
+  } else {
+    records.forEach((record) => {
+      const safe = sanitizeDailyChallengeRecord(record);
+      rows += `
+        <tr>
+          <td>${escapeHtml(safe.dateKey)}</td>
+          <td>${safe.completed ? 'Yes' : 'No'}</td>
+          <td>${safe.attempts}</td>
+          <td>${safe.bestScore}</td>
+          <td>${safe.lastScore}</td>
+        </tr>
+      `;
+    });
+  }
+
+  return `
+    <div class="stats-grid">
+      <article class="stats-card">
+        <h4>Daily Streak</h4>
+        <p class="stats-row"><strong>Current:</strong> ${sanitizedStats.currentDailyStreak}</p>
+        <p class="stats-row"><strong>Best:</strong> ${sanitizedStats.bestDailyStreak}</p>
+        <p class="stats-row"><strong>Successful Completions (>=70%):</strong> ${successfulCompletions} 🏅</p>
+        <p class="stats-row"><strong>Total Attempts:</strong> ${sanitizedStats.totalDailyAttempts}</p>
+      </article>
+
+      <article class="stats-card">
+        <h4>Recent Daily Challenges</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Completed</th>
+              <th>Attempts</th>
+              <th>Best</th>
+              <th>Last</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      </article>
+    </div>
+  `;
+}
+
+async function refreshDailyChallengeCard() {
+  try {
+    await loadData();
+  } catch (e) {
+    DBManager.log('Failed to refresh daily card from persisted data', e.message);
+  }
+  renderWelcomeDailyCard();
+}
+
+function renderLeaderboardOverlayFromCurrentState() {
+  const topScoresContent = document.getElementById("welcome-leaderboard-content");
+  const historyContent = document.getElementById("welcome-history-content");
+  const statsContent = document.getElementById("welcome-stats-content");
+  const dailyContent = document.getElementById("welcome-daily-content");
+
+  if (topScoresContent) {
+    const hasScores = Array.isArray(highScores) && highScores.length > 0;
+    topScoresContent.innerHTML = hasScores
+      ? buildLeaderboardHtml(highScores, 'welcome-leaderboard-container')
+      : '<div class="leaderboard-empty">No high scores yet. Play a game to get on the board.</div>';
+  }
+
+  if (historyContent) {
+    historyContent.innerHTML = buildGameHistoryHtml(gameHistory, { withDetails: false });
+  }
+
+  if (statsContent) {
+    statsContent.innerHTML = buildLifetimeStatsHtml(playerStats);
+  }
+
+  if (dailyContent) {
+    dailyContent.innerHTML = buildDailyLeaderboardHtml(Object.values(dailyChallengeMap), dailyStats);
+  }
+}
+
+async function openDailyChallengeOverlay() {
+  const overlay = document.getElementById("daily-challenge-overlay");
+  if (overlay) {
+    overlay.style.display = "flex";
+  }
+
+  renderWelcomeDailyCard();
+  await refreshDailyChallengeCard().catch((e) => {
+    DBManager.log('Open daily overlay refresh failed', e.message);
+  });
+}
+
+async function openLeaderboardOverlay() {
+  const overlay = document.getElementById("leaderboard-overlay");
+  if (overlay) {
+    overlay.style.display = "flex";
+  }
+
+  const tabs = document.querySelectorAll("#leaderboard-overlay .leaderboard-tab");
+  const panels = document.querySelectorAll("#leaderboard-overlay .leaderboard-panel");
+  tabs.forEach((tab) => {
+    const isTop = tab.dataset.panel === 'leaderboard-top-scores';
+    tab.classList.toggle('active', isTop);
+    tab.setAttribute('aria-selected', isTop ? 'true' : 'false');
+  });
+  panels.forEach((panel) => {
+    panel.classList.toggle('active', panel.id === 'leaderboard-top-scores');
+  });
+
+  renderLeaderboardOverlayFromCurrentState();
+  await loadData().catch((e) => {
+    DBManager.log('Open leaderboard load failed', e.message);
+  });
+  renderLeaderboardOverlayFromCurrentState();
+}
+
+window.openDailyChallengeOverlay = openDailyChallengeOverlay;
+window.openLeaderboardOverlay = openLeaderboardOverlay;
+
 
     async function endGame() {
       setQuestionHeaderVisible(false);
       const percent = Math.round((correctCount / QUESTIONS_PER_GAME) * 100);
-
-      gameHistory.push({
-        timestamp: new Date().toLocaleString(),
-        correct: correctCount,
-        total: QUESTIONS_PER_GAME,
-        score: totalScore,
-        percent: percent,
-        difficultyMode: normalizeDifficultyMode(difficultyMode)
-      });
+      const isDailyGame = currentGameMode === GAME_MODE_DAILY;
+      const isDailySuccess = isDailyGame && percent >= DAILY_SUCCESS_PERCENT;
+      const activeMode = normalizeDifficultyMode(getActiveDifficultyMode());
 
       ensurePlayerStatsLoaded();
       playerStats.lastGameMaxStreak = currentGameMaxStreak;
 
-      await saveData();
-      await reloadGameHistory();
+      let isNewHighScore = false;
 
-// ── NEW HIGH SCORE CHECK ────────────────────────────────────────────────
-  let isNewHighScore = false;
-  const previousBest = getTopScoresByMode(highScores, difficultyMode, 1)[0]?.score;
-  if (previousBest === undefined || totalScore > previousBest) {
-    isNewHighScore = true;
-  }
-  // ────────────────────────────────────────────────────────────────────────
+      if (isDailyGame) {
+        ensureDailyDataLoaded();
+        const dateKey = activeDailyChallengeDateKey || getLocalDateKey();
+        const existingRecord = sanitizeDailyChallengeRecord(activeDailyChallengeRecord || dailyChallengeMap[dateKey] || null);
+        const firstCompletionForDay = isDailySuccess && !existingRecord.completed;
 
-  await saveHighScore();
+        existingRecord.attempts += 1;
+        existingRecord.lastScore = totalScore;
+        existingRecord.bestScore = Math.max(existingRecord.bestScore, totalScore);
+        existingRecord.completed = existingRecord.completed || isDailySuccess;
+        if (isDailySuccess) {
+          existingRecord.completedAt = existingRecord.completedAt || new Date().toISOString();
+        }
+        existingRecord.modeVersion = DAILY_CHALLENGE_MODE_VERSION;
+
+        dailyChallengeMap[dateKey] = existingRecord;
+        activeDailyChallengeRecord = existingRecord;
+
+        dailyStats.totalDailyAttempts += 1;
+        applyDailyCompletionToStats(dateKey, firstCompletionForDay);
+
+        await saveData();
+      } else {
+        gameHistory.push({
+          timestamp: new Date().toLocaleString(),
+          correct: correctCount,
+          total: QUESTIONS_PER_GAME,
+          score: totalScore,
+          percent: percent,
+          difficultyMode: activeMode
+        });
+
+        const previousBest = getTopScoresByMode(highScores, activeMode, 1)[0]?.score;
+        if (previousBest === undefined || totalScore > previousBest) {
+          isNewHighScore = true;
+        }
+
+        await saveHighScore();
+        await saveData();
+        await reloadGameHistory();
+      }
 
       const verseObj = encouragingVerses.find(v => percent >= v.minPercent) || encouragingVerses[0];
 
@@ -5338,7 +6355,19 @@ function buildLifetimeStatsHtml(stats) {
       `;
 
       let statsHtml = "";
-      if (gameHistory.length > 0) {
+      if (isDailyGame) {
+        ensureDailyDataLoaded();
+        const todayKey = activeDailyChallengeDateKey || getLocalDateKey();
+        const todayRecord = sanitizeDailyChallengeRecord(dailyChallengeMap[todayKey]);
+        const completionText = isDailySuccess
+          ? `Daily challenge complete (${DAILY_SUCCESS_PERCENT}%+).`
+          : `Daily challenge not completed. Reach ${DAILY_SUCCESS_PERCENT}% or higher to complete.`;
+        statsHtml = `
+          <p style="font-size:1.25rem; margin-top:16px;"><strong>Today's Best: ${todayRecord.bestScore}</strong> • Attempts: ${todayRecord.attempts}</p>
+          <p style="font-size:1.1rem; margin-top:8px;"><strong>${completionText}</strong></p>
+          <p style="font-size:1.2rem;"><strong>Daily Streak:</strong> ${dailyStats.currentDailyStreak} (Best ${dailyStats.bestDailyStreak})</p>
+        `;
+      } else if (gameHistory.length > 0) {
         const scores = gameHistory.map(g => g.score);
         const avg = Math.round(scores.reduce((a,b)=>a+b,0) / scores.length);
         const best = Math.max(...scores);
@@ -5346,7 +6375,7 @@ function buildLifetimeStatsHtml(stats) {
       }
 
       summaryEl.innerHTML = `
-        <h2>Round Summary</h2>
+        <h2>${isDailyGame ? "Daily Challenge Summary" : "Round Summary"}</h2>
         <p>You got <strong>${correctCount}</strong> right out of ${QUESTIONS_PER_GAME} (${percent}%).</p>
         <p><strong>Total Score: ${totalScore} points</strong></p>
         ${categoryHtml}
@@ -5367,18 +6396,33 @@ function buildLifetimeStatsHtml(stats) {
         </div>
       `;
 
-      pendingHighScoreCelebrationScore = isNewHighScore ? totalScore : null;
+      pendingHighScoreCelebrationScore = !isDailyGame && isNewHighScore ? totalScore : null;
+      pendingDailyCompletionCelebration = Boolean(isDailySuccess);
 
       document.getElementById("restart-same")?.addEventListener("click", () => {
         if (isHighScoreCelebrationActive) return;
-        //startNewGame();
-        startCountdownThenGame();
+        startCountdownThenGame({ mode: currentGameMode, preserveBonusStreak: true });
       });
+
+      if (isDailyGame && isDailySuccess) {
+        const restartBtn = document.getElementById("restart-same");
+        if (restartBtn) {
+          restartBtn.disabled = true;
+          restartBtn.textContent = "Daily Completed";
+          restartBtn.style.opacity = "0.65";
+          restartBtn.style.cursor = "not-allowed";
+        }
+      }
 
       document.getElementById("restart-change").addEventListener("click", () => {
         if (isHighScoreCelebrationActive) return;
+        resetBonusCarryStreak();
+        currentGameMode = GAME_MODE_NORMAL;
+        activeDailyChallengeDateKey = null;
+        activeDailyChallengeRecord = null;
         document.getElementById("question-container").style.display = "none";
         document.getElementById("welcome").style.display = "block";
+        renderWelcomeDailyCard();
       });
 
       document.getElementById("summary-leaderboard-link")?.addEventListener("click", () => {
@@ -5403,13 +6447,13 @@ function buildLifetimeStatsHtml(stats) {
 
     document.getElementById("start-btn").onclick = () => {
       if (isHighScoreCelebrationActive) return;
+      resetBonusCarryStreak();
       document.getElementById("welcome").style.display = "none";
       document.getElementById("question-container").style.display = "block";
-      //startNewGame();
-      startCountdownThenGame();
+      startCountdownThenGame({ mode: GAME_MODE_NORMAL, preserveBonusStreak: false });
     };
 
-function startCountdownThenGame() {
+function startCountdownThenGame({ mode = GAME_MODE_NORMAL, preserveBonusStreak = false } = {}) {
   const overlay = document.getElementById("countdown-overlay");
   const number = document.getElementById("countdown-number");
 
@@ -5423,7 +6467,20 @@ function startCountdownThenGame() {
     if (count <= 0) {
       clearInterval(interval);
       overlay.style.display = "none";
-      startNewGame(); // your existing game-start logic
+      if (mode === GAME_MODE_DAILY) {
+        startDailyChallenge({ preserveBonusStreak }).catch((e) => {
+          DBManager.log('Failed to start daily challenge', e.message);
+          const message = /already been completed/i.test(String(e?.message || ''))
+            ? 'Today\'s Daily Challenge is already completed. Come back tomorrow.'
+            : 'Could not load today\'s challenge. Please try again.';
+          alert(message);
+          document.getElementById("question-container").style.display = "none";
+          document.getElementById("welcome").style.display = "block";
+          renderWelcomeDailyCard();
+        });
+      } else {
+        startNewGame({ mode: GAME_MODE_NORMAL, preserveBonusStreak });
+      }
       return;
     }
 
@@ -5440,9 +6497,46 @@ function startCountdownThenGame() {
   </div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  const dailyChallengeLink = document.getElementById("daily-challenge-link");
+  const dailyChallengeOverlay = document.getElementById("daily-challenge-overlay");
+  const dailyChallengeClose = document.querySelector("#daily-challenge-overlay .daily-overlay-close");
+  const dailyChallengeBackdrop = document.querySelector("#daily-challenge-overlay .overlay-backdrop");
+  const dailyStartBtn = document.getElementById("daily-start-btn");
+
+  dailyChallengeLink?.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.openDailyChallengeOverlay();
+  });
+
+  dailyChallengeClose?.addEventListener("click", () => {
+    if (dailyChallengeOverlay) {
+      dailyChallengeOverlay.style.display = "none";
+    }
+  });
+
+  dailyChallengeBackdrop?.addEventListener("click", () => {
+    if (dailyChallengeOverlay) {
+      dailyChallengeOverlay.style.display = "none";
+    }
+  });
+
+  dailyStartBtn?.addEventListener("click", () => {
+    if (dailyStartBtn.disabled) return;
+    if (isHighScoreCelebrationActive) return;
+    resetBonusCarryStreak();
+    if (dailyChallengeOverlay) {
+      dailyChallengeOverlay.style.display = "none";
+    }
+    document.getElementById("welcome").style.display = "none";
+    document.getElementById("question-container").style.display = "block";
+    startCountdownThenGame({ mode: GAME_MODE_DAILY, preserveBonusStreak: false });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
   const howToPlayLink = document.getElementById("how-to-play-link");
   const howToPlayOverlay = document.getElementById("how-to-play-overlay");
-  const howToPlayClose = document.querySelector(".overlay-close");
+  const howToPlayClose = document.querySelector("#how-to-play-overlay .overlay-close");
   const howToPlayBackdrop = document.querySelector("#how-to-play-overlay .overlay-backdrop");
 
   if (!howToPlayLink) return; // safety guard
@@ -5473,6 +6567,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const topScoresContent = document.getElementById("welcome-leaderboard-content");
   const historyContent = document.getElementById("welcome-history-content");
   const statsContent = document.getElementById("welcome-stats-content");
+  const dailyContent = document.getElementById("welcome-daily-content");
   const clearHistoryOverlayBtn = document.getElementById("clear-history-overlay");
   const leaderboardStatus = document.getElementById("leaderboard-status");
   let leaderboardStatusTimer = null;
@@ -5508,6 +6603,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (statsContent) {
       statsContent.innerHTML = buildLifetimeStatsHtml(playerStats);
     }
+
+    if (dailyContent) {
+      dailyContent.innerHTML = buildDailyLeaderboardHtml(Object.values(dailyChallengeMap), dailyStats);
+    }
+
+    renderWelcomeDailyCard();
   };
 
   const showLeaderboardStatus = (message, type = 'success') => {
@@ -5536,11 +6637,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  leaderboardLink.addEventListener("click", async () => {
-    setActivePanel('leaderboard-top-scores');
-    await renderLeaderboardOverlay();
+  leaderboardLink.addEventListener("click", (event) => {
+    event.preventDefault();
     leaderboardStatus?.classList.remove('visible');
-    leaderboardOverlay.style.display = "flex";
+    window.openLeaderboardOverlay();
   });
 
   leaderboardClose?.addEventListener("click", () => {
@@ -5583,6 +6683,94 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     showLeaderboardStatus('Scores and history cleared. Lifetime stats were kept.', 'success');
+  });
+});
+
+// Fallback overlay launch handlers. These make overlay opening resilient even if
+// any specialized initializer exits early.
+document.addEventListener("DOMContentLoaded", () => {
+  const showOverlay = (overlayId) => {
+    const overlay = document.getElementById(overlayId);
+    if (!overlay) return;
+    overlay.style.display = "flex";
+  };
+
+  const hideOverlay = (overlayId) => {
+    const overlay = document.getElementById(overlayId);
+    if (!overlay) return;
+    overlay.style.display = "none";
+  };
+
+  const renderLeaderboardFallback = async () => {
+    await loadData();
+
+    const topScoresContent = document.getElementById("welcome-leaderboard-content");
+    const historyContent = document.getElementById("welcome-history-content");
+    const statsContent = document.getElementById("welcome-stats-content");
+    const dailyContent = document.getElementById("welcome-daily-content");
+
+    if (topScoresContent) {
+      const hasScores = Array.isArray(highScores) && highScores.length > 0;
+      topScoresContent.innerHTML = hasScores
+        ? buildLeaderboardHtml(highScores, 'welcome-leaderboard-container')
+        : '<div class="leaderboard-empty">No high scores yet. Play a game to get on the board.</div>';
+    }
+
+    if (historyContent) {
+      historyContent.innerHTML = buildGameHistoryHtml(gameHistory, { withDetails: false });
+    }
+
+    if (statsContent) {
+      statsContent.innerHTML = buildLifetimeStatsHtml(playerStats);
+    }
+
+    if (dailyContent) {
+      dailyContent.innerHTML = buildDailyLeaderboardHtml(Object.values(dailyChallengeMap), dailyStats);
+    }
+
+    const tabs = document.querySelectorAll("#leaderboard-overlay .leaderboard-tab");
+    const panels = document.querySelectorAll("#leaderboard-overlay .leaderboard-panel");
+    tabs.forEach((tab) => {
+      const isTop = tab.dataset.panel === 'leaderboard-top-scores';
+      tab.classList.toggle('active', isTop);
+      tab.setAttribute('aria-selected', isTop ? 'true' : 'false');
+    });
+    panels.forEach((panel) => {
+      panel.classList.toggle('active', panel.id === 'leaderboard-top-scores');
+    });
+  };
+
+  document.getElementById("daily-challenge-link")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.openDailyChallengeOverlay();
+  });
+
+  document.getElementById("leaderboard-link")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.openLeaderboardOverlay();
+  });
+
+  document.getElementById("settings-link")?.addEventListener("click", () => {
+    showOverlay("settings-overlay");
+  });
+
+  document.querySelector("#daily-challenge-overlay .daily-overlay-close")?.addEventListener("click", () => {
+    hideOverlay("daily-challenge-overlay");
+  });
+  document.querySelector("#daily-challenge-overlay .overlay-backdrop")?.addEventListener("click", () => {
+    hideOverlay("daily-challenge-overlay");
+  });
+  document.querySelector("#leaderboard-overlay .leaderboard-close")?.addEventListener("click", () => {
+    hideOverlay("leaderboard-overlay");
+  });
+  document.querySelector("#leaderboard-overlay .leaderboard-backdrop")?.addEventListener("click", () => {
+    hideOverlay("leaderboard-overlay");
+  });
+  document.querySelector("#settings-overlay .settings-close")?.addEventListener("click", () => {
+    hideOverlay("settings-overlay");
+  });
+  document.querySelector("#settings-overlay .settings-backdrop")?.addEventListener("click", () => {
+    hideOverlay("settings-overlay");
   });
 });
 
@@ -5700,10 +6888,12 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
     await DBManager.init();
     await loadData();
+    renderWelcomeDailyCard();
     DBManager.log('Application initialized successfully');
   } catch (e) {
     DBManager.log('Initialization error, using localStorage fallback', e.message);
     loadData();
+    renderWelcomeDailyCard();
   }
 })();
 
@@ -5744,7 +6934,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <li>⚫ Super Hard: 250 pts/question, 18 seconds (max 2500 per game) — Elite Challenge!</li>
           </ul>
         </li>
-        <li><b>Bonus points:</b> Answer quickly to earn speed bonuses (up to 100% of base points)</li>
+        <li><b>Bonus points:</b> Speed bonus stacks with streak bonus on correct clicks.</li>
+        <li><b>Streak bonus rules:</b> Starts at 3 in a row, increases by tier, caps at streak 10, carries across Restart rounds, and breaks on incorrect answers, timeouts, or returning Home.</li>
+        <li><b>Daily Challenge:</b> One deterministic challenge per local day, replayable for a better score; daily streak increases on first completion of each day.</li>
         <li><b>Questions:</b> 1000+ questions across Old Testament, New Testament, and General categories</li>
       </ul>
     </div>
@@ -5764,6 +6956,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <button class="leaderboard-tab active" role="tab" data-panel="leaderboard-top-scores" aria-selected="true">Top Scores</button>
       <button class="leaderboard-tab" role="tab" data-panel="leaderboard-history" aria-selected="false">Game History</button>
       <button class="leaderboard-tab" role="tab" data-panel="leaderboard-stats" aria-selected="false">Stats</button>
+      <button class="leaderboard-tab" role="tab" data-panel="leaderboard-daily" aria-selected="false">Daily</button>
     </div>
 
     <section id="leaderboard-top-scores" class="leaderboard-panel active" role="tabpanel">
@@ -5776,6 +6969,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     <section id="leaderboard-stats" class="leaderboard-panel" role="tabpanel">
       <div id="welcome-stats-content"></div>
+    </section>
+
+    <section id="leaderboard-daily" class="leaderboard-panel" role="tabpanel">
+      <div id="welcome-daily-content"></div>
     </section>
 
     <div class="leaderboard-actions">
