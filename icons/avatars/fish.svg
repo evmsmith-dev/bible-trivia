@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Fish avatar">
+  <rect width="128" height="128" rx="24" fill="#e1f5fe"/>
+  <circle cx="64" cy="64" r="42" fill="#b3e5fc"/>
+  <path d="M30 64c12-14 28-22 46-22 8 0 16 2 24 6l10-8v48l-10-8c-8 4-16 6-24 6-18 0-34-8-46-22z" fill="#039be5"/>
+  <circle cx="50" cy="58" r="3" fill="#ffffff"/>
+  <circle cx="50" cy="58" r="1.5" fill="#0d47a1"/>
+  <path d="M48 74c6 3 12 3 18 0" stroke="#81d4fa" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

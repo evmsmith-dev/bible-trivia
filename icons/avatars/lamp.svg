@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Lamp avatar">
+  <rect width="128" height="128" rx="24" fill="#fff3e0"/>
+  <circle cx="64" cy="64" r="42" fill="#ffe0b2"/>
+  <path d="M52 78h24l6 12H46z" fill="#8d6e63"/>
+  <path d="M48 58c0-10 7-18 16-18s16 8 16 18c0 8-5 15-12 18h-8c-7-3-12-10-12-18z" fill="#ffb74d"/>
+  <path d="M64 34c4 4 6 8 6 12s-3 8-6 10c-3-2-6-6-6-10s2-8 6-12z" fill="#ffca28"/>
+</svg>

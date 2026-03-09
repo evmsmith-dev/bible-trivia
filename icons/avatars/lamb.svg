@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Lamb avatar">
+  <rect width="128" height="128" rx="24" fill="#f5f5f5"/>
+  <circle cx="64" cy="64" r="42" fill="#ffffff"/>
+  <ellipse cx="64" cy="70" rx="28" ry="20" fill="#fafafa"/>
+  <circle cx="49" cy="58" r="9" fill="#eeeeee"/>
+  <circle cx="79" cy="58" r="9" fill="#eeeeee"/>
+  <circle cx="64" cy="62" r="14" fill="#f0f0f0"/>
+  <circle cx="59" cy="61" r="2" fill="#212121"/>
+  <circle cx="69" cy="61" r="2" fill="#212121"/>
+  <ellipse cx="64" cy="67" rx="4" ry="3" fill="#ef9a9a"/>
+</svg>

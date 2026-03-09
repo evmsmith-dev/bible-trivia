@@ -737,6 +737,104 @@
       color: #1b5e20 !important;
     }
 
+    #player-entry-wrap {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    #player-entry-btn {
+      width: 56px;
+      height: 56px;
+      border: 1px solid #c8e6c9;
+      border-radius: 50%;
+      background: #f6fff7;
+      color: #1b5e20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(46, 125, 50, 0.14);
+      text-align: center;
+    }
+
+    #player-entry-btn .player-entry-avatar {
+      font-size: 1.75rem;
+      line-height: 1;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 0;
+    }
+
+    #player-entry-btn .player-entry-avatar img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .player-entry-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .player-entry-level {
+      font-size: 0.95rem;
+      color: #2f5f34;
+      font-weight: 600;
+    }
+
+    #summary-player-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1px solid #c8e6c9;
+      background: #f6fff7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto 0;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    #summary-player-btn img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .summary-player-wrap {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .summary-player-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1b5e20;
+      text-align: center;
+    }
+
+    .summary-player-level {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2f5f34;
+      text-align: center;
+    }
+
     @keyframes daily-link-pulse {
       0% {
         transform: scale(1);
@@ -936,6 +1034,302 @@
   font-weight: 700;
   text-align: center;
 }
+
+    #player-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9997;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #player-overlay .player-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1;
+    }
+
+    #player-overlay .player-card {
+      position: relative;
+      background: white;
+      padding: 22px 20px 18px;
+      border-radius: 20px;
+      width: min(560px, 94vw);
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      z-index: 2;
+      text-align: left;
+    }
+
+    .player-status-tray {
+      position: sticky;
+      top: 0;
+      transform: translateY(-120%);
+      min-width: 240px;
+      max-width: calc(100% - 28px);
+      padding: 10px 14px;
+      border-radius: 0 0 12px 12px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.24s ease, opacity 0.24s ease;
+      z-index: 5;
+      margin: 0 auto;
+    }
+
+    .player-status-tray.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .player-status-tray.success {
+      background: #2e7d32;
+    }
+
+    .player-status-tray.error {
+      background: #c62828;
+    }
+
+    #player-overlay h2 {
+      margin: 0 0 12px;
+      color: var(--primary);
+      font-size: 1.8rem;
+    }
+
+    #player-overlay .player-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .player-profile-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .player-avatar-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .player-avatar-preview-icon {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: 2px solid #c8e6c9;
+      background: #f6fff7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      overflow: hidden;
+    }
+
+    .player-avatar-preview-icon img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .player-level-text {
+      font-size: 1rem;
+      color: #1b5e20;
+      font-weight: 700;
+    }
+
+    .player-level-progress {
+      width: 100%;
+      max-width: 320px;
+      margin: 4px auto 0;
+    }
+
+    .player-level-progress-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: #dcedd8;
+      overflow: hidden;
+      border: 1px solid #c5dfc6;
+    }
+
+    .player-level-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #43a047, #2e7d32);
+      transition: width 0.28s ease;
+    }
+
+    .player-level-progress-text {
+      margin: 6px 0 0;
+      font-size: 0.9rem;
+      color: #2f5f34;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .player-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .player-field label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2f4f31;
+    }
+
+    #player-name-input {
+      border: 1px solid #c8e6c9;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 1rem;
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    #player-name-help {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #616161;
+    }
+
+    #player-name-error {
+      margin: 0;
+      font-size: 0.92rem;
+      color: #b71c1c;
+      min-height: 1.2rem;
+    }
+
+    #player-avatar-options {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .avatar-pagination {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .avatar-pagination button {
+      margin: 0;
+      padding: 8px 10px;
+      font-size: 0.92rem;
+      background: #f6fff7;
+      color: #1b5e20;
+      border: 1px solid #c8e6c9;
+      border-radius: 999px;
+      box-shadow: none;
+    }
+
+    .avatar-pagination button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    #avatar-page-indicator {
+      font-size: 0.9rem;
+      color: #2f5f34;
+      font-weight: 700;
+      min-width: 78px;
+      text-align: center;
+    }
+
+    .avatar-option {
+      border: 1px solid #c8e6c9;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: 'Fredoka', sans-serif;
+      color: #1b5e20;
+      min-height: 86px;
+    }
+
+    .avatar-option.is-selected {
+      border-color: #2e7d32;
+      box-shadow: 0 0 0 2px rgba(46,125,50,0.22) inset;
+      background: #f2fbf3;
+    }
+
+    .avatar-option-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f7fff7;
+      border: 1px solid #e0efe1;
+      overflow: hidden;
+    }
+
+    .avatar-option-icon img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .avatar-option-label {
+      font-size: 0.8rem;
+      line-height: 1.1;
+      text-align: center;
+      color: #2f5f34;
+    }
+
+    .player-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .player-secondary-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    #player-save-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    #player-reset-btn {
+      background: #ffeceb;
+      color: #b71c1c;
+      border: 1px solid #ef9a9a;
+    }
 
 #game-start-text {
       text-align: center;
@@ -1361,6 +1755,32 @@
 }
 
 @media (max-width: 640px) {
+  #player-entry-btn {
+    max-width: 100%;
+  }
+
+  #player-overlay {
+    align-items: flex-end;
+  }
+
+  #player-overlay .player-card {
+    width: 100%;
+    max-height: 92vh;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    padding: 18px 14px 12px;
+  }
+
+  #player-avatar-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .avatar-option {
+    min-height: 84px;
+  }
+
   #leaderboard-overlay {
     align-items: flex-end;
   }
@@ -1560,24 +1980,13 @@
           margin-top: 10px;">
   Game Play
 </a>
-<a id="settings-link"
-   style="color: var(--primary);
-          font-size: 1.4rem;
-          cursor: pointer;
-          display: block;
-          margin-top: 10px;">
-  Settings
-</a>
-<a id="leaderboard-link"
-  onclick="document.getElementById('leaderboard-overlay').style.display='flex'; if (window.openLeaderboardOverlay) { window.openLeaderboardOverlay(); } return false;"
-   style="color: var(--primary);
-          font-size: 1.4rem;
-          text-decoration: none;
-          cursor: pointer;
-          display: block;
-          margin-top: 10px;">
-  🏆 Leaderboard &amp; History
-</a>
+<div id="player-entry-wrap">
+  <button id="player-entry-btn" type="button" aria-label="Open player profile">
+    <span class="player-entry-avatar" id="player-entry-avatar" aria-hidden="true">🙂</span>
+  </button>
+  <span class="player-entry-name" id="player-entry-name">Player</span>
+  <span class="player-entry-level" id="player-entry-level">Level 1</span>
+</div>
   </div>
 
   <div id="question-container" style="display:none;">
@@ -1619,6 +2028,55 @@
       <h2>🎯 Daily Challenge</h2>
       <p id="daily-challenge-status">Loading today's challenge...</p>
       <button id="daily-start-btn" type="button">Start Today's Challenge</button>
+    </div>
+  </div>
+
+  <div id="player-overlay" style="display:none;">
+    <div class="player-backdrop"></div>
+    <div class="player-card" role="dialog" aria-modal="true" aria-labelledby="player-overlay-title">
+      <div id="player-save-status" class="player-status-tray" role="status" aria-live="polite"></div>
+      <button class="player-close overlay-close-button" aria-label="Close player profile">x</button>
+      <h2 id="player-overlay-title">Player Profile</h2>
+
+      <div class="player-profile-stack">
+        <div class="player-avatar-preview">
+          <div class="player-avatar-preview-icon" id="player-avatar-preview" aria-hidden="true">🙂</div>
+          <div class="player-level-text" id="player-level-display">Level 1</div>
+          <div class="player-level-progress" aria-label="Level progress">
+            <div class="player-level-progress-track" aria-hidden="true">
+              <div id="player-level-progress-fill" class="player-level-progress-fill"></div>
+            </div>
+            <p id="player-level-progress-text" class="player-level-progress-text">0 more correct answers to next level</p>
+          </div>
+        </div>
+
+        <div class="player-field">
+          <label for="player-name-input">Name</label>
+          <input id="player-name-input" type="text" maxlength="15" autocomplete="off" />
+          <p id="player-name-help">2 to 15 characters after trimming spaces.</p>
+          <p id="player-name-error" aria-live="polite"></p>
+        </div>
+
+        <div class="player-field">
+          <label id="avatar-options-label">Avatar</label>
+          <div id="player-avatar-options" role="radiogroup" aria-labelledby="avatar-options-label"></div>
+          <div class="avatar-pagination" aria-label="Avatar pages">
+            <button id="avatar-page-prev" type="button" aria-label="Previous avatar page">Previous</button>
+            <span id="avatar-page-indicator" aria-live="polite">1 / 1</span>
+            <button id="avatar-page-next" type="button" aria-label="Next avatar page">Next</button>
+          </div>
+        </div>
+
+        <div class="player-actions">
+          <button id="player-save-btn" type="button">Save Profile</button>
+        </div>
+
+        <div class="player-secondary-actions">
+          <button id="player-open-leaderboard-btn" type="button">Player Stats</button>
+          <button id="player-open-settings-btn" type="button">Settings</button>
+          <button id="player-reset-btn" type="button">Reset Player</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -3816,8 +4274,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
     // ==================== INDEXEDDB MANAGER ====================
     const DBManager = (() => {
-      const DB_NAME = 'BibleTriviaDB';
-      const DB_VERSION = 3;
+      const DB_NAME = 'BibleTriviaDB_player_primary';
+      const DB_VERSION = 1;
       const STORE_HISTORY = 'gameHistory';
       const STORE_SCORES = 'highScores';
       const STORE_SETTINGS = 'settings';
@@ -4542,6 +5000,29 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         });
       };
 
+      const clearDailyChallenges = () => {
+        return new Promise((resolve, reject) => {
+          if (!useIndexedDB || !dbReady) {
+            reject(new Error('Database not available'));
+            return;
+          }
+
+          const transaction = db.transaction([STORE_DAILY_CHALLENGES], 'readwrite');
+          const store = transaction.objectStore(STORE_DAILY_CHALLENGES);
+          const request = store.clear();
+
+          request.onsuccess = () => {
+            log('Daily challenges cleared');
+            resolve();
+          };
+
+          request.onerror = () => {
+            log('Failed to clear daily challenges', request.error);
+            reject(request.error);
+          };
+        });
+      };
+
       // Initialization
       const init = async () => {
         try {
@@ -4554,12 +5035,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
           await openDatabase();
           
-          // Attempt migration from localStorage
-          try {
-            await migrateFromLocalStorage();
-          } catch (e) {
-            log('Migration failed but continuing', e.message);
-          }
+          // Legacy data is intentionally ignored for the player-profile rollout.
+          log('Skipped localStorage migration for scoped player data');
 
           return true;
         } catch (e) {
@@ -4592,6 +5069,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         listRecentDailyChallenges,
         saveDailyStats,
         loadDailyStats,
+        clearDailyChallenges,
         log
       };
     })();
@@ -4605,6 +5083,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     let gameHistory = [];
     let highScores = [];
     let playerStats = null;
+    let playerProfile = null;
     let dailyStats = null;
     let dailyChallengeMap = {};
     let currentGameMode = GAME_MODE_NORMAL;
@@ -4612,6 +5091,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     let activeDailyChallengeRecord = null;
     let lastRoundReview = [];
     let pendingHighScoreCelebrationScore = null;
+    let pendingLevelCelebrationLevel = null;
     let pendingDailyCompletionCelebration = false;
     let isHighScoreCelebrationActive = false;
     let currentGameStreak = 0;
@@ -4625,20 +5105,51 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     const AUTO_ADVANCE_WRONG_MS = 2800;
     const QUESTIONS_PER_GAME = 10;
     const MAX_HIGH_SCORES_SHOWN = 5;
-    const STORAGE_KEY_HISTORY = "bibleTriviaHistory";
-    const STORAGE_KEY_HIGHSCORES = "bibleTriviaHighScores";
-    const STORAGE_KEY_HARD_TOGGLE = "bibleTriviaIncludeHard";
-    const STORAGE_KEY_DIFFICULTY_MODE = "bibleTriviaDifficultyMode";
-    const STORAGE_KEY_ROUND_REVIEW_PREFERENCE = "bibleTriviaRoundReviewPreference";
-    const STORAGE_KEY_PLAYER_STATS = "bibleTriviaPlayerStats";
-    const STORAGE_KEY_DAILY_STATS = "bibleTriviaDailyStats";
-    const STORAGE_KEY_DAILY_CHALLENGES = "bibleTriviaDailyChallenges";
-    const STORAGE_KEY_DAILY_PULSE_ACK_DATE = "bibleTriviaDailyPulseAckDate";
-    const STORAGE_KEY_DAILY_PULSE_LAST_SHOWN_DATE = "bibleTriviaDailyPulseLastShownDate";
-    const STORAGE_KEY_DAILY_PULSE_SHOW_COUNT = "bibleTriviaDailyPulseShowCount";
-    const STORAGE_KEY_DAILY_PULSE_CLICK_COUNT = "bibleTriviaDailyPulseClickCount";
-    const STORAGE_KEY_STREAK_CARRYOVER_MSG_SHOWN_COUNT = "bibleTriviaStreakCarryoverMessageShownCount";
-    const STORAGE_KEY_STREAK_CARRYOVER_RESTART_CLICK_COUNT = "bibleTriviaStreakCarryoverRestartClickCount";
+    const PLAYER_PRIMARY_ID = 'primary';
+    const STORAGE_PREFIX = `bibleTriviaPlayer_${PLAYER_PRIMARY_ID}_`;
+    const STORAGE_KEY_PROFILE = `${STORAGE_PREFIX}profile`;
+    const STORAGE_KEY_HISTORY = `${STORAGE_PREFIX}history`;
+    const STORAGE_KEY_HIGHSCORES = `${STORAGE_PREFIX}highScores`;
+    const STORAGE_KEY_HARD_TOGGLE = `${STORAGE_PREFIX}includeHardLegacy`;
+    const STORAGE_KEY_DIFFICULTY_MODE = `${STORAGE_PREFIX}difficultyMode`;
+    const STORAGE_KEY_ROUND_REVIEW_PREFERENCE = `${STORAGE_PREFIX}roundReviewPreference`;
+    const STORAGE_KEY_PLAYER_STATS = `${STORAGE_PREFIX}playerStats`;
+    const STORAGE_KEY_DAILY_STATS = `${STORAGE_PREFIX}dailyStats`;
+    const STORAGE_KEY_DAILY_CHALLENGES = `${STORAGE_PREFIX}dailyChallenges`;
+    const STORAGE_KEY_DAILY_PULSE_ACK_DATE = `${STORAGE_PREFIX}dailyPulseAckDate`;
+    const STORAGE_KEY_DAILY_PULSE_LAST_SHOWN_DATE = `${STORAGE_PREFIX}dailyPulseLastShownDate`;
+    const STORAGE_KEY_DAILY_PULSE_SHOW_COUNT = `${STORAGE_PREFIX}dailyPulseShowCount`;
+    const STORAGE_KEY_DAILY_PULSE_CLICK_COUNT = `${STORAGE_PREFIX}dailyPulseClickCount`;
+    const STORAGE_KEY_STREAK_CARRYOVER_MSG_SHOWN_COUNT = `${STORAGE_PREFIX}streakCarryoverMessageShownCount`;
+    const STORAGE_KEY_STREAK_CARRYOVER_RESTART_CLICK_COUNT = `${STORAGE_PREFIX}streakCarryoverRestartClickCount`;
+    const BUILT_IN_AVATARS = [
+      { id: 'emoji-smile', type: 'emoji', value: '🙂', label: 'Smile' },
+      { id: 'emoji-cool', type: 'emoji', value: '😎', label: 'Cool' },
+      { id: 'emoji-nerd', type: 'emoji', value: '🤓', label: 'Nerd' },
+      { id: 'emoji-fire', type: 'emoji', value: '🔥', label: 'Fire' },
+      { id: 'emoji-starstruck', type: 'emoji', value: '🤩', label: 'Starstruck' },
+      { id: 'emoji-sunglow', type: 'emoji', value: '🌞', label: 'Sunny' },
+      { id: 'emoji-lightbulb', type: 'emoji', value: '💡', label: 'Bright Idea' },
+      { id: 'emoji-hands', type: 'emoji', value: '🙌', label: 'Praise' },
+      { id: 'image-dove', type: 'image', value: 'icons/avatars/dove.svg', label: 'Dove' },
+      { id: 'image-crown', type: 'image', value: 'icons/avatars/crown.svg', label: 'Crown' },
+      { id: 'image-shield', type: 'image', value: 'icons/avatars/shield.svg', label: 'Shield' },
+      { id: 'image-star', type: 'image', value: 'icons/avatars/star.svg', label: 'Star' },
+      { id: 'image-olive-branch', type: 'image', value: 'icons/avatars/olive-branch.svg', label: 'Olive Branch' },
+      { id: 'image-lamb', type: 'image', value: 'icons/avatars/lamb.svg', label: 'Lamb' },
+      { id: 'image-fish', type: 'image', value: 'icons/avatars/fish.svg', label: 'Fish' },
+      { id: 'image-scroll', type: 'image', value: 'icons/avatars/scroll.svg', label: 'Scroll' },
+      { id: 'image-ark', type: 'image', value: 'icons/avatars/ark.svg', label: 'Ark' },
+      { id: 'image-lyre', type: 'image', value: 'icons/avatars/lyre.svg', label: 'Lyre' },
+      { id: 'image-lamp', type: 'image', value: 'icons/avatars/lamp.svg', label: 'Lamp' },
+      { id: 'image-lion', type: 'image', value: 'icons/avatars/lion.svg', label: 'Lion' },
+      { id: 'image-rainbow', type: 'image', value: 'icons/avatars/rainbow.svg', label: 'Rainbow' },
+      { id: 'image-mountain', type: 'image', value: 'icons/avatars/mountain.svg', label: 'Mountain' },
+      { id: 'image-anchor', type: 'image', value: 'icons/avatars/anchor.svg', label: 'Anchor' },
+      { id: 'image-sunflower', type: 'image', value: 'icons/avatars/sunflower.svg', label: 'Sunflower' }
+    ];
+    const AVATARS_PER_PAGE = 8;
+    const PLAYER_LEVEL_THRESHOLDS = [0, 25, 60, 110, 180, 270, 390, 540, 730, 970, 1270, 1640];
     const FEEDBACK_SHOW_MS = 2200;
     const DAILY_SUCCESS_PERCENT = 70;
     const DAILY_BASE_BONUS_MULTIPLIER = 0.05;
@@ -4654,6 +5165,10 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       10: 260
     };
     let dailyPulseResetTimer = null;
+    let playerDraftAvatarId = BUILT_IN_AVATARS[0].id;
+    let playerAvatarPageIndex = 0;
+    let playerSaveStatusTimer = null;
+    let gameStartPlayerLevel = 1;
 
     function createZeroedModeMap() {
       return {
@@ -4716,6 +5231,146 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       }
 
       return sanitized;
+    }
+
+    function createDefaultPlayerProfile() {
+      return {
+        id: PLAYER_PRIMARY_ID,
+        name: 'Player',
+        avatarId: BUILT_IN_AVATARS[0].id,
+        nonDailyCorrectAnswers: 0
+      };
+    }
+
+    function sanitizePlayerName(nameInput) {
+      const trimmed = String(nameInput || '').trim();
+      if (trimmed.length < 2 || trimmed.length > 15) {
+        return null;
+      }
+      return trimmed;
+    }
+
+    function sanitizePlayerProfile(rawProfile) {
+      const defaults = createDefaultPlayerProfile();
+      const raw = rawProfile && typeof rawProfile === 'object' ? rawProfile : {};
+      const cleanName = sanitizePlayerName(raw.name) || defaults.name;
+      const avatarExists = BUILT_IN_AVATARS.some((avatar) => avatar.id === raw.avatarId);
+
+      return {
+        id: PLAYER_PRIMARY_ID,
+        name: cleanName,
+        avatarId: avatarExists ? raw.avatarId : defaults.avatarId,
+        nonDailyCorrectAnswers: Number.isFinite(raw.nonDailyCorrectAnswers)
+          ? Math.max(0, Math.round(raw.nonDailyCorrectAnswers))
+          : 0
+      };
+    }
+
+    function ensurePlayerProfileLoaded() {
+      if (!playerProfile) {
+        const rawSaved = localStorage.getItem(STORAGE_KEY_PROFILE);
+        if (rawSaved) {
+          try {
+            playerProfile = sanitizePlayerProfile(JSON.parse(rawSaved));
+          } catch (e) {
+            playerProfile = createDefaultPlayerProfile();
+          }
+        } else {
+          playerProfile = createDefaultPlayerProfile();
+        }
+      }
+      playerProfile = sanitizePlayerProfile(playerProfile);
+      return playerProfile;
+    }
+
+    function savePlayerProfile() {
+      ensurePlayerProfileLoaded();
+      localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(playerProfile));
+    }
+
+    function getAvatarById(avatarId) {
+      return BUILT_IN_AVATARS.find((avatar) => avatar.id === avatarId) || BUILT_IN_AVATARS[0];
+    }
+
+    function getPlayerLevelFromCorrectCount(correctAnswers) {
+      const safeCount = Number.isFinite(correctAnswers) ? Math.max(0, Math.round(correctAnswers)) : 0;
+      let level = 1;
+      PLAYER_LEVEL_THRESHOLDS.forEach((threshold, index) => {
+        if (safeCount >= threshold) {
+          level = index + 1;
+        }
+      });
+      return level;
+    }
+
+    function getPlayerCurrentLevel() {
+      ensurePlayerProfileLoaded();
+      return getPlayerLevelFromCorrectCount(playerProfile.nonDailyCorrectAnswers);
+    }
+
+    function getPlayerLevelProgress() {
+      ensurePlayerProfileLoaded();
+      const correctAnswers = Math.max(0, Math.round(playerProfile.nonDailyCorrectAnswers || 0));
+      const currentLevel = getPlayerLevelFromCorrectCount(correctAnswers);
+      const currentIndex = Math.max(0, currentLevel - 1);
+      const currentThreshold = PLAYER_LEVEL_THRESHOLDS[currentIndex] || 0;
+      const nextThreshold = PLAYER_LEVEL_THRESHOLDS[currentIndex + 1] ?? null;
+
+      if (nextThreshold === null) {
+        return {
+          currentLevel,
+          progressPercent: 100,
+          remainingToNextLevel: 0,
+          isMaxLevel: true
+        };
+      }
+
+      const span = Math.max(1, nextThreshold - currentThreshold);
+      const doneWithinLevel = Math.min(span, Math.max(0, correctAnswers - currentThreshold));
+      const progressPercent = Math.max(0, Math.min(100, (doneWithinLevel / span) * 100));
+
+      return {
+        currentLevel,
+        progressPercent,
+        remainingToNextLevel: Math.max(0, nextThreshold - correctAnswers),
+        isMaxLevel: false
+      };
+    }
+
+    function getAvatarHtml(avatar, { withAlt = true } = {}) {
+      if (avatar.type === 'image') {
+        const safeAlt = withAlt ? ` alt="${escapeHtml(avatar.label)} avatar"` : ' alt="" aria-hidden="true"';
+        return `<img src="${escapeHtml(avatar.value)}"${safeAlt}>`;
+      }
+      return `<span>${escapeHtml(avatar.value)}</span>`;
+    }
+
+    function renderWelcomePlayerEntry() {
+      ensurePlayerProfileLoaded();
+      const avatarHost = document.getElementById('player-entry-avatar');
+      const nameEl = document.getElementById('player-entry-name');
+      const levelEl = document.getElementById('player-entry-level');
+      if (!avatarHost || !nameEl || !levelEl) return;
+
+      const avatar = getAvatarById(playerProfile.avatarId);
+      avatarHost.innerHTML = getAvatarHtml(avatar, { withAlt: false });
+      nameEl.textContent = playerProfile.name;
+      levelEl.textContent = `Level ${getPlayerCurrentLevel()}`;
+    }
+
+    function refreshSummaryPlayerDisplay() {
+      ensurePlayerProfileLoaded();
+      const summaryAvatarBtn = document.getElementById('summary-player-btn');
+      const summaryNameEl = document.getElementById('summary-player-name');
+      const summaryLevelEl = document.getElementById('summary-player-level');
+      if (!summaryAvatarBtn || !summaryNameEl || !summaryLevelEl) return;
+
+      const avatar = getAvatarById(playerProfile.avatarId);
+      summaryAvatarBtn.innerHTML = avatar.type === 'image'
+        ? `<img src="${escapeHtml(avatar.value)}" alt="${escapeHtml(playerProfile.name)} avatar"/>`
+        : `${escapeHtml(avatar.value)}`;
+      summaryNameEl.textContent = playerProfile.name;
+      summaryLevelEl.textContent = `Level ${getPlayerCurrentLevel()}`;
     }
 
     function getAverageCorrectSecondsByMode(mode, statsInput = playerStats) {
@@ -5180,10 +5835,24 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       roundReviewEl.style.display = "none";
       summaryEl.style.display = "block";
 
-      if (pendingHighScoreCelebrationScore !== null) {
+      const hadHighScoreCelebration = pendingHighScoreCelebrationScore !== null;
+
+      if (hadHighScoreCelebration) {
         const scoreToCelebrate = pendingHighScoreCelebrationScore;
         pendingHighScoreCelebrationScore = null;
         celebrateNewHighScore(scoreToCelebrate);
+      }
+
+      if (pendingLevelCelebrationLevel !== null) {
+        const levelToCelebrate = pendingLevelCelebrationLevel;
+        pendingLevelCelebrationLevel = null;
+        if (hadHighScoreCelebration) {
+          setTimeout(() => {
+            celebrateNewLevel(levelToCelebrate);
+          }, 3800);
+        } else {
+          celebrateNewLevel(levelToCelebrate);
+        }
       }
 
       if (pendingDailyCompletionCelebration) {
@@ -5239,6 +5908,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
     async function loadData() {
       try {
+        ensurePlayerProfileLoaded();
         if (DBManager.isReady()) {
           // Load from IndexedDB with fallback to localStorage if needed
           try {
@@ -5279,6 +5949,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
         DBManager.log('loadData error', e.message);
         loadDataFromLocalStorage();
       }
+
+      renderWelcomePlayerEntry();
     }
 
     async function reloadGameHistory() {
@@ -5318,6 +5990,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     }
 
     function loadDataFromLocalStorage() {
+      ensurePlayerProfileLoaded();
       const savedHistory = localStorage.getItem(STORAGE_KEY_HISTORY);
       if (savedHistory) {
         try { gameHistory = JSON.parse(savedHistory); } catch(e) { gameHistory = []; }
@@ -5379,10 +6052,12 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       }
 
       ensureDailyDataLoaded();
+      renderWelcomePlayerEntry();
     }
 
     async function saveData() {
       try {
+        ensurePlayerProfileLoaded();
         highScores = normalizeAndTrimHighScores(highScores);
         difficultyMode = normalizeDifficultyMode(difficultyMode);
         roundReviewPreference = normalizeRoundReviewPreference(roundReviewPreference);
@@ -5425,6 +6100,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     }
 
     function saveDataToLocalStorage() {
+      ensurePlayerProfileLoaded();
       highScores = normalizeAndTrimHighScores(highScores);
       difficultyMode = normalizeDifficultyMode(difficultyMode);
       roundReviewPreference = normalizeRoundReviewPreference(roundReviewPreference);
@@ -5437,6 +6113,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       localStorage.setItem(STORAGE_KEY_PLAYER_STATS, JSON.stringify(playerStats));
       localStorage.setItem(STORAGE_KEY_DAILY_STATS, JSON.stringify(dailyStats));
       localStorage.setItem(STORAGE_KEY_DAILY_CHALLENGES, JSON.stringify(dailyChallengeMap));
+      localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(playerProfile));
     }
 
     function shuffle(array) {
@@ -5690,8 +6367,10 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
     }
 
     function startNewGame({ mode = GAME_MODE_NORMAL, questions = null, dailyRecord = null, preserveBonusStreak = false } = {}) {
+      ensurePlayerProfileLoaded();
       resetQuestionScreen();
       currentGameMode = mode;
+      gameStartPlayerLevel = getPlayerCurrentLevel();
       activeDailyChallengeRecord = mode === GAME_MODE_DAILY ? dailyRecord : null;
       activeDailyChallengeDateKey = dailyRecord?.dateKey || null;
       gameQuestions = Array.isArray(questions) && questions.length > 0
@@ -5871,6 +6550,7 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
 
     function registerCorrectAnswerStats(question, elapsedSecondsRounded) {
       ensurePlayerStatsLoaded();
+      ensurePlayerProfileLoaded();
       const mode = normalizeDifficultyMode(getActiveDifficultyMode());
       const category = question?.category;
 
@@ -5880,6 +6560,10 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
 
       if (category && playerStats.correctByCategory[category] !== undefined) {
         playerStats.correctByCategory[category] += 1;
+      }
+
+      if (currentGameMode !== GAME_MODE_DAILY) {
+        playerProfile.nonDailyCorrectAnswers += 1;
       }
 
       playerStats.currentStreak += 1;
@@ -6018,6 +6702,72 @@ function celebrateNewHighScore(score) {
       overlay.remove();
       isHighScoreCelebrationActive = false;
     }, 800); // wait for fade-out
+  }, 3000);
+}
+
+function celebrateNewLevel(level) {
+  const existingOverlay = document.getElementById('level-celebration');
+  if (existingOverlay) {
+    existingOverlay.remove();
+  }
+
+  const overlay = document.createElement('div');
+  overlay.id = 'level-celebration';
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.background = 'rgba(0,0,0,0.65)';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.zIndex = '11000';
+  overlay.style.opacity = '0';
+  overlay.style.transition = 'opacity 0.8s ease';
+  overlay.style.pointerEvents = 'none';
+
+  const messageBox = document.createElement('div');
+  messageBox.style.background = 'white';
+  messageBox.style.padding = '40px 50px';
+  messageBox.style.borderRadius = '24px';
+  messageBox.style.boxShadow = '0 12px 60px rgba(0,0,0,0.4)';
+  messageBox.style.textAlign = 'center';
+  messageBox.style.maxWidth = '90%';
+  messageBox.style.fontFamily = "'Fredoka', sans-serif";
+
+  const title = document.createElement('h2');
+  title.textContent = 'Level Up!';
+  title.style.color = 'var(--primary)';
+  title.style.fontSize = '3.2rem';
+  title.style.margin = '0 0 16px 0';
+
+  const subtitle = document.createElement('p');
+  subtitle.textContent = 'You achieved a new level!';
+  subtitle.style.fontSize = '2.1rem';
+  subtitle.style.margin = '0 0 20px 0';
+  subtitle.style.color = '#333';
+
+  const levelDisplay = document.createElement('p');
+  levelDisplay.textContent = `Level ${level}`;
+  levelDisplay.style.fontSize = '4.2rem';
+  levelDisplay.style.fontWeight = '700';
+  levelDisplay.style.color = 'var(--accent)';
+  levelDisplay.style.margin = '0 0 30px 0';
+
+  messageBox.appendChild(title);
+  messageBox.appendChild(subtitle);
+  messageBox.appendChild(levelDisplay);
+  overlay.appendChild(messageBox);
+
+  document.body.appendChild(overlay);
+
+  setTimeout(() => {
+    overlay.style.opacity = '1';
+  }, 100);
+
+  setTimeout(() => {
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+      overlay.remove();
+    }, 800);
   }, 3000);
 }
 
@@ -6480,6 +7230,167 @@ function renderLeaderboardOverlayFromCurrentState() {
   }
 }
 
+function setPlayerAvatarPreview(avatarId) {
+  const previewEl = document.getElementById('player-avatar-preview');
+  if (!previewEl) return;
+  const avatar = getAvatarById(avatarId);
+  previewEl.innerHTML = getAvatarHtml(avatar, { withAlt: false });
+}
+
+function renderPlayerAvatarOptions(selectedAvatarId) {
+  const optionsHost = document.getElementById('player-avatar-options');
+  const prevBtn = document.getElementById('avatar-page-prev');
+  const nextBtn = document.getElementById('avatar-page-next');
+  const pageIndicator = document.getElementById('avatar-page-indicator');
+  if (!optionsHost) return;
+
+  const totalPages = Math.max(1, Math.ceil(BUILT_IN_AVATARS.length / AVATARS_PER_PAGE));
+  if (!Number.isFinite(playerAvatarPageIndex)) {
+    playerAvatarPageIndex = 0;
+  }
+  playerAvatarPageIndex = Math.min(totalPages - 1, Math.max(0, Math.round(playerAvatarPageIndex)));
+
+  const start = playerAvatarPageIndex * AVATARS_PER_PAGE;
+  const end = start + AVATARS_PER_PAGE;
+  const avatarsOnPage = BUILT_IN_AVATARS.slice(start, end);
+
+  optionsHost.innerHTML = avatarsOnPage.map((avatar) => {
+    const selected = avatar.id === selectedAvatarId;
+    const icon = avatar.type === 'image'
+      ? `<img src="${escapeHtml(avatar.value)}" alt="${escapeHtml(avatar.label)} avatar">`
+      : `<span>${escapeHtml(avatar.value)}</span>`;
+    return `
+      <button type="button"
+              class="avatar-option${selected ? ' is-selected' : ''}"
+              data-avatar-id="${escapeHtml(avatar.id)}"
+              role="radio"
+              aria-checked="${selected ? 'true' : 'false'}"
+              aria-label="Select ${escapeHtml(avatar.label)} avatar">
+        <span class="avatar-option-icon" aria-hidden="true">${icon}</span>
+        <span class="avatar-option-label">${escapeHtml(avatar.label)}</span>
+      </button>
+    `;
+  }).join('');
+
+  optionsHost.querySelectorAll('.avatar-option').forEach((button) => {
+    button.addEventListener('click', () => {
+      playerDraftAvatarId = button.dataset.avatarId || BUILT_IN_AVATARS[0].id;
+      renderPlayerAvatarOptions(playerDraftAvatarId);
+      setPlayerAvatarPreview(playerDraftAvatarId);
+    });
+  });
+
+  if (pageIndicator) {
+    pageIndicator.textContent = `${playerAvatarPageIndex + 1} / ${totalPages}`;
+  }
+  if (prevBtn) {
+    prevBtn.disabled = playerAvatarPageIndex <= 0;
+  }
+  if (nextBtn) {
+    nextBtn.disabled = playerAvatarPageIndex >= totalPages - 1;
+  }
+}
+
+function refreshPlayerOverlayFields() {
+  ensurePlayerProfileLoaded();
+  const nameInput = document.getElementById('player-name-input');
+  const levelEl = document.getElementById('player-level-display');
+  const levelProgressFillEl = document.getElementById('player-level-progress-fill');
+  const levelProgressTextEl = document.getElementById('player-level-progress-text');
+  const errorEl = document.getElementById('player-name-error');
+  const selectedAvatarIndex = BUILT_IN_AVATARS.findIndex((avatar) => avatar.id === playerProfile.avatarId);
+  playerDraftAvatarId = playerProfile.avatarId;
+  playerAvatarPageIndex = selectedAvatarIndex >= 0 ? Math.floor(selectedAvatarIndex / AVATARS_PER_PAGE) : 0;
+
+  if (nameInput) {
+    nameInput.value = playerProfile.name;
+  }
+  const progress = getPlayerLevelProgress();
+  if (levelEl) {
+    levelEl.textContent = `Level ${progress.currentLevel}`;
+  }
+  if (levelProgressFillEl) {
+    levelProgressFillEl.style.width = `${progress.progressPercent}%`;
+  }
+  if (levelProgressTextEl) {
+    levelProgressTextEl.textContent = progress.isMaxLevel
+      ? 'Max level reached'
+      : `${progress.remainingToNextLevel} more correct answers to next level`;
+  }
+  if (errorEl) {
+    errorEl.textContent = '';
+  }
+
+  setPlayerAvatarPreview(playerDraftAvatarId);
+  renderPlayerAvatarOptions(playerDraftAvatarId);
+}
+
+async function resetPlayerStateAndData() {
+  playerProfile = createDefaultPlayerProfile();
+  gameHistory = [];
+  highScores = [];
+  playerStats = createDefaultPlayerStats();
+  dailyStats = createDefaultDailyStats();
+  dailyChallengeMap = {};
+  difficultyMode = 'medium';
+  roundReviewPreference = 'ask';
+  resetBonusCarryStreak();
+
+  try {
+    if (DBManager.isReady()) {
+      await DBManager.clearGameHistory();
+      await DBManager.clearHighScores();
+      await DBManager.clearSettings();
+      await DBManager.clearDailyChallenges();
+      await DBManager.savePlayerStats(playerStats);
+      await DBManager.saveDailyStats(dailyStats);
+    }
+  } catch (e) {
+    DBManager.log('Player reset database clear failed', e.message);
+  }
+
+  savePlayerProfile();
+  saveDataToLocalStorage();
+  renderWelcomePlayerEntry();
+  refreshSummaryPlayerDisplay();
+  renderWelcomeDailyCard();
+}
+
+async function openPlayerOverlay() {
+  ensurePlayerProfileLoaded();
+  const overlay = document.getElementById('player-overlay');
+  if (!overlay) return;
+  refreshPlayerOverlayFields();
+  overlay.style.display = 'flex';
+}
+
+function closePlayerOverlay() {
+  const overlay = document.getElementById('player-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'none';
+}
+
+function showPlayerSaveStatus(message, type = 'success') {
+  const tray = document.getElementById('player-save-status');
+  if (!tray) return;
+
+  tray.textContent = message;
+  tray.classList.remove('success', 'error', 'visible');
+  tray.classList.add(type === 'error' ? 'error' : 'success');
+
+  // Allow repeated message animations to restart.
+  void tray.offsetWidth;
+  tray.classList.add('visible');
+
+  if (playerSaveStatusTimer) {
+    clearTimeout(playerSaveStatusTimer);
+  }
+
+  playerSaveStatusTimer = setTimeout(() => {
+    tray.classList.remove('visible');
+  }, 2200);
+}
+
 async function openDailyChallengeOverlay() {
   const todayKey = getLocalDateKey();
   const didAcknowledgeToday = acknowledgeDailyChallengeLinkClick(todayKey);
@@ -6524,6 +7435,7 @@ async function openLeaderboardOverlay() {
 
 window.openDailyChallengeOverlay = openDailyChallengeOverlay;
 window.openLeaderboardOverlay = openLeaderboardOverlay;
+window.openPlayerOverlay = openPlayerOverlay;
 
 
     async function endGame() {
@@ -6534,6 +7446,7 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
       const activeMode = normalizeDifficultyMode(getActiveDifficultyMode());
 
       ensurePlayerStatsLoaded();
+      ensurePlayerProfileLoaded();
       playerStats.lastGameMaxStreak = currentGameMaxStreak;
 
       const categoryCount = { "Old Testament": 0, "New Testament": 0, "General": 0 };
@@ -6567,6 +7480,7 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
         applyDailyCompletionToStats(dateKey, firstCompletionForDay);
 
         await saveData();
+        pendingLevelCelebrationLevel = null;
       } else {
         gameHistory.push({
           timestamp: new Date().toLocaleString(),
@@ -6586,6 +7500,9 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
         await saveHighScore();
         await saveData();
         await reloadGameHistory();
+
+        const endLevel = getPlayerCurrentLevel();
+        pendingLevelCelebrationLevel = endLevel > gameStartPlayerLevel ? endLevel : null;
       }
 
       const verseObj = encouragingVerses.find(v => percent >= v.minPercent) || encouragingVerses[0];
@@ -6627,20 +7544,25 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
         });
       }
 
+      const summaryPlayerLevel = getPlayerCurrentLevel();
+
       summaryEl.innerHTML = `
         <h2>${isDailyGame ? "Daily Challenge Summary" : "Game Summary"}</h2>
         <p>You got <strong>${correctCount}</strong> right out of ${QUESTIONS_PER_GAME} (${percent}%).</p>
         <p><strong>Total Score: ${totalScore} points</strong></p>
         <p id="encouraging-verse">${verseObj.text}</p>
         ${statsHtml}
-        <a id="summary-leaderboard-link"
-           style="color: var(--primary);
-                  font-size: 1.4rem;
-                  cursor: pointer;
-                  display: block;
-                  margin-top: 10px;">
-          🏆 Leaderboard &amp; History
-        </a>
+        <div class="summary-player-wrap">
+          <button id="summary-player-btn"
+            type="button"
+            aria-label="Open player profile">
+            ${getAvatarById(playerProfile?.avatarId || BUILT_IN_AVATARS[0].id).type === 'image'
+              ? `<img src="${escapeHtml(getAvatarById(playerProfile?.avatarId || BUILT_IN_AVATARS[0].id).value)}" alt="${escapeHtml(playerProfile?.name || 'Player')} avatar"/>`
+              : `${escapeHtml(getAvatarById(playerProfile?.avatarId || BUILT_IN_AVATARS[0].id).value)}`}
+          </button>
+          <span id="summary-player-name" class="summary-player-name">${escapeHtml(playerProfile?.name || 'Player')}</span>
+          <span id="summary-player-level" class="summary-player-level">Level ${summaryPlayerLevel}</span>
+        </div>
         ${carryoverBannerHtml}
         <div style="margin-top: 30px;">
           ${showRestartSameButton ? '<button id="restart-same">&#9654; Play</button>' : ''}
@@ -6675,9 +7597,9 @@ window.openLeaderboardOverlay = openLeaderboardOverlay;
         renderWelcomeDailyCard();
       });
 
-      document.getElementById("summary-leaderboard-link")?.addEventListener("click", () => {
+      document.getElementById("summary-player-btn")?.addEventListener("click", () => {
         if (isHighScoreCelebrationActive) return;
-        document.getElementById("leaderboard-link")?.click();
+        window.openPlayerOverlay?.();
       });
 
       const reviewChoice = await showReviewChoiceOverlay();
@@ -6747,6 +7669,10 @@ function startCountdownThenGame({ mode = GAME_MODE_NORMAL, preserveBonusStreak =
   </div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("player-entry-btn")?.addEventListener("click", () => {
+    window.openPlayerOverlay?.();
+  });
+
   const dailyChallengeLink = document.getElementById("daily-challenge-link");
   const dailyChallengeOverlay = document.getElementById("daily-challenge-overlay");
   const dailyChallengeClose = document.querySelector("#daily-challenge-overlay .daily-overlay-close");
@@ -6827,11 +7753,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const historyContent = document.getElementById("welcome-history-content");
   const statsContent = document.getElementById("welcome-stats-content");
   const dailyContent = document.getElementById("welcome-daily-content");
-  const clearHistoryOverlayBtn = document.getElementById("clear-history-overlay");
-  const leaderboardStatus = document.getElementById("leaderboard-status");
-  let leaderboardStatusTimer = null;
 
-  if (!leaderboardLink || !leaderboardOverlay) return;
+  if (!leaderboardOverlay) return;
 
   const setActivePanel = (panelId) => {
     tabs.forEach((tab) => {
@@ -6870,35 +7793,14 @@ document.addEventListener("DOMContentLoaded", () => {
     renderWelcomeDailyCard();
   };
 
-  const showLeaderboardStatus = (message, type = 'success') => {
-    if (!leaderboardStatus) return;
-
-    leaderboardStatus.textContent = message;
-    leaderboardStatus.classList.remove('success', 'error', 'visible');
-    leaderboardStatus.classList.add(type === 'error' ? 'error' : 'success');
-
-    // Force reflow so repeated messages can retrigger the fade animation.
-    void leaderboardStatus.offsetWidth;
-    leaderboardStatus.classList.add('visible');
-
-    if (leaderboardStatusTimer) {
-      clearTimeout(leaderboardStatusTimer);
-    }
-
-    leaderboardStatusTimer = setTimeout(() => {
-      leaderboardStatus.classList.remove('visible');
-    }, 2800);
-  };
-
   tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
       setActivePanel(tab.dataset.panel);
     });
   });
 
-  leaderboardLink.addEventListener("click", (event) => {
+  leaderboardLink?.addEventListener("click", (event) => {
     event.preventDefault();
-    leaderboardStatus?.classList.remove('visible');
     window.openLeaderboardOverlay();
   });
 
@@ -6910,39 +7812,6 @@ document.addEventListener("DOMContentLoaded", () => {
     leaderboardOverlay.style.display = "none";
   });
 
-  clearHistoryOverlayBtn?.addEventListener("click", async () => {
-    const confirmed = confirm('Clear all saved high scores and game history? Lifetime stats will be kept. This cannot be undone.');
-    if (!confirmed) return;
-
-    gameHistory = [];
-    highScores = [];
-    let clearFailed = false;
-
-    try {
-      if (DBManager.isReady()) {
-        await DBManager.clearGameHistory();
-        await DBManager.clearHighScores();
-        DBManager.log('Game history and high scores cleared from IndexedDB');
-      }
-    } catch (e) {
-      clearFailed = true;
-      DBManager.log('Failed to clear IndexedDB data', e.message);
-    }
-
-    if (!clearFailed) {
-      saveDataToLocalStorage();
-    }
-
-    setActivePanel('leaderboard-top-scores');
-    await renderLeaderboardOverlay();
-
-    if (clearFailed) {
-      showLeaderboardStatus('Could not clear saved data. Please try again.', 'error');
-      return;
-    }
-
-    showLeaderboardStatus('Scores and history cleared. Lifetime stats were kept.', 'success');
-  });
 });
 
 // Fallback overlay launch handlers. These make overlay opening resilient even if
@@ -7036,6 +7905,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // --- Settings Overlay Logic ---
 document.addEventListener("DOMContentLoaded", () => {
   const settingsLink = document.getElementById("settings-link");
+  const playerOpenSettingsBtn = document.getElementById("player-open-settings-btn");
   const settingsOverlay = document.getElementById("settings-overlay");
   const settingsClose = document.querySelector(".settings-close");
   const settingsBackdrop = document.querySelector("#settings-overlay .settings-backdrop");
@@ -7095,7 +7965,13 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeReviewPreferenceButtons();
 
   // Open overlay
-  settingsLink.addEventListener("click", () => {
+  settingsLink?.addEventListener("click", () => {
+    settingsOverlay.style.display = "flex";
+    initializeDifficultyButtons();  // Re-sync buttons when opening settings
+    initializeReviewPreferenceButtons();
+  });
+
+  playerOpenSettingsBtn?.addEventListener("click", () => {
     settingsOverlay.style.display = "flex";
     initializeDifficultyButtons();  // Re-sync buttons when opening settings
     initializeReviewPreferenceButtons();
@@ -7140,6 +8016,84 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const playerOverlay = document.getElementById("player-overlay");
+  const playerBackdrop = document.querySelector("#player-overlay .player-backdrop");
+  const playerClose = document.querySelector("#player-overlay .player-close");
+  const playerNameInput = document.getElementById("player-name-input");
+  const playerNameError = document.getElementById("player-name-error");
+  const playerSaveBtn = document.getElementById("player-save-btn");
+  const playerOpenLeaderboardBtn = document.getElementById("player-open-leaderboard-btn");
+  const playerResetBtn = document.getElementById("player-reset-btn");
+  const avatarPagePrevBtn = document.getElementById("avatar-page-prev");
+  const avatarPageNextBtn = document.getElementById("avatar-page-next");
+
+  if (!playerOverlay) return;
+
+  playerBackdrop?.addEventListener("click", closePlayerOverlay);
+  playerClose?.addEventListener("click", closePlayerOverlay);
+
+  playerNameInput?.addEventListener("input", () => {
+    if (playerNameError) {
+      playerNameError.textContent = '';
+    }
+  });
+
+  playerNameInput?.addEventListener("keydown", (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    playerSaveBtn?.click();
+  });
+
+  avatarPagePrevBtn?.addEventListener("click", () => {
+    playerAvatarPageIndex = Math.max(0, playerAvatarPageIndex - 1);
+    renderPlayerAvatarOptions(playerDraftAvatarId);
+  });
+
+  avatarPageNextBtn?.addEventListener("click", () => {
+    const totalPages = Math.max(1, Math.ceil(BUILT_IN_AVATARS.length / AVATARS_PER_PAGE));
+    playerAvatarPageIndex = Math.min(totalPages - 1, playerAvatarPageIndex + 1);
+    renderPlayerAvatarOptions(playerDraftAvatarId);
+  });
+
+  playerSaveBtn?.addEventListener("click", async () => {
+    ensurePlayerProfileLoaded();
+    const rawName = playerNameInput ? playerNameInput.value : playerProfile.name;
+    const validName = sanitizePlayerName(rawName);
+    if (!validName) {
+      if (playerNameError) {
+        playerNameError.textContent = 'Name must be 2 to 15 characters after trimming spaces.';
+      }
+      return;
+    }
+
+    try {
+      playerProfile.name = validName;
+      playerProfile.avatarId = playerDraftAvatarId;
+      savePlayerProfile();
+      await saveData();
+      renderWelcomePlayerEntry();
+      refreshSummaryPlayerDisplay();
+      refreshPlayerOverlayFields();
+      showPlayerSaveStatus('Profile Updated', 'success');
+    } catch (e) {
+      DBManager.log('Failed to save player profile', e.message);
+      showPlayerSaveStatus('Changes could not be saved', 'error');
+    }
+  });
+
+  playerOpenLeaderboardBtn?.addEventListener("click", () => {
+    window.openLeaderboardOverlay?.();
+  });
+
+  playerResetBtn?.addEventListener("click", async () => {
+    const confirmed = confirm('Reset player profile and clear all saved progress for this player?');
+    if (!confirmed) return;
+    await resetPlayerStateAndData();
+    refreshPlayerOverlayFields();
+  });
 });
 
 // Initialize IndexedDB and load data
@@ -7229,7 +8183,7 @@ document.addEventListener("DOMContentLoaded", () => {
   <div class="leaderboard-card">
     <button class="leaderboard-close overlay-close-button">x</button>
 
-    <h2>🏆 Leaderboard &amp; History</h2>
+    <h2>🏆 Player Stats</h2>
 
     <div class="leaderboard-tabs" role="tablist" aria-label="Leaderboard views">
       <button class="leaderboard-tab active" role="tab" data-panel="leaderboard-top-scores" aria-selected="true">Top Scores</button>
@@ -7254,10 +8208,6 @@ document.addEventListener("DOMContentLoaded", () => {
       <div id="welcome-daily-content"></div>
     </section>
 
-    <div class="leaderboard-actions">
-      <button id="clear-history-overlay" class="clear-history-btn">Clear Scores &amp; History</button>
-      <p id="leaderboard-status" class="leaderboard-status" role="status" aria-live="polite"></p>
-    </div>
   </div>
 </div>
 

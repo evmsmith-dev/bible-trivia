@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Olive branch avatar">
+  <rect width="128" height="128" rx="24" fill="#f1f8e9"/>
+  <circle cx="64" cy="64" r="42" fill="#e8f5e9"/>
+  <path d="M36 84c12-20 27-33 52-40" stroke="#558b2f" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <ellipse cx="50" cy="70" rx="10" ry="6" fill="#81c784" transform="rotate(-30 50 70)"/>
+  <ellipse cx="67" cy="60" rx="10" ry="6" fill="#66bb6a" transform="rotate(-22 67 60)"/>
+  <ellipse cx="82" cy="52" rx="9" ry="5" fill="#4caf50" transform="rotate(-14 82 52)"/>
+</svg>

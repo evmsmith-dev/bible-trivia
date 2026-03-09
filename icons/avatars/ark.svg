@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Ark avatar">
+  <rect width="128" height="128" rx="24" fill="#e3f2fd"/>
+  <circle cx="64" cy="64" r="42" fill="#bbdefb"/>
+  <path d="M28 78h72l-8 14H36z" fill="#8d6e63"/>
+  <rect x="40" y="54" width="48" height="24" rx="4" fill="#a1887f"/>
+  <rect x="48" y="60" width="10" height="8" fill="#6d4c41"/>
+  <rect x="70" y="60" width="10" height="8" fill="#6d4c41"/>
+  <path d="M30 88c10-4 18-4 28 0 10 4 18 4 28 0 10-4 18-4 28 0" stroke="#42a5f5" stroke-width="4" fill="none"/>
+</svg>

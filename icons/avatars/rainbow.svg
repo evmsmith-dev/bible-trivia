@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Rainbow avatar">
+  <rect width="128" height="128" rx="24" fill="#e8f5ff"/>
+  <circle cx="64" cy="64" r="42" fill="#f3f9ff"/>
+  <path d="M28 86a36 36 0 0 1 72 0" stroke="#ef5350" stroke-width="8" fill="none"/>
+  <path d="M36 86a28 28 0 0 1 56 0" stroke="#ffca28" stroke-width="8" fill="none"/>
+  <path d="M44 86a20 20 0 0 1 40 0" stroke="#66bb6a" stroke-width="8" fill="none"/>
+  <path d="M52 86a12 12 0 0 1 24 0" stroke="#42a5f5" stroke-width="8" fill="none"/>
+</svg>
