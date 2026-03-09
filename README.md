@@ -95,6 +95,8 @@ This project now uses a source-to-deploy workflow:
 
 - Edit: `index.source.html` (human-readable source)
 - Deploy file: `index.html` (minified output used by GitHub Pages)
+- Deploy stylesheet: `src/ui/styles.min.css` (generated from `src/ui/styles.css`)
+- Deploy scripts: local `*.min.js` files generated from referenced external scripts in `index.source.html`
 - Optional artifacts:
   - `index.min.html` (HTML+CSS minified, JS not minified)
   - `index.min.js.html` (HTML+CSS+inline JS minified)
@@ -107,10 +109,10 @@ GitHub Pages serves `index.html` by default. The workflow keeps a readable sourc
 
 Run from the repository root.
 
-### 1) Build deployable minified `index.html` (with JS minification)
+### 1) Build deployable minified `index.html` (with inline JS + external CSS + external JS minification)
 
 ```powershell
-py scripts/minify_safe.py --source index.source.html --minify-js --output index.html
+py scripts/minify_safe.py --source index.source.html --minify-js --minify-external-css --minify-external-js --output index.html
 ```
 
 ### 2) Verify minified `index.html` still contains critical app markers
@@ -142,6 +144,8 @@ Additional outputs:
 ```powershell
 npm run minify:safe:py        # writes index.min.html
 npm run minify:with-js:py     # writes index.min.js.html
+npm run minify:safe:css:py    # writes index.min.html + src/ui/styles.min.css
+npm run minify:with-js:css:py # writes index.min.js.html + src/ui/styles.min.css + local *.min.js files
 ```
 
 ## GitHub Pages Publish Steps
