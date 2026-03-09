@@ -92,7 +92,19 @@ if __name__ == "__main__":
     previous_version, next_version = update_versions()
 
     # Build deployable minified index.html from index.source.html.
-    run([sys.executable, "scripts/minify_safe.py", "--source", "index.source.html", "--minify-js", "--output", "index.html"])
+    run(
+        [
+            sys.executable,
+            "scripts/minify_safe.py",
+            "--source",
+            "index.source.html",
+            "--minify-js",
+            "--minify-external-css",
+            "--minify-external-js",
+            "--output",
+            "index.html",
+        ]
+    )
 
     # Verify the deployable index.html still contains key app markers.
     run([sys.executable, "scripts/test_minified.py", "index.html", "index.source.html"])

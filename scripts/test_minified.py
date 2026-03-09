@@ -119,11 +119,11 @@ require_regex(runtime_surface, minified_carryover_guard_pattern, "minified/runti
 
 # Guard against regression: Home from summary should refresh welcome player entry.
 source_home_refresh_pattern = (
-    r"getElementById\(\s*[\"']restart-change[\"']\s*\)\.addEventListener\(\s*[\"']click[\"']\s*,"
+    r"getElementById\(\s*[\"'`]restart-change[\"'`]\s*\)\??\.addEventListener\(\s*[\"'`]click[\"'`]\s*,"
     r".*?renderWelcomePlayerEntry\s*\(\s*\)"
 )
 minified_home_refresh_pattern = (
-    r"getElementById\(\s*[\"'`]restart-change[\"'`]\s*\)\.addEventListener\(\s*[\"'`]click[\"'`].*?renderWelcomePlayerEntry\(\s*\)"
+    r"getElementById\(\s*[\"'`]restart-change[\"'`]\s*\)\??\.addEventListener\(\s*[\"'`]click[\"'`].*?renderWelcomePlayerEntry\(\s*\)"
 )
 require_regex(source_runtime_surface, source_home_refresh_pattern, "source/runtime Home handler welcome-player refresh")
 require_regex(runtime_surface, minified_home_refresh_pattern, "minified/runtime Home handler welcome-player refresh")

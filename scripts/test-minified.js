@@ -105,9 +105,9 @@ requireRegex(source, sourceCarryoverGuardPattern, 'source streak carryover guard
 requireRegex(minified, minifiedCarryoverGuardPattern, 'minified streak carryover guard');
 
 const sourceHomeRefreshPattern =
-  'getElementById\\(\\s*["\\\']restart-change["\\\']\\s*\\)\\.addEventListener\\(\\s*["\\\']click["\\\']\\s*,.*?renderWelcomePlayerEntry\\s*\\(\\s*\\)';
+  'getElementById\\(\\s*[`"\\\']restart-change[`"\\\']\\s*\\)\\??\\.addEventListener\\(\\s*[`"\\\']click[`"\\\']\\s*,.*?renderWelcomePlayerEntry\\s*\\(\\s*\\)';
 const minifiedHomeRefreshPattern =
-  'getElementById\\((`|"|\\\')restart-change\\1\\)\\.addEventListener\\((`|"|\\\')click\\2.*?renderWelcomePlayerEntry\\(\\)';
+  'getElementById\\(\\s*[`"\\\']restart-change[`"\\\']\\s*\\)\\??\\.addEventListener\\(\\s*[`"\\\']click[`"\\\'].*?renderWelcomePlayerEntry\\(\\s*\\)';
 requireRegex(source, sourceHomeRefreshPattern, 'source Home handler welcome-player refresh');
 requireRegex(minified, minifiedHomeRefreshPattern, 'minified Home handler welcome-player refresh');
 
