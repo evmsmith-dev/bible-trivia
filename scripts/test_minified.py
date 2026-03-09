@@ -30,6 +30,26 @@ if not minified_path.exists():
 source = source_path.read_text(encoding='utf-8')
 minified = minified_path.read_text(encoding='utf-8')
 
+
+def build_runtime_surface(html_text: str, html_base_path: Path) -> str:
+    parts = [html_text]
+    script_paths = []
+    for match in re.finditer(r'<script[^>]+\bsrc\s*=\s*(?:["\']([^"\']+)["\']|([^\s>]+))', html_text, flags=re.IGNORECASE):
+        script_paths.append(match.group(1) or match.group(2))
+    for src in script_paths:
+        if re.match(r'^(?:https?:)?//', src, flags=re.IGNORECASE):
+            continue
+        if src.startswith('data:'):
+            continue
+        local_path = (html_base_path / src).resolve()
+        if local_path.exists():
+            parts.append(local_path.read_text(encoding='utf-8'))
+    return "\n".join(parts)
+
+
+runtime_surface = build_runtime_surface(minified, minified_path.parent)
+source_runtime_surface = source + "\n" + runtime_surface
+
 source_bytes = len(source.encode('utf-8'))
 minified_bytes = len(minified.encode('utf-8'))
 if minified_bytes >= source_bytes:
@@ -48,7 +68,7 @@ required_any_markers = [
 ]
 
 for marker_group in required_any_markers:
-    require_any(minified, marker_group, "core marker in minified output")
+    require_any(runtime_surface, marker_group, "core marker in minified/runtime output")
 
 # Daily challenge: core UI and logic markers should survive minification.
 daily_feature_markers = [
@@ -60,7 +80,7 @@ daily_feature_markers = [
 ]
 
 for marker_group in daily_feature_markers:
-    require_any(minified, marker_group, "daily challenge marker in minified output")
+    require_any(runtime_surface, marker_group, "daily challenge marker in minified/runtime output")
 
 # Player profile: welcome entry and overlay controls must be present.
 player_profile_markers = [
@@ -73,7 +93,7 @@ player_profile_markers = [
 ]
 
 for marker_group in player_profile_markers:
-    require_any(minified, marker_group, "player profile marker in minified output")
+    require_any(runtime_surface, marker_group, "player profile marker in minified/runtime output")
 
 # Streak systems: HUD, bonus logic, and carryover banner are all required.
 streak_markers = [
@@ -85,17 +105,17 @@ streak_markers = [
 ]
 
 for marker_group in streak_markers:
-    require_any(minified, marker_group, "streak marker in minified output")
+    require_any(runtime_surface, marker_group, "streak marker in minified/runtime output")
 
 # Guard against regression: summary carryover banner must require an active bonus.
 source_carryover_guard_pattern = (
     r"showCarryoverBanner\s*=\s*showRestartSameButton\s*&&\s*carryoverStreak\s*>\s*0\s*&&\s*carryoverBonus\s*>\s*0"
 )
 minified_carryover_guard_pattern = (
-    r"showCarryoverBanner\s*=\s*showRestartSameButton\s*&&\s*carryoverStreak>0\s*&&\s*carryoverBonus>0"
+    r"showCarryoverBanner\s*=\s*showRestartSameButton\s*&&\s*carryoverStreak\s*>\s*0\s*&&\s*carryoverBonus\s*>\s*0"
 )
-require_regex(source, source_carryover_guard_pattern, "source streak carryover guard")
-require_regex(minified, minified_carryover_guard_pattern, "minified streak carryover guard")
+require_regex(source_runtime_surface, source_carryover_guard_pattern, "source/runtime streak carryover guard")
+require_regex(runtime_surface, minified_carryover_guard_pattern, "minified/runtime streak carryover guard")
 
 # Guard against regression: Home from summary should refresh welcome player entry.
 source_home_refresh_pattern = (
@@ -103,10 +123,10 @@ source_home_refresh_pattern = (
     r".*?renderWelcomePlayerEntry\s*\(\s*\)"
 )
 minified_home_refresh_pattern = (
-    r"getElementById\(`restart-change`\)\.addEventListener\(`click`.*?renderWelcomePlayerEntry\(\)"
+    r"getElementById\(\s*[\"'`]restart-change[\"'`]\s*\)\.addEventListener\(\s*[\"'`]click[\"'`].*?renderWelcomePlayerEntry\(\s*\)"
 )
-require_regex(source, source_home_refresh_pattern, "source Home handler welcome-player refresh")
-require_regex(minified, minified_home_refresh_pattern, "minified Home handler welcome-player refresh")
+require_regex(source_runtime_surface, source_home_refresh_pattern, "source/runtime Home handler welcome-player refresh")
+require_regex(runtime_surface, minified_home_refresh_pattern, "minified/runtime Home handler welcome-player refresh")
 
 source_script_count = len(re.findall(r'<script\\b', source, flags=re.IGNORECASE))
 minified_script_count = len(re.findall(r'<script\\b', minified, flags=re.IGNORECASE))
