@@ -1,7 +1,7 @@
 {
   "name": "bible-trivia",
   "private": true,
-  "version": "1.9.106",
+  "version": "1.9.107",
   "description": "Bible trivia static app",
   "scripts": {
     "minify:safe": "html-minifier-terser index.html --collapse-whitespace --remove-comments --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js false -o index.min.html",
@@ -13,12 +13,14 @@
     "build:pages:py": "py scripts/minify_safe.py --source index.source.html --minify-js --minify-external-css --minify-external-js --output index.html",
     "build:pages:safe:py": "py scripts/minify_safe.py --source index.source.html --minify-external-css --minify-external-js --output index.html",
     "test:minified": "node scripts/test-minified.js",
+    "test:history-dedup": "node scripts/test-history-dedup.js",
     "test:minified:py": "py scripts/test_minified.py",
+    "test:history-dedup:py": "py scripts/test_history_dedup.py",
     "test:minified-js:py": "py scripts/test_minified.py index.min.js.html",
     "build:minified": "npm run minify:safe && npm run test:minified",
     "build:minified:py": "npm run minify:safe:py && npm run test:minified:py",
     "build:minified-js:py": "npm run minify:with-js:py && npm run test:minified-js:py",
-    "verify:pages:py": "py scripts/test_minified.py index.html index.source.html",
+    "verify:pages:py": "py scripts/test_minified.py index.html index.source.html && py scripts/test_history_dedup.py",
     "publish:prep:py": "py scripts/publish_prep.py"
   },
   "devDependencies": {
