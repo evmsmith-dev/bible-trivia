@@ -1,0 +1,30 @@
+(function attachBibleTriviaStorageKeys(globalScope) {
+  function createStorageKeys(playerId) {
+    const safePlayerId = String(playerId || "primary");
+    const storagePrefix = `bibleTriviaPlayer_${safePlayerId}_`;
+
+    return {
+      playerId: safePlayerId,
+      storagePrefix,
+      profile: `${storagePrefix}profile`,
+      history: `${storagePrefix}history`,
+      highScores: `${storagePrefix}highScores`,
+      includeHardLegacy: `${storagePrefix}includeHardLegacy`,
+      difficultyMode: `${storagePrefix}difficultyMode`,
+      roundReviewPreference: `${storagePrefix}roundReviewPreference`,
+      playerStats: `${storagePrefix}playerStats`,
+      dailyStats: `${storagePrefix}dailyStats`,
+      dailyChallenges: `${storagePrefix}dailyChallenges`,
+      dailyPulseAckDate: `${storagePrefix}dailyPulseAckDate`,
+      dailyPulseLastShownDate: `${storagePrefix}dailyPulseLastShownDate`,
+      dailyPulseShowCount: `${storagePrefix}dailyPulseShowCount`,
+      dailyPulseClickCount: `${storagePrefix}dailyPulseClickCount`,
+      streakCarryoverMessageShownCount: `${storagePrefix}streakCarryoverMessageShownCount`,
+      streakCarryoverRestartClickCount: `${storagePrefix}streakCarryoverRestartClickCount`,
+    };
+  }
+
+  globalScope.BibleTriviaStorage = Object.assign({}, globalScope.BibleTriviaStorage, {
+    createStorageKeys,
+  });
+})(window);

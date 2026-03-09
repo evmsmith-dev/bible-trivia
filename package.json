@@ -1,7 +1,7 @@
 {
   "name": "bible-trivia",
   "private": true,
-  "version": "1.9.5",
+  "version": "1.9.105",
   "description": "Bible trivia static app",
   "scripts": {
     "minify:safe": "html-minifier-terser index.html --collapse-whitespace --remove-comments --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js false -o index.min.html",
