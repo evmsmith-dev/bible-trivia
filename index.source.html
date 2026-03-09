@@ -1122,6 +1122,65 @@
       gap: 12px;
     }
 
+    .player-name-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .player-name-display-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      max-width: fit-content;
+    }
+
+    .player-name-display-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2f4f31;
+    }
+
+    .player-name-display-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1b5e20;
+    }
+
+    .player-name-edit-row {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .player-inline-icon-btn {
+      margin: 0;
+      padding: 8px 11px;
+      min-width: 42px;
+      min-height: 42px;
+      border-radius: 999px;
+      font-size: 1rem;
+      line-height: 1;
+      box-shadow: none;
+    }
+
+    #player-name-edit-btn {
+      background: #f6fff7;
+      border: 1px solid #c8e6c9;
+      color: #1b5e20;
+    }
+
+    #player-name-confirm-btn {
+      background: #2e7d32;
+      color: #ffffff;
+    }
+
+    #player-name-cancel-btn {
+      background: #ef5350;
+      color: #ffffff;
+    }
+
     .player-avatar-preview {
       display: flex;
       flex-direction: column;
@@ -1306,23 +1365,11 @@
       color: #2f5f34;
     }
 
-    .player-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 8px;
-    }
-
     .player-secondary-actions {
       display: flex;
       flex-direction: column;
       gap: 8px;
       margin-top: 8px;
-    }
-
-    #player-save-btn {
-      background: var(--primary);
-      color: white;
     }
 
     #player-reset-btn {
@@ -2050,10 +2097,18 @@
           </div>
         </div>
 
-        <div class="player-field">
-          <label for="player-name-input">Name</label>
-          <input id="player-name-input" type="text" maxlength="15" autocomplete="off" />
-          <p id="player-name-help">2 to 15 characters after trimming spaces.</p>
+        <div class="player-name-header">
+          <div id="player-name-display-row" class="player-name-display-row">
+            <span class="player-name-display-label">Name:</span>
+            <span id="player-name-display" class="player-name-display-value">Player</span>
+            <button id="player-name-edit-btn" class="player-inline-icon-btn" type="button" aria-label="Edit player name" title="Edit player name">✏️</button>
+          </div>
+          <div id="player-name-edit-row" class="player-name-edit-row">
+            <input id="player-name-input" type="text" maxlength="15" autocomplete="off" aria-label="Edit player name" />
+            <button id="player-name-confirm-btn" class="player-inline-icon-btn" type="button" aria-label="Save name" title="Save name">✓</button>
+            <button id="player-name-cancel-btn" class="player-inline-icon-btn" type="button" aria-label="Cancel name edit" title="Cancel name edit">✕</button>
+          </div>
+          <p id="player-name-help" style="display:none;">Name must be 2 to 15 characters.</p>
           <p id="player-name-error" aria-live="polite"></p>
         </div>
 
@@ -2065,10 +2120,6 @@
             <span id="avatar-page-indicator" aria-live="polite">1 / 1</span>
             <button id="avatar-page-next" type="button" aria-label="Next avatar page">Next</button>
           </div>
-        </div>
-
-        <div class="player-actions">
-          <button id="player-save-btn" type="button">Save Profile</button>
         </div>
 
         <div class="player-secondary-actions">
@@ -4190,6 +4241,511 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 { "q": "Which Old Testament figures are cited in Hebrews as stopping the mouths of lions, quenching fire, and escaping the sword?", "opts": ["Unnamed heroes of faith", "Daniel and his friends", "Elijah and Elisha", "David and Jonathan"], "ans": 0, "ref": "Hebrews 11:32-34", "category": "General", "difficulty": "hard" }
 ];
 
+    /* AUTO-GENERATED QUESTION EXPANSION BEGIN */
+    allQuestions.push(
+      {"q": "Quick Bible check: who built the ark before the flood?", "opts": ["Noah", "Moses", "Abraham", "David"], "ans": 0, "ref": "Genesis 6:13-14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who built the ark before the flood?", "opts": ["Noah", "Moses", "Abraham", "David"], "ans": 0, "ref": "Genesis 6:13-14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who built the ark before the flood?", "opts": ["Noah", "Moses", "Abraham", "David"], "ans": 0, "ref": "Genesis 6:13-14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who built the ark before the flood?", "opts": ["Noah", "Moses", "Abraham", "David"], "ans": 0, "ref": "Genesis 6:13-14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who built the ark before the flood?", "opts": ["Noah", "Moses", "Abraham", "David"], "ans": 0, "ref": "Genesis 6:13-14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was the first man God created?", "opts": ["Adam", "Noah", "Abraham", "Jacob"], "ans": 0, "ref": "Genesis 2:7", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was the first man God created?", "opts": ["Adam", "Noah", "Abraham", "Jacob"], "ans": 0, "ref": "Genesis 2:7", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who was the first man God created?", "opts": ["Adam", "Noah", "Abraham", "Jacob"], "ans": 0, "ref": "Genesis 2:7", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was the first man God created?", "opts": ["Adam", "Noah", "Abraham", "Jacob"], "ans": 0, "ref": "Genesis 2:7", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was the first man God created?", "opts": ["Adam", "Noah", "Abraham", "Jacob"], "ans": 0, "ref": "Genesis 2:7", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was the first woman God created?", "opts": ["Eve", "Sarah", "Rebekah", "Miriam"], "ans": 0, "ref": "Genesis 2:22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was the first woman God created?", "opts": ["Eve", "Sarah", "Rebekah", "Miriam"], "ans": 0, "ref": "Genesis 2:22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who was the first woman God created?", "opts": ["Eve", "Sarah", "Rebekah", "Miriam"], "ans": 0, "ref": "Genesis 2:22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was the first woman God created?", "opts": ["Eve", "Sarah", "Rebekah", "Miriam"], "ans": 0, "ref": "Genesis 2:22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was the first woman God created?", "opts": ["Eve", "Sarah", "Rebekah", "Miriam"], "ans": 0, "ref": "Genesis 2:22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who parted the Red Sea by God's power?", "opts": ["Moses", "Aaron", "Joshua", "Elijah"], "ans": 0, "ref": "Exodus 14:21-22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who parted the Red Sea by God's power?", "opts": ["Moses", "Aaron", "Joshua", "Elijah"], "ans": 0, "ref": "Exodus 14:21-22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who parted the Red Sea by God's power?", "opts": ["Moses", "Aaron", "Joshua", "Elijah"], "ans": 0, "ref": "Exodus 14:21-22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who parted the Red Sea by God's power?", "opts": ["Moses", "Aaron", "Joshua", "Elijah"], "ans": 0, "ref": "Exodus 14:21-22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who parted the Red Sea by God's power?", "opts": ["Moses", "Aaron", "Joshua", "Elijah"], "ans": 0, "ref": "Exodus 14:21-22", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who defeated Goliath with a sling and stone?", "opts": ["David", "Saul", "Jonathan", "Samuel"], "ans": 0, "ref": "1 Samuel 17:49-50", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who defeated Goliath with a sling and stone?", "opts": ["David", "Saul", "Jonathan", "Samuel"], "ans": 0, "ref": "1 Samuel 17:49-50", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who defeated Goliath with a sling and stone?", "opts": ["David", "Saul", "Jonathan", "Samuel"], "ans": 0, "ref": "1 Samuel 17:49-50", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who defeated Goliath with a sling and stone?", "opts": ["David", "Saul", "Jonathan", "Samuel"], "ans": 0, "ref": "1 Samuel 17:49-50", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who defeated Goliath with a sling and stone?", "opts": ["David", "Saul", "Jonathan", "Samuel"], "ans": 0, "ref": "1 Samuel 17:49-50", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was thrown into the lions' den and survived?", "opts": ["Daniel", "Jeremiah", "Ezekiel", "Isaiah"], "ans": 0, "ref": "Daniel 6:16-23", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was thrown into the lions' den and survived?", "opts": ["Daniel", "Jeremiah", "Ezekiel", "Isaiah"], "ans": 0, "ref": "Daniel 6:16-23", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who was thrown into the lions' den and survived?", "opts": ["Daniel", "Jeremiah", "Ezekiel", "Isaiah"], "ans": 0, "ref": "Daniel 6:16-23", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was thrown into the lions' den and survived?", "opts": ["Daniel", "Jeremiah", "Ezekiel", "Isaiah"], "ans": 0, "ref": "Daniel 6:16-23", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was thrown into the lions' den and survived?", "opts": ["Daniel", "Jeremiah", "Ezekiel", "Isaiah"], "ans": 0, "ref": "Daniel 6:16-23", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was swallowed by a great fish?", "opts": ["Jonah", "Elijah", "Amos", "Hosea"], "ans": 0, "ref": "Jonah 1:17", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was swallowed by a great fish?", "opts": ["Jonah", "Elijah", "Amos", "Hosea"], "ans": 0, "ref": "Jonah 1:17", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who was swallowed by a great fish?", "opts": ["Jonah", "Elijah", "Amos", "Hosea"], "ans": 0, "ref": "Jonah 1:17", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was swallowed by a great fish?", "opts": ["Jonah", "Elijah", "Amos", "Hosea"], "ans": 0, "ref": "Jonah 1:17", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was swallowed by a great fish?", "opts": ["Jonah", "Elijah", "Amos", "Hosea"], "ans": 0, "ref": "Jonah 1:17", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was the strongest man known for long hair?", "opts": ["Samson", "Saul", "Absalom", "Gideon"], "ans": 0, "ref": "Judges 13:5", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was the strongest man known for long hair?", "opts": ["Samson", "Saul", "Absalom", "Gideon"], "ans": 0, "ref": "Judges 13:5", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who was the strongest man known for long hair?", "opts": ["Samson", "Saul", "Absalom", "Gideon"], "ans": 0, "ref": "Judges 13:5", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was the strongest man known for long hair?", "opts": ["Samson", "Saul", "Absalom", "Gideon"], "ans": 0, "ref": "Judges 13:5", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was the strongest man known for long hair?", "opts": ["Samson", "Saul", "Absalom", "Gideon"], "ans": 0, "ref": "Judges 13:5", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: what city's walls fell after Israel marched around them?", "opts": ["Jericho", "Ai", "Nineveh", "Babylon"], "ans": 0, "ref": "Joshua 6:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: what city's walls fell after Israel marched around them?", "opts": ["Jericho", "Ai", "Nineveh", "Babylon"], "ans": 0, "ref": "Joshua 6:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: what city's walls fell after Israel marched around them?", "opts": ["Jericho", "Ai", "Nineveh", "Babylon"], "ans": 0, "ref": "Joshua 6:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: what city's walls fell after Israel marched around them?", "opts": ["Jericho", "Ai", "Nineveh", "Babylon"], "ans": 0, "ref": "Joshua 6:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: what city's walls fell after Israel marched around them?", "opts": ["Jericho", "Ai", "Nineveh", "Babylon"], "ans": 0, "ref": "Joshua 6:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who received the Ten Commandments from God?", "opts": ["Moses", "Aaron", "Joshua", "Caleb"], "ans": 0, "ref": "Exodus 31:18", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who received the Ten Commandments from God?", "opts": ["Moses", "Aaron", "Joshua", "Caleb"], "ans": 0, "ref": "Exodus 31:18", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who received the Ten Commandments from God?", "opts": ["Moses", "Aaron", "Joshua", "Caleb"], "ans": 0, "ref": "Exodus 31:18", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who received the Ten Commandments from God?", "opts": ["Moses", "Aaron", "Joshua", "Caleb"], "ans": 0, "ref": "Exodus 31:18", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who received the Ten Commandments from God?", "opts": ["Moses", "Aaron", "Joshua", "Caleb"], "ans": 0, "ref": "Exodus 31:18", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who interpreted Pharaoh's dreams in Egypt?", "opts": ["Joseph", "Moses", "Daniel", "Jacob"], "ans": 0, "ref": "Genesis 41:15-16", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who interpreted Pharaoh's dreams in Egypt?", "opts": ["Joseph", "Moses", "Daniel", "Jacob"], "ans": 0, "ref": "Genesis 41:15-16", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who interpreted Pharaoh's dreams in Egypt?", "opts": ["Joseph", "Moses", "Daniel", "Jacob"], "ans": 0, "ref": "Genesis 41:15-16", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who interpreted Pharaoh's dreams in Egypt?", "opts": ["Joseph", "Moses", "Daniel", "Jacob"], "ans": 0, "ref": "Genesis 41:15-16", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who interpreted Pharaoh's dreams in Egypt?", "opts": ["Joseph", "Moses", "Daniel", "Jacob"], "ans": 0, "ref": "Genesis 41:15-16", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was the queen who saved her people from Haman?", "opts": ["Esther", "Ruth", "Deborah", "Leah"], "ans": 0, "ref": "Esther 4:14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was the queen who saved her people from Haman?", "opts": ["Esther", "Ruth", "Deborah", "Leah"], "ans": 0, "ref": "Esther 4:14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who was the queen who saved her people from Haman?", "opts": ["Esther", "Ruth", "Deborah", "Leah"], "ans": 0, "ref": "Esther 4:14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was the queen who saved her people from Haman?", "opts": ["Esther", "Ruth", "Deborah", "Leah"], "ans": 0, "ref": "Esther 4:14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was the queen who saved her people from Haman?", "opts": ["Esther", "Ruth", "Deborah", "Leah"], "ans": 0, "ref": "Esther 4:14", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was the mother of Samuel?", "opts": ["Hannah", "Naomi", "Ruth", "Miriam"], "ans": 0, "ref": "1 Samuel 1:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was the mother of Samuel?", "opts": ["Hannah", "Naomi", "Ruth", "Miriam"], "ans": 0, "ref": "1 Samuel 1:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who was the mother of Samuel?", "opts": ["Hannah", "Naomi", "Ruth", "Miriam"], "ans": 0, "ref": "1 Samuel 1:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was the mother of Samuel?", "opts": ["Hannah", "Naomi", "Ruth", "Miriam"], "ans": 0, "ref": "1 Samuel 1:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was the mother of Samuel?", "opts": ["Hannah", "Naomi", "Ruth", "Miriam"], "ans": 0, "ref": "1 Samuel 1:20", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who became king after Saul?", "opts": ["David", "Solomon", "Absalom", "Rehoboam"], "ans": 0, "ref": "2 Samuel 5:3-4", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who became king after Saul?", "opts": ["David", "Solomon", "Absalom", "Rehoboam"], "ans": 0, "ref": "2 Samuel 5:3-4", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who became king after Saul?", "opts": ["David", "Solomon", "Absalom", "Rehoboam"], "ans": 0, "ref": "2 Samuel 5:3-4", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who became king after Saul?", "opts": ["David", "Solomon", "Absalom", "Rehoboam"], "ans": 0, "ref": "2 Samuel 5:3-4", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who became king after Saul?", "opts": ["David", "Solomon", "Absalom", "Rehoboam"], "ans": 0, "ref": "2 Samuel 5:3-4", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was the first king of Israel?", "opts": ["Saul", "David", "Solomon", "Hezekiah"], "ans": 0, "ref": "1 Samuel 10:1", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was the first king of Israel?", "opts": ["Saul", "David", "Solomon", "Hezekiah"], "ans": 0, "ref": "1 Samuel 10:1", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Story question: who was the first king of Israel?", "opts": ["Saul", "David", "Solomon", "Hezekiah"], "ans": 0, "ref": "1 Samuel 10:1", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was the first king of Israel?", "opts": ["Saul", "David", "Solomon", "Hezekiah"], "ans": 0, "ref": "1 Samuel 10:1", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was the first king of Israel?", "opts": ["Saul", "David", "Solomon", "Hezekiah"], "ans": 0, "ref": "1 Samuel 10:1", "category": "Old Testament", "difficulty": "easy"},
+      {"q": "Think it through: which judge tested God with a fleece?", "opts": ["Gideon", "Samson", "Jephthah", "Ehud"], "ans": 0, "ref": "Judges 6:36-40", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: which judge tested God with a fleece?", "opts": ["Gideon", "Samson", "Jephthah", "Ehud"], "ans": 0, "ref": "Judges 6:36-40", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: which judge tested God with a fleece?", "opts": ["Gideon", "Samson", "Jephthah", "Ehud"], "ans": 0, "ref": "Judges 6:36-40", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: which judge tested God with a fleece?", "opts": ["Gideon", "Samson", "Jephthah", "Ehud"], "ans": 0, "ref": "Judges 6:36-40", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: which judge tested God with a fleece?", "opts": ["Gideon", "Samson", "Jephthah", "Ehud"], "ans": 0, "ref": "Judges 6:36-40", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: which prophet challenged Baal's prophets on Mount Carmel?", "opts": ["Elijah", "Elisha", "Isaiah", "Jeremiah"], "ans": 0, "ref": "1 Kings 18:20-24", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: which prophet challenged Baal's prophets on Mount Carmel?", "opts": ["Elijah", "Elisha", "Isaiah", "Jeremiah"], "ans": 0, "ref": "1 Kings 18:20-24", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: which prophet challenged Baal's prophets on Mount Carmel?", "opts": ["Elijah", "Elisha", "Isaiah", "Jeremiah"], "ans": 0, "ref": "1 Kings 18:20-24", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: which prophet challenged Baal's prophets on Mount Carmel?", "opts": ["Elijah", "Elisha", "Isaiah", "Jeremiah"], "ans": 0, "ref": "1 Kings 18:20-24", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: which prophet challenged Baal's prophets on Mount Carmel?", "opts": ["Elijah", "Elisha", "Isaiah", "Jeremiah"], "ans": 0, "ref": "1 Kings 18:20-24", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: who rebuilt Jerusalem's walls after exile?", "opts": ["Nehemiah", "Ezra", "Zerubbabel", "Joshua"], "ans": 0, "ref": "Nehemiah 2:17-18", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who rebuilt Jerusalem's walls after exile?", "opts": ["Nehemiah", "Ezra", "Zerubbabel", "Joshua"], "ans": 0, "ref": "Nehemiah 2:17-18", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who rebuilt Jerusalem's walls after exile?", "opts": ["Nehemiah", "Ezra", "Zerubbabel", "Joshua"], "ans": 0, "ref": "Nehemiah 2:17-18", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who rebuilt Jerusalem's walls after exile?", "opts": ["Nehemiah", "Ezra", "Zerubbabel", "Joshua"], "ans": 0, "ref": "Nehemiah 2:17-18", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who rebuilt Jerusalem's walls after exile?", "opts": ["Nehemiah", "Ezra", "Zerubbabel", "Joshua"], "ans": 0, "ref": "Nehemiah 2:17-18", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: who interpreted the handwriting on the wall for Belshazzar?", "opts": ["Daniel", "Ezekiel", "Isaiah", "Jeremiah"], "ans": 0, "ref": "Daniel 5:25-28", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who interpreted the handwriting on the wall for Belshazzar?", "opts": ["Daniel", "Ezekiel", "Isaiah", "Jeremiah"], "ans": 0, "ref": "Daniel 5:25-28", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who interpreted the handwriting on the wall for Belshazzar?", "opts": ["Daniel", "Ezekiel", "Isaiah", "Jeremiah"], "ans": 0, "ref": "Daniel 5:25-28", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who interpreted the handwriting on the wall for Belshazzar?", "opts": ["Daniel", "Ezekiel", "Isaiah", "Jeremiah"], "ans": 0, "ref": "Daniel 5:25-28", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who interpreted the handwriting on the wall for Belshazzar?", "opts": ["Daniel", "Ezekiel", "Isaiah", "Jeremiah"], "ans": 0, "ref": "Daniel 5:25-28", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: which king asked for wisdom and built the first temple?", "opts": ["Solomon", "David", "Rehoboam", "Hezekiah"], "ans": 0, "ref": "1 Kings 3:9; 6:14", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: which king asked for wisdom and built the first temple?", "opts": ["Solomon", "David", "Rehoboam", "Hezekiah"], "ans": 0, "ref": "1 Kings 3:9; 6:14", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: which king asked for wisdom and built the first temple?", "opts": ["Solomon", "David", "Rehoboam", "Hezekiah"], "ans": 0, "ref": "1 Kings 3:9; 6:14", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: which king asked for wisdom and built the first temple?", "opts": ["Solomon", "David", "Rehoboam", "Hezekiah"], "ans": 0, "ref": "1 Kings 3:9; 6:14", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: which king asked for wisdom and built the first temple?", "opts": ["Solomon", "David", "Rehoboam", "Hezekiah"], "ans": 0, "ref": "1 Kings 3:9; 6:14", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: who was taken to heaven in a whirlwind?", "opts": ["Elijah", "Elisha", "Enoch", "Isaiah"], "ans": 0, "ref": "2 Kings 2:11", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who was taken to heaven in a whirlwind?", "opts": ["Elijah", "Elisha", "Enoch", "Isaiah"], "ans": 0, "ref": "2 Kings 2:11", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who was taken to heaven in a whirlwind?", "opts": ["Elijah", "Elisha", "Enoch", "Isaiah"], "ans": 0, "ref": "2 Kings 2:11", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who was taken to heaven in a whirlwind?", "opts": ["Elijah", "Elisha", "Enoch", "Isaiah"], "ans": 0, "ref": "2 Kings 2:11", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who was taken to heaven in a whirlwind?", "opts": ["Elijah", "Elisha", "Enoch", "Isaiah"], "ans": 0, "ref": "2 Kings 2:11", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: which prophet saw a valley of dry bones?", "opts": ["Ezekiel", "Isaiah", "Jeremiah", "Amos"], "ans": 0, "ref": "Ezekiel 37:1-10", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: which prophet saw a valley of dry bones?", "opts": ["Ezekiel", "Isaiah", "Jeremiah", "Amos"], "ans": 0, "ref": "Ezekiel 37:1-10", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: which prophet saw a valley of dry bones?", "opts": ["Ezekiel", "Isaiah", "Jeremiah", "Amos"], "ans": 0, "ref": "Ezekiel 37:1-10", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: which prophet saw a valley of dry bones?", "opts": ["Ezekiel", "Isaiah", "Jeremiah", "Amos"], "ans": 0, "ref": "Ezekiel 37:1-10", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: which prophet saw a valley of dry bones?", "opts": ["Ezekiel", "Isaiah", "Jeremiah", "Amos"], "ans": 0, "ref": "Ezekiel 37:1-10", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: who found baby Moses in the Nile?", "opts": ["Pharaoh's daughter", "Miriam", "Jochebed", "Zipporah"], "ans": 0, "ref": "Exodus 2:5-6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who found baby Moses in the Nile?", "opts": ["Pharaoh's daughter", "Miriam", "Jochebed", "Zipporah"], "ans": 0, "ref": "Exodus 2:5-6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who found baby Moses in the Nile?", "opts": ["Pharaoh's daughter", "Miriam", "Jochebed", "Zipporah"], "ans": 0, "ref": "Exodus 2:5-6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who found baby Moses in the Nile?", "opts": ["Pharaoh's daughter", "Miriam", "Jochebed", "Zipporah"], "ans": 0, "ref": "Exodus 2:5-6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who found baby Moses in the Nile?", "opts": ["Pharaoh's daughter", "Miriam", "Jochebed", "Zipporah"], "ans": 0, "ref": "Exodus 2:5-6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: which book tells how Ruth married Boaz?", "opts": ["Ruth", "Judges", "1 Samuel", "Ezra"], "ans": 0, "ref": "Ruth 4:13", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: which book tells how Ruth married Boaz?", "opts": ["Ruth", "Judges", "1 Samuel", "Ezra"], "ans": 0, "ref": "Ruth 4:13", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: which book tells how Ruth married Boaz?", "opts": ["Ruth", "Judges", "1 Samuel", "Ezra"], "ans": 0, "ref": "Ruth 4:13", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: which book tells how Ruth married Boaz?", "opts": ["Ruth", "Judges", "1 Samuel", "Ezra"], "ans": 0, "ref": "Ruth 4:13", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: which book tells how Ruth married Boaz?", "opts": ["Ruth", "Judges", "1 Samuel", "Ezra"], "ans": 0, "ref": "Ruth 4:13", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: who interpreted dreams while in Babylon and Persia?", "opts": ["Daniel", "Joseph", "Nehemiah", "Mordecai"], "ans": 0, "ref": "Daniel 2:19", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who interpreted dreams while in Babylon and Persia?", "opts": ["Daniel", "Joseph", "Nehemiah", "Mordecai"], "ans": 0, "ref": "Daniel 2:19", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who interpreted dreams while in Babylon and Persia?", "opts": ["Daniel", "Joseph", "Nehemiah", "Mordecai"], "ans": 0, "ref": "Daniel 2:19", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who interpreted dreams while in Babylon and Persia?", "opts": ["Daniel", "Joseph", "Nehemiah", "Mordecai"], "ans": 0, "ref": "Daniel 2:19", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who interpreted dreams while in Babylon and Persia?", "opts": ["Daniel", "Joseph", "Nehemiah", "Mordecai"], "ans": 0, "ref": "Daniel 2:19", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: which prophet said a child would be called Prince of Peace?", "opts": ["Isaiah", "Micah", "Hosea", "Joel"], "ans": 0, "ref": "Isaiah 9:6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: which prophet said a child would be called Prince of Peace?", "opts": ["Isaiah", "Micah", "Hosea", "Joel"], "ans": 0, "ref": "Isaiah 9:6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: which prophet said a child would be called Prince of Peace?", "opts": ["Isaiah", "Micah", "Hosea", "Joel"], "ans": 0, "ref": "Isaiah 9:6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: which prophet said a child would be called Prince of Peace?", "opts": ["Isaiah", "Micah", "Hosea", "Joel"], "ans": 0, "ref": "Isaiah 9:6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: which prophet said a child would be called Prince of Peace?", "opts": ["Isaiah", "Micah", "Hosea", "Joel"], "ans": 0, "ref": "Isaiah 9:6", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Think it through: who was told to lead Israel after Moses died?", "opts": ["Joshua", "Aaron", "Caleb", "Eleazar"], "ans": 0, "ref": "Joshua 1:1-2", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who was told to lead Israel after Moses died?", "opts": ["Joshua", "Aaron", "Caleb", "Eleazar"], "ans": 0, "ref": "Joshua 1:1-2", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who was told to lead Israel after Moses died?", "opts": ["Joshua", "Aaron", "Caleb", "Eleazar"], "ans": 0, "ref": "Joshua 1:1-2", "category": "Old Testament", "difficulty": "medium"},
+      {"q": "Advanced Bible question: which king discovered the Book of the Law during temple repairs?", "opts": ["Josiah", "Hezekiah", "Manasseh", "Jehoiakim"], "ans": 0, "ref": "2 Kings 22:8-11", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Deep dive: which king discovered the Book of the Law during temple repairs?", "opts": ["Josiah", "Hezekiah", "Manasseh", "Jehoiakim"], "ans": 0, "ref": "2 Kings 22:8-11", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "For careful readers: which king discovered the Book of the Law during temple repairs?", "opts": ["Josiah", "Hezekiah", "Manasseh", "Jehoiakim"], "ans": 0, "ref": "2 Kings 22:8-11", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: which king discovered the Book of the Law during temple repairs?", "opts": ["Josiah", "Hezekiah", "Manasseh", "Jehoiakim"], "ans": 0, "ref": "2 Kings 22:8-11", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Hard mode: which king discovered the Book of the Law during temple repairs?", "opts": ["Josiah", "Hezekiah", "Manasseh", "Jehoiakim"], "ans": 0, "ref": "2 Kings 22:8-11", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which prophet married Gomer as a sign to Israel?", "opts": ["Hosea", "Amos", "Micah", "Zechariah"], "ans": 0, "ref": "Hosea 1:2-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Deep dive: which prophet married Gomer as a sign to Israel?", "opts": ["Hosea", "Amos", "Micah", "Zechariah"], "ans": 0, "ref": "Hosea 1:2-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "For careful readers: which prophet married Gomer as a sign to Israel?", "opts": ["Hosea", "Amos", "Micah", "Zechariah"], "ans": 0, "ref": "Hosea 1:2-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: which prophet married Gomer as a sign to Israel?", "opts": ["Hosea", "Amos", "Micah", "Zechariah"], "ans": 0, "ref": "Hosea 1:2-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Hard mode: which prophet married Gomer as a sign to Israel?", "opts": ["Hosea", "Amos", "Micah", "Zechariah"], "ans": 0, "ref": "Hosea 1:2-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which priest found refuge with David while fleeing Saul?", "opts": ["Abiathar", "Zadok", "Jehoiada", "Eli"], "ans": 0, "ref": "1 Samuel 23:6", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Deep dive: which priest found refuge with David while fleeing Saul?", "opts": ["Abiathar", "Zadok", "Jehoiada", "Eli"], "ans": 0, "ref": "1 Samuel 23:6", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "For careful readers: which priest found refuge with David while fleeing Saul?", "opts": ["Abiathar", "Zadok", "Jehoiada", "Eli"], "ans": 0, "ref": "1 Samuel 23:6", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: which priest found refuge with David while fleeing Saul?", "opts": ["Abiathar", "Zadok", "Jehoiada", "Eli"], "ans": 0, "ref": "1 Samuel 23:6", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Hard mode: which priest found refuge with David while fleeing Saul?", "opts": ["Abiathar", "Zadok", "Jehoiada", "Eli"], "ans": 0, "ref": "1 Samuel 23:6", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: who led the return from exile and rebuilt the altar first?", "opts": ["Zerubbabel", "Ezra", "Nehemiah", "Joshua son of Nun"], "ans": 0, "ref": "Ezra 3:2", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Deep dive: who led the return from exile and rebuilt the altar first?", "opts": ["Zerubbabel", "Ezra", "Nehemiah", "Joshua son of Nun"], "ans": 0, "ref": "Ezra 3:2", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "For careful readers: who led the return from exile and rebuilt the altar first?", "opts": ["Zerubbabel", "Ezra", "Nehemiah", "Joshua son of Nun"], "ans": 0, "ref": "Ezra 3:2", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: who led the return from exile and rebuilt the altar first?", "opts": ["Zerubbabel", "Ezra", "Nehemiah", "Joshua son of Nun"], "ans": 0, "ref": "Ezra 3:2", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Hard mode: who led the return from exile and rebuilt the altar first?", "opts": ["Zerubbabel", "Ezra", "Nehemiah", "Joshua son of Nun"], "ans": 0, "ref": "Ezra 3:2", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which prophet confronted Jeroboam at Bethel's altar?", "opts": ["A man of God from Judah", "Elijah", "Amos", "Ahijah"], "ans": 0, "ref": "1 Kings 13:1-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Deep dive: which prophet confronted Jeroboam at Bethel's altar?", "opts": ["A man of God from Judah", "Elijah", "Amos", "Ahijah"], "ans": 0, "ref": "1 Kings 13:1-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "For careful readers: which prophet confronted Jeroboam at Bethel's altar?", "opts": ["A man of God from Judah", "Elijah", "Amos", "Ahijah"], "ans": 0, "ref": "1 Kings 13:1-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: which prophet confronted Jeroboam at Bethel's altar?", "opts": ["A man of God from Judah", "Elijah", "Amos", "Ahijah"], "ans": 0, "ref": "1 Kings 13:1-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Hard mode: which prophet confronted Jeroboam at Bethel's altar?", "opts": ["A man of God from Judah", "Elijah", "Amos", "Ahijah"], "ans": 0, "ref": "1 Kings 13:1-3", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which commander was healed of leprosy after washing in the Jordan?", "opts": ["Naaman", "Hazael", "Ben-Hadad", "Ahab"], "ans": 0, "ref": "2 Kings 5:10-14", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Deep dive: which commander was healed of leprosy after washing in the Jordan?", "opts": ["Naaman", "Hazael", "Ben-Hadad", "Ahab"], "ans": 0, "ref": "2 Kings 5:10-14", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "For careful readers: which commander was healed of leprosy after washing in the Jordan?", "opts": ["Naaman", "Hazael", "Ben-Hadad", "Ahab"], "ans": 0, "ref": "2 Kings 5:10-14", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: which commander was healed of leprosy after washing in the Jordan?", "opts": ["Naaman", "Hazael", "Ben-Hadad", "Ahab"], "ans": 0, "ref": "2 Kings 5:10-14", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Hard mode: which commander was healed of leprosy after washing in the Jordan?", "opts": ["Naaman", "Hazael", "Ben-Hadad", "Ahab"], "ans": 0, "ref": "2 Kings 5:10-14", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: who became queen and approached the king uninvited to save the Jews?", "opts": ["Esther", "Vashti", "Mordecai", "Hadassah's cousin"], "ans": 0, "ref": "Esther 5:1-2", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Deep dive: who became queen and approached the king uninvited to save the Jews?", "opts": ["Esther", "Vashti", "Mordecai", "Hadassah's cousin"], "ans": 0, "ref": "Esther 5:1-2", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "For careful readers: who became queen and approached the king uninvited to save the Jews?", "opts": ["Esther", "Vashti", "Mordecai", "Hadassah's cousin"], "ans": 0, "ref": "Esther 5:1-2", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: who became queen and approached the king uninvited to save the Jews?", "opts": ["Esther", "Vashti", "Mordecai", "Hadassah's cousin"], "ans": 0, "ref": "Esther 5:1-2", "category": "Old Testament", "difficulty": "hard"},
+      {"q": "Quick Bible check: in what town was Jesus born?", "opts": ["Bethlehem", "Nazareth", "Jerusalem", "Capernaum"], "ans": 0, "ref": "Luke 2:4-7", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: in what town was Jesus born?", "opts": ["Bethlehem", "Nazareth", "Jerusalem", "Capernaum"], "ans": 0, "ref": "Luke 2:4-7", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: in what town was Jesus born?", "opts": ["Bethlehem", "Nazareth", "Jerusalem", "Capernaum"], "ans": 0, "ref": "Luke 2:4-7", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: in what town was Jesus born?", "opts": ["Bethlehem", "Nazareth", "Jerusalem", "Capernaum"], "ans": 0, "ref": "Luke 2:4-7", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: in what town was Jesus born?", "opts": ["Bethlehem", "Nazareth", "Jerusalem", "Capernaum"], "ans": 0, "ref": "Luke 2:4-7", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was Jesus' mother?", "opts": ["Mary", "Martha", "Elizabeth", "Anna"], "ans": 0, "ref": "Luke 1:30-31", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was Jesus' mother?", "opts": ["Mary", "Martha", "Elizabeth", "Anna"], "ans": 0, "ref": "Luke 1:30-31", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who was Jesus' mother?", "opts": ["Mary", "Martha", "Elizabeth", "Anna"], "ans": 0, "ref": "Luke 1:30-31", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was Jesus' mother?", "opts": ["Mary", "Martha", "Elizabeth", "Anna"], "ans": 0, "ref": "Luke 1:30-31", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was Jesus' mother?", "opts": ["Mary", "Martha", "Elizabeth", "Anna"], "ans": 0, "ref": "Luke 1:30-31", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who baptized Jesus?", "opts": ["John the Baptist", "Peter", "James", "Andrew"], "ans": 0, "ref": "Matthew 3:13-17", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who baptized Jesus?", "opts": ["John the Baptist", "Peter", "James", "Andrew"], "ans": 0, "ref": "Matthew 3:13-17", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who baptized Jesus?", "opts": ["John the Baptist", "Peter", "James", "Andrew"], "ans": 0, "ref": "Matthew 3:13-17", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who baptized Jesus?", "opts": ["John the Baptist", "Peter", "James", "Andrew"], "ans": 0, "ref": "Matthew 3:13-17", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who baptized Jesus?", "opts": ["John the Baptist", "Peter", "James", "Andrew"], "ans": 0, "ref": "Matthew 3:13-17", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: how many disciples did Jesus choose?", "opts": ["12", "10", "7", "70"], "ans": 0, "ref": "Luke 6:13", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: how many disciples did Jesus choose?", "opts": ["12", "10", "7", "70"], "ans": 0, "ref": "Luke 6:13", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: how many disciples did Jesus choose?", "opts": ["12", "10", "7", "70"], "ans": 0, "ref": "Luke 6:13", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: how many disciples did Jesus choose?", "opts": ["12", "10", "7", "70"], "ans": 0, "ref": "Luke 6:13", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: how many disciples did Jesus choose?", "opts": ["12", "10", "7", "70"], "ans": 0, "ref": "Luke 6:13", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who denied Jesus three times?", "opts": ["Peter", "Judas", "Thomas", "John"], "ans": 0, "ref": "Luke 22:54-62", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who denied Jesus three times?", "opts": ["Peter", "Judas", "Thomas", "John"], "ans": 0, "ref": "Luke 22:54-62", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who denied Jesus three times?", "opts": ["Peter", "Judas", "Thomas", "John"], "ans": 0, "ref": "Luke 22:54-62", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who denied Jesus three times?", "opts": ["Peter", "Judas", "Thomas", "John"], "ans": 0, "ref": "Luke 22:54-62", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who denied Jesus three times?", "opts": ["Peter", "Judas", "Thomas", "John"], "ans": 0, "ref": "Luke 22:54-62", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who betrayed Jesus for silver?", "opts": ["Judas Iscariot", "Peter", "Pilate", "Caiaphas"], "ans": 0, "ref": "Matthew 26:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who betrayed Jesus for silver?", "opts": ["Judas Iscariot", "Peter", "Pilate", "Caiaphas"], "ans": 0, "ref": "Matthew 26:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who betrayed Jesus for silver?", "opts": ["Judas Iscariot", "Peter", "Pilate", "Caiaphas"], "ans": 0, "ref": "Matthew 26:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who betrayed Jesus for silver?", "opts": ["Judas Iscariot", "Peter", "Pilate", "Caiaphas"], "ans": 0, "ref": "Matthew 26:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who betrayed Jesus for silver?", "opts": ["Judas Iscariot", "Peter", "Pilate", "Caiaphas"], "ans": 0, "ref": "Matthew 26:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: what did Jesus feed to over five thousand people?", "opts": ["Five loaves and two fish", "Seven loaves and wine", "Manna and quail", "Bread and olives"], "ans": 0, "ref": "Matthew 14:17-21", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: what did Jesus feed to over five thousand people?", "opts": ["Five loaves and two fish", "Seven loaves and wine", "Manna and quail", "Bread and olives"], "ans": 0, "ref": "Matthew 14:17-21", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: what did Jesus feed to over five thousand people?", "opts": ["Five loaves and two fish", "Seven loaves and wine", "Manna and quail", "Bread and olives"], "ans": 0, "ref": "Matthew 14:17-21", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: what did Jesus feed to over five thousand people?", "opts": ["Five loaves and two fish", "Seven loaves and wine", "Manna and quail", "Bread and olives"], "ans": 0, "ref": "Matthew 14:17-21", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: what did Jesus feed to over five thousand people?", "opts": ["Five loaves and two fish", "Seven loaves and wine", "Manna and quail", "Bread and olives"], "ans": 0, "ref": "Matthew 14:17-21", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: what was Jesus' first miracle?", "opts": ["Turning water into wine", "Healing a blind man", "Raising Lazarus", "Walking on water"], "ans": 0, "ref": "John 2:1-11", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: what was Jesus' first miracle?", "opts": ["Turning water into wine", "Healing a blind man", "Raising Lazarus", "Walking on water"], "ans": 0, "ref": "John 2:1-11", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: what was Jesus' first miracle?", "opts": ["Turning water into wine", "Healing a blind man", "Raising Lazarus", "Walking on water"], "ans": 0, "ref": "John 2:1-11", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: what was Jesus' first miracle?", "opts": ["Turning water into wine", "Healing a blind man", "Raising Lazarus", "Walking on water"], "ans": 0, "ref": "John 2:1-11", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: what was Jesus' first miracle?", "opts": ["Turning water into wine", "Healing a blind man", "Raising Lazarus", "Walking on water"], "ans": 0, "ref": "John 2:1-11", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who climbed a tree to see Jesus?", "opts": ["Zacchaeus", "Matthew", "Bartimaeus", "Nicodemus"], "ans": 0, "ref": "Luke 19:2-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who climbed a tree to see Jesus?", "opts": ["Zacchaeus", "Matthew", "Bartimaeus", "Nicodemus"], "ans": 0, "ref": "Luke 19:2-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who climbed a tree to see Jesus?", "opts": ["Zacchaeus", "Matthew", "Bartimaeus", "Nicodemus"], "ans": 0, "ref": "Luke 19:2-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who climbed a tree to see Jesus?", "opts": ["Zacchaeus", "Matthew", "Bartimaeus", "Nicodemus"], "ans": 0, "ref": "Luke 19:2-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who climbed a tree to see Jesus?", "opts": ["Zacchaeus", "Matthew", "Bartimaeus", "Nicodemus"], "ans": 0, "ref": "Luke 19:2-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who walked on water toward Jesus?", "opts": ["Peter", "John", "Andrew", "Thomas"], "ans": 0, "ref": "Matthew 14:28-29", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who walked on water toward Jesus?", "opts": ["Peter", "John", "Andrew", "Thomas"], "ans": 0, "ref": "Matthew 14:28-29", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who walked on water toward Jesus?", "opts": ["Peter", "John", "Andrew", "Thomas"], "ans": 0, "ref": "Matthew 14:28-29", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who walked on water toward Jesus?", "opts": ["Peter", "John", "Andrew", "Thomas"], "ans": 0, "ref": "Matthew 14:28-29", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who walked on water toward Jesus?", "opts": ["Peter", "John", "Andrew", "Thomas"], "ans": 0, "ref": "Matthew 14:28-29", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who visited baby Jesus after following a star?", "opts": ["Wise men", "Roman soldiers", "Fishermen", "Pharisees"], "ans": 0, "ref": "Matthew 2:1-2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who visited baby Jesus after following a star?", "opts": ["Wise men", "Roman soldiers", "Fishermen", "Pharisees"], "ans": 0, "ref": "Matthew 2:1-2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who visited baby Jesus after following a star?", "opts": ["Wise men", "Roman soldiers", "Fishermen", "Pharisees"], "ans": 0, "ref": "Matthew 2:1-2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who visited baby Jesus after following a star?", "opts": ["Wise men", "Roman soldiers", "Fishermen", "Pharisees"], "ans": 0, "ref": "Matthew 2:1-2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who visited baby Jesus after following a star?", "opts": ["Wise men", "Roman soldiers", "Fishermen", "Pharisees"], "ans": 0, "ref": "Matthew 2:1-2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who rolled away the stone from Jesus' tomb?", "opts": ["An angel of the Lord", "Peter", "The women", "Pilate"], "ans": 0, "ref": "Matthew 28:2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who rolled away the stone from Jesus' tomb?", "opts": ["An angel of the Lord", "Peter", "The women", "Pilate"], "ans": 0, "ref": "Matthew 28:2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who rolled away the stone from Jesus' tomb?", "opts": ["An angel of the Lord", "Peter", "The women", "Pilate"], "ans": 0, "ref": "Matthew 28:2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who rolled away the stone from Jesus' tomb?", "opts": ["An angel of the Lord", "Peter", "The women", "Pilate"], "ans": 0, "ref": "Matthew 28:2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who rolled away the stone from Jesus' tomb?", "opts": ["An angel of the Lord", "Peter", "The women", "Pilate"], "ans": 0, "ref": "Matthew 28:2", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was the first to see Jesus after His resurrection?", "opts": ["Mary Magdalene", "Peter", "John", "Thomas"], "ans": 0, "ref": "John 20:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was the first to see Jesus after His resurrection?", "opts": ["Mary Magdalene", "Peter", "John", "Thomas"], "ans": 0, "ref": "John 20:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who was the first to see Jesus after His resurrection?", "opts": ["Mary Magdalene", "Peter", "John", "Thomas"], "ans": 0, "ref": "John 20:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was the first to see Jesus after His resurrection?", "opts": ["Mary Magdalene", "Peter", "John", "Thomas"], "ans": 0, "ref": "John 20:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was the first to see Jesus after His resurrection?", "opts": ["Mary Magdalene", "Peter", "John", "Thomas"], "ans": 0, "ref": "John 20:14-16", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: what happened at Pentecost?", "opts": ["The Holy Spirit came", "Jesus was baptized", "Paul was converted", "John was exiled"], "ans": 0, "ref": "Acts 2:1-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: what happened at Pentecost?", "opts": ["The Holy Spirit came", "Jesus was baptized", "Paul was converted", "John was exiled"], "ans": 0, "ref": "Acts 2:1-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: what happened at Pentecost?", "opts": ["The Holy Spirit came", "Jesus was baptized", "Paul was converted", "John was exiled"], "ans": 0, "ref": "Acts 2:1-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: what happened at Pentecost?", "opts": ["The Holy Spirit came", "Jesus was baptized", "Paul was converted", "John was exiled"], "ans": 0, "ref": "Acts 2:1-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: what happened at Pentecost?", "opts": ["The Holy Spirit came", "Jesus was baptized", "Paul was converted", "John was exiled"], "ans": 0, "ref": "Acts 2:1-4", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Quick Bible check: who was known as the beloved disciple?", "opts": ["John", "Peter", "James", "Matthew"], "ans": 0, "ref": "John 21:20", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Bible basics: who was known as the beloved disciple?", "opts": ["John", "Peter", "James", "Matthew"], "ans": 0, "ref": "John 21:20", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Story question: who was known as the beloved disciple?", "opts": ["John", "Peter", "James", "Matthew"], "ans": 0, "ref": "John 21:20", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Let's remember: who was known as the beloved disciple?", "opts": ["John", "Peter", "James", "Matthew"], "ans": 0, "ref": "John 21:20", "category": "New Testament", "difficulty": "easy"},
+      {"q": "From Scripture: who was known as the beloved disciple?", "opts": ["John", "Peter", "James", "Matthew"], "ans": 0, "ref": "John 21:20", "category": "New Testament", "difficulty": "easy"},
+      {"q": "Think it through: who wrote the Gospel of Luke and the book of Acts?", "opts": ["Luke", "Mark", "John", "Matthew"], "ans": 0, "ref": "Luke 1:1-3; Acts 1:1", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who wrote the Gospel of Luke and the book of Acts?", "opts": ["Luke", "Mark", "John", "Matthew"], "ans": 0, "ref": "Luke 1:1-3; Acts 1:1", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who wrote the Gospel of Luke and the book of Acts?", "opts": ["Luke", "Mark", "John", "Matthew"], "ans": 0, "ref": "Luke 1:1-3; Acts 1:1", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who wrote the Gospel of Luke and the book of Acts?", "opts": ["Luke", "Mark", "John", "Matthew"], "ans": 0, "ref": "Luke 1:1-3; Acts 1:1", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who wrote the Gospel of Luke and the book of Acts?", "opts": ["Luke", "Mark", "John", "Matthew"], "ans": 0, "ref": "Luke 1:1-3; Acts 1:1", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who mentored Timothy in ministry?", "opts": ["Paul", "Peter", "Barnabas", "James"], "ans": 0, "ref": "2 Timothy 1:2", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who mentored Timothy in ministry?", "opts": ["Paul", "Peter", "Barnabas", "James"], "ans": 0, "ref": "2 Timothy 1:2", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who mentored Timothy in ministry?", "opts": ["Paul", "Peter", "Barnabas", "James"], "ans": 0, "ref": "2 Timothy 1:2", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who mentored Timothy in ministry?", "opts": ["Paul", "Peter", "Barnabas", "James"], "ans": 0, "ref": "2 Timothy 1:2", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who mentored Timothy in ministry?", "opts": ["Paul", "Peter", "Barnabas", "James"], "ans": 0, "ref": "2 Timothy 1:2", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who saw a vision telling him to go to Cornelius?", "opts": ["Peter", "Paul", "Philip", "Ananias"], "ans": 0, "ref": "Acts 10:9-20", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who saw a vision telling him to go to Cornelius?", "opts": ["Peter", "Paul", "Philip", "Ananias"], "ans": 0, "ref": "Acts 10:9-20", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who saw a vision telling him to go to Cornelius?", "opts": ["Peter", "Paul", "Philip", "Ananias"], "ans": 0, "ref": "Acts 10:9-20", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who saw a vision telling him to go to Cornelius?", "opts": ["Peter", "Paul", "Philip", "Ananias"], "ans": 0, "ref": "Acts 10:9-20", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who saw a vision telling him to go to Cornelius?", "opts": ["Peter", "Paul", "Philip", "Ananias"], "ans": 0, "ref": "Acts 10:9-20", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who baptized the Ethiopian official on the road?", "opts": ["Philip", "Peter", "John", "Paul"], "ans": 0, "ref": "Acts 8:35-38", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who baptized the Ethiopian official on the road?", "opts": ["Philip", "Peter", "John", "Paul"], "ans": 0, "ref": "Acts 8:35-38", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who baptized the Ethiopian official on the road?", "opts": ["Philip", "Peter", "John", "Paul"], "ans": 0, "ref": "Acts 8:35-38", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who baptized the Ethiopian official on the road?", "opts": ["Philip", "Peter", "John", "Paul"], "ans": 0, "ref": "Acts 8:35-38", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who baptized the Ethiopian official on the road?", "opts": ["Philip", "Peter", "John", "Paul"], "ans": 0, "ref": "Acts 8:35-38", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who was struck blind on the road to Damascus?", "opts": ["Saul (Paul)", "Barnabas", "Silas", "Stephen"], "ans": 0, "ref": "Acts 9:3-9", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who was struck blind on the road to Damascus?", "opts": ["Saul (Paul)", "Barnabas", "Silas", "Stephen"], "ans": 0, "ref": "Acts 9:3-9", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who was struck blind on the road to Damascus?", "opts": ["Saul (Paul)", "Barnabas", "Silas", "Stephen"], "ans": 0, "ref": "Acts 9:3-9", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who was struck blind on the road to Damascus?", "opts": ["Saul (Paul)", "Barnabas", "Silas", "Stephen"], "ans": 0, "ref": "Acts 9:3-9", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who was struck blind on the road to Damascus?", "opts": ["Saul (Paul)", "Barnabas", "Silas", "Stephen"], "ans": 0, "ref": "Acts 9:3-9", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who was called the son of encouragement?", "opts": ["Barnabas", "Silas", "Apollos", "Timothy"], "ans": 0, "ref": "Acts 4:36", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who was called the son of encouragement?", "opts": ["Barnabas", "Silas", "Apollos", "Timothy"], "ans": 0, "ref": "Acts 4:36", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who was called the son of encouragement?", "opts": ["Barnabas", "Silas", "Apollos", "Timothy"], "ans": 0, "ref": "Acts 4:36", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who was called the son of encouragement?", "opts": ["Barnabas", "Silas", "Apollos", "Timothy"], "ans": 0, "ref": "Acts 4:36", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who was called the son of encouragement?", "opts": ["Barnabas", "Silas", "Apollos", "Timothy"], "ans": 0, "ref": "Acts 4:36", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who opened her home to Paul in Philippi?", "opts": ["Lydia", "Priscilla", "Phoebe", "Martha"], "ans": 0, "ref": "Acts 16:14-15", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who opened her home to Paul in Philippi?", "opts": ["Lydia", "Priscilla", "Phoebe", "Martha"], "ans": 0, "ref": "Acts 16:14-15", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who opened her home to Paul in Philippi?", "opts": ["Lydia", "Priscilla", "Phoebe", "Martha"], "ans": 0, "ref": "Acts 16:14-15", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who opened her home to Paul in Philippi?", "opts": ["Lydia", "Priscilla", "Phoebe", "Martha"], "ans": 0, "ref": "Acts 16:14-15", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who opened her home to Paul in Philippi?", "opts": ["Lydia", "Priscilla", "Phoebe", "Martha"], "ans": 0, "ref": "Acts 16:14-15", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who was lowered in a basket from Damascus?", "opts": ["Paul", "Peter", "John", "Timothy"], "ans": 0, "ref": "Acts 9:23-25", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who was lowered in a basket from Damascus?", "opts": ["Paul", "Peter", "John", "Timothy"], "ans": 0, "ref": "Acts 9:23-25", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who was lowered in a basket from Damascus?", "opts": ["Paul", "Peter", "John", "Timothy"], "ans": 0, "ref": "Acts 9:23-25", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who was lowered in a basket from Damascus?", "opts": ["Paul", "Peter", "John", "Timothy"], "ans": 0, "ref": "Acts 9:23-25", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who was lowered in a basket from Damascus?", "opts": ["Paul", "Peter", "John", "Timothy"], "ans": 0, "ref": "Acts 9:23-25", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who replaced Judas among the twelve?", "opts": ["Matthias", "Barsabbas", "Stephen", "Philip"], "ans": 0, "ref": "Acts 1:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who replaced Judas among the twelve?", "opts": ["Matthias", "Barsabbas", "Stephen", "Philip"], "ans": 0, "ref": "Acts 1:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who replaced Judas among the twelve?", "opts": ["Matthias", "Barsabbas", "Stephen", "Philip"], "ans": 0, "ref": "Acts 1:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who replaced Judas among the twelve?", "opts": ["Matthias", "Barsabbas", "Stephen", "Philip"], "ans": 0, "ref": "Acts 1:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who replaced Judas among the twelve?", "opts": ["Matthias", "Barsabbas", "Stephen", "Philip"], "ans": 0, "ref": "Acts 1:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who argued with Peter in Antioch according to Galatians?", "opts": ["Paul", "Barnabas", "James", "John"], "ans": 0, "ref": "Galatians 2:11", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who argued with Peter in Antioch according to Galatians?", "opts": ["Paul", "Barnabas", "James", "John"], "ans": 0, "ref": "Galatians 2:11", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who argued with Peter in Antioch according to Galatians?", "opts": ["Paul", "Barnabas", "James", "John"], "ans": 0, "ref": "Galatians 2:11", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who argued with Peter in Antioch according to Galatians?", "opts": ["Paul", "Barnabas", "James", "John"], "ans": 0, "ref": "Galatians 2:11", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who argued with Peter in Antioch according to Galatians?", "opts": ["Paul", "Barnabas", "James", "John"], "ans": 0, "ref": "Galatians 2:11", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: who explained Scripture to Apollos more accurately?", "opts": ["Priscilla and Aquila", "Paul and Silas", "Peter and John", "Barnabas and Mark"], "ans": 0, "ref": "Acts 18:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: who explained Scripture to Apollos more accurately?", "opts": ["Priscilla and Aquila", "Paul and Silas", "Peter and John", "Barnabas and Mark"], "ans": 0, "ref": "Acts 18:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: who explained Scripture to Apollos more accurately?", "opts": ["Priscilla and Aquila", "Paul and Silas", "Peter and John", "Barnabas and Mark"], "ans": 0, "ref": "Acts 18:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "From the Bible account: who explained Scripture to Apollos more accurately?", "opts": ["Priscilla and Aquila", "Paul and Silas", "Peter and John", "Barnabas and Mark"], "ans": 0, "ref": "Acts 18:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Knowledge check: who explained Scripture to Apollos more accurately?", "opts": ["Priscilla and Aquila", "Paul and Silas", "Peter and John", "Barnabas and Mark"], "ans": 0, "ref": "Acts 18:26", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Think it through: which apostle was exiled to Patmos?", "opts": ["John", "Peter", "Paul", "James"], "ans": 0, "ref": "Revelation 1:9", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Bible challenge: which apostle was exiled to Patmos?", "opts": ["John", "Peter", "Paul", "James"], "ans": 0, "ref": "Revelation 1:9", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Do you recall: which apostle was exiled to Patmos?", "opts": ["John", "Peter", "Paul", "James"], "ans": 0, "ref": "Revelation 1:9", "category": "New Testament", "difficulty": "medium"},
+      {"q": "Advanced Bible question: who was released instead of Jesus before the crucifixion?", "opts": ["Barabbas", "Simon of Cyrene", "Jairus", "Nicodemus"], "ans": 0, "ref": "Matthew 27:15-26", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Deep dive: who was released instead of Jesus before the crucifixion?", "opts": ["Barabbas", "Simon of Cyrene", "Jairus", "Nicodemus"], "ans": 0, "ref": "Matthew 27:15-26", "category": "New Testament", "difficulty": "hard"},
+      {"q": "For careful readers: who was released instead of Jesus before the crucifixion?", "opts": ["Barabbas", "Simon of Cyrene", "Jairus", "Nicodemus"], "ans": 0, "ref": "Matthew 27:15-26", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: who was released instead of Jesus before the crucifixion?", "opts": ["Barabbas", "Simon of Cyrene", "Jairus", "Nicodemus"], "ans": 0, "ref": "Matthew 27:15-26", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Hard mode: who was released instead of Jesus before the crucifixion?", "opts": ["Barabbas", "Simon of Cyrene", "Jairus", "Nicodemus"], "ans": 0, "ref": "Matthew 27:15-26", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: who carried the letter to the Romans according to tradition in the text?", "opts": ["Phoebe", "Priscilla", "Lydia", "Junia"], "ans": 0, "ref": "Romans 16:1-2", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Deep dive: who carried the letter to the Romans according to tradition in the text?", "opts": ["Phoebe", "Priscilla", "Lydia", "Junia"], "ans": 0, "ref": "Romans 16:1-2", "category": "New Testament", "difficulty": "hard"},
+      {"q": "For careful readers: who carried the letter to the Romans according to tradition in the text?", "opts": ["Phoebe", "Priscilla", "Lydia", "Junia"], "ans": 0, "ref": "Romans 16:1-2", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: who carried the letter to the Romans according to tradition in the text?", "opts": ["Phoebe", "Priscilla", "Lydia", "Junia"], "ans": 0, "ref": "Romans 16:1-2", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Hard mode: who carried the letter to the Romans according to tradition in the text?", "opts": ["Phoebe", "Priscilla", "Lydia", "Junia"], "ans": 0, "ref": "Romans 16:1-2", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: who was the teacher whose feet Gamaliel had students sit at?", "opts": ["Rabbi tradition in Jerusalem", "Jesus only", "John the Baptist", "Hillel only"], "ans": 0, "ref": "Acts 22:3", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Deep dive: who was the teacher whose feet Gamaliel had students sit at?", "opts": ["Rabbi tradition in Jerusalem", "Jesus only", "John the Baptist", "Hillel only"], "ans": 0, "ref": "Acts 22:3", "category": "New Testament", "difficulty": "hard"},
+      {"q": "For careful readers: who was the teacher whose feet Gamaliel had students sit at?", "opts": ["Rabbi tradition in Jerusalem", "Jesus only", "John the Baptist", "Hillel only"], "ans": 0, "ref": "Acts 22:3", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: who was the teacher whose feet Gamaliel had students sit at?", "opts": ["Rabbi tradition in Jerusalem", "Jesus only", "John the Baptist", "Hillel only"], "ans": 0, "ref": "Acts 22:3", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Hard mode: who was the teacher whose feet Gamaliel had students sit at?", "opts": ["Rabbi tradition in Jerusalem", "Jesus only", "John the Baptist", "Hillel only"], "ans": 0, "ref": "Acts 22:3", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which church was warned for being lukewarm in Revelation?", "opts": ["Laodicea", "Ephesus", "Smyrna", "Pergamum"], "ans": 0, "ref": "Revelation 3:14-16", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Deep dive: which church was warned for being lukewarm in Revelation?", "opts": ["Laodicea", "Ephesus", "Smyrna", "Pergamum"], "ans": 0, "ref": "Revelation 3:14-16", "category": "New Testament", "difficulty": "hard"},
+      {"q": "For careful readers: which church was warned for being lukewarm in Revelation?", "opts": ["Laodicea", "Ephesus", "Smyrna", "Pergamum"], "ans": 0, "ref": "Revelation 3:14-16", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: which church was warned for being lukewarm in Revelation?", "opts": ["Laodicea", "Ephesus", "Smyrna", "Pergamum"], "ans": 0, "ref": "Revelation 3:14-16", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Hard mode: which church was warned for being lukewarm in Revelation?", "opts": ["Laodicea", "Ephesus", "Smyrna", "Pergamum"], "ans": 0, "ref": "Revelation 3:14-16", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: who was the runaway slave mentioned in Paul's letter to Philemon?", "opts": ["Onesimus", "Tychicus", "Epaphras", "Archippus"], "ans": 0, "ref": "Philemon 1:10-12", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Deep dive: who was the runaway slave mentioned in Paul's letter to Philemon?", "opts": ["Onesimus", "Tychicus", "Epaphras", "Archippus"], "ans": 0, "ref": "Philemon 1:10-12", "category": "New Testament", "difficulty": "hard"},
+      {"q": "For careful readers: who was the runaway slave mentioned in Paul's letter to Philemon?", "opts": ["Onesimus", "Tychicus", "Epaphras", "Archippus"], "ans": 0, "ref": "Philemon 1:10-12", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: who was the runaway slave mentioned in Paul's letter to Philemon?", "opts": ["Onesimus", "Tychicus", "Epaphras", "Archippus"], "ans": 0, "ref": "Philemon 1:10-12", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Hard mode: who was the runaway slave mentioned in Paul's letter to Philemon?", "opts": ["Onesimus", "Tychicus", "Epaphras", "Archippus"], "ans": 0, "ref": "Philemon 1:10-12", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which deacon became known for signs and was martyred in Acts?", "opts": ["Stephen", "Philip", "Prochorus", "Nicanor"], "ans": 0, "ref": "Acts 6:8; 7:59-60", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Deep dive: which deacon became known for signs and was martyred in Acts?", "opts": ["Stephen", "Philip", "Prochorus", "Nicanor"], "ans": 0, "ref": "Acts 6:8; 7:59-60", "category": "New Testament", "difficulty": "hard"},
+      {"q": "For careful readers: which deacon became known for signs and was martyred in Acts?", "opts": ["Stephen", "Philip", "Prochorus", "Nicanor"], "ans": 0, "ref": "Acts 6:8; 7:59-60", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: which deacon became known for signs and was martyred in Acts?", "opts": ["Stephen", "Philip", "Prochorus", "Nicanor"], "ans": 0, "ref": "Acts 6:8; 7:59-60", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Hard mode: which deacon became known for signs and was martyred in Acts?", "opts": ["Stephen", "Philip", "Prochorus", "Nicanor"], "ans": 0, "ref": "Acts 6:8; 7:59-60", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Advanced Bible question: who was king when John the Baptist was imprisoned and executed?", "opts": ["Herod Antipas", "Herod Agrippa I", "Caesar Augustus", "Pontius Pilate"], "ans": 0, "ref": "Mark 6:17-27", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Deep dive: who was king when John the Baptist was imprisoned and executed?", "opts": ["Herod Antipas", "Herod Agrippa I", "Caesar Augustus", "Pontius Pilate"], "ans": 0, "ref": "Mark 6:17-27", "category": "New Testament", "difficulty": "hard"},
+      {"q": "For careful readers: who was king when John the Baptist was imprisoned and executed?", "opts": ["Herod Antipas", "Herod Agrippa I", "Caesar Augustus", "Pontius Pilate"], "ans": 0, "ref": "Mark 6:17-27", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Scholars' corner: who was king when John the Baptist was imprisoned and executed?", "opts": ["Herod Antipas", "Herod Agrippa I", "Caesar Augustus", "Pontius Pilate"], "ans": 0, "ref": "Mark 6:17-27", "category": "New Testament", "difficulty": "hard"},
+      {"q": "Quick Bible check: how many books are in the Bible?", "opts": ["66", "39", "27", "73"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: how many books are in the Bible?", "opts": ["66", "39", "27", "73"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: how many books are in the Bible?", "opts": ["66", "39", "27", "73"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: how many books are in the Bible?", "opts": ["66", "39", "27", "73"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: how many books are in the Bible?", "opts": ["66", "39", "27", "73"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: how many books are in the Old Testament?", "opts": ["39", "27", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: how many books are in the Old Testament?", "opts": ["39", "27", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: how many books are in the Old Testament?", "opts": ["39", "27", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: how many books are in the Old Testament?", "opts": ["39", "27", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: how many books are in the Old Testament?", "opts": ["39", "27", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: how many books are in the New Testament?", "opts": ["27", "39", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: how many books are in the New Testament?", "opts": ["27", "39", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: how many books are in the New Testament?", "opts": ["27", "39", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: how many books are in the New Testament?", "opts": ["27", "39", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: how many books are in the New Testament?", "opts": ["27", "39", "66", "12"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: what is the first book of the Bible?", "opts": ["Genesis", "Exodus", "Matthew", "Psalms"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: what is the first book of the Bible?", "opts": ["Genesis", "Exodus", "Matthew", "Psalms"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: what is the first book of the Bible?", "opts": ["Genesis", "Exodus", "Matthew", "Psalms"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: what is the first book of the Bible?", "opts": ["Genesis", "Exodus", "Matthew", "Psalms"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: what is the first book of the Bible?", "opts": ["Genesis", "Exodus", "Matthew", "Psalms"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: what is the last book of the Bible?", "opts": ["Revelation", "Jude", "Acts", "Malachi"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: what is the last book of the Bible?", "opts": ["Revelation", "Jude", "Acts", "Malachi"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: what is the last book of the Bible?", "opts": ["Revelation", "Jude", "Acts", "Malachi"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: what is the last book of the Bible?", "opts": ["Revelation", "Jude", "Acts", "Malachi"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: what is the last book of the Bible?", "opts": ["Revelation", "Jude", "Acts", "Malachi"], "ans": 0, "ref": "", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: what is the shortest verse in many English Bibles?", "opts": ["Jesus wept", "God is love", "Pray always", "Rejoice evermore"], "ans": 0, "ref": "John 11:35", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: what is the shortest verse in many English Bibles?", "opts": ["Jesus wept", "God is love", "Pray always", "Rejoice evermore"], "ans": 0, "ref": "John 11:35", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: what is the shortest verse in many English Bibles?", "opts": ["Jesus wept", "God is love", "Pray always", "Rejoice evermore"], "ans": 0, "ref": "John 11:35", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: what is the shortest verse in many English Bibles?", "opts": ["Jesus wept", "God is love", "Pray always", "Rejoice evermore"], "ans": 0, "ref": "John 11:35", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: what is the shortest verse in many English Bibles?", "opts": ["Jesus wept", "God is love", "Pray always", "Rejoice evermore"], "ans": 0, "ref": "John 11:35", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: who taught us to pray \"Our Father\"?", "opts": ["Jesus", "Moses", "Paul", "David"], "ans": 0, "ref": "Matthew 6:9-13", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: who taught us to pray \"Our Father\"?", "opts": ["Jesus", "Moses", "Paul", "David"], "ans": 0, "ref": "Matthew 6:9-13", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: who taught us to pray \"Our Father\"?", "opts": ["Jesus", "Moses", "Paul", "David"], "ans": 0, "ref": "Matthew 6:9-13", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: who taught us to pray \"Our Father\"?", "opts": ["Jesus", "Moses", "Paul", "David"], "ans": 0, "ref": "Matthew 6:9-13", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: who taught us to pray \"Our Father\"?", "opts": ["Jesus", "Moses", "Paul", "David"], "ans": 0, "ref": "Matthew 6:9-13", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: what are the first words of the Bible?", "opts": ["In the beginning", "The Lord is my shepherd", "God is love", "Hear O Israel"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: what are the first words of the Bible?", "opts": ["In the beginning", "The Lord is my shepherd", "God is love", "Hear O Israel"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: what are the first words of the Bible?", "opts": ["In the beginning", "The Lord is my shepherd", "God is love", "Hear O Israel"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: what are the first words of the Bible?", "opts": ["In the beginning", "The Lord is my shepherd", "God is love", "Hear O Israel"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: what are the first words of the Bible?", "opts": ["In the beginning", "The Lord is my shepherd", "God is love", "Hear O Israel"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: on which day did God rest from creation work?", "opts": ["The seventh day", "The first day", "The third day", "The sixth day"], "ans": 0, "ref": "Genesis 2:2-3", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: on which day did God rest from creation work?", "opts": ["The seventh day", "The first day", "The third day", "The sixth day"], "ans": 0, "ref": "Genesis 2:2-3", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: on which day did God rest from creation work?", "opts": ["The seventh day", "The first day", "The third day", "The sixth day"], "ans": 0, "ref": "Genesis 2:2-3", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: on which day did God rest from creation work?", "opts": ["The seventh day", "The first day", "The third day", "The sixth day"], "ans": 0, "ref": "Genesis 2:2-3", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: on which day did God rest from creation work?", "opts": ["The seventh day", "The first day", "The third day", "The sixth day"], "ans": 0, "ref": "Genesis 2:2-3", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: what symbol reminds Christians of Jesus' sacrifice?", "opts": ["The cross", "The fish", "The dove", "The crown"], "ans": 0, "ref": "1 Corinthians 1:18", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: what symbol reminds Christians of Jesus' sacrifice?", "opts": ["The cross", "The fish", "The dove", "The crown"], "ans": 0, "ref": "1 Corinthians 1:18", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: what symbol reminds Christians of Jesus' sacrifice?", "opts": ["The cross", "The fish", "The dove", "The crown"], "ans": 0, "ref": "1 Corinthians 1:18", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: what symbol reminds Christians of Jesus' sacrifice?", "opts": ["The cross", "The fish", "The dove", "The crown"], "ans": 0, "ref": "1 Corinthians 1:18", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: what symbol reminds Christians of Jesus' sacrifice?", "opts": ["The cross", "The fish", "The dove", "The crown"], "ans": 0, "ref": "1 Corinthians 1:18", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: who is called the Good Shepherd?", "opts": ["Jesus", "David", "Moses", "Peter"], "ans": 0, "ref": "John 10:11", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: who is called the Good Shepherd?", "opts": ["Jesus", "David", "Moses", "Peter"], "ans": 0, "ref": "John 10:11", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: who is called the Good Shepherd?", "opts": ["Jesus", "David", "Moses", "Peter"], "ans": 0, "ref": "John 10:11", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: who is called the Good Shepherd?", "opts": ["Jesus", "David", "Moses", "Peter"], "ans": 0, "ref": "John 10:11", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: who is called the Good Shepherd?", "opts": ["Jesus", "David", "Moses", "Peter"], "ans": 0, "ref": "John 10:11", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: what fruit of the Spirit is listed first in Galatians?", "opts": ["Love", "Joy", "Peace", "Patience"], "ans": 0, "ref": "Galatians 5:22", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: what fruit of the Spirit is listed first in Galatians?", "opts": ["Love", "Joy", "Peace", "Patience"], "ans": 0, "ref": "Galatians 5:22", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: what fruit of the Spirit is listed first in Galatians?", "opts": ["Love", "Joy", "Peace", "Patience"], "ans": 0, "ref": "Galatians 5:22", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: what fruit of the Spirit is listed first in Galatians?", "opts": ["Love", "Joy", "Peace", "Patience"], "ans": 0, "ref": "Galatians 5:22", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: what fruit of the Spirit is listed first in Galatians?", "opts": ["Love", "Joy", "Peace", "Patience"], "ans": 0, "ref": "Galatians 5:22", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: what did Jesus say we are to be in the world?", "opts": ["Salt and light", "Kings and judges", "Merchants and rulers", "Warriors and builders"], "ans": 0, "ref": "Matthew 5:13-14", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: what did Jesus say we are to be in the world?", "opts": ["Salt and light", "Kings and judges", "Merchants and rulers", "Warriors and builders"], "ans": 0, "ref": "Matthew 5:13-14", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: what did Jesus say we are to be in the world?", "opts": ["Salt and light", "Kings and judges", "Merchants and rulers", "Warriors and builders"], "ans": 0, "ref": "Matthew 5:13-14", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: what did Jesus say we are to be in the world?", "opts": ["Salt and light", "Kings and judges", "Merchants and rulers", "Warriors and builders"], "ans": 0, "ref": "Matthew 5:13-14", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: what did Jesus say we are to be in the world?", "opts": ["Salt and light", "Kings and judges", "Merchants and rulers", "Warriors and builders"], "ans": 0, "ref": "Matthew 5:13-14", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: who wrote many Psalms?", "opts": ["David", "Solomon only", "Moses only", "Isaiah"], "ans": 0, "ref": "Psalm 23:1", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: who wrote many Psalms?", "opts": ["David", "Solomon only", "Moses only", "Isaiah"], "ans": 0, "ref": "Psalm 23:1", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: who wrote many Psalms?", "opts": ["David", "Solomon only", "Moses only", "Isaiah"], "ans": 0, "ref": "Psalm 23:1", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: who wrote many Psalms?", "opts": ["David", "Solomon only", "Moses only", "Isaiah"], "ans": 0, "ref": "Psalm 23:1", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: who wrote many Psalms?", "opts": ["David", "Solomon only", "Moses only", "Isaiah"], "ans": 0, "ref": "Psalm 23:1", "category": "General", "difficulty": "easy"},
+      {"q": "Quick Bible check: what does the word Gospel mean?", "opts": ["Good news", "Hidden message", "Sacred poem", "Ancient law"], "ans": 0, "ref": "Mark 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "Bible basics: what does the word Gospel mean?", "opts": ["Good news", "Hidden message", "Sacred poem", "Ancient law"], "ans": 0, "ref": "Mark 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "Story question: what does the word Gospel mean?", "opts": ["Good news", "Hidden message", "Sacred poem", "Ancient law"], "ans": 0, "ref": "Mark 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "Let's remember: what does the word Gospel mean?", "opts": ["Good news", "Hidden message", "Sacred poem", "Ancient law"], "ans": 0, "ref": "Mark 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "From Scripture: what does the word Gospel mean?", "opts": ["Good news", "Hidden message", "Sacred poem", "Ancient law"], "ans": 0, "ref": "Mark 1:1", "category": "General", "difficulty": "easy"},
+      {"q": "Think it through: which Gospel appears first in the New Testament?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which Gospel appears first in the New Testament?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which Gospel appears first in the New Testament?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which Gospel appears first in the New Testament?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which Gospel appears first in the New Testament?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which book comes after Acts?", "opts": ["Romans", "1 Corinthians", "John", "Hebrews"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which book comes after Acts?", "opts": ["Romans", "1 Corinthians", "John", "Hebrews"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which book comes after Acts?", "opts": ["Romans", "1 Corinthians", "John", "Hebrews"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which book comes after Acts?", "opts": ["Romans", "1 Corinthians", "John", "Hebrews"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which book comes after Acts?", "opts": ["Romans", "1 Corinthians", "John", "Hebrews"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which book comes before Psalms?", "opts": ["Job", "Proverbs", "Esther", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which book comes before Psalms?", "opts": ["Job", "Proverbs", "Esther", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which book comes before Psalms?", "opts": ["Job", "Proverbs", "Esther", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which book comes before Psalms?", "opts": ["Job", "Proverbs", "Esther", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which book comes before Psalms?", "opts": ["Job", "Proverbs", "Esther", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which two parts make up the Bible?", "opts": ["Old and New Testaments", "Law and Poetry", "Gospels and Letters", "History and Wisdom"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which two parts make up the Bible?", "opts": ["Old and New Testaments", "Law and Poetry", "Gospels and Letters", "History and Wisdom"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which two parts make up the Bible?", "opts": ["Old and New Testaments", "Law and Poetry", "Gospels and Letters", "History and Wisdom"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which two parts make up the Bible?", "opts": ["Old and New Testaments", "Law and Poetry", "Gospels and Letters", "History and Wisdom"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which two parts make up the Bible?", "opts": ["Old and New Testaments", "Law and Poetry", "Gospels and Letters", "History and Wisdom"], "ans": 0, "ref": "", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which Gospel highlights Jesus as the Word made flesh?", "opts": ["John", "Matthew", "Mark", "Luke"], "ans": 0, "ref": "John 1:14", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which Gospel highlights Jesus as the Word made flesh?", "opts": ["John", "Matthew", "Mark", "Luke"], "ans": 0, "ref": "John 1:14", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which Gospel highlights Jesus as the Word made flesh?", "opts": ["John", "Matthew", "Mark", "Luke"], "ans": 0, "ref": "John 1:14", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which Gospel highlights Jesus as the Word made flesh?", "opts": ["John", "Matthew", "Mark", "Luke"], "ans": 0, "ref": "John 1:14", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which Gospel highlights Jesus as the Word made flesh?", "opts": ["John", "Matthew", "Mark", "Luke"], "ans": 0, "ref": "John 1:14", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which Gospel includes the parable of the Good Samaritan?", "opts": ["Luke", "Matthew", "Mark", "John"], "ans": 0, "ref": "Luke 10:30-37", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which Gospel includes the parable of the Good Samaritan?", "opts": ["Luke", "Matthew", "Mark", "John"], "ans": 0, "ref": "Luke 10:30-37", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which Gospel includes the parable of the Good Samaritan?", "opts": ["Luke", "Matthew", "Mark", "John"], "ans": 0, "ref": "Luke 10:30-37", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which Gospel includes the parable of the Good Samaritan?", "opts": ["Luke", "Matthew", "Mark", "John"], "ans": 0, "ref": "Luke 10:30-37", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which Gospel includes the parable of the Good Samaritan?", "opts": ["Luke", "Matthew", "Mark", "John"], "ans": 0, "ref": "Luke 10:30-37", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which Gospel includes the Sermon on the Mount?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "Matthew 5:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which Gospel includes the Sermon on the Mount?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "Matthew 5:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which Gospel includes the Sermon on the Mount?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "Matthew 5:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which Gospel includes the Sermon on the Mount?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "Matthew 5:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which Gospel includes the Sermon on the Mount?", "opts": ["Matthew", "Mark", "Luke", "John"], "ans": 0, "ref": "Matthew 5:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which Bible book tells about early church missions?", "opts": ["Acts", "Romans", "Hebrews", "Revelation"], "ans": 0, "ref": "Acts 1:8", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which Bible book tells about early church missions?", "opts": ["Acts", "Romans", "Hebrews", "Revelation"], "ans": 0, "ref": "Acts 1:8", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which Bible book tells about early church missions?", "opts": ["Acts", "Romans", "Hebrews", "Revelation"], "ans": 0, "ref": "Acts 1:8", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which Bible book tells about early church missions?", "opts": ["Acts", "Romans", "Hebrews", "Revelation"], "ans": 0, "ref": "Acts 1:8", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which Bible book tells about early church missions?", "opts": ["Acts", "Romans", "Hebrews", "Revelation"], "ans": 0, "ref": "Acts 1:8", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which Bible book is known for wisdom sayings?", "opts": ["Proverbs", "Judges", "Ezra", "Joel"], "ans": 0, "ref": "Proverbs 1:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which Bible book is known for wisdom sayings?", "opts": ["Proverbs", "Judges", "Ezra", "Joel"], "ans": 0, "ref": "Proverbs 1:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which Bible book is known for wisdom sayings?", "opts": ["Proverbs", "Judges", "Ezra", "Joel"], "ans": 0, "ref": "Proverbs 1:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which Bible book is known for wisdom sayings?", "opts": ["Proverbs", "Judges", "Ezra", "Joel"], "ans": 0, "ref": "Proverbs 1:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which Bible book is known for wisdom sayings?", "opts": ["Proverbs", "Judges", "Ezra", "Joel"], "ans": 0, "ref": "Proverbs 1:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which book contains many songs and prayers?", "opts": ["Psalms", "Nehemiah", "Acts", "Galatians"], "ans": 0, "ref": "Psalm 95:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which book contains many songs and prayers?", "opts": ["Psalms", "Nehemiah", "Acts", "Galatians"], "ans": 0, "ref": "Psalm 95:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which book contains many songs and prayers?", "opts": ["Psalms", "Nehemiah", "Acts", "Galatians"], "ans": 0, "ref": "Psalm 95:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which book contains many songs and prayers?", "opts": ["Psalms", "Nehemiah", "Acts", "Galatians"], "ans": 0, "ref": "Psalm 95:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which book contains many songs and prayers?", "opts": ["Psalms", "Nehemiah", "Acts", "Galatians"], "ans": 0, "ref": "Psalm 95:1-2", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which book records creation and early patriarchs?", "opts": ["Genesis", "Exodus", "Leviticus", "Numbers"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which book records creation and early patriarchs?", "opts": ["Genesis", "Exodus", "Leviticus", "Numbers"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which book records creation and early patriarchs?", "opts": ["Genesis", "Exodus", "Leviticus", "Numbers"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which book records creation and early patriarchs?", "opts": ["Genesis", "Exodus", "Leviticus", "Numbers"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "medium"},
+      {"q": "Knowledge check: which book records creation and early patriarchs?", "opts": ["Genesis", "Exodus", "Leviticus", "Numbers"], "ans": 0, "ref": "Genesis 1:1", "category": "General", "difficulty": "medium"},
+      {"q": "Think it through: which book tells Israel's exodus from Egypt?", "opts": ["Exodus", "Genesis", "Joshua", "Judges"], "ans": 0, "ref": "Exodus 12:31-42", "category": "General", "difficulty": "medium"},
+      {"q": "Bible challenge: which book tells Israel's exodus from Egypt?", "opts": ["Exodus", "Genesis", "Joshua", "Judges"], "ans": 0, "ref": "Exodus 12:31-42", "category": "General", "difficulty": "medium"},
+      {"q": "Do you recall: which book tells Israel's exodus from Egypt?", "opts": ["Exodus", "Genesis", "Joshua", "Judges"], "ans": 0, "ref": "Exodus 12:31-42", "category": "General", "difficulty": "medium"},
+      {"q": "From the Bible account: which book tells Israel's exodus from Egypt?", "opts": ["Exodus", "Genesis", "Joshua", "Judges"], "ans": 0, "ref": "Exodus 12:31-42", "category": "General", "difficulty": "medium"},
+      {"q": "Advanced Bible question: which minor prophet says \"The just shall live by faith\"?", "opts": ["Habakkuk", "Nahum", "Obadiah", "Haggai"], "ans": 0, "ref": "Habakkuk 2:4", "category": "General", "difficulty": "hard"},
+      {"q": "Deep dive: which minor prophet says \"The just shall live by faith\"?", "opts": ["Habakkuk", "Nahum", "Obadiah", "Haggai"], "ans": 0, "ref": "Habakkuk 2:4", "category": "General", "difficulty": "hard"},
+      {"q": "For careful readers: which minor prophet says \"The just shall live by faith\"?", "opts": ["Habakkuk", "Nahum", "Obadiah", "Haggai"], "ans": 0, "ref": "Habakkuk 2:4", "category": "General", "difficulty": "hard"},
+      {"q": "Scholars' corner: which minor prophet says \"The just shall live by faith\"?", "opts": ["Habakkuk", "Nahum", "Obadiah", "Haggai"], "ans": 0, "ref": "Habakkuk 2:4", "category": "General", "difficulty": "hard"},
+      {"q": "Hard mode: which minor prophet says \"The just shall live by faith\"?", "opts": ["Habakkuk", "Nahum", "Obadiah", "Haggai"], "ans": 0, "ref": "Habakkuk 2:4", "category": "General", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which New Testament letter was written to seven churches in Asia?", "opts": ["Revelation", "1 Peter", "James", "Hebrews"], "ans": 0, "ref": "Revelation 1:4", "category": "General", "difficulty": "hard"},
+      {"q": "Deep dive: which New Testament letter was written to seven churches in Asia?", "opts": ["Revelation", "1 Peter", "James", "Hebrews"], "ans": 0, "ref": "Revelation 1:4", "category": "General", "difficulty": "hard"},
+      {"q": "For careful readers: which New Testament letter was written to seven churches in Asia?", "opts": ["Revelation", "1 Peter", "James", "Hebrews"], "ans": 0, "ref": "Revelation 1:4", "category": "General", "difficulty": "hard"},
+      {"q": "Scholars' corner: which New Testament letter was written to seven churches in Asia?", "opts": ["Revelation", "1 Peter", "James", "Hebrews"], "ans": 0, "ref": "Revelation 1:4", "category": "General", "difficulty": "hard"},
+      {"q": "Hard mode: which New Testament letter was written to seven churches in Asia?", "opts": ["Revelation", "1 Peter", "James", "Hebrews"], "ans": 0, "ref": "Revelation 1:4", "category": "General", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which Old Testament book has no direct mention of God's name?", "opts": ["Esther", "Ruth", "Lamentations", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "Deep dive: which Old Testament book has no direct mention of God's name?", "opts": ["Esther", "Ruth", "Lamentations", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "For careful readers: which Old Testament book has no direct mention of God's name?", "opts": ["Esther", "Ruth", "Lamentations", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "Scholars' corner: which Old Testament book has no direct mention of God's name?", "opts": ["Esther", "Ruth", "Lamentations", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "Hard mode: which Old Testament book has no direct mention of God's name?", "opts": ["Esther", "Ruth", "Lamentations", "Ecclesiastes"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which Gospel has no birth narrative for Jesus?", "opts": ["Mark", "Matthew", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "Deep dive: which Gospel has no birth narrative for Jesus?", "opts": ["Mark", "Matthew", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "For careful readers: which Gospel has no birth narrative for Jesus?", "opts": ["Mark", "Matthew", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "Scholars' corner: which Gospel has no birth narrative for Jesus?", "opts": ["Mark", "Matthew", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "Hard mode: which Gospel has no birth narrative for Jesus?", "opts": ["Mark", "Matthew", "Luke", "John"], "ans": 0, "ref": "", "category": "General", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which epistle focuses on Christ's superiority over angels and priests?", "opts": ["Hebrews", "Romans", "Galatians", "James"], "ans": 0, "ref": "Hebrews 1:4; 4:14", "category": "General", "difficulty": "hard"},
+      {"q": "Deep dive: which epistle focuses on Christ's superiority over angels and priests?", "opts": ["Hebrews", "Romans", "Galatians", "James"], "ans": 0, "ref": "Hebrews 1:4; 4:14", "category": "General", "difficulty": "hard"},
+      {"q": "For careful readers: which epistle focuses on Christ's superiority over angels and priests?", "opts": ["Hebrews", "Romans", "Galatians", "James"], "ans": 0, "ref": "Hebrews 1:4; 4:14", "category": "General", "difficulty": "hard"},
+      {"q": "Scholars' corner: which epistle focuses on Christ's superiority over angels and priests?", "opts": ["Hebrews", "Romans", "Galatians", "James"], "ans": 0, "ref": "Hebrews 1:4; 4:14", "category": "General", "difficulty": "hard"},
+      {"q": "Hard mode: which epistle focuses on Christ's superiority over angels and priests?", "opts": ["Hebrews", "Romans", "Galatians", "James"], "ans": 0, "ref": "Hebrews 1:4; 4:14", "category": "General", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which wisdom book wrestles deeply with suffering and righteousness?", "opts": ["Job", "Proverbs", "Psalms", "Song of Solomon"], "ans": 0, "ref": "Job 1:1", "category": "General", "difficulty": "hard"},
+      {"q": "Deep dive: which wisdom book wrestles deeply with suffering and righteousness?", "opts": ["Job", "Proverbs", "Psalms", "Song of Solomon"], "ans": 0, "ref": "Job 1:1", "category": "General", "difficulty": "hard"},
+      {"q": "For careful readers: which wisdom book wrestles deeply with suffering and righteousness?", "opts": ["Job", "Proverbs", "Psalms", "Song of Solomon"], "ans": 0, "ref": "Job 1:1", "category": "General", "difficulty": "hard"},
+      {"q": "Scholars' corner: which wisdom book wrestles deeply with suffering and righteousness?", "opts": ["Job", "Proverbs", "Psalms", "Song of Solomon"], "ans": 0, "ref": "Job 1:1", "category": "General", "difficulty": "hard"},
+      {"q": "Hard mode: which wisdom book wrestles deeply with suffering and righteousness?", "opts": ["Job", "Proverbs", "Psalms", "Song of Solomon"], "ans": 0, "ref": "Job 1:1", "category": "General", "difficulty": "hard"},
+      {"q": "Advanced Bible question: which prophetic book contains visions of four beasts from the sea?", "opts": ["Daniel", "Ezekiel", "Zechariah", "Joel"], "ans": 0, "ref": "Daniel 7:3-7", "category": "General", "difficulty": "hard"},
+      {"q": "Deep dive: which prophetic book contains visions of four beasts from the sea?", "opts": ["Daniel", "Ezekiel", "Zechariah", "Joel"], "ans": 0, "ref": "Daniel 7:3-7", "category": "General", "difficulty": "hard"}
+    );
+    /* AUTO-GENERATED QUESTION EXPANSION END */
+
     allQuestions.forEach((question, index) => {
       if (!Object.prototype.hasOwnProperty.call(question, 'id')) {
         question.id = index + 1;
@@ -5167,6 +5723,7 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     let dailyPulseResetTimer = null;
     let playerDraftAvatarId = BUILT_IN_AVATARS[0].id;
     let playerAvatarPageIndex = 0;
+    let isPlayerNameEditing = false;
     let playerSaveStatusTimer = null;
     let gameStartPlayerLevel = 1;
 
@@ -7273,10 +7830,35 @@ function renderPlayerAvatarOptions(selectedAvatarId) {
   }).join('');
 
   optionsHost.querySelectorAll('.avatar-option').forEach((button) => {
-    button.addEventListener('click', () => {
-      playerDraftAvatarId = button.dataset.avatarId || BUILT_IN_AVATARS[0].id;
+    button.addEventListener('click', async () => {
+      ensurePlayerProfileLoaded();
+      const nextAvatarId = button.dataset.avatarId || BUILT_IN_AVATARS[0].id;
+      const previousAvatarId = playerProfile.avatarId;
+
+      playerDraftAvatarId = nextAvatarId;
       renderPlayerAvatarOptions(playerDraftAvatarId);
       setPlayerAvatarPreview(playerDraftAvatarId);
+
+      if (nextAvatarId === previousAvatarId) {
+        return;
+      }
+
+      try {
+        playerProfile.avatarId = nextAvatarId;
+        savePlayerProfile();
+        await saveData();
+        renderWelcomePlayerEntry();
+        refreshSummaryPlayerDisplay();
+        showPlayerSaveStatus('Avatar Updated', 'success');
+      } catch (e) {
+        DBManager.log('Failed to save avatar change', e.message);
+        playerProfile.avatarId = previousAvatarId;
+        playerDraftAvatarId = previousAvatarId;
+        savePlayerProfile();
+        renderPlayerAvatarOptions(playerDraftAvatarId);
+        setPlayerAvatarPreview(playerDraftAvatarId);
+        showPlayerSaveStatus('Avatar change could not be saved', 'error');
+      }
     });
   });
 
@@ -7291,9 +7873,95 @@ function renderPlayerAvatarOptions(selectedAvatarId) {
   }
 }
 
+function setPlayerNameEditMode(isEditing) {
+  const displayRow = document.getElementById('player-name-display-row');
+  const editRow = document.getElementById('player-name-edit-row');
+  const inputEl = document.getElementById('player-name-input');
+  const helpEl = document.getElementById('player-name-help');
+  const errorEl = document.getElementById('player-name-error');
+
+  isPlayerNameEditing = Boolean(isEditing);
+
+  if (displayRow) {
+    displayRow.style.display = isPlayerNameEditing ? 'none' : 'inline-flex';
+  }
+  if (editRow) {
+    editRow.style.display = isPlayerNameEditing ? 'flex' : 'none';
+  }
+  if (helpEl) {
+    helpEl.style.display = isPlayerNameEditing ? '' : 'none';
+  }
+
+  if (errorEl) {
+    errorEl.textContent = '';
+  }
+
+  if (isPlayerNameEditing && inputEl) {
+    inputEl.value = playerProfile.name;
+    inputEl.focus();
+    inputEl.select();
+  }
+}
+
+async function commitPlayerNameChange() {
+  ensurePlayerProfileLoaded();
+  const inputEl = document.getElementById('player-name-input');
+  const errorEl = document.getElementById('player-name-error');
+  const nameDisplayEl = document.getElementById('player-name-display');
+  const rawName = inputEl ? inputEl.value : playerProfile.name;
+  const validName = sanitizePlayerName(rawName);
+
+  if (!validName) {
+    if (errorEl) {
+      errorEl.textContent = 'Name must be 2 to 15 characters after trimming spaces.';
+    }
+    return;
+  }
+
+  if (validName === playerProfile.name) {
+    if (nameDisplayEl) {
+      nameDisplayEl.textContent = playerProfile.name;
+    }
+    setPlayerNameEditMode(false);
+    return;
+  }
+
+  const previousName = playerProfile.name;
+  try {
+    playerProfile.name = validName;
+    savePlayerProfile();
+    await saveData();
+    if (nameDisplayEl) {
+      nameDisplayEl.textContent = playerProfile.name;
+    }
+    renderWelcomePlayerEntry();
+    refreshSummaryPlayerDisplay();
+    showPlayerSaveStatus('Name Updated', 'success');
+    setPlayerNameEditMode(false);
+  } catch (e) {
+    DBManager.log('Failed to save player name', e.message);
+    playerProfile.name = previousName;
+    savePlayerProfile();
+    if (errorEl) {
+      errorEl.textContent = 'Changes could not be saved.';
+    }
+    showPlayerSaveStatus('Changes could not be saved', 'error');
+  }
+}
+
+function cancelPlayerNameEdit() {
+  ensurePlayerProfileLoaded();
+  const inputEl = document.getElementById('player-name-input');
+  if (inputEl) {
+    inputEl.value = playerProfile.name;
+  }
+  setPlayerNameEditMode(false);
+}
+
 function refreshPlayerOverlayFields() {
   ensurePlayerProfileLoaded();
   const nameInput = document.getElementById('player-name-input');
+  const nameDisplayEl = document.getElementById('player-name-display');
   const levelEl = document.getElementById('player-level-display');
   const levelProgressFillEl = document.getElementById('player-level-progress-fill');
   const levelProgressTextEl = document.getElementById('player-level-progress-text');
@@ -7304,6 +7972,9 @@ function refreshPlayerOverlayFields() {
 
   if (nameInput) {
     nameInput.value = playerProfile.name;
+  }
+  if (nameDisplayEl) {
+    nameDisplayEl.textContent = playerProfile.name;
   }
   const progress = getPlayerLevelProgress();
   if (levelEl) {
@@ -7323,6 +7994,7 @@ function refreshPlayerOverlayFields() {
 
   setPlayerAvatarPreview(playerDraftAvatarId);
   renderPlayerAvatarOptions(playerDraftAvatarId);
+  setPlayerNameEditMode(false);
 }
 
 async function resetPlayerStateAndData() {
@@ -7525,7 +8197,7 @@ window.openPlayerOverlay = openPlayerOverlay;
       const showRestartSameButton = !isDailyGame;
       const carryoverStreak = Math.max(0, Math.round(bonusCarryStreak || 0));
       const carryoverBonus = getStreakBonus(carryoverStreak);
-      const showCarryoverBanner = showRestartSameButton && carryoverStreak > 0;
+      const showCarryoverBanner = showRestartSameButton && carryoverStreak > 0 && carryoverBonus > 0;
       const carryoverBannerHtml = showCarryoverBanner
         ? `
           <div class="streak-carryover-banner" role="status" aria-live="polite">
@@ -7594,6 +8266,7 @@ window.openPlayerOverlay = openPlayerOverlay;
         activeDailyChallengeRecord = null;
         document.getElementById("question-container").style.display = "none";
         document.getElementById("welcome").style.display = "block";
+        renderWelcomePlayerEntry();
         renderWelcomeDailyCard();
       });
 
@@ -8022,9 +8695,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const playerOverlay = document.getElementById("player-overlay");
   const playerBackdrop = document.querySelector("#player-overlay .player-backdrop");
   const playerClose = document.querySelector("#player-overlay .player-close");
+  const playerNameEditBtn = document.getElementById("player-name-edit-btn");
+  const playerNameConfirmBtn = document.getElementById("player-name-confirm-btn");
+  const playerNameCancelBtn = document.getElementById("player-name-cancel-btn");
   const playerNameInput = document.getElementById("player-name-input");
   const playerNameError = document.getElementById("player-name-error");
-  const playerSaveBtn = document.getElementById("player-save-btn");
   const playerOpenLeaderboardBtn = document.getElementById("player-open-leaderboard-btn");
   const playerResetBtn = document.getElementById("player-reset-btn");
   const avatarPagePrevBtn = document.getElementById("avatar-page-prev");
@@ -8041,10 +8716,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  playerNameEditBtn?.addEventListener("click", () => {
+    setPlayerNameEditMode(true);
+  });
+
+  playerNameConfirmBtn?.addEventListener("click", async () => {
+    await commitPlayerNameChange();
+  });
+
+  playerNameCancelBtn?.addEventListener("click", () => {
+    cancelPlayerNameEdit();
+  });
+
   playerNameInput?.addEventListener("keydown", (event) => {
-    if (event.key !== 'Enter') return;
-    event.preventDefault();
-    playerSaveBtn?.click();
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      commitPlayerNameChange();
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      cancelPlayerNameEdit();
+    }
   });
 
   avatarPagePrevBtn?.addEventListener("click", () => {
@@ -8056,32 +8749,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalPages = Math.max(1, Math.ceil(BUILT_IN_AVATARS.length / AVATARS_PER_PAGE));
     playerAvatarPageIndex = Math.min(totalPages - 1, playerAvatarPageIndex + 1);
     renderPlayerAvatarOptions(playerDraftAvatarId);
-  });
-
-  playerSaveBtn?.addEventListener("click", async () => {
-    ensurePlayerProfileLoaded();
-    const rawName = playerNameInput ? playerNameInput.value : playerProfile.name;
-    const validName = sanitizePlayerName(rawName);
-    if (!validName) {
-      if (playerNameError) {
-        playerNameError.textContent = 'Name must be 2 to 15 characters after trimming spaces.';
-      }
-      return;
-    }
-
-    try {
-      playerProfile.name = validName;
-      playerProfile.avatarId = playerDraftAvatarId;
-      savePlayerProfile();
-      await saveData();
-      renderWelcomePlayerEntry();
-      refreshSummaryPlayerDisplay();
-      refreshPlayerOverlayFields();
-      showPlayerSaveStatus('Profile Updated', 'success');
-    } catch (e) {
-      DBManager.log('Failed to save player profile', e.message);
-      showPlayerSaveStatus('Changes could not be saved', 'error');
-    }
   });
 
   playerOpenLeaderboardBtn?.addEventListener("click", () => {
@@ -8167,9 +8834,17 @@ document.addEventListener("DOMContentLoaded", () => {
         <summary>Daily Challenge</summary>
         <ul>
           <li>One challenge per day.</li>
-          <li>Daily streak increases on first completion of each day.</li>
           <li>Reach 70%+ in the Daily Challenge to activate a <b>+5% bonus on base points per correct answer</b> for the rest of that day.</li>
           <li>The daily +5% base-point bonus resets when the next day starts.</li>
+        </ul>
+      </details>
+
+      <details class="howto-section">
+        <summary>Offline Play</summary>
+        <ul>
+          <li><b>Android (Chrome):</b> Open the game, tap the browser menu (three dots), then tap <b>Install app</b> or <b>Add to Home screen</b>.</li>
+          <li><b>iPhone/iPad (Safari):</b> Open the game in Safari, tap <b>Share</b>, then tap <b>Add to Home Screen</b>.</li>
+          <li>After installation and first load, the app can run offline using cached files. Go online occasionally to receive updates.</li>
         </ul>
       </details>
     </div>
