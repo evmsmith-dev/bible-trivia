@@ -1263,7 +1263,10 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
             // Save game history
             for (const record of gameHistory) {
               if (!record.id) {
-                await DBManager.addGameRecord(record);
+                const insertedId = await DBManager.addGameRecord(record);
+                if (insertedId !== undefined && insertedId !== null) {
+                  record.id = insertedId;
+                }
               }
             }
             // Replace high scores with normalized top 5 per mode.
@@ -2635,7 +2638,6 @@ window.openPlayerOverlay = openPlayerOverlay;
         }
 
         await saveHighScore();
-        await saveData();
         await reloadGameHistory();
 
         const endLevel = getPlayerCurrentLevel();
