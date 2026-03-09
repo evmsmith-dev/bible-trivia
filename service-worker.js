@@ -1,4 +1,4 @@
-const CACHE_NAME = "bible-trivia-cache-v1.9.105";
+const CACHE_NAME = "bible-trivia-cache-v1.9.106";
 
 const ASSETS_TO_CACHE = [
   "index.html",
