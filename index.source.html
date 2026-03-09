@@ -712,8 +712,24 @@
 
     #daily-challenge-link {
       position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
       transform-origin: center;
       transition: transform 0.22s ease, text-shadow 0.22s ease;
+    }
+
+    #daily-challenge-link .daily-new-badge {
+      display: none;
+      font-size: 1.1rem;
+      line-height: 1;
+      transform-origin: center;
+    }
+
+    #daily-challenge-link .daily-new-badge.is-visible {
+      display: inline-block;
+      animation: daily-new-badge-pulse 1.6s ease-in-out infinite;
     }
 
     #daily-challenge-link.daily-link-pulse {
@@ -737,6 +753,25 @@
       100% {
         transform: scale(1);
         text-shadow: 0 0 0 rgba(46, 125, 50, 0);
+      }
+    }
+
+    @keyframes daily-new-badge-pulse {
+      0% {
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 0 rgba(46, 125, 50, 0));
+      }
+      35% {
+        transform: scale(1.16) rotate(-3deg);
+        filter: drop-shadow(0 0 8px rgba(46, 125, 50, 0.45));
+      }
+      70% {
+        transform: scale(1.04) rotate(2deg);
+        filter: drop-shadow(0 0 3px rgba(46, 125, 50, 0.28));
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 0 rgba(46, 125, 50, 0));
       }
     }
 
@@ -1508,9 +1543,13 @@
           font-size: 1.4rem;
           text-decoration: none;
           cursor: pointer;
-          display: block;
+       display: flex;
+       justify-content: center;
+          align-items: center;
+          gap: 8px;
           margin-top: 16px;">
-  🎯 Daily Challenge
+  <span>🎯 Daily Challenge</span>
+  <span id="daily-challenge-new-badge" class="daily-new-badge" aria-hidden="true">🔥</span>
 </a>
     <button id="start-btn">Start</button>
 <a id="how-to-play-link"
@@ -4882,11 +4921,13 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
 
     function updateDailyChallengeLinkPulse(dateKey = getLocalDateKey()) {
       const dailyChallengeLink = document.getElementById('daily-challenge-link');
+      const dailyChallengeNewBadge = document.getElementById('daily-challenge-new-badge');
       if (!dailyChallengeLink) return;
 
       const normalizedDateKey = String(dateKey || '').trim() || getLocalDateKey();
       const shouldPulse = shouldPulseDailyChallengeLink(normalizedDateKey);
       dailyChallengeLink.classList.toggle('daily-link-pulse', shouldPulse);
+      dailyChallengeNewBadge?.classList.toggle('is-visible', shouldPulse);
 
       if (shouldPulse) {
         const lastShownDateKey = getStoredPulseDateKey(STORAGE_KEY_DAILY_PULSE_LAST_SHOWN_DATE);
@@ -6338,9 +6379,7 @@ function renderWelcomeDailyCard() {
   const isDailyBonusActive = isDailyBaseBonusActive(todayKey);
 
   statusEl.innerHTML = [
-    `<strong>${todayKey}</strong>`,
-    `Status: ${statusText}`,
-    `Daily Streak: ${dailyStats.currentDailyStreak}`,
+    `${statusText}`,
     `Point Bonus: ${isDailyBonusActive ? 'Active (+5% base/question)' : 'Inactive'}`
   ].join('<br>');
 
