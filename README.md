@@ -4,8 +4,8 @@ Static Bible trivia app for web and GitHub Pages.
 
 ## Version Info
 
-- Runtime cache version: `bible-trivia-cache-v1.9.4` (`service-worker.js`)
-- Package version: `1.9.4` (`package.json`)
+- Runtime cache version: `bible-trivia-cache-v1.9.5` (`service-worker.js`)
+- Package version: `1.9.5` (`package.json`)
 - Daily challenge mode version: `v1` (`index.source.html`)
 
 ## App Overview
@@ -155,4 +155,4 @@ npm run minify:with-js:py     # writes index.min.js.html
 
 `service-worker.js` caches `index.html` and core assets. After changing deploy behavior/content, bump `CACHE_NAME` so existing users receive fresh files.
 
-Current cache version: `bible-trivia-cache-v1.9.4`.
+Current cache version: `bible-trivia-cache-v1.9.5`.
