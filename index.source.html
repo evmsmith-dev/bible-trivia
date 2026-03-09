@@ -5845,6 +5845,14 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(playerProfile));
     }
 
+    function savePlayerProfileSafely() {
+      try {
+        savePlayerProfile();
+      } catch (e) {
+        DBManager.log('Failed to persist player profile', e.message);
+      }
+    }
+
     function getAvatarById(avatarId) {
       return BUILT_IN_AVATARS.find((avatar) => avatar.id === avatarId) || BUILT_IN_AVATARS[0];
     }
@@ -5863,6 +5871,10 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     function getPlayerCurrentLevel() {
       ensurePlayerProfileLoaded();
       return getPlayerLevelFromCorrectCount(playerProfile.nonDailyCorrectAnswers);
+    }
+
+    function logLevelDebug(eventName, payload = {}) {
+      DBManager.log(`LEVEL_DEBUG:${eventName}`, payload);
     }
 
     function getPlayerLevelProgress() {
@@ -6391,6 +6403,14 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
       feedbackEl.style.display = "none";
       roundReviewEl.style.display = "none";
       summaryEl.style.display = "block";
+      refreshSummaryPlayerDisplay();
+      logLevelDebug('summary_shown', {
+        displayedLevel: getPlayerCurrentLevel(),
+        nonDailyCorrectAnswers: Math.max(0, Math.round(playerProfile?.nonDailyCorrectAnswers || 0)),
+        pendingLevelCelebrationLevel,
+        pendingHighScoreCelebrationScore,
+        pendingDailyCompletionCelebration
+      });
 
       const hadHighScoreCelebration = pendingHighScoreCelebrationScore !== null;
 
@@ -6615,6 +6635,8 @@ const allQuestions = [{ q: "Who was the first man created by God?", opts: ["Noah
     async function saveData() {
       try {
         ensurePlayerProfileLoaded();
+        // Player profile currently persists via localStorage for immediate durability.
+        savePlayerProfileSafely();
         highScores = normalizeAndTrimHighScores(highScores);
         difficultyMode = normalizeDifficultyMode(difficultyMode);
         roundReviewPreference = normalizeRoundReviewPreference(roundReviewPreference);
@@ -6928,6 +6950,11 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
       resetQuestionScreen();
       currentGameMode = mode;
       gameStartPlayerLevel = getPlayerCurrentLevel();
+      logLevelDebug('game_start', {
+        mode,
+        gameStartPlayerLevel,
+        nonDailyCorrectAnswers: playerProfile.nonDailyCorrectAnswers
+      });
       activeDailyChallengeRecord = mode === GAME_MODE_DAILY ? dailyRecord : null;
       activeDailyChallengeDateKey = dailyRecord?.dateKey || null;
       gameQuestions = Array.isArray(questions) && questions.length > 0
@@ -7093,7 +7120,7 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
         base,
         dailyBaseBonus,
         speedBonus: roundedSpeedBonus,
-        streakBonus: roundedStreakBonus,
+        streakBonus: OroundedStreakBonus,
         total: Math.round(base + dailyBaseBonus + roundedSpeedBonus + roundedStreakBonus)
       };
     }
@@ -7110,6 +7137,8 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
       ensurePlayerProfileLoaded();
       const mode = normalizeDifficultyMode(getActiveDifficultyMode());
       const category = question?.category;
+      const nonDailyCorrectBefore = Math.max(0, Math.round(playerProfile.nonDailyCorrectAnswers || 0));
+      const levelBefore = getPlayerLevelFromCorrectCount(nonDailyCorrectBefore);
 
       playerStats.totalCorrectClicks += 1;
       playerStats.correctCountByMode[mode] += 1;
@@ -7121,6 +7150,26 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
 
       if (currentGameMode !== GAME_MODE_DAILY) {
         playerProfile.nonDailyCorrectAnswers += 1;
+        const nonDailyCorrectAfter = Math.max(0, Math.round(playerProfile.nonDailyCorrectAnswers || 0));
+        const levelAfter = getPlayerLevelFromCorrectCount(nonDailyCorrectAfter);
+        logLevelDebug('correct_answer_applied', {
+          gameMode: currentGameMode,
+          questionCategory: category || 'unknown',
+          nonDailyCorrectBefore,
+          nonDailyCorrectAfter,
+          levelBefore,
+          levelAfter,
+          leveledUp: levelAfter > levelBefore
+        });
+        // Persist level-driving progress immediately in case navigation happens before end-game save.
+        savePlayerProfileSafely();
+      } else {
+        logLevelDebug('correct_answer_ignored_for_daily_level', {
+          gameMode: currentGameMode,
+          questionCategory: category || 'unknown',
+          nonDailyCorrectAnswers: nonDailyCorrectBefore,
+          level: levelBefore
+        });
       }
 
       playerStats.currentStreak += 1;
@@ -8120,6 +8169,7 @@ window.openPlayerOverlay = openPlayerOverlay;
       ensurePlayerStatsLoaded();
       ensurePlayerProfileLoaded();
       playerStats.lastGameMaxStreak = currentGameMaxStreak;
+      const endGameStartLevel = getPlayerCurrentLevel();
 
       const categoryCount = { "Old Testament": 0, "New Testament": 0, "General": 0 };
       gameQuestions.forEach(q => {
@@ -8153,6 +8203,13 @@ window.openPlayerOverlay = openPlayerOverlay;
 
         await saveData();
         pendingLevelCelebrationLevel = null;
+        logLevelDebug('end_game_daily', {
+          gameStartPlayerLevel,
+          levelAtEnd: getPlayerCurrentLevel(),
+          pendingLevelCelebrationLevel,
+          percent,
+          isDailySuccess
+        });
       } else {
         gameHistory.push({
           timestamp: new Date().toLocaleString(),
@@ -8175,6 +8232,15 @@ window.openPlayerOverlay = openPlayerOverlay;
 
         const endLevel = getPlayerCurrentLevel();
         pendingLevelCelebrationLevel = endLevel > gameStartPlayerLevel ? endLevel : null;
+        logLevelDebug('end_game_normal', {
+          gameStartPlayerLevel,
+          levelAtEndGameStart: endGameStartLevel,
+          endLevel,
+          pendingLevelCelebrationLevel,
+          percent,
+          correctCount,
+          totalScore
+        });
       }
 
       const verseObj = encouragingVerses.find(v => percent >= v.minPercent) || encouragingVerses[0];
@@ -8267,6 +8333,7 @@ window.openPlayerOverlay = openPlayerOverlay;
         document.getElementById("question-container").style.display = "none";
         document.getElementById("welcome").style.display = "block";
         renderWelcomePlayerEntry();
+        refreshSummaryPlayerDisplay();
         renderWelcomeDailyCard();
       });
 
@@ -8776,6 +8843,21 @@ document.addEventListener("DOMContentLoaded", () => {
     renderWelcomeDailyCard();
   }
 })();
+
+window.addEventListener('pagehide', () => {
+  savePlayerProfileSafely();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    savePlayerProfileSafely();
+  }
+});
+
+window.addEventListener('pageshow', () => {
+  renderWelcomePlayerEntry();
+  refreshSummaryPlayerDisplay();
+});
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js').then(registration =>{
