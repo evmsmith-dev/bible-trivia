@@ -1,4 +1,4 @@
-const CACHE_NAME = "bible-trivia-cache-v1.6.3";
+const CACHE_NAME = "bible-trivia-cache-v1.9.0";
 
 const ASSETS_TO_CACHE = [
   "index.html",
@@ -9,6 +9,22 @@ const ASSETS_TO_CACHE = [
   "icons/bibletrivia_icon_x96.png",
   "icons/bibletrivia_icon_x128.png",
   "icons/bibletrivia_icon_x512.png",
+  "icons/avatars/dove.svg",
+  "icons/avatars/crown.svg",
+  "icons/avatars/shield.svg",
+  "icons/avatars/star.svg",
+  "icons/avatars/olive-branch.svg",
+  "icons/avatars/lamb.svg",
+  "icons/avatars/fish.svg",
+  "icons/avatars/scroll.svg",
+  "icons/avatars/ark.svg",
+  "icons/avatars/lyre.svg",
+  "icons/avatars/lamp.svg",
+  "icons/avatars/lion.svg",
+  "icons/avatars/rainbow.svg",
+  "icons/avatars/mountain.svg",
+  "icons/avatars/anchor.svg",
+  "icons/avatars/sunflower.svg",
   "https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap",
   "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"
 ];

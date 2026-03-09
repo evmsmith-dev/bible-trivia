@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Mountain avatar">
+  <rect width="128" height="128" rx="24" fill="#e8f5e9"/>
+  <circle cx="64" cy="64" r="42" fill="#dcedc8"/>
+  <path d="M26 90l26-38 12 18 16-24 22 44z" fill="#607d8b"/>
+  <path d="M52 52l6-9 7 10-6 8z" fill="#ffffff"/>
+  <circle cx="90" cy="42" r="8" fill="#ffeb3b"/>
+</svg>

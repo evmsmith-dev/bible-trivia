@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Dove avatar">
+  <rect width="128" height="128" rx="24" fill="#e8f5e9"/>
+  <circle cx="64" cy="64" r="42" fill="#ffffff"/>
+  <path d="M36 70c14-2 24-11 29-27 11 6 20 17 27 31-9-4-16-5-22-3-9 3-16 1-21-1-4 0-8 1-13 0z" fill="#90caf9"/>
+  <circle cx="78" cy="54" r="3" fill="#263238"/>
+  <path d="M82 58l9 3-9 3z" fill="#ffca28"/>
+</svg>
