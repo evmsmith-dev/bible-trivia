@@ -11,6 +11,16 @@ def fail(message: str) -> None:
     sys.exit(1)
 
 
+def require_any(text: str, marker_group: list[str], label: str) -> None:
+    if not any(marker in text for marker in marker_group):
+        fail(f"Missing {label}: one of {marker_group}")
+
+
+def require_regex(text: str, pattern: str, label: str) -> None:
+    if not re.search(pattern, text, flags=re.IGNORECASE | re.DOTALL):
+        fail(f"Missing {label} (pattern: {pattern})")
+
+
 if not source_path.exists():
     fail(f"Missing source file: {source_path}")
 
@@ -38,8 +48,65 @@ required_any_markers = [
 ]
 
 for marker_group in required_any_markers:
-    if not any(marker in minified for marker in marker_group):
-        fail(f"Missing marker in minified output: one of {marker_group}")
+    require_any(minified, marker_group, "core marker in minified output")
+
+# Daily challenge: core UI and logic markers should survive minification.
+daily_feature_markers = [
+    ['id="daily-challenge-link"', "id='daily-challenge-link'", 'id=daily-challenge-link'],
+    ['id="daily-challenge-overlay"', "id='daily-challenge-overlay'", 'id=daily-challenge-overlay'],
+    ['id="daily-start-btn"', "id='daily-start-btn'", 'id=daily-start-btn'],
+    ["GAME_MODE_DAILY='daily'", 'GAME_MODE_DAILY="daily"', 'GAME_MODE_DAILY=`daily`'],
+    ['startDailyChallenge(', 'openDailyChallengeOverlay('],
+]
+
+for marker_group in daily_feature_markers:
+    require_any(minified, marker_group, "daily challenge marker in minified output")
+
+# Player profile: welcome entry and overlay controls must be present.
+player_profile_markers = [
+    ['id="player-entry-btn"', "id='player-entry-btn'", 'id=player-entry-btn'],
+    ['id="player-entry-level"', "id='player-entry-level'", 'id=player-entry-level'],
+    ['id="summary-player-level"', "id='summary-player-level'", 'id=summary-player-level'],
+    ['id="player-overlay"', "id='player-overlay'", 'id=player-overlay'],
+    ['id="player-name-input"', "id='player-name-input'", 'id=player-name-input'],
+    ['renderWelcomePlayerEntry(', 'refreshSummaryPlayerDisplay('],
+]
+
+for marker_group in player_profile_markers:
+    require_any(minified, marker_group, "player profile marker in minified output")
+
+# Streak systems: HUD, bonus logic, and carryover banner are all required.
+streak_markers = [
+    ['id="streak-hud"', "id='streak-hud'", 'id=streak-hud'],
+    ['id="streak-hud-bonus"', "id='streak-hud-bonus'", 'id=streak-hud-bonus'],
+    ['Next bonus at 3'],
+    ['getStreakBonus(', 'STREAK_BONUS_TABLE'],
+    ['streak-carryover-banner'],
+]
+
+for marker_group in streak_markers:
+    require_any(minified, marker_group, "streak marker in minified output")
+
+# Guard against regression: summary carryover banner must require an active bonus.
+source_carryover_guard_pattern = (
+    r"showCarryoverBanner\s*=\s*showRestartSameButton\s*&&\s*carryoverStreak\s*>\s*0\s*&&\s*carryoverBonus\s*>\s*0"
+)
+minified_carryover_guard_pattern = (
+    r"showCarryoverBanner\s*=\s*showRestartSameButton\s*&&\s*carryoverStreak>0\s*&&\s*carryoverBonus>0"
+)
+require_regex(source, source_carryover_guard_pattern, "source streak carryover guard")
+require_regex(minified, minified_carryover_guard_pattern, "minified streak carryover guard")
+
+# Guard against regression: Home from summary should refresh welcome player entry.
+source_home_refresh_pattern = (
+    r"getElementById\(\s*[\"']restart-change[\"']\s*\)\.addEventListener\(\s*[\"']click[\"']\s*,"
+    r".*?renderWelcomePlayerEntry\s*\(\s*\)"
+)
+minified_home_refresh_pattern = (
+    r"getElementById\(`restart-change`\)\.addEventListener\(`click`.*?renderWelcomePlayerEntry\(\)"
+)
+require_regex(source, source_home_refresh_pattern, "source Home handler welcome-player refresh")
+require_regex(minified, minified_home_refresh_pattern, "minified Home handler welcome-player refresh")
 
 source_script_count = len(re.findall(r'<script\\b', source, flags=re.IGNORECASE))
 minified_script_count = len(re.findall(r'<script\\b', minified, flags=re.IGNORECASE))

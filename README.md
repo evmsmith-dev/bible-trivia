@@ -2,6 +2,12 @@
 
 Static Bible trivia app for web and GitHub Pages.
 
+## Version Info
+
+- Runtime cache version: `bible-trivia-cache-v1.9.1` (`service-worker.js`)
+- Package version: `1.0.0` (`package.json`)
+- Daily challenge mode version: `v1` (`index.source.html`)
+
 ## App Overview
 
 Bible Trivia is a single-page quiz game focused on Scripture knowledge. Players answer multiple-choice questions under a timer, receive immediate feedback, and see their score progression throughout each round. The app is designed to work well on desktop and mobile and can be installed as a PWA.
@@ -9,17 +15,29 @@ Bible Trivia is a single-page quiz game focused on Scripture knowledge. Players 
 ## Current Feature Set
 
 - Multiple-choice Bible questions across Old Testament, New Testament, and General categories
-- Difficulty support (`easy`, `medium`, `hard`) with visible per-question difficulty tags
-- Timed gameplay with countdown display, progress bar, and timeout handling
+- Question pool expanded to 1000+ questions
+- Difficulty support (`easy`, `medium`, `hard`, `superHard`) with visible per-question difficulty tags
+- Mode-based scoring and timers:
+  - Easy: 50 pts, 25s (max 500/game)
+  - Medium: 100 pts, 25s (max 1000/game)
+  - Hard: 150 pts, 21s (max 1500/game)
+  - Super Hard: 250 pts, 18s (max 2500/game)
+- Timed gameplay with countdown display, progress bar, timeout handling, and per-question feedback states
 - Round scoring with progress dots, correct-count tracking, and end-of-round summary
+- Speed bonus and streak bonus system (streak tiers begin at 3, cap at 10)
+- Streak carryover support across normal rounds, with carryover messaging
+- Daily Challenge mode with once-per-day flow and completion tracking
+- Daily bonus unlock: reaching 70%+ in Daily Challenge grants +5% base-point bonus for the rest of that day
 - Review flow for completed rounds, including per-question correctness and references
+- Configurable post-round review preference (`ask`, `alwaysReview`, `alwaysSkip`)
 - Single local Player profile (no login required)
 - Player profile editor with save-only updates for name and avatar
-- Built-in avatar picker with 8 options (emoji + bundled image avatars)
+- Built-in avatar picker with paged options (24 total: 8 emoji + 16 bundled image avatars)
 - Level system tied to lifetime correct answers in normal gameplay modes (daily challenge excluded)
 - Player entry point on Welcome and Summary screens
 - Player overlay actions to open Settings and Leaderboard overlays
-- Leaderboard and history views with mode-based displays
+- Player Stats overlay tabs: Top Scores, Game History, Stats, and Daily
+- IndexedDB-backed persistence with localStorage fallback/migration for compatible data
 - PWA support through `manifest.json` and `service-worker.js`
 - Offline-first behavior using service worker asset caching
 - Update notification flow when a new service worker version is installed
@@ -33,6 +51,7 @@ Bible Trivia is a single-page quiz game focused on Scripture knowledge. Players 
 - Avatar rules:
   - Only built-in avatars are available.
   - No custom upload support.
+  - Avatars include emoji and bundled SVG images.
   - Bundled image avatars are stored in `icons/avatars/` and cached for offline play.
 - Only one player is supported.
 - A `Reset Player` action is available in the Player overlay.
@@ -68,7 +87,7 @@ Levels increase based on lifetime non-daily correct answers:
 ### Data Storage Scope
 
 - Persisted datasets are player-scoped via storage key prefixes.
-- App starts fresh for the new player profile model (legacy stats are not migrated).
+- IndexedDB is used when available, with localStorage fallback and migration for compatible legacy records.
 
 ## Minification Workflow
 
@@ -134,6 +153,6 @@ npm run minify:with-js:py     # writes index.min.js.html
 
 ## Service Worker Cache Note
 
-`service-worker.js` caches `index.html`. After changing deploy behavior/content, bump `CACHE_NAME` (already updated to `bible-trivia-cache-v1.4.0`) so existing users receive fresh files.
+`service-worker.js` caches `index.html` and core assets. After changing deploy behavior/content, bump `CACHE_NAME` so existing users receive fresh files.
 
-Current cache version: `bible-trivia-cache-v1.7.0`.
+Current cache version: `bible-trivia-cache-v1.9.1`.
