@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PACKAGE_JSON_PATH = ROOT / "package.json"
 PACKAGE_LOCK_PATH = ROOT / "package-lock.json"
 SERVICE_WORKER_PATH = ROOT / "service-worker.js"
+README_PATH = ROOT / "README.md"
 
 
 def run(cmd: list[str]) -> None:
@@ -65,6 +66,24 @@ def update_versions() -> tuple[str, str]:
     if replacements != 1:
         raise ValueError("service-worker.js CACHE_NAME version token not found or ambiguous")
     SERVICE_WORKER_PATH.write_text(service_worker_text, encoding="utf-8")
+
+    readme_text = README_PATH.read_text(encoding="utf-8")
+    readme_text, cache_replacements = re.subn(
+        r'(`bible-trivia-cache-v)(\d+\.\d+\.\d+)(`)',
+        rf"\g<1>{next_version}\g<3>",
+        readme_text,
+    )
+    readme_text, package_replacements = re.subn(
+        r'(- Package version:\s*`)(\d+\.\d+\.\d+)(`\s*\(`package\.json`\))',
+        rf"\g<1>{next_version}\g<3>",
+        readme_text,
+        count=1,
+    )
+    if cache_replacements < 1:
+        raise ValueError("README.md cache version reference not found")
+    if package_replacements != 1:
+        raise ValueError("README.md package version reference not found or ambiguous")
+    README_PATH.write_text(readme_text, encoding="utf-8")
 
     return current_version, next_version
 
