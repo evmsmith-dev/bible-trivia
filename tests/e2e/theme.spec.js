@@ -14,7 +14,7 @@ test("follows the device's dark setting by default", async ({ page }) => {
   await h.openApp(page);
   expect(await theme(page)).toBe("dark");
   expect(await bodyBackground(page)).toBe("rgb(16, 21, 16)");
-  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#101510");
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#1b5e20");
 
   // Switching the device to light while on Auto switches the app too.
   await page.emulateMedia({ colorScheme: "light" });
@@ -64,4 +64,10 @@ test("the manifest theme color works in both light and dark mode", async ({ page
   await page.goto("index.html");
   const manifest = await page.evaluate(() => fetch("manifest.json").then((r) => r.json()));
   expect(manifest.theme_color).toBe("#1b5e20");
+  // The top status bar matches the bottom bar, in light and dark mode.
+  for (const scheme of ["light", "dark"]) {
+    await page.emulateMedia({ colorScheme: scheme });
+    await h.openApp(page);
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#1b5e20");
+  }
 });
