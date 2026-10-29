@@ -1,8 +1,9 @@
-// End-to-end tests run against a static server. Set APP_DIR to test a build output folder (e.g. dist).
+// End-to-end tests run against the built site in dist/ (npm run test:e2e builds it first).
+// Set APP_DIR=. to run them against the unbuilt source instead.
 import { defineConfig, devices } from "@playwright/test";
 
 const port = Number(process.env.PORT || 4173);
-const appDir = process.env.APP_DIR || ".";
+const appDir = process.env.APP_DIR || "dist";
 
 export default defineConfig({
   testDir: "tests/e2e",

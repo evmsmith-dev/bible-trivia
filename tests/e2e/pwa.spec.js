@@ -5,12 +5,12 @@ import path from "node:path";
 // Service-worker tests share one server folder, so they run one at a time.
 test.describe.configure({ mode: "serial" });
 
-const appDir = path.resolve(process.env.APP_DIR || ".");
+const appDir = path.resolve(process.env.APP_DIR || "dist");
 const swPath = path.join(appDir, "service-worker.js");
 
 test.beforeEach(({}, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "Service-worker tests run once, on desktop.");
-  test.skip(!process.env.APP_DIR, "Service-worker tests need the built app (npm run test:e2e).");
+  test.skip(!fs.readFileSync(swPath, "utf8").includes("PRECACHE = [\"./\","), "Service-worker tests need the built app (npm run test:e2e).");
 });
 
 async function waitForControl(page) {
