@@ -11,6 +11,17 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icons/bibletrivia_icon_x96.png" sizes="96x96" type="image/png">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <script>
+    // Pick light or dark before the page draws, so there's no white flash.
+    // Keep the key in step with KEYS.theme in src/storage/store.js.
+    (function () {
+      var pref = "auto";
+      try { pref = localStorage.getItem("bibleTriviaPlayer_primary_theme") || "auto"; } catch (e) {}
+      var dark = pref === "dark" || (pref !== "light" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+      if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content", "#101510");
+    })();
+  </script>
   <link rel="stylesheet" href="vendor/fonts/fredoka.css">
   <link rel="stylesheet" href="src/ui/styles.css">
   <script src="vendor/confetti.browser.js" defer></script>
@@ -199,7 +210,7 @@
             <li>Edit your name with the pencil icon, then tap ✓ to save.</li>
             <li>Choose your avatar and use Previous/Next to browse more avatar pages.</li>
             <li>Use <b>Player Stats</b> to view Top Scores, Game History, Stats, and Daily results.</li>
-            <li>Use <b>Settings</b> to change difficulty mode (or tap the mode under <b>Start</b>).</li>
+            <li>Use <b>Settings</b> to change difficulty mode (or tap the mode under <b>Start</b>) and light or dark appearance.</li>
             <li><b>Reset Player</b> clears this player's saved progress after confirmation.</li>
             <li>Your level goes up with correct answers in normal games (Daily Challenge answers don't count).</li>
           </ul>
@@ -276,6 +287,16 @@
           <!-- Buttons generated from config.MODES -->
           <div class="difficulty-selector" id="difficulty-selector" role="group" aria-labelledby="difficulty-label"></div>
           <p id="mode-description" class="setting-description"></p>
+        </div>
+
+        <div class="setting-item">
+          <span class="setting-label" id="theme-label">Appearance</span>
+          <div class="pref-selector" role="group" aria-labelledby="theme-label">
+            <button type="button" class="theme-btn" data-value="auto" aria-pressed="true">Auto</button>
+            <button type="button" class="theme-btn" data-value="light" aria-pressed="false">Light</button>
+            <button type="button" class="theme-btn" data-value="dark" aria-pressed="false">Dark</button>
+          </div>
+          <p class="setting-description">Auto follows your device's light or dark setting.</p>
         </div>
 
         <!-- Shown only on devices that can vibrate (not iPhone or iPad). -->
