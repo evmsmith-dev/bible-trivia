@@ -140,10 +140,16 @@ test("the summary spreads over the whole screen on a tall phone", async ({ page 
   await page.setViewportSize({ width: 412, height: 795 });
   await h.openApp(page);
   await reachSummary(page);
-  const title = await page.locator("#summary h2").boundingBox();
+  const title = await page.locator(".summary-headline").boundingBox();
   const play = await page.locator("#restart-same").boundingBox();
-  expect(title.y).toBeLessThan(795 * 0.2); // starts near the top…
-  expect(play.y + play.height).toBeGreaterThan(795 * 0.75); // …and the buttons sit low, near the thumb
+  const home = await page.locator("#restart-change").boundingBox();
+  const chip = await page.locator("#summary-mode-chip").boundingBox();
+  expect(title.y).toBeLessThan(795 * 0.2); // the result starts near the top…
+  expect(play.y + play.height).toBeGreaterThan(795 * 0.75); // …and the next step sits low, near the thumb
   expect(play.height).toBeGreaterThanOrEqual(56);
+  expect(play.width).toBeGreaterThan(412 * 0.8); // one large, full-width Play
+  expect(chip.y + chip.height).toBeLessThanOrEqual(play.y); // difficulty above Play…
+  expect(home.y).toBeGreaterThanOrEqual(play.y + play.height); // …and Home as a smaller button below
+  expect(home.height).toBeGreaterThanOrEqual(44);
   expect(await overflow(page)).toBeLessThanOrEqual(0);
 });

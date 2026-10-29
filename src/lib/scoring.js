@@ -1,5 +1,5 @@
 // Scoring, streak and level rules. Pure functions; values come from config.js.
-import { LEVEL_THRESHOLDS, MODES, STREAK_BONUS_CAP, STREAK_BONUS_TABLE } from "../config.js";
+import { LEVEL_THRESHOLDS, MODES, QUESTIONS_PER_GAME, STREAK_BONUS_CAP, STREAK_BONUS_TABLE } from "../config.js";
 import { toCount } from "./utils.js";
 
 export function getStreakBonus(streak) {
@@ -56,4 +56,15 @@ export function getLevelProgress(correctAnswers) {
     remaining: Math.max(0, next - count),
     isMaxLevel: false,
   };
+}
+
+/** "Great job, Dad!" — the summary's headline, by how the round went. */
+export function summaryHeadline(correct, name) {
+  const percent = (correct / QUESTIONS_PER_GAME) * 100;
+  const words = correct === QUESTIONS_PER_GAME ? "Perfect round"
+    : percent >= 80 ? "Excellent"
+      : percent >= 60 ? "Great job"
+        : percent >= 40 ? "Good effort"
+          : "Nice try";
+  return `${words}, ${name}!`;
 }

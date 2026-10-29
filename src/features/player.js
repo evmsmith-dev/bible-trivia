@@ -34,13 +34,6 @@ export function renderPlayerCards() {
   byId("player-entry-level").textContent = level;
   byId("home-level-fill").style.width = `${progress.percent}%`;
   byId("home-level-to-go").textContent = progress.isMaxLevel ? "Top level!" : `${progress.remaining} to go`;
-
-  const summaryButton = byId("summary-player-btn");
-  if (summaryButton) {
-    summaryButton.innerHTML = avatarHtml(avatar, `${profile.name} avatar`);
-    byId("summary-player-name").textContent = profile.name;
-    byId("summary-player-level").textContent = level;
-  }
 }
 
 // ---------- Who's playing? ----------
