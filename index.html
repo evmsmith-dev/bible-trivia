@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Bible Trivia - Fun Bible Questions!</title>
   <meta name="description" content="A fun Bible trivia game with multiple-choice questions, scoring, and difficulty options.">
-  <meta name="theme-color" content="#4CAF50">
+  <!-- Phone status bar. Deep green in light and dark mode, to match Android's bottom bar,
+       which comes from manifest.json's theme_color and can't change with the theme. -->
+  <meta name="theme-color" content="#1b5e20">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
@@ -20,7 +22,6 @@
       try { pref = localStorage.getItem("bibleTrivia_theme") || localStorage.getItem("bibleTriviaPlayer_primary_theme") || "auto"; } catch (e) {}
       var dark = pref === "dark" || (pref !== "light" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
       document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-      if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content", "#101510");
     })();
   </script>
   <script>

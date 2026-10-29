@@ -3,7 +3,6 @@
 import { DEVICE_KEYS, readLocal, writeLocal } from "../storage/store.js";
 
 export const THEME_PREFERENCES = ["auto", "light", "dark"];
-const THEME_COLORS = { light: "#4CAF50", dark: "#101510" };
 const darkQuery = typeof matchMedia === "function" ? matchMedia("(prefers-color-scheme: dark)") : null;
 
 export function getThemePreference() {
@@ -19,7 +18,7 @@ function resolve(preference) {
 export function applyTheme(preference = getThemePreference()) {
   const theme = resolve(preference);
   document.documentElement.setAttribute("data-theme", theme);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", THEME_COLORS[theme]);
+  // The status bar color (meta theme-color) stays deep green in both themes; see index.html.
 }
 
 export function setThemePreference(preference) {
