@@ -95,3 +95,21 @@ test("the summary's mode button changes the difficulty for the next round", asyn
   await h.finishCountdown(page);
   await expect(page.locator("#timer-display")).toHaveText("21"); // Hard's timer
 });
+
+test("Back from the review returns to the results, and Back from the results goes Home", async ({ page }) => {
+  await h.openApp(page);
+  await h.startNormalGame(page);
+  await h.playRound(page, { correctAnswers: 5 });
+  await h.expectSummary(page);
+  await page.clock.runFor(16000); // let any celebration finish
+
+  await page.locator("#summary-review-btn").click();
+  await expect(page.locator("#round-review")).toBeVisible();
+  await page.goBack();
+  await expect(page.locator("#summary")).toBeVisible();
+  await expect(page.locator("#round-review")).toBeHidden();
+
+  await page.goBack();
+  await expect(page.locator("#start-btn")).toBeVisible();
+  await expect(page.locator("#summary")).toBeHidden();
+});

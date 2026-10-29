@@ -12,7 +12,7 @@ import { state } from "./state.js";
 import { save, saveProfile, saveRecentQuestionIds } from "./storage/store.js";
 import { byId, replayAnimation, setVisible, showScreen } from "./ui/dom.js";
 import { celebrateDailyCompletion, celebrateHighScore, celebrateLevel, fireConfetti } from "./ui/celebrate.js";
-import { anyOverlayOpen, closeOverlay, openOverlay } from "./ui/overlay.js";
+import { anyOverlayOpen, closeOverlay, ensureBackGuard, openOverlay, setScreenBackHandler } from "./ui/overlay.js";
 import { isDailyBonusActive, prepareDailyChallenge, recordDailyResult, renderDailyCard } from "./features/daily.js";
 import { getPlayerLevel, renderPlayerCards } from "./features/player.js";
 import { openDifficultyPicker, renderModeChip } from "./features/settings.js";
@@ -475,6 +475,23 @@ function showReview() {
   byId("review-continue").focus({ preventScroll: true });
 }
 
+// The buttons at the bottom of the summary.
+// Normal round: one large Play, with Home as a smaller text button underneath.
+// Daily Challenge: leaving is the usual next step, so "Back to Home" is a full-size button.
+// Not complete yet: Try Again comes first and Share is a small extra.
+function summaryActionsHtml(isDaily, passed) {
+  const home = (label) => `<button type="button" id="restart-change">&#x1F3E0; ${label}</button>`;
+  if (!isDaily) return '<button type="button" id="restart-same">&#9654; Play</button>' + home("Home");
+  const shareStatus = '<p id="share-status" class="share-status" role="status"></p>';
+  if (passed) {
+    return '<button type="button" id="share-daily-btn">📤 Share Result</button>' + home("Back to Home") + shareStatus;
+  }
+  return '<button type="button" id="daily-retry-btn">🔁 Try Again</button>'
+    + home("Back to Home")
+    + '<button type="button" id="share-daily-btn" class="is-small">📤 Share result</button>'
+    + shareStatus;
+}
+
 // The summary reads like Home: the result at the top, then the next step at the bottom
 // (difficulty, a large Play, and Home as a smaller text button).
 function renderSummary({ percent, isDaily, dailyResult }) {
@@ -489,7 +506,7 @@ function renderSummary({ percent, isDaily, dailyResult }) {
       <div class="summary-daily${dailyResult.passed ? " is-complete" : ""}">
         <p class="summary-daily-status">${dailyResult.passed
           ? `✅ Daily Challenge complete (${DAILY.successPercent}%+)`
-          : `Not complete yet: reach ${DAILY.successPercent}% to finish today's challenge`}</p>
+          : `Not complete yet: ${DAILY.successPercent}% needed`}</p>
         <p class="summary-daily-meta">Today's best: ${record.bestScore.toLocaleString()} · Attempts: ${record.attempts}</p>
         <p class="summary-daily-meta">🔥 Daily streak: ${streak} (best ${state.dailyStats.bestDailyStreak})</p>
       </div>`;
@@ -517,15 +534,13 @@ function renderSummary({ percent, isDaily, dailyResult }) {
     ${carryBanner}
     <div class="summary-spacer"></div>
     ${isDaily ? "" : '<button type="button" id="summary-mode-chip" class="mode-chip"></button>'}
-    <div class="summary-actions">
-      ${isDaily
-        ? '<button type="button" id="share-daily-btn">📤 Share Result</button><p id="share-status" class="share-status" role="status"></p>'
-        : '<button type="button" id="restart-same">&#9654; Play</button>'}
-      <button type="button" id="restart-change">&#x1F3E0; Home</button>
-    </div>`;
+    <div class="summary-actions${isDaily ? " is-daily" : ""}">${summaryActionsHtml(isDaily, dailyResult?.passed)}</div>`;
 
   byId("restart-same")?.addEventListener("click", () => {
     if (!state.celebrationActive) startNormalGame({ keepStreak: true });
+  });
+  byId("daily-retry-btn")?.addEventListener("click", () => {
+    if (!state.celebrationActive) startDailyGame();
   });
   byId("restart-change").addEventListener("click", () => {
     if (!state.celebrationActive) goHome();
@@ -570,6 +585,7 @@ async function shareDailyResult(dateKey) {
 function showSummary(celebrations) {
   setVisible(el.review, false);
   setVisible(el.summary, true, ""); // "" lets the stylesheet choose block or grid (landscape)
+  ensureBackGuard(); // so Android's Back gesture goes Home instead of closing the app
   pendingCelebrations = null;
   if (celebrations?.highScore !== null && celebrations?.highScore !== undefined) celebrateHighScore(celebrations.highScore);
   if (celebrations?.level) {
@@ -643,6 +659,17 @@ export function initGame() {
   });
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") pauseRound();
+  });
+  // Back with no overlay open: from the review, back to the results; from the results, Home.
+  setScreenBackHandler(() => {
+    if (el.review.style.display !== "none") {
+      byId("review-continue")?.click();
+      return true;
+    }
+    if (el.summary.style.display === "none") return false;
+    if (state.celebrationActive) return true; // wait for the celebration to finish
+    goHome();
+    return false;
   });
   updateStreakHud();
 }

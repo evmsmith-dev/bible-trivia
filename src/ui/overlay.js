@@ -19,6 +19,15 @@ function pushGuard() {
     // history unavailable (e.g. sandboxed frame): overlays still work, Back just won't close them
   }
 }
+/** Adds the Back guard outside overlays too (the summary uses it so Back goes Home). */
+export const ensureBackGuard = pushGuard;
+
+// Called when Back is pressed with no overlay open. Return true to stay in the app.
+let screenBackHandler = () => false;
+export function setScreenBackHandler(handler) {
+  screenBackHandler = handler;
+}
+
 const closeHandlers = new Map();
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select, textarea, summary, [tabindex]:not([tabindex="-1"])';
 
@@ -56,7 +65,10 @@ export function closeOverlay(id) {
 export function initOverlays() {
   addEventListener("popstate", () => {
     const top = stack[stack.length - 1];
-    if (!top) return;
+    if (!top) {
+      if (screenBackHandler()) pushGuard();
+      return;
+    }
     if (top.dismissible) closeOverlay(top.id);
     // Something is still open (an overlay underneath, or one that must be answered): stay in the app.
     if (stack.length) pushGuard();
