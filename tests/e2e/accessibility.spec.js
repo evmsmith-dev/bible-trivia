@@ -72,17 +72,28 @@ test("opening a player's sheet doesn't focus the name box (no phone keyboard)", 
   await expect(page.locator("#player-name-input")).not.toBeFocused();
 });
 
-test("the mode button sits under Start; Help is in one row with Scores and Settings", async ({ page }) => {
-  const start = await page.locator("#start-btn").boundingBox();
+test("Home: avatar top right, difficulty just above Start, and a Scores / Settings / Help bar at the bottom", async ({ page }) => {
+  const viewport = page.viewportSize();
+  const avatar = await page.locator("#player-entry-btn").boundingBox();
+  const brand = await page.locator(".home-brand").boundingBox();
+  expect(avatar.x).toBeGreaterThan(brand.x + brand.width); // to the right of the name
+  expect(Math.abs(avatar.y + avatar.height / 2 - (brand.y + brand.height / 2))).toBeLessThan(8); // same row
+
   const mode = await page.locator("#mode-chip").boundingBox();
-  expect(mode.y).toBeGreaterThanOrEqual(start.y + start.height - 6);
+  const start = await page.locator("#start-btn").boundingBox();
+  expect(mode.y + mode.height).toBeLessThanOrEqual(start.y); // difficulty first, then Start
   expect(Math.abs((mode.x + mode.width / 2) - (start.x + start.width / 2))).toBeLessThan(4);
 
-  await expect(page.locator("#how-to-play-link")).toHaveText("❓ Help");
-  const boxes = await Promise.all(["#home-scores-btn", "#home-settings-btn", "#how-to-play-link"]
-    .map((selector) => page.locator(selector).boundingBox()));
-  for (const box of boxes) expect(Math.abs(box.y - boxes[0].y)).toBeLessThan(2); // one row
-
+  const bar = await Promise.all(["#home-scores-btn", "#home-settings-btn", "#how-to-play-link"].map((s) => page.locator(s).boundingBox()));
+  for (const box of bar) {
+    expect(Math.abs(box.y - bar[0].y)).toBeLessThan(2); // one row
+    expect(box.y).toBeGreaterThanOrEqual(start.y + start.height); // below Start
+  }
+  if (viewport.width <= 640) {
+    // On phones, Start sits in the lower part of the screen, within thumb reach.
+    expect(start.y + start.height / 2).toBeGreaterThan(viewport.height * 0.55);
+  }
+  await expect(page.locator("#how-to-play-link")).toContainText("Help");
   await page.locator("#how-to-play-link").click();
   await expect(page.locator("#how-to-play-overlay")).toBeVisible();
 });
