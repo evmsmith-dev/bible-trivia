@@ -2361,6 +2361,42 @@ button, input, select, textarea { font-family: inherit; }
   .summary-actions .share-status { flex-basis: 100%; order: 3; margin: 0; }
 }
 
+/* ---------- Summary on phones held upright: use the whole card ----------
+   The parts share the card's height: spacing and sizes grow on taller screens so the
+   text is easier to read and the buttons easier to tap, and shrink on small ones. */
+@media (max-width: 640px) and (orientation: portrait) {
+  #summary {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly; /* spread the sections over the card's full height */
+    gap: clamp(10px, 2 * var(--app-vh, 1dvh), 20px); /* at least this much between sections */
+    margin: 0;
+    padding: clamp(4px, 1.5 * var(--app-vh, 1dvh), 16px) 2px;
+    font-size: clamp(1.05rem, min(5vw, 2.8 * var(--app-vh, 1dvh)), 1.4rem);
+  }
+  #summary > * { margin: 0; }
+  #summary h2 { font-size: clamp(1.8rem, min(9vw, 5.2 * var(--app-vh, 1dvh)), 2.8rem); margin: 0; }
+  #summary > p { line-height: 1.4; }
+  #summary .summary-stats { display: flex; flex-direction: column; gap: 4px; }
+  #summary .summary-stats p { margin: 0; }
+  #summary #summary-review-btn {
+    margin: 0;
+    min-height: clamp(52px, 7.5 * var(--app-vh, 1dvh), 68px);
+    font-size: clamp(1.15rem, min(5.4vw, 2.9 * var(--app-vh, 1dvh)), 1.45rem);
+  }
+  .summary-player-wrap { margin: 0; gap: 12px; }
+  #summary-player-btn { width: clamp(44px, 6.5 * var(--app-vh, 1dvh), 60px); height: clamp(44px, 6.5 * var(--app-vh, 1dvh), 60px); }
+  .summary-player-name { font-size: clamp(1.05rem, min(5vw, 2.7 * var(--app-vh, 1dvh)), 1.35rem); }
+  .summary-player-level { font-size: clamp(0.95rem, min(4.4vw, 2.4 * var(--app-vh, 1dvh)), 1.15rem); }
+  .streak-carryover-banner { margin: 0; font-size: clamp(0.95rem, min(4.4vw, 2.4 * var(--app-vh, 1dvh)), 1.15rem); }
+  .summary-actions { margin: 0; gap: 12px; }
+  .summary-actions button {
+    min-height: clamp(56px, 8.5 * var(--app-vh, 1dvh), 76px);
+    font-size: clamp(1.3rem, min(6.4vw, 3.4 * var(--app-vh, 1dvh)), 1.7rem);
+  }
+}
+
 /* ---------- Phones held sideways: two columns so nothing needs scrolling ---------- */
 @media (orientation: landscape) and (max-height: 520px) {
   #welcome {
@@ -2395,7 +2431,7 @@ button, input, select, textarea { font-family: inherit; }
     column-gap: 20px;
     font-size: 1rem;
   }
-  #summary > h2, #summary > p, #summary > #summary-review-btn { grid-column: 1; }
+  #summary > h2, #summary > .summary-stats, #summary > #summary-review-btn { grid-column: 1; }
   #summary > .summary-player-wrap { grid-column: 2; grid-row: 1; }
   #summary > .streak-carryover-banner { grid-column: 2; grid-row: 2 / span 2; }
   #summary > .summary-actions { grid-column: 2; grid-row: 4; }

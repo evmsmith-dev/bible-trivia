@@ -496,10 +496,12 @@ function renderSummary({ percent, isDaily, dailyResult }) {
 
   el.summary.innerHTML = `
     <h2>${isDaily ? "Daily Challenge Summary" : "Game Summary"}</h2>
-    <p>You got <strong>${game.correct}</strong> right out of ${QUESTIONS_PER_GAME} (${percent}%).</p>
-    <p><strong>Total Score: ${game.score} points</strong></p>
+    <div class="summary-stats">
+      <p>You got <strong>${game.correct}</strong> right out of ${QUESTIONS_PER_GAME} (${percent}%).</p>
+      <p><strong>Total Score: ${game.score} points</strong></p>
+      ${dailyHtml}
+    </div>
     <button type="button" id="summary-review-btn">📖 Review Answers</button>
-    ${dailyHtml}
     <div class="summary-player-wrap">
       <button id="summary-player-btn" type="button" aria-label="Open player profile"></button>
       <span id="summary-player-name" class="summary-player-name"></span>
