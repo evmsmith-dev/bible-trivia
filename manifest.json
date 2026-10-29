@@ -4,7 +4,7 @@
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#E8F5E9",
-  "theme_color": "#4CAF50",
+  "theme_color": "#1b5e20",
   "description": "A fun Bible trivia game with multiple-choice questions, scoring, and difficulty options.",
   "icons": [
     {

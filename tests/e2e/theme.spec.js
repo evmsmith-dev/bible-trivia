@@ -57,3 +57,11 @@ test("text on the yellow buttons stays dark in dark mode", async ({ page }) => {
   const color = await page.evaluate(() => getComputedStyle(document.getElementById("start-btn")).color);
   expect(color).toBe("rgb(51, 51, 51)");
 });
+
+test("the manifest theme color works in both light and dark mode", async ({ page }) => {
+  // Android paints an installed app's bottom navigation bar with the manifest theme_color,
+  // and the manifest can't change with the theme, so it must be a deep color, not bright green.
+  await page.goto("index.html");
+  const manifest = await page.evaluate(() => fetch("manifest.json").then((r) => r.json()));
+  expect(manifest.theme_color).toBe("#1b5e20");
+});
