@@ -2019,7 +2019,9 @@ button.link-button {
   cursor: pointer;
 }
 button.link-button:hover { transform: none; text-decoration: underline; }
-#daily-challenge-link.link-button { display: flex; margin-top: 16px; }
+#daily-challenge-link.link-button { display: flex; margin: 16px auto 0; }
+/* Each Welcome link sits on its own line, centered under the Start button. */
+#how-to-play-link.link-button { display: block; margin: 10px auto 0; }
 
 /* Visible keyboard focus everywhere. */
 :focus-visible {

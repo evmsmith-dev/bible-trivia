@@ -43,3 +43,11 @@ test("Settings text comes from the mode config", async ({ page }) => {
   await expect(page.locator("#mode-description")).toContainText("250 pts • 18 sec");
   await expect(page.locator('.difficulty-btn[data-mode="superHard"]')).toHaveAttribute("aria-pressed", "true");
 });
+
+test("Game Play sits on its own line below the Start button", async ({ page }) => {
+  const start = await page.locator("#start-btn").boundingBox();
+  const howTo = await page.locator("#how-to-play-link").boundingBox();
+  expect(howTo.y).toBeGreaterThanOrEqual(start.y + start.height);
+  // Centered under Start (within a few pixels).
+  expect(Math.abs((howTo.x + howTo.width / 2) - (start.x + start.width / 2))).toBeLessThan(4);
+});
