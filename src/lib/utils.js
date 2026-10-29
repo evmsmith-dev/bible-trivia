@@ -55,11 +55,6 @@ export function pickRandom(array, random = Math.random) {
   return array[Math.floor(random() * array.length)];
 }
 
-export function formatTimestamp(timestamp) {
-  const parsed = Date.parse(timestamp);
-  return Number.isNaN(parsed) ? String(timestamp ?? "") : new Date(parsed).toLocaleString();
-}
-
 /** Scripture references worth linking (must contain a chapter/verse number). */
 export function hasScriptureReference(reference) {
   const ref = String(reference || "").trim();

@@ -1,43 +1,60 @@
 import { test, expect } from "@playwright/test";
 import * as h from "./helpers.js";
 
-test.describe("player profile and settings", () => {
+test.describe("player and settings", () => {
   test.beforeEach(async ({ page }) => {
     await h.openApp(page);
   });
 
-  test("renaming validates length and persists", async ({ page }) => {
-    await page.locator("#player-entry-btn").click();
-    await page.locator("#player-name-edit-btn").click();
-    await page.locator("#player-name-input").fill(" x ");
-    await page.locator("#player-name-confirm-btn").click();
-    await expect(page.locator("#player-name-error")).toContainText("2 to 15 characters");
+  test("renaming validates length and saves with Save", async ({ page }) => {
+    await h.openPlayerSheet(page);
+    const input = page.locator("#player-name-input");
+    await expect(input).toHaveValue("Player");
+    await input.fill(" x ");
+    await page.locator("#player-save-btn").click();
+    await expect(page.locator("#player-name-error")).toContainText("2 to 15 letters");
+    await expect(page.locator("#player-sheet")).toBeVisible();
 
-    await page.locator("#player-name-input").fill("  Ruth  ");
-    await page.locator("#player-name-input").press("Enter");
-    await expect(page.locator("#player-name-display")).toHaveText("Ruth");
+    await input.fill("  Ruth  ");
+    await input.press("Enter"); // Enter saves too
+    await expect(page.locator("#player-sheet")).toBeHidden();
+    await expect(page.locator("#player-entry-name")).toHaveText("Ruth");
 
     await page.reload();
     await expect(page.locator("#player-entry-name")).toHaveText("Ruth");
   });
 
-  test("choosing an avatar persists", async ({ page }) => {
-    await page.locator("#player-entry-btn").click();
-    await page.locator("#avatar-page-next").click();
-    const option = page.locator("#player-avatar-options [role=radio]").first();
+  test("all pictures show at once, and the choice is saved with Save", async ({ page }) => {
+    await h.openPlayerSheet(page);
+    const options = page.locator("#player-avatar-options [role=radio]");
+    await expect(options).toHaveCount(24); // every picture (8 emoji + 16 drawings), no paging
+    const option = page.locator('#player-avatar-options [data-avatar-id^="image-"]').first();
     const avatarId = await option.getAttribute("data-avatar-id");
     await option.click();
-    await expect(page.locator("#player-save-status")).toContainText("Avatar Updated");
     await expect(option).toHaveAttribute("aria-checked", "true");
+    await page.locator("#player-save-btn").click();
+    await expect(page.locator("#player-entry-avatar img")).toHaveAttribute("src", /icons\/avatars\//);
+
     await page.reload();
     await h.waitForReady(page);
     expect((await h.readProfile(page)).avatarId).toBe(avatarId);
-    await expect(page.locator("#player-entry-avatar img")).toHaveAttribute("src", /icons\/avatars\//);
+  });
+
+  test("closing the sheet without saving keeps the old name and picture", async ({ page }) => {
+    await h.openPlayerSheet(page);
+    await page.locator("#player-name-input").fill("Changed");
+    await page.locator('#player-avatar-options [data-avatar-id="emoji-cool"]').click();
+    await page.locator("#player-sheet .sheet-close").click();
+    await expect(page.locator("#player-sheet")).toBeHidden();
+    await expect(page.locator("#player-entry-name")).toHaveText("Player");
+    expect((await h.readProfile(page)).avatarId).not.toBe("emoji-cool");
+
+    await h.openPlayerSheet(page); // reopening starts from the saved values
+    await expect(page.locator("#player-name-input")).toHaveValue("Player");
   });
 
   test("difficulty mode persists and changes the timer", async ({ page }) => {
-    await page.locator("#player-entry-btn").click();
-    await page.locator("#player-open-settings-btn").click();
+    await h.openSettings(page);
     await page.locator('.difficulty-btn[data-mode="hard"]').click();
     await expect(page.locator('.difficulty-btn[data-mode="hard"]')).toHaveClass(/active/);
 
@@ -70,12 +87,12 @@ test.describe("player profile and settings", () => {
     expect((await h.readProfile(page)).nonDailyCorrectAnswers).toBe(10);
 
     page.once("dialog", (dialog) => dialog.accept());
-    await page.locator("#player-entry-btn").click();
+    await h.openPlayerSheet(page);
     await page.locator("#player-reset-btn").click();
     await expect.poll(async () => (await h.readProfile(page)).nonDailyCorrectAnswers).toBe(0);
-    await page.locator("#player-open-leaderboard-btn").click();
-    await page.locator('.leaderboard-tab[data-panel="leaderboard-history"]').click();
-    await expect(page.locator("#welcome-history-content")).toContainText("No game history yet");
+    await expect(page.locator("#player-sheet")).toBeHidden();
+    await h.openScores(page);
+    await expect(page.locator("#scores-recent-title").locator("..")).toContainText("No games yet");
   });
 });
 
@@ -108,13 +125,13 @@ test("data saved by the previous version still loads; an inflated level counter 
   await expect(page.locator("#player-entry-level")).toHaveText("Level 2"); // 40 correct answers
   expect(await h.readProfile(page)).toMatchObject({ nonDailyCorrectAnswers: 40, levelCountVersion: 2 });
 
-  // Saved settings and scores from the old version load too.
-  await page.locator("#player-entry-btn").click();
-  await page.locator("#player-open-leaderboard-btn").click();
-  await expect(page.locator("#welcome-leaderboard-content")).toContainText("1234");
-  await page.locator('.leaderboard-tab[data-panel="leaderboard-history"]').click();
-  await expect(page.locator("#welcome-history-content tbody tr")).toHaveCount(5);
+  // Saved settings and scores from the old version load too. Scores opens on the saved mode.
+  await h.openScores(page);
+  await expect(page.locator('.mode-switch-btn[data-mode="superHard"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".score-list")).toContainText("1,234");
+  await expect(page.locator(".game-list").first().locator(".game-row")).toHaveCount(5);
+  await expect(page.locator(".game-list").first()).toContainText("Jan 2"); // old-style dates still read well
   await page.keyboard.press("Escape");
-  await page.locator("#player-open-settings-btn").click();
+  await h.openSettings(page);
   await expect(page.locator('.difficulty-btn[data-mode="superHard"]')).toHaveClass(/active/);
 });

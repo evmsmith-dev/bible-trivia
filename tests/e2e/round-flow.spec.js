@@ -48,10 +48,8 @@ test.describe("round flow", () => {
     await expect(page.locator("#start-btn")).toBeVisible();
     await expect(page.locator("#question-container")).toBeHidden();
 
-    await page.locator("#player-entry-btn").click();
-    await page.locator("#player-open-leaderboard-btn").click();
-    await page.locator('.leaderboard-tab[data-panel="leaderboard-history"]').click();
-    await expect(page.locator("#welcome-history-content")).not.toContainText(/\d+\s*\/\s*10/);
+    await h.openScores(page);
+    await expect(page.locator("#scores-recent-title").locator("..")).toContainText("No games yet");
   });
 
   test("keys A–D and 1–4 pick the matching answer", async ({ page }) => {

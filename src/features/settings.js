@@ -89,6 +89,7 @@ export function initSettings() {
   });
 
   byId("mode-chip").addEventListener("click", openSettings);
+  byId("home-settings-btn").addEventListener("click", openSettings);
   renderModeChip();
 
   renderHowToPlay();

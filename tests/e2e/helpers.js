@@ -57,6 +57,24 @@ export async function goHomeFromSummary(page) {
   await expect(page.locator("#start-btn")).toBeVisible();
 }
 
+/** The Scores page (🏆 on Home). */
+export async function openScores(page) {
+  await page.locator("#home-scores-btn").click();
+  await expect(page.locator("#scores-page")).toBeVisible();
+}
+
+/** Settings (⚙️ on Home). */
+export async function openSettings(page) {
+  await page.locator("#home-settings-btn").click();
+  await expect(page.locator("#settings-overlay")).toBeVisible();
+}
+
+/** The Edit player sheet (tap the avatar on Home). */
+export async function openPlayerSheet(page) {
+  await page.locator("#player-entry-btn").click();
+  await expect(page.locator("#player-sheet")).toBeVisible();
+}
+
 export async function readProfile(page) {
   return page.evaluate((key) => JSON.parse(localStorage.getItem(key) || "null"), PROFILE_KEY);
 }

@@ -1,134 +1,180 @@
-// Player Stats overlay: Top Scores, Game History, lifetime Stats, and Daily results.
-import { CATEGORIES, MODES, MODE_KEYS } from "../config.js";
+// Scores page: level and overview, top scores per mode, recent games, right answers by
+// category, and Daily Challenge results. A full page with a back button (Android's Back
+// gesture closes it too; see ui/overlay.js).
+import { CATEGORIES, CATEGORY_EMOJIS, MODES, MODE_KEYS } from "../config.js";
 import { getAverageCorrectSeconds, getTopScores, normalizeMode, sanitizeDailyRecord } from "../lib/records.js";
-import { escapeHtml, formatTimestamp } from "../lib/utils.js";
+import { getLevelProgress } from "../lib/scoring.js";
+import { escapeHtml } from "../lib/utils.js";
 import { state } from "../state.js";
 import { byId } from "../ui/dom.js";
 import { openOverlay } from "../ui/overlay.js";
 
-const modeName = (mode) => `${MODES[mode]?.emoji || "❓"} ${MODES[mode]?.label || "Unknown"}`;
-const emptyRow = (columns, text) => `<tr><td colspan="${columns}" class="table-empty">${text}</td></tr>`;
+const RECENT_GAMES = 10;
+const RECENT_DAILY = 7;
+const MEDALS = ["🥇", "🥈", "🥉"];
+
+let selectedMode = null;
+
+const number = (value) => Number(value || 0).toLocaleString();
+const modeLabel = (mode) => `${MODES[mode]?.emoji || ""} ${MODES[mode]?.label || "Unknown"}`.trim();
+
+/** "Oct 29" (and "Oct 29, 2025" for other years). Older saved records may not be ISO dates. */
+function shortDate(timestamp, { withTime = false } = {}) {
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return escapeHtml(String(timestamp ?? ""));
+  const options = { month: "short", day: "numeric" };
+  if (date.getFullYear() !== new Date().getFullYear()) options.year = "numeric";
+  if (withTime) Object.assign(options, { hour: "numeric", minute: "2-digit" });
+  return escapeHtml(date.toLocaleString(undefined, options));
+}
+
+function dateKeyLabel(dateKey) {
+  const [year, month, day] = String(dateKey).split("-").map(Number);
+  return year && month && day ? shortDate(new Date(year, month - 1, day)) : escapeHtml(String(dateKey));
+}
+
+const card = (label, value, detail = "") => `
+  <div class="stat-card">
+    <span class="stat-label">${label}</span>
+    <span class="stat-value">${value}</span>
+    ${detail ? `<span class="stat-detail">${detail}</span>` : ""}
+  </div>`;
+
+function overviewHtml() {
+  const { history, playerStats, dailyStats, profile } = state;
+  const progress = getLevelProgress(profile.nonDailyCorrectAnswers);
+  const asked = history.reduce((sum, game) => sum + (game.total || 0), 0);
+  const right = history.reduce((sum, game) => sum + (game.correct || 0), 0);
+  const accuracy = asked ? `${Math.round((right / asked) * 100)}%` : "–";
+  return `
+    <section class="scores-section" aria-labelledby="scores-level-title">
+      <div class="level-card">
+        <div>
+          <h3 id="scores-level-title" class="level-title">Level ${progress.level}</h3>
+          <p class="level-detail">${progress.isMaxLevel ? "Top level reached!" : `${progress.remaining} more right answers to Level ${progress.level + 1}`}</p>
+        </div>
+        <div class="level-track" role="progressbar" aria-label="Progress to the next level"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(progress.percent)}">
+          <div class="level-fill" style="width:${progress.percent}%"></div>
+        </div>
+      </div>
+      <div class="stat-cards">
+        ${card("Games played", number(history.length))}
+        ${card("Accuracy", accuracy, asked ? `${number(right)} of ${number(asked)} right` : "")}
+        ${card("Best streak", number(playerStats.allTimeBestStreak), "right answers in a row")}
+        ${card("Daily streak", `${number(dailyStats.currentDailyStreak)} 🔥`, `Best: ${number(dailyStats.bestDailyStreak)} days`)}
+      </div>
+    </section>`;
+}
 
 function topScoresHtml() {
-  if (!state.highScores.length) {
-    return '<div class="leaderboard-empty">No high scores yet. Play a game to get on the board.</div>';
-  }
-  return `<div id="welcome-leaderboard-container">${MODE_KEYS.map((mode) => {
-    const scores = getTopScores(state.highScores, mode);
-    const rows = scores.length
-      ? scores.map((score, index) => `
-          <tr><td>${index + 1}</td><td>${score.score}</td>
-          <td class="table-date">${escapeHtml(formatTimestamp(score.timestamp))}</td><td>${score.correct} / ${score.total}</td></tr>`).join("")
-      : emptyRow(4, "No scores yet");
-    return `
-      <div class="leaderboard-mode">
-        <h4>${modeName(mode)} Mode Top Scores</h4>
-        <table>
-          <colgroup><col class="scores-rank"><col class="scores-score"><col class="scores-date"><col class="scores-correct"></colgroup>
-          <thead><tr><th>Rank</th><th>Score</th><th>Date / Time</th><th>Correct</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>`;
-  }).join("")}</div>`;
+  const mode = selectedMode;
+  const scores = getTopScores(state.highScores, mode);
+  const average = getAverageCorrectSeconds(state.playerStats, mode);
+  const rows = scores.length
+    ? `<ol class="score-list">${scores.map((score, index) => `
+        <li class="score-row">
+          <span class="score-rank" aria-label="Rank ${index + 1}">${MEDALS[index] || index + 1}</span>
+          <span class="score-points">${number(score.score)}</span>
+          <span class="score-meta">${score.correct}/${score.total} · ${shortDate(score.timestamp)}</span>
+        </li>`).join("")}</ol>`
+    : `<p class="scores-empty">No ${MODES[mode].label} scores yet. Play a ${MODES[mode].label} round to set one.</p>`;
+  return `
+    <section class="scores-section" aria-labelledby="scores-top-title">
+      <h3 id="scores-top-title" class="scores-heading">Top scores</h3>
+      <div class="mode-switch" role="group" aria-label="Difficulty mode">
+        ${MODE_KEYS.map((key) => `
+          <button type="button" class="mode-switch-btn${key === mode ? " active" : ""}" data-mode="${key}" aria-pressed="${key === mode}">
+            <span aria-hidden="true">${MODES[key].emoji}</span> ${MODES[key].shortLabel}
+          </button>`).join("")}
+      </div>
+      ${rows}
+      <p class="scores-note">${average === null
+        ? `Average answer time appears after your first right answer in ${MODES[mode].label}.`
+        : `Average time for a right answer: <strong>${average}s</strong> · ${number(state.playerStats.correctCountByMode[mode])} right answers`}</p>
+    </section>`;
 }
 
-function historyHtml() {
-  const games = state.history.slice().reverse();
-  const rows = games.length
-    ? games.map((game, index) => `
-        <tr><td>${index + 1}</td><td>${modeName(normalizeMode(game.difficultyMode))}</td>
-        <td class="table-date">${escapeHtml(formatTimestamp(game.timestamp))}</td>
-        <td>${game.correct} / ${game.total}</td><td>${game.score}</td><td>${game.percent}%</td></tr>`).join("")
-    : emptyRow(6, "No game history yet");
+function recentGamesHtml() {
+  const games = state.history.slice(-RECENT_GAMES).reverse();
+  const body = games.length
+    ? `<ul class="game-list">${games.map((game) => `
+        <li class="game-row">
+          <span class="game-date">${shortDate(game.timestamp, { withTime: true })}</span>
+          <span class="game-mode">${modeLabel(normalizeMode(game.difficultyMode))}</span>
+          <span class="game-result">${game.correct}/${game.total}</span>
+          <span class="game-score">${number(game.score)}</span>
+        </li>`).join("")}</ul>`
+    : '<p class="scores-empty">No games yet. Your last 10 rounds will show here.</p>';
   return `
-    <table>
-      <colgroup><col class="history-game"><col class="history-mode"><col class="history-date"><col class="history-correct"><col class="history-score"><col class="history-percent"></colgroup>
-      <thead><tr><th>Game</th><th>Mode</th><th>Date / Time</th><th>Correct</th><th>Score</th><th>%</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+    <section class="scores-section" aria-labelledby="scores-recent-title">
+      <h3 id="scores-recent-title" class="scores-heading">Recent games</h3>
+      ${body}
+    </section>`;
 }
 
-function lifetimeStatsHtml() {
-  const stats = state.playerStats;
-  const timingRows = MODE_KEYS.map((mode) => {
-    const average = getAverageCorrectSeconds(stats, mode);
-    return `<tr><td>${modeName(mode)}</td><td>${average === null ? "-" : `${average}s`}</td><td>${stats.correctCountByMode[mode]}</td></tr>`;
-  }).join("");
+function categoriesHtml() {
+  const counts = state.playerStats.correctByCategory;
+  const total = CATEGORIES.reduce((sum, category) => sum + counts[category], 0);
+  const most = Math.max(1, ...CATEGORIES.map((category) => counts[category]));
+  const body = total
+    ? CATEGORIES.map((category) => `
+        <div class="category-row">
+          <span class="category-name">${CATEGORY_EMOJIS[category] || ""} ${category}</span>
+          <span class="category-count">${number(counts[category])}</span>
+          <div class="category-track" aria-hidden="true"><div class="category-fill" style="width:${(counts[category] / most) * 100}%"></div></div>
+        </div>`).join("")
+    : '<p class="scores-empty">Right answers will be counted here by category.</p>';
   return `
-    <div class="stats-grid">
-      <article class="stats-card">
-        <h4>Average Correct Answer Time</h4>
-        <table><thead><tr><th>Mode</th><th>Avg Time</th><th>Correct</th></tr></thead><tbody>${timingRows}</tbody></table>
-      </article>
-      <article class="stats-card">
-        <h4>Correct Answers by Category</h4>
-        ${CATEGORIES.map((category) => `<p class="stats-row"><strong>${category}:</strong> ${stats.correctByCategory[category]}</p>`).join("")}
-        <p class="stats-row"><strong>Total Correct:</strong> ${stats.totalCorrectClicks}</p>
-      </article>
-      <article class="stats-card">
-        <h4>Correct-Answer Streaks</h4>
-        <p class="stats-row"><strong>Current:</strong> ${stats.currentStreak}</p>
-        <p class="stats-row"><strong>Last Game Max:</strong> ${stats.lastGameMaxStreak}</p>
-        <p class="stats-row"><strong>All-Time Best:</strong> ${stats.allTimeBestStreak}</p>
-      </article>
-    </div>`;
+    <section class="scores-section" aria-labelledby="scores-category-title">
+      <h3 id="scores-category-title" class="scores-heading">Right answers by category</h3>
+      ${body}
+    </section>`;
 }
 
 function dailyHtml() {
-  const records = Object.values(state.dailyChallenges).map(sanitizeDailyRecord).sort((a, b) => b.dateKey.localeCompare(a.dateKey));
-  const wins = records.filter((record) => record.completed).length;
-  const rows = records.length
-    ? records.map((record) => `<tr><td>${escapeHtml(record.dateKey)}</td><td>${record.completed ? "Yes" : "No"}</td><td>${record.lastScore}</td></tr>`).join("")
-    : emptyRow(3, "No daily challenges yet");
-  const { dailyStats } = state;
+  const records = Object.values(state.dailyChallenges).map(sanitizeDailyRecord)
+    .filter((record) => record.attempts > 0 || record.completed) // only days that were played
+    .sort((a, b) => b.dateKey.localeCompare(a.dateKey));
+  const completed = records.filter((record) => record.completed).length;
+  const list = records.length
+    ? `<ul class="game-list">${records.slice(0, RECENT_DAILY).map((record) => `
+        <li class="game-row daily-row">
+          <span class="game-date">${dateKeyLabel(record.dateKey)}</span>
+          <span class="game-mode">${record.completed ? "✅ Completed" : "Not completed"}</span>
+          <span class="game-score">${number(record.bestScore)}</span>
+        </li>`).join("")}</ul>`
+    : '<p class="scores-empty">No Daily Challenges yet. A new one is ready every day.</p>';
   return `
-    <div class="stats-grid">
-      <article class="stats-card">
-        <h4>Daily Streak</h4>
-        <p class="stats-row"><strong>Current:</strong> ${dailyStats.currentDailyStreak}</p>
-        <p class="stats-row"><strong>Best:</strong> ${dailyStats.bestDailyStreak}</p>
-        <p class="stats-row"><strong>Total Wins:</strong> ${wins} 🏅</p>
-        <p class="stats-row"><strong>Total Attempts:</strong> ${dailyStats.totalDailyAttempts}</p>
-      </article>
-      <article class="stats-card">
-        <h4>Recent Daily Challenges</h4>
-        <table><thead><tr><th>Date</th><th>Completed</th><th>Score</th></tr></thead><tbody>${rows}</tbody></table>
-      </article>
-    </div>`;
+    <section class="scores-section" aria-labelledby="scores-daily-title">
+      <h3 id="scores-daily-title" class="scores-heading">Daily Challenge</h3>
+      <div class="stat-cards">
+        ${card("Days completed", number(completed))}
+        ${card("Attempts", number(state.dailyStats.totalDailyAttempts))}
+      </div>
+      ${list}
+    </section>`;
 }
 
-function setActiveTab(panelId) {
-  document.querySelectorAll("#leaderboard-overlay .leaderboard-tab").forEach((tab) => {
-    const active = tab.dataset.panel === panelId;
-    tab.classList.toggle("active", active);
-    tab.setAttribute("aria-selected", String(active));
-    tab.tabIndex = active ? 0 : -1;
-  });
-  document.querySelectorAll("#leaderboard-overlay .leaderboard-panel").forEach((panel) => {
-    panel.classList.toggle("active", panel.id === panelId);
-  });
+function renderScores() {
+  byId("scores-content").innerHTML = overviewHtml() + topScoresHtml() + recentGamesHtml() + categoriesHtml() + dailyHtml();
 }
 
 export function openStats() {
-  byId("welcome-leaderboard-content").innerHTML = topScoresHtml();
-  byId("welcome-history-content").innerHTML = historyHtml();
-  byId("welcome-stats-content").innerHTML = lifetimeStatsHtml();
-  byId("welcome-daily-content").innerHTML = dailyHtml();
-  setActiveTab("leaderboard-top-scores");
-  openOverlay("leaderboard-overlay", { initialFocus: ".leaderboard-tab.active" });
+  selectedMode = normalizeMode(state.difficultyMode);
+  renderScores();
+  openOverlay("scores-page", { initialFocus: ".page-back" });
+  byId("scores-content").scrollTop = 0;
 }
 
 export function initStats() {
-  const tabs = [...document.querySelectorAll("#leaderboard-overlay .leaderboard-tab")];
-  tabs.forEach((tab, index) => {
-    tab.addEventListener("click", () => setActiveTab(tab.dataset.panel));
-    // Arrow keys move between tabs (standard tablist behaviour).
-    tab.addEventListener("keydown", (event) => {
-      const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
-      if (!step) return;
-      const next = tabs[(index + step + tabs.length) % tabs.length];
-      setActiveTab(next.dataset.panel);
-      next.focus();
-    });
+  byId("home-scores-btn").addEventListener("click", openStats);
+  byId("scores-content").addEventListener("click", (event) => {
+    const button = event.target.closest(".mode-switch-btn");
+    if (!button || button.dataset.mode === selectedMode) return;
+    selectedMode = normalizeMode(button.dataset.mode);
+    const section = byId("scores-top-title").closest("section");
+    section.outerHTML = topScoresHtml();
+    document.querySelector(`.mode-switch-btn[data-mode="${selectedMode}"]`)?.focus();
   });
 }

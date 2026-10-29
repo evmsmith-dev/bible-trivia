@@ -33,11 +33,9 @@ test.describe("normal game", () => {
     // History and top score survive a reload.
     await page.reload();
     await h.waitForReady(page);
-    await page.locator("#player-entry-btn").click();
-    await page.locator("#player-open-leaderboard-btn").click();
-    await expect(page.locator("#welcome-leaderboard-content")).toContainText(String(score));
-    await page.locator('.leaderboard-tab[data-panel="leaderboard-history"]').click();
-    await expect(page.locator("#welcome-history-content")).toContainText(/10\s*\/\s*10/);
+    await h.openScores(page);
+    await expect(page.locator(".score-list")).toContainText(score.toLocaleString("en-US"));
+    await expect(page.locator(".game-list").first()).toContainText("10/10");
   });
 
   test("a wrong answer highlights exactly one correct option and breaks the streak", async ({ page }) => {

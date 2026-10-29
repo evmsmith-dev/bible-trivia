@@ -12,32 +12,35 @@ test("Welcome links are keyboard-reachable buttons", async ({ page }) => {
 });
 
 test("Escape closes the top overlay and returns focus", async ({ page }) => {
-  await page.locator("#player-entry-btn").click();
-  await page.locator("#player-open-settings-btn").click();
-  await expect(page.locator("#settings-overlay")).toBeVisible();
-
+  await h.openSettings(page);
   await page.keyboard.press("Escape");
   await expect(page.locator("#settings-overlay")).toBeHidden();
-  await expect(page.locator("#player-overlay")).toBeVisible();
-  await expect(page.locator("#player-open-settings-btn")).toBeFocused();
+  await expect(page.locator("#home-settings-btn")).toBeFocused();
 
+  await h.openScores(page);
+  await expect(page.locator("#scores-page .page-back")).toBeFocused();
   await page.keyboard.press("Escape");
-  await expect(page.locator("#player-overlay")).toBeHidden();
-  await expect(page.locator("#player-entry-btn")).toBeFocused();
+  await expect(page.locator("#scores-page")).toBeHidden();
+  await expect(page.locator("#home-scores-btn")).toBeFocused();
 });
 
-test("Escape while editing the name cancels the edit but keeps the overlay open", async ({ page }) => {
-  await page.locator("#player-entry-btn").click();
-  await page.locator("#player-name-edit-btn").click();
-  await page.locator("#player-name-input").fill("Changed");
-  await page.keyboard.press("Escape");
-  await expect(page.locator("#player-overlay")).toBeVisible();
-  await expect(page.locator("#player-name-display")).toHaveText("Player");
+test("the phone's Back gesture closes pages and sheets instead of leaving the app", async ({ page }) => {
+  await h.openScores(page);
+  await page.goBack();
+  await expect(page.locator("#scores-page")).toBeHidden();
+  await expect(page.locator("#start-btn")).toBeVisible();
+
+  // After closing in the app, the next page reuses the same history entry.
+  await h.openPlayerSheet(page);
+  await page.locator("#player-sheet .sheet-close").click();
+  await h.openSettings(page);
+  await page.goBack();
+  await expect(page.locator("#settings-overlay")).toBeHidden();
+  await expect(page.locator("#start-btn")).toBeVisible();
 });
 
 test("Settings text comes from the mode config", async ({ page }) => {
-  await page.locator("#player-entry-btn").click();
-  await page.locator("#player-open-settings-btn").click();
+  await h.openSettings(page);
   await expect(page.locator(".difficulty-btn")).toHaveCount(4);
   await page.locator('.difficulty-btn[data-mode="superHard"]').click();
   await expect(page.locator("#mode-description")).toContainText("250 pts • 18 sec");
