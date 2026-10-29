@@ -1,5 +1,5 @@
-const { test, expect } = require("@playwright/test");
-const h = require("./helpers");
+import { test, expect } from "@playwright/test";
+import * as h from "./helpers.js";
 
 test.describe("player profile and settings", () => {
   test.beforeEach(async ({ page }) => {
@@ -30,7 +30,7 @@ test.describe("player profile and settings", () => {
     await expect(page.locator("#player-save-status")).toContainText("Avatar Updated");
     await expect(option).toHaveAttribute("aria-checked", "true");
     await page.reload();
-    await expect(page.locator("#player-entry-level")).toHaveText(/Level \d+/);
+    await h.waitForReady(page);
     expect((await h.readProfile(page)).avatarId).toBe(avatarId);
     await expect(page.locator("#player-entry-avatar img")).toHaveAttribute("src", /icons\/avatars\//);
   });
@@ -42,7 +42,7 @@ test.describe("player profile and settings", () => {
     await expect(page.locator('.difficulty-btn[data-mode="hard"]')).toHaveClass(/active/);
 
     await page.reload();
-    await expect(page.locator("#player-entry-level")).toHaveText(/Level \d+/);
+    await h.waitForReady(page);
     await h.startNormalGame(page);
     await expect(page.locator("#timer-display")).toHaveText("21");
   });
@@ -78,10 +78,10 @@ test.describe("player profile and settings", () => {
   });
 });
 
-test("an old profile whose level counter included daily answers is rebuilt from game history", async ({ page }) => {
+test("data saved by the previous version still loads; an inflated level counter is rebuilt from game history", async ({ page }) => {
   // Create the database with the app, then seed legacy data from a page that doesn't run the app.
   await page.goto("index.html");
-  await expect(page.locator("#player-entry-level")).toHaveText(/Level \d+/);
+  await h.waitForReady(page);
   await page.goto("manifest.json");
   await page.evaluate(async ({ profileKey, dbName }) => {
     localStorage.setItem(profileKey, JSON.stringify({ id: "primary", name: "Tester", avatarId: "emoji-cool", nonDailyCorrectAnswers: 200 }));
@@ -89,10 +89,12 @@ test("an old profile whose level counter included daily answers is rebuilt from 
       const request = indexedDB.open(dbName);
       request.onsuccess = () => {
         const db = request.result;
-        const tx = db.transaction(["gameHistory"], "readwrite");
+        const tx = db.transaction(["gameHistory", "highScores", "settings"], "readwrite");
         for (let i = 0; i < 5; i++) {
           tx.objectStore("gameHistory").add({ timestamp: "1/2/2026, 3:04:05 PM", correct: 8, total: 10, score: 900, percent: 80, difficultyMode: "medium", categories: {} });
         }
+        tx.objectStore("highScores").add({ score: 1234, timestamp: "2026-01-02T15:04:05.000Z", correct: 9, total: 10, difficultyMode: "Super Hard" });
+        tx.objectStore("settings").put({ key: "difficultyMode", value: "superHard" });
         tx.oncomplete = () => { db.close(); resolve(); };
         tx.onerror = () => reject(tx.error);
       };
@@ -104,4 +106,14 @@ test("an old profile whose level counter included daily answers is rebuilt from 
   await expect(page.locator("#player-entry-name")).toHaveText("Tester");
   await expect(page.locator("#player-entry-level")).toHaveText("Level 2"); // 40 correct answers
   expect(await h.readProfile(page)).toMatchObject({ nonDailyCorrectAnswers: 40, levelCountVersion: 2 });
+
+  // Saved settings and scores from the old version load too.
+  await page.locator("#player-entry-btn").click();
+  await page.locator("#player-open-leaderboard-btn").click();
+  await expect(page.locator("#welcome-leaderboard-content")).toContainText("1234");
+  await page.locator('.leaderboard-tab[data-panel="leaderboard-history"]').click();
+  await expect(page.locator("#welcome-history-content tbody tr")).toHaveCount(5);
+  await page.keyboard.press("Escape");
+  await page.locator("#player-open-settings-btn").click();
+  await expect(page.locator('.difficulty-btn[data-mode="superHard"]')).toHaveClass(/active/);
 });

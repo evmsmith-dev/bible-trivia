@@ -1,10 +1,10 @@
 // End-to-end tests run against a static server. Set APP_DIR to test a build output folder (e.g. dist).
-const { defineConfig, devices } = require("@playwright/test");
+import { defineConfig, devices } from "@playwright/test";
 
 const port = Number(process.env.PORT || 4173);
 const appDir = process.env.APP_DIR || ".";
 
-module.exports = defineConfig({
+export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),

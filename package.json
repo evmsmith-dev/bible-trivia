@@ -1,17 +1,20 @@
 {
   "name": "bible-trivia",
   "private": true,
-  "version": "1.9.108",
-  "description": "Bible trivia static app",
+  "version": "2.0.0",
+  "description": "Bible trivia progressive web app",
   "scripts": {
-    "serve": "node scripts/serve.mjs . 8080",
+    "start": "node scripts/serve.mjs . 8080",
+    "build": "node scripts/build.mjs",
+    "preview": "npm run build && node scripts/serve.mjs dist 8080",
     "validate:questions": "node scripts/validate-questions.mjs",
-    "test": "npm run validate:questions && npm run test:e2e",
-    "test:e2e": "playwright test",
-    "build:pages:py": "py scripts/minify_safe.py --source index.source.html --minify-js --minify-external-css --minify-external-js --output index.html",
-    "publish:prep:py": "py scripts/publish_prep.py"
+    "test:unit": "node --test \"tests/unit/*.test.js\"",
+    "test:e2e": "npm run build && APP_DIR=dist playwright test",
+    "test": "npm run validate:questions && npm run test:unit && npm run test:e2e"
   },
   "devDependencies": {
-    "@playwright/test": "1.63.0"
-  }
+    "@playwright/test": "1.63.0",
+    "esbuild": "^0.25.10"
+  },
+  "type": "module"
 }

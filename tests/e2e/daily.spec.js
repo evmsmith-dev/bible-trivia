@@ -1,5 +1,5 @@
-const { test, expect } = require("@playwright/test");
-const h = require("./helpers");
+import { test, expect } from "@playwright/test";
+import * as h from "./helpers.js";
 
 async function startDaily(page) {
   await page.locator("#daily-challenge-link").click();

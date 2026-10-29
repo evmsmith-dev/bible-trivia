@@ -3,7 +3,7 @@
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
-const file = process.argv[2] || "src/data/questions-bank.js";
+const file = process.argv[2] || "data/questions.json";
 const DIFFICULTIES = ["easy", "medium", "hard"];
 const CATEGORIES = ["Old Testament", "New Testament", "General"];
 

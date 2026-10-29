@@ -1,5 +1,5 @@
-const { test, expect } = require("@playwright/test");
-const h = require("./helpers");
+import { test, expect } from "@playwright/test";
+import * as h from "./helpers.js";
 
 test.describe("normal game", () => {
   test.beforeEach(async ({ page }) => {
@@ -29,7 +29,7 @@ test.describe("normal game", () => {
 
     // History and top score survive a reload.
     await page.reload();
-    await expect(page.locator("#player-entry-level")).toHaveText(/Level \d+/);
+    await h.waitForReady(page);
     await page.locator("#player-entry-btn").click();
     await page.locator("#player-open-leaderboard-btn").click();
     await expect(page.locator("#welcome-leaderboard-content")).toContainText(String(score));
@@ -61,7 +61,7 @@ test.describe("normal game", () => {
   test("the game keeps working when the confetti library cannot load", async ({ page }) => {
     await page.route(/confetti/, (route) => route.abort());
     await page.reload();
-    await expect(page.locator("#player-entry-level")).toHaveText(/Level \d+/);
+    await h.waitForReady(page);
     await h.startNormalGame(page);
     await h.answer(page, { correct: true });
     await expect(page.locator("#progress")).toContainText("Question 2 of 10");
