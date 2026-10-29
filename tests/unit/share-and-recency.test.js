@@ -28,8 +28,10 @@ test("share text has the date, emoji grid, score and link", () => {
 
 test("rounds pick questions the player hasn't seen before ones seen recently", () => {
   const easy = questions.filter((q) => q.difficulty === "easy");
-  const recent = easy.slice(0, easy.length - 30).map((q) => q.id); // all but 30 easy questions seen
-  const fresh = new Set(easy.slice(-30).map((q) => q.id));
+  // Leave 10 unseen questions in each category; mark every other easy question as seen.
+  const fresh = new Set(["Old Testament", "New Testament", "General"]
+    .flatMap((category) => easy.filter((q) => q.category === category).slice(-10).map((q) => q.id)));
+  const recent = easy.filter((q) => !fresh.has(q.id)).map((q) => q.id);
   const picked = selectQuestionsForMode(questions, "easy", Math.random, 10, recent);
   assert.equal(picked.length, 10);
   assert.ok(picked.every((q) => fresh.has(q.id)), "all ten should be unseen questions");
