@@ -51,3 +51,21 @@ test("Game Play sits on its own line below the Start button", async ({ page }) =
   // Centered under Start (within a few pixels).
   expect(Math.abs((howTo.x + howTo.width / 2) - (start.x + start.width / 2))).toBeLessThan(4);
 });
+
+test.describe("phone layout", () => {
+  for (const [name, width, height] of [["iPhone SE", 375, 667], ["iPhone in Safari", 390, 664], ["tall phone", 412, 915]]) {
+    test(`home and game screens fit a ${name} screen without scrolling`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await h.openApp(page);
+      const overflow = () => page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+      expect(await overflow()).toBeLessThanOrEqual(0);
+
+      await h.startNormalGame(page);
+      expect(await overflow()).toBeLessThanOrEqual(0);
+      // The answer buttons sit inside the screen and are comfortably tappable.
+      const last = await page.locator("#options .option").last().boundingBox();
+      expect(last.y + last.height).toBeLessThanOrEqual(height);
+      expect(last.height).toBeGreaterThanOrEqual(48);
+    });
+  }
+});
