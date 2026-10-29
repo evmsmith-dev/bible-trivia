@@ -53,15 +53,19 @@
       <span id="daily-challenge-new-badge" class="daily-new-badge" aria-hidden="true">🔥</span>
     </button>
     <button type="button" id="start-btn">Start</button>
-    <button type="button" id="mode-chip" aria-label="Difficulty mode: Medium. Change difficulty">🟠 Medium ▾</button>
+    <button type="button" id="mode-chip" class="mode-chip" aria-label="Difficulty mode: Medium. Change difficulty">🟠 Medium ▾</button>
     <button type="button" id="how-to-play-link" class="link-button">How to Play</button>
 
     <div id="player-entry-wrap">
-      <button id="player-entry-btn" type="button" aria-label="Open player profile">
+      <button id="player-entry-btn" type="button" aria-label="Edit player">
         <span class="player-entry-avatar" id="player-entry-avatar" aria-hidden="true">🙂</span>
       </button>
       <span class="player-entry-name" id="player-entry-name">Player</span>
       <span class="player-entry-level" id="player-entry-level">Level 1</span>
+    </div>
+    <div id="home-links">
+      <button type="button" id="home-scores-btn">🏆 Scores</button>
+      <button type="button" id="home-settings-btn">⚙️ Settings</button>
     </div>
     <noscript><p>Bible Trivia needs JavaScript turned on.</p></noscript>
   </main>
@@ -134,58 +138,37 @@
     </div>
   </div>
 
-  <!-- ==================== Player overlay ==================== -->
-  <div id="player-overlay" style="display:none;">
-    <div class="player-backdrop" data-overlay-close></div>
-    <div class="player-card" role="dialog" aria-modal="true" aria-labelledby="player-overlay-title">
-      <div id="player-save-status" class="player-status-tray" role="status" aria-live="polite"></div>
-      <button type="button" class="player-close overlay-close-button" data-overlay-close aria-label="Close player profile">x</button>
-      <h2 id="player-overlay-title">Player Profile</h2>
+  <!-- ==================== Edit player (sheet from the bottom) ==================== -->
+  <div id="player-sheet" class="sheet-overlay" style="display:none;">
+    <div class="sheet-backdrop" data-overlay-close></div>
+    <form class="sheet" id="player-form" role="dialog" aria-modal="true" aria-labelledby="player-sheet-title" novalidate>
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button type="button" class="sheet-close" data-overlay-close aria-label="Close without saving">✕</button>
+      <h2 id="player-sheet-title">Edit player</h2>
 
-      <div class="player-profile-stack">
-        <div class="player-avatar-preview">
-          <div class="player-avatar-preview-icon" id="player-avatar-preview" aria-hidden="true">🙂</div>
+      <div class="player-level-card">
+        <div class="player-level-avatar" id="player-sheet-avatar" aria-hidden="true"></div>
+        <div class="player-level-info">
           <div class="player-level-text" id="player-level-display">Level 1</div>
-          <div class="player-level-progress">
-            <div class="player-level-progress-track" aria-hidden="true">
-              <div id="player-level-progress-fill" class="player-level-progress-fill"></div>
-            </div>
-            <p id="player-level-progress-text" class="player-level-progress-text">0 more correct answers to next level</p>
+          <div class="player-level-progress-track" aria-hidden="true">
+            <div id="player-level-progress-fill" class="player-level-progress-fill"></div>
           </div>
-        </div>
-
-        <div class="player-name-header">
-          <div id="player-name-display-row" class="player-name-display-row">
-            <span class="player-name-display-label">Name:</span>
-            <span id="player-name-display" class="player-name-display-value">Player</span>
-            <button id="player-name-edit-btn" class="player-inline-icon-btn" type="button" aria-label="Edit player name" title="Edit player name">✏️</button>
-          </div>
-          <div id="player-name-edit-row" class="player-name-edit-row">
-            <input id="player-name-input" type="text" maxlength="15" autocomplete="off" aria-label="Player name" aria-describedby="player-name-help player-name-error">
-            <button id="player-name-confirm-btn" class="player-inline-icon-btn" type="button" aria-label="Save name" title="Save name">✓</button>
-            <button id="player-name-cancel-btn" class="player-inline-icon-btn" type="button" aria-label="Cancel name edit" title="Cancel name edit">✕</button>
-          </div>
-          <p id="player-name-help" style="display:none;">Name must be 2 to 15 characters.</p>
-          <p id="player-name-error" aria-live="polite"></p>
-        </div>
-
-        <div class="player-field">
-          <span id="avatar-options-label" class="player-field-label">Avatar</span>
-          <div id="player-avatar-options" role="radiogroup" aria-labelledby="avatar-options-label"></div>
-          <div class="avatar-pagination" aria-label="Avatar pages">
-            <button id="avatar-page-prev" type="button" aria-label="Previous avatar page">Previous</button>
-            <span id="avatar-page-indicator" aria-live="polite">1 / 1</span>
-            <button id="avatar-page-next" type="button" aria-label="Next avatar page">Next</button>
-          </div>
-        </div>
-
-        <div class="player-secondary-actions">
-          <button id="player-open-leaderboard-btn" type="button">Player Stats</button>
-          <button id="player-open-settings-btn" type="button">Settings</button>
-          <button id="player-reset-btn" type="button">Reset Player</button>
+          <p id="player-level-progress-text" class="player-level-progress-text"></p>
         </div>
       </div>
-    </div>
+
+      <label class="sheet-label" for="player-name-input">Name</label>
+      <input id="player-name-input" type="text" maxlength="15" autocomplete="off" enterkeyhint="done" aria-describedby="player-name-error">
+      <p id="player-name-error" class="field-error" aria-live="polite"></p>
+
+      <span class="sheet-label" id="avatar-options-label">Pick a picture</span>
+      <div id="player-avatar-options" role="radiogroup" aria-labelledby="avatar-options-label"></div>
+
+      <div class="sheet-actions">
+        <button type="button" id="player-reset-btn">Reset player</button>
+        <button type="submit" id="player-save-btn">Save</button>
+      </div>
+    </form>
   </div>
 
   <!-- ==================== How to Play overlay ==================== -->
@@ -212,19 +195,17 @@
           <ul id="howto-mode-list"></ul>
           <ul>
             <li>Correct answers also earn a <b>speed bonus</b> (up to double the base points) and a <b>streak bonus</b>.</li>
-            <li>Change this anytime in <b>Player Profile -&gt; Settings</b>.</li>
+            <li>Change this anytime by tapping the mode under <b>Start</b>, or in <b>⚙️ Settings</b>.</li>
           </ul>
         </details>
 
         <details class="howto-section">
-          <summary>Player Profile</summary>
+          <summary>Your Player and Scores</summary>
           <ul>
-            <li>Open <b>Player Profile</b> from the player card on the Welcome or Summary screens.</li>
-            <li>Edit your name with the pencil icon, then tap ✓ to save.</li>
-            <li>Choose your avatar and use Previous/Next to browse more avatar pages.</li>
-            <li>Use <b>Player Stats</b> to view Top Scores, Game History, Stats, and Daily results.</li>
-            <li>Use <b>Settings</b> to change difficulty mode (or tap the mode under <b>Start</b>) and light or dark appearance.</li>
-            <li><b>Reset Player</b> clears this player's saved progress after confirmation.</li>
+            <li>Tap your picture on the Home or Summary screen to change your name or picture, then tap <b>Save</b>.</li>
+            <li><b>🏆 Scores</b> shows your level, top scores for each mode, recent games, right answers by category, and Daily Challenge results.</li>
+            <li><b>⚙️ Settings</b> changes the difficulty mode, light or dark appearance, and vibration (on phones that support it).</li>
+            <li><b>Reset player</b> (at the bottom of the player screen) clears this player's saved progress after you confirm.</li>
             <li>Your level goes up with correct answers in normal games (Daily Challenge answers don't count).</li>
           </ul>
         </details>
@@ -258,32 +239,14 @@
     </div>
   </div>
 
-  <!-- ==================== Player Stats overlay ==================== -->
-  <div id="leaderboard-overlay" style="display:none;">
-    <div class="leaderboard-backdrop" data-overlay-close></div>
-    <div class="leaderboard-card" role="dialog" aria-modal="true" aria-labelledby="leaderboard-title">
-      <button type="button" class="leaderboard-close overlay-close-button" data-overlay-close aria-label="Close">x</button>
-      <h2 id="leaderboard-title">🏆 Player Stats</h2>
-
-      <div class="leaderboard-tabs" role="tablist" aria-label="Player stats views">
-        <button type="button" class="leaderboard-tab active" role="tab" id="tab-top-scores" aria-controls="leaderboard-top-scores" data-panel="leaderboard-top-scores" aria-selected="true">Top Scores</button>
-        <button type="button" class="leaderboard-tab" role="tab" id="tab-history" aria-controls="leaderboard-history" data-panel="leaderboard-history" aria-selected="false" tabindex="-1">Game History</button>
-        <button type="button" class="leaderboard-tab" role="tab" id="tab-stats" aria-controls="leaderboard-stats" data-panel="leaderboard-stats" aria-selected="false" tabindex="-1">Stats</button>
-        <button type="button" class="leaderboard-tab" role="tab" id="tab-daily" aria-controls="leaderboard-daily" data-panel="leaderboard-daily" aria-selected="false" tabindex="-1">Daily</button>
-      </div>
-
-      <section id="leaderboard-top-scores" class="leaderboard-panel active" role="tabpanel" aria-labelledby="tab-top-scores">
-        <div id="welcome-leaderboard-content"></div>
-      </section>
-      <section id="leaderboard-history" class="leaderboard-panel" role="tabpanel" aria-labelledby="tab-history">
-        <div id="welcome-history-content"></div>
-      </section>
-      <section id="leaderboard-stats" class="leaderboard-panel" role="tabpanel" aria-labelledby="tab-stats">
-        <div id="welcome-stats-content"></div>
-      </section>
-      <section id="leaderboard-daily" class="leaderboard-panel" role="tabpanel" aria-labelledby="tab-daily">
-        <div id="welcome-daily-content"></div>
-      </section>
+  <!-- ==================== Scores (full page) ==================== -->
+  <div id="scores-page" class="page-overlay" style="display:none;">
+    <div class="page" role="dialog" aria-modal="true" aria-labelledby="scores-title">
+      <header class="page-header">
+        <button type="button" class="page-back" data-overlay-close aria-label="Back">←</button>
+        <h2 id="scores-title">Scores</h2>
+      </header>
+      <div class="page-body" id="scores-content"></div>
     </div>
   </div>
 

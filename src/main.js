@@ -7,9 +7,9 @@ import { initOverlays } from "./ui/overlay.js";
 import { registerServiceWorker } from "./ui/update-banner.js";
 import { initDaily, renderDailyCard } from "./features/daily.js";
 import { initPlayer, renderPlayerCards } from "./features/player.js";
-import { initSettings, openSettings, renderModeChip } from "./features/settings.js";
+import { initSettings, renderModeChip } from "./features/settings.js";
 import { initTheme } from "./ui/theme.js";
-import { initStats, openStats } from "./features/stats.js";
+import { initStats } from "./features/stats.js";
 import { initGame, startDailyGame } from "./game.js";
 
 async function loadQuestions() {
@@ -29,7 +29,7 @@ async function start() {
   initGame();
   initSettings();
   initStats();
-  initPlayer({ openStats, openSettings, onReset: () => { renderDailyCard(); renderModeChip(); } });
+  initPlayer({ onReset: () => { renderDailyCard(); renderModeChip(); } });
 
   const [snapshot] = await Promise.all([initStore().then(loadAll), loadQuestions()]);
   applySnapshot(snapshot);

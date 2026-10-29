@@ -91,12 +91,10 @@ test.describe("vibration", () => {
   });
 
   test("can be turned off in Settings", async ({ page }) => {
-    await page.locator("#player-entry-btn").click();
-    await page.locator("#player-open-settings-btn").click();
+    await h.openSettings(page);
     await expect(page.locator("#vibration-setting")).toBeVisible();
     await page.locator('.vibration-btn[data-value="off"]').click();
     await expect(page.locator('.vibration-btn[data-value="off"]')).toHaveAttribute("aria-pressed", "true");
-    await page.keyboard.press("Escape");
     await page.keyboard.press("Escape");
     await page.evaluate(() => { window.__vibrations = []; });
 
@@ -111,9 +109,7 @@ test("the vibration setting is hidden on devices that can't vibrate", async ({ p
     Object.defineProperty(navigator, "vibrate", { configurable: true, value: undefined });
   });
   await h.openApp(page);
-  await page.locator("#player-entry-btn").click();
-  await page.locator("#player-open-settings-btn").click();
-  await expect(page.locator("#settings-title")).toBeVisible();
+  await h.openSettings(page);
   await expect(page.locator("#vibration-setting")).toBeHidden();
 });
 

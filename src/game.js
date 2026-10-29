@@ -14,7 +14,8 @@ import { byId, replayAnimation, setVisible, showScreen } from "./ui/dom.js";
 import { celebrateDailyCompletion, celebrateHighScore, celebrateLevel, fireConfetti } from "./ui/celebrate.js";
 import { anyOverlayOpen, closeOverlay, openOverlay } from "./ui/overlay.js";
 import { isDailyBonusActive, prepareDailyChallenge, recordDailyResult, renderDailyCard } from "./features/daily.js";
-import { getPlayerLevel, openPlayerOverlay, renderPlayerCards } from "./features/player.js";
+import { getPlayerLevel, openPlayerSheet, renderPlayerCards } from "./features/player.js";
+import { openSettings, renderModeChip } from "./features/settings.js";
 import { showUpdateBannerIfReady } from "./ui/update-banner.js";
 import { vibrate, VIBRATION } from "./ui/haptics.js";
 
@@ -503,11 +504,12 @@ function renderSummary({ percent, isDaily, dailyResult }) {
     </div>
     <button type="button" id="summary-review-btn">📖 Review Answers</button>
     <div class="summary-player-wrap">
-      <button id="summary-player-btn" type="button" aria-label="Open player profile"></button>
+      <button id="summary-player-btn" type="button" aria-label="Edit player"></button>
       <span id="summary-player-name" class="summary-player-name"></span>
       <span id="summary-player-level" class="summary-player-level"></span>
     </div>
     ${carryBanner}
+    ${isDaily ? "" : '<button type="button" id="summary-mode-chip" class="mode-chip"></button>'}
     <div class="summary-actions">
       ${isDaily ? '<button type="button" id="share-daily-btn">📤 Share Result</button><p id="share-status" class="share-status" role="status"></p>' : ""}
       ${isDaily ? "" : '<button type="button" id="restart-same">&#9654; Play</button>'}
@@ -521,7 +523,12 @@ function renderSummary({ percent, isDaily, dailyResult }) {
   byId("restart-change").addEventListener("click", () => {
     if (!state.celebrationActive) goHome();
   });
-  byId("summary-player-btn").addEventListener("click", openPlayerOverlay);
+  byId("summary-player-btn").addEventListener("click", openPlayerSheet);
+  // Change the difficulty for the next round; Play then uses it.
+  renderModeChip();
+  byId("summary-mode-chip")?.addEventListener("click", () => {
+    if (!state.celebrationActive) openSettings();
+  });
   byId("summary-review-btn").addEventListener("click", () => {
     if (!state.celebrationActive) showReview();
   });

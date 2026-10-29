@@ -120,7 +120,6 @@ export const RECENT_QUESTION_MEMORY = 500;
 
 export const PLAYER_NAME = { min: 2, max: 15, default: "Player" };
 
-export const AVATARS_PER_PAGE = 8;
 export const AVATARS = [
   { id: "emoji-smile", type: "emoji", value: "🙂", label: "Smile" },
   { id: "emoji-cool", type: "emoji", value: "😎", label: "Cool" },

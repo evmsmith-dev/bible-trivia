@@ -4,6 +4,21 @@
 import { byId } from "./dom.js";
 
 const stack = [];
+
+// Android's back gesture (and the browser's Back button) should close the top overlay,
+// not leave the app. Opening a dismissible overlay adds one "guard" history entry; Back
+// pops it and closes the overlay. Closing an overlay in the app leaves the guard in place
+// for the next overlay to reuse (calling history.back() there would race with opening
+// another overlay straight away).
+const GUARD = { bibleTriviaOverlay: true };
+const onGuard = () => Boolean(history.state?.bibleTriviaOverlay);
+function pushGuard() {
+  try {
+    if (!onGuard()) history.pushState(GUARD, "");
+  } catch {
+    // history unavailable (e.g. sandboxed frame): overlays still work, Back just won't close them
+  }
+}
 const closeHandlers = new Map();
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select, textarea, summary, [tabindex]:not([tabindex="-1"])';
 
@@ -20,6 +35,7 @@ export function openOverlay(id, { onClose, dismissible = true, initialFocus } = 
   const overlay = byId(id);
   if (!overlay || isOverlayOpen(id)) return;
   stack.push({ id, returnFocus: document.activeElement, dismissible });
+  if (dismissible) pushGuard();
   if (onClose) closeHandlers.set(id, onClose);
   else closeHandlers.delete(id);
   overlay.style.display = "flex";
@@ -38,6 +54,14 @@ export function closeOverlay(id) {
 }
 
 export function initOverlays() {
+  addEventListener("popstate", () => {
+    const top = stack[stack.length - 1];
+    if (!top) return;
+    if (top.dismissible) closeOverlay(top.id);
+    // Something is still open (an overlay underneath, or one that must be answered): stay in the app.
+    if (stack.length) pushGuard();
+  });
+
   document.addEventListener("click", (event) => {
     const closer = event.target.closest("[data-overlay-close]");
     if (!closer) return;
