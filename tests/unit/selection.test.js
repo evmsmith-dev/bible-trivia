@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { MODES } from "../../src/config.js";
-import { selectQuestionsForMode } from "../../src/lib/selection.js";
+import { answerKey, openingKey, selectQuestionsForMode } from "../../src/lib/selection.js";
 import { createSeededRandom, getDateKeyOffset } from "../../src/lib/utils.js";
 
 const questions = JSON.parse(readFileSync(new URL("../../data/questions.json", import.meta.url), "utf8"));
@@ -42,4 +42,32 @@ test("Medium mode aims for 5 easy and 5 medium questions", () => {
   const picked = selectQuestionsForMode(questions, "medium");
   assert.equal(picked.filter((q) => q.difficulty === "easy").length, 5);
   assert.equal(picked.filter((q) => q.difficulty === "medium").length, 5);
+});
+
+test("a round never repeats a correct answer or a question opening", () => {
+  for (const mode of Object.keys(MODES)) {
+    const random = createSeededRandom(`variety-${mode}`);
+    let recent = [];
+    for (let round = 0; round < 200; round++) {
+      const picked = selectQuestionsForMode(questions, mode, random, 10, recent);
+      const answers = picked.map(answerKey);
+      const openings = picked.map(openingKey);
+      assert.equal(new Set(answers).size, 10, `${mode} round ${round}: repeated answer in ${answers}`);
+      assert.equal(new Set(openings).size, 10, `${mode} round ${round}: look-alike questions ${openings}`);
+      recent = [...recent, ...picked.map((q) => q.id)].slice(-500);
+    }
+  }
+});
+
+test("answers and openings are compared loosely (case, punctuation, spacing)", () => {
+  assert.equal(answerKey({ opts: ["Paul.", "x"], ans: 0 }), answerKey({ opts: ["y", " paul "], ans: 1 }));
+  assert.equal(openingKey({ q: "Which Gospel contains the story of Zacchaeus?" }), "which gospel contains the story");
+});
+
+test("when a clash can't be avoided, the round is still filled", () => {
+  const same = Array.from({ length: 30 }, (_, i) => ({
+    id: i + 1, q: `Who was the apostle number ${i}?`, opts: ["Paul", "Peter", "John", "James"], ans: 0,
+    category: ["Old Testament", "New Testament", "General"][i % 3], difficulty: "easy",
+  }));
+  assert.equal(selectQuestionsForMode(same, "easy", createSeededRandom("clash"), 10).length, 10);
 });
