@@ -1,5 +1,6 @@
-// Daily Challenge: one shared question set per day, completion at 70%+, a daily streak,
-// and a +5% base-point bonus for normal games after passing.
+// Daily Challenge: one question set per player per day, completion at 70%+, a daily streak,
+// and a +5% base-point bonus for normal games after passing. Each player's set skips the
+// questions they've seen recently, so the daily doesn't repeat what they just played.
 import { DAILY, QUESTIONS_PER_GAME } from "../config.js";
 import { applyDailyCompletion, createDailySeed, sanitizeDailyRecord } from "../lib/records.js";
 import { selectQuestionsForMode } from "../lib/selection.js";
@@ -14,13 +15,14 @@ export const getDailyRecord = (dateKey = getLocalDateKey()) => state.dailyChalle
 export const isDailyBonusActive = (dateKey = getLocalDateKey()) => Boolean(getDailyRecord(dateKey)?.completed);
 
 function selectDailyQuestions(seed) {
-  return selectQuestionsForMode(state.questions, DAILY.difficultyMode, createSeededRandom(seed), QUESTIONS_PER_GAME);
+  return selectQuestionsForMode(state.questions, DAILY.difficultyMode, createSeededRandom(seed), QUESTIONS_PER_GAME, state.recentQuestionIds);
 }
 
 /**
- * The questions for a given attempt at a day's challenge. The first attempt uses the day's
- * saved question set (the same for everyone). Each retry gets a different set, so a retry
- * can't be passed just by remembering the answers. All sets are repeatable for that day.
+ * The questions for a given attempt at a day's challenge. The first attempt uses the set saved
+ * when the player first opened today's challenge (picked from the day's seed, skipping what
+ * they'd seen recently). Each retry gets a different set, so a retry can't be passed just by
+ * remembering the answers.
  */
 export function getDailyAttemptQuestions(record, attemptIndex) {
   const used = new Set();
@@ -37,7 +39,7 @@ export function getDailyAttemptQuestions(record, attemptIndex) {
     } else {
       const unused = state.questions.filter((question) => !used.has(question.id));
       const pool = unused.length >= state.questions.length / 2 ? unused : state.questions;
-      questions = selectQuestionsForMode(pool, DAILY.difficultyMode, createSeededRandom(`${record.seed}|retry${attempt}`), QUESTIONS_PER_GAME);
+      questions = selectQuestionsForMode(pool, DAILY.difficultyMode, createSeededRandom(`${record.seed}|retry${attempt}`), QUESTIONS_PER_GAME, state.recentQuestionIds);
     }
     questions.forEach((question) => used.add(question.id));
   }

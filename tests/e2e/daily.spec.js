@@ -85,3 +85,22 @@ test.describe("daily challenge", () => {
     expect((await h.readProfile(page)).nonDailyCorrectAnswers).toBe(0);
   });
 });
+
+test("the Daily Challenge skips questions the player just saw", async ({ page }) => {
+  await h.openApp(page);
+  // Three Medium rounds (the daily's mode) first.
+  const seen = new Set();
+  for (let round = 0; round < 3; round++) {
+    if (round) await page.locator("#restart-same").click();
+    else await page.locator("#start-btn").click();
+    await h.finishCountdown(page);
+    (await collectQuestions(page, { correct: false })).forEach((q) => seen.add(q));
+    await h.expectSummary(page);
+    await page.clock.runFor(16000);
+  }
+  await h.goHomeFromSummary(page);
+
+  await startDaily(page);
+  const daily = await collectQuestions(page, { correct: true });
+  expect(daily.filter((q) => seen.has(q))).toEqual([]);
+});
