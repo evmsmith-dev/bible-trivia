@@ -583,14 +583,26 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
       });
     }
 
-    function getPlayerCurrentLevel() {
+    function getLevelCorrectAnswers() {
       ensurePlayerProfileLoaded();
-      const statsCorrectAnswers = Number.isFinite(playerStats?.totalCorrectClicks)
-        ? Math.max(0, Math.round(playerStats.totalCorrectClicks))
-        : null;
-      const profileCorrectAnswers = Math.max(0, Math.round(playerProfile.nonDailyCorrectAnswers || 0));
-      const correctAnswers = statsCorrectAnswers === null ? profileCorrectAnswers : statsCorrectAnswers;
-      return getPlayerLevelFromCorrectCount(correctAnswers);
+      return Math.max(0, Math.round(playerProfile.nonDailyCorrectAnswers || 0));
+    }
+
+    function getPlayerCurrentLevel() {
+      return getPlayerLevelFromCorrectCount(getLevelCorrectAnswers());
+    }
+
+    // Older versions copied lifetime correct answers (which include Daily Challenge answers)
+    // into the level counter. Rebuild it once from normal-game history, which never contains daily games.
+    function reconcileLevelCounter() {
+      ensurePlayerProfileLoaded();
+      if (playerProfile.levelCountVersion === 2) {
+        return;
+      }
+      const historyCorrect = gameHistory.reduce((sum, record) => sum + Math.max(0, Math.round(Number(record?.correct) || 0)), 0);
+      const nextCount = gameHistory.length > 0 ? historyCorrect : playerProfile.nonDailyCorrectAnswers;
+      setPlayerProfile(sanitizePlayerProfile({ ...playerProfile, nonDailyCorrectAnswers: nextCount, levelCountVersion: 2 }));
+      savePlayerProfileSafely();
     }
 
     function logLevelDebug(eventName, payload = {}) {
@@ -598,12 +610,7 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
     }
 
     function getPlayerLevelProgress() {
-      ensurePlayerProfileLoaded();
-      const statsCorrectAnswers = Number.isFinite(playerStats?.totalCorrectClicks)
-        ? Math.max(0, Math.round(playerStats.totalCorrectClicks))
-        : null;
-      const profileCorrectAnswers = Math.max(0, Math.round(playerProfile.nonDailyCorrectAnswers || 0));
-      const correctAnswers = statsCorrectAnswers === null ? profileCorrectAnswers : statsCorrectAnswers;
+      const correctAnswers = getLevelCorrectAnswers();
       const currentLevel = getPlayerLevelFromCorrectCount(correctAnswers);
       const currentIndex = Math.max(0, currentLevel - 1);
       const currentThreshold = PLAYER_LEVEL_THRESHOLDS[currentIndex] || 0;
@@ -1007,6 +1014,18 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
       });
     }
 
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches === true;
+
+    // Confetti is decorative: never let a missing library or reduced-motion preference break gameplay.
+    function fireConfetti(options) {
+      if (prefersReducedMotion || typeof window.confetti !== 'function') return;
+      try {
+        window.confetti(options);
+      } catch (e) {
+        DBManager.log('Confetti failed', e.message);
+      }
+    }
+
     function escapeHtml(value) {
       return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -1157,10 +1176,7 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
 
             setHighScores(normalizeAndTrimHighScores(highScores));
             setPlayerStats(sanitizePlayerStats(savedStats));
-            setPlayerProfile(sanitizePlayerProfile({
-              ...playerProfile,
-              nonDailyCorrectAnswers: playerStats.totalCorrectClicks
-            }));
+            reconcileLevelCounter();
             setDailyStats(sanitizeDailyStats(savedDailyStats));
             setDailyChallengeMap(sanitizeDailyChallengeMap(
               Object.fromEntries((recentDailyChallenges || []).map((record) => [record.dateKey, record]))
@@ -1235,10 +1251,7 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
       setDifficultyMode(loaded.difficultyMode);
       setRoundReviewPreference(loaded.roundReviewPreference);
       setPlayerStats(loaded.playerStats);
-      setPlayerProfile(sanitizePlayerProfile({
-        ...playerProfile,
-        nonDailyCorrectAnswers: loaded.playerStats.totalCorrectClicks
-      }));
+      reconcileLevelCounter();
       setDailyStats(loaded.dailyStats);
       setDailyChallengeMap(loaded.dailyChallengeMap);
 
@@ -1516,6 +1529,7 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
         const btn = document.createElement("button");
         btn.className = "option";
         btn.textContent = `${labels[i]}) ${opt}`;
+        btn.dataset.correct = i === correctIndex ? 'true' : 'false';
         btn.onclick = () => handleAnswer(i === correctIndex, btn);
         optionsEl.appendChild(btn);
       });
@@ -1553,8 +1567,11 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
       updateProgressDots();
     }
 
+    // Time left is computed from a fixed deadline, so it stays accurate when the browser throttles
+    // timers (background tabs) or pauses the page (switching apps on a phone).
     function startTimer() {
       const timeLimit = getCurrentTimeLimit();
+      const deadline = performance.now() + timeLimit * 1000;
       let timeLeft = timeLimit;
       setTimeLeftAtAnswer(timeLimit);
       timerFill.style.width = "100%";
@@ -1564,7 +1581,7 @@ async function getOrCreateDailyChallengeRecord(dateKey) {
       clearInterval(timerInterval);
 
       setTimerInterval(setInterval(() => {
-        timeLeft -= 0.1;
+        timeLeft = Math.max(0, (deadline - performance.now()) / 1000);
         setTimeLeftAtAnswer(timeLeft);
         timerDisplayEl.textContent = Math.ceil(timeLeft);
 
@@ -1766,11 +1783,11 @@ function celebrateNewHighScore(score) {
   };
 
   // Burst 1
-  confetti(confettiSettings);
+  fireConfetti(confettiSettings);
 
   // Burst 2 - slightly delayed & different color emphasis
   setTimeout(() => {
-    confetti({
+    fireConfetti({
       ...confettiSettings,
       colors: ['#4CAF50', '#FFCA28', '#2196F3', '#F44336', '#9C27B0'],
       particleCount: 100
@@ -1779,7 +1796,7 @@ function celebrateNewHighScore(score) {
 
   // Burst 3 - final big one
   setTimeout(() => {
-    confetti({
+    fireConfetti({
       particleCount: 150,
       spread: 100,
       origin: { y: 0.4 }
@@ -1934,9 +1951,7 @@ function celebrateDailyChallengeCompletion() {
       buttons.forEach(b => b.onclick = null);
 
       const q = gameQuestions[currentIndex];
-      const correctText = q.opts[q.ans];
-      const correctBtn = [...buttons].find(b => b.textContent.includes(correctText));
-      correctBtn?.classList.add("correct");
+      optionsEl.querySelector('.option[data-correct="true"]')?.classList.add("correct");
 
       if (isCorrect) {
         selectedBtn.classList.add("correct");
@@ -1949,7 +1964,7 @@ function celebrateDailyChallengeCompletion() {
         showFeedback(`+${pointBreakdown.total} pts`, "correct");
         updateStreakHud({ animate: true });
         setCorrectCount(correctCount + 1);
-        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        fireConfetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
       } else {
         registerIncorrectAnswerStats();
         selectedBtn.classList.add("incorrect");
@@ -1977,9 +1992,7 @@ function celebrateDailyChallengeCompletion() {
       buttons.forEach(b => b.onclick = null);
 
       const q = gameQuestions[currentIndex];
-      const correctText = q.opts[q.ans];
-      const correctBtn = [...buttons].find(b => b.textContent.includes(correctText));
-      correctBtn?.classList.add("correct");
+      optionsEl.querySelector('.option[data-correct="true"]')?.classList.add("correct");
 
       buttons.forEach(b => {
         if (!b.classList.contains("correct")) b.classList.add("grayed");
@@ -2191,22 +2204,38 @@ function initializeAppLifecycleBindings({ onSaveProfile, onPageShow } = {}) {
   });
 }
 
-function attachServiceWorkerUpdatePromptHandlers({ registration, promptMessage } = {}) {
-  return UiFeature.attachServiceWorkerUpdatePromptHandlers({
-    registration,
-    navigatorObj: navigator,
-    confirmUpdate: () => confirm(promptMessage),
-    reloadPage: () => window.location.reload()
-  });
-}
-
 // Marker retained for publish smoke checks after summary markup extraction.
 window.__BT_KEEP_PROFILE_MARKER__ = 'id="summary-player-level"';
 
-function registerServiceWorkerWithUpdatePrompt({
-  serviceWorkerPath = 'service-worker.js',
-  promptMessage = 'A new version of the game is available. Would you like to update now?'
-} = {}) {
+let waitingServiceWorker = null;
+
+function isOnWelcomeScreen() {
+  const welcome = document.getElementById('welcome');
+  return Boolean(welcome) && welcome.style.display !== 'none';
+}
+
+// Non-blocking "update available" banner, only shown on the Home screen so a game is never interrupted.
+function showUpdateBannerIfReady() {
+  if (!waitingServiceWorker || !isOnWelcomeScreen() || document.getElementById('update-banner')) {
+    return;
+  }
+
+  const banner = document.createElement('div');
+  banner.id = 'update-banner';
+  banner.setAttribute('role', 'status');
+  banner.innerHTML = '<span>A new version of Bible Trivia is available.</span>'
+    + '<button type="button" id="update-banner-btn">Update</button>'
+    + '<button type="button" id="update-banner-dismiss" aria-label="Dismiss update notice">✕</button>';
+  document.body.appendChild(banner);
+
+  document.getElementById('update-banner-btn').addEventListener('click', () => {
+    waitingServiceWorker?.postMessage({ type: 'SKIP_WAITING' });
+    banner.remove();
+  });
+  document.getElementById('update-banner-dismiss').addEventListener('click', () => banner.remove());
+}
+
+function registerServiceWorkerWithUpdatePrompt({ serviceWorkerPath = 'service-worker.js' } = {}) {
   if (window.__BT_KEEP_SW_MARKER__ === true) {
     navigator.serviceWorker.register('service-worker.js');
   }
@@ -2214,7 +2243,10 @@ function registerServiceWorkerWithUpdatePrompt({
   return UiFeature.registerServiceWorkerWithUpdatePrompt({
     navigatorObj: navigator,
     serviceWorkerPath,
-    confirmUpdate: () => confirm(promptMessage),
+    onUpdateReady: (worker) => {
+      waitingServiceWorker = worker;
+      showUpdateBannerIfReady();
+    },
     reloadPage: () => window.location.reload()
   });
 }
@@ -2540,7 +2572,7 @@ function initializeDailyChallengeOverlayBindings() {
     openDailyChallengeOverlay: () => window.openDailyChallengeOverlay(),
     closeDailyChallengeOverlay,
     resetBonusCarryStreak,
-    isHighScoreCelebrationActive,
+    isHighScoreCelebrationActive: () => isHighScoreCelebrationActive,
     setWelcomeDisplay: () => {
       const welcome = document.getElementById('welcome');
       if (welcome) {
@@ -2623,7 +2655,7 @@ window.openPlayerOverlay = openPlayerOverlay;
         });
       } else {
         gameHistory.push({
-          timestamp: new Date().toLocaleString(),
+          timestamp: new Date().toISOString(),
           correct: correctCount,
           total: QUESTIONS_PER_GAME,
           score: totalScore,
@@ -2633,7 +2665,7 @@ window.openPlayerOverlay = openPlayerOverlay;
         });
 
         const previousBest = getTopScoresByMode(highScores, activeMode, 1)[0]?.score;
-        if (previousBest === undefined || totalScore > previousBest) {
+        if (totalScore > 0 && (previousBest === undefined || totalScore > previousBest)) {
           isNewHighScore = true;
         }
 
@@ -2653,7 +2685,8 @@ window.openPlayerOverlay = openPlayerOverlay;
         });
       }
 
-      const verseObj = encouragingVerses.find(v => percent >= v.minPercent) || encouragingVerses[0];
+      // Highest tier the player reached (verses are listed lowest tier first).
+      const verseObj = encouragingVerses.filter(v => percent >= v.minPercent).pop() || encouragingVerses[0];
 
       let statsHtml = "";
       if (isDailyGame) {
@@ -2738,6 +2771,7 @@ window.openPlayerOverlay = openPlayerOverlay;
         renderWelcomePlayerEntry();
         refreshSummaryPlayerDisplay();
         renderWelcomeDailyCard();
+        showUpdateBannerIfReady();
       });
 
       document.getElementById("summary-player-btn")?.addEventListener("click", () => {

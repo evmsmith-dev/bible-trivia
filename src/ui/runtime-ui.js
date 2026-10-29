@@ -318,19 +318,28 @@
     return true;
   }
 
+  // A new service worker installs in the background and then waits. `onUpdateReady(worker)` lets
+  // the app offer the update at a safe moment; the page reloads once the new worker takes control.
   function attachServiceWorkerUpdatePromptHandlers(input) {
     const payload = input && typeof input === "object" ? input : {};
     const registration = payload.registration || null;
     const navigatorObj = payload.navigatorObj || (globalScope ? globalScope.navigator : null);
-    const confirmUpdate = typeof payload.confirmUpdate === "function"
-      ? payload.confirmUpdate
-      : (() => false);
-    const reloadPage = typeof payload.reloadPage === "function"
-      ? payload.reloadPage
-      : (() => {});
+    const onUpdateReady = typeof payload.onUpdateReady === "function" ? payload.onUpdateReady : (() => {});
+    const reloadPage = typeof payload.reloadPage === "function" ? payload.reloadPage : (() => {});
 
     if (!registration || !navigatorObj || !navigatorObj.serviceWorker) {
       return false;
+    }
+
+    let reloading = false;
+    navigatorObj.serviceWorker.addEventListener("controllerchange", () => {
+      if (reloading) return;
+      reloading = true;
+      reloadPage();
+    });
+
+    if (registration.waiting && navigatorObj.serviceWorker.controller) {
+      onUpdateReady(registration.waiting);
     }
 
     registration.addEventListener("updatefound", () => {
@@ -341,9 +350,7 @@
 
       newWorker.addEventListener("statechange", () => {
         if (newWorker.state === "installed" && navigatorObj.serviceWorker.controller) {
-          if (confirmUpdate()) {
-            reloadPage();
-          }
+          onUpdateReady(newWorker);
         }
       });
     });
@@ -355,12 +362,6 @@
     const payload = input && typeof input === "object" ? input : {};
     const navigatorObj = payload.navigatorObj || (globalScope ? globalScope.navigator : null);
     const serviceWorkerPath = payload.serviceWorkerPath || "service-worker.js";
-    const confirmUpdate = typeof payload.confirmUpdate === "function"
-      ? payload.confirmUpdate
-      : (() => false);
-    const reloadPage = typeof payload.reloadPage === "function"
-      ? payload.reloadPage
-      : (() => {});
 
     if (!navigatorObj || !navigatorObj.serviceWorker) {
       return false;
@@ -377,8 +378,8 @@
         attachServiceWorkerUpdatePromptHandlers({
           registration,
           navigatorObj,
-          confirmUpdate,
-          reloadPage,
+          onUpdateReady: payload.onUpdateReady,
+          reloadPage: payload.reloadPage,
         });
       })
       .catch(() => {

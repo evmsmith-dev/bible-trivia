@@ -12,6 +12,7 @@
       name: "Player",
       avatarId: defaultAvatarId,
       nonDailyCorrectAnswers: 0,
+      levelCountVersion: 2,
     };
   }
 
@@ -45,6 +46,8 @@
       nonDailyCorrectAnswers: Number.isFinite(rawProfile.nonDailyCorrectAnswers)
         ? Math.max(0, Math.round(rawProfile.nonDailyCorrectAnswers))
         : 0,
+      // 2 = nonDailyCorrectAnswers excludes Daily Challenge answers (older profiles mixed them in).
+      levelCountVersion: rawProfile.levelCountVersion === 2 ? 2 : 1,
     };
   }
 

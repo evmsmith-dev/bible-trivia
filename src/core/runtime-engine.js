@@ -15,7 +15,8 @@
     const streakBonus = Number.isFinite(payload.streakBonus) ? Math.max(0, payload.streakBonus) : 0;
 
     const maxBonus = basePoints;
-    const speedBonus = Math.max(0, maxBonus * ((timeLeftAtAnswer + 0.75) / timeLimit));
+    // Up to +100% of base points for an instant answer (the 0.75s grace offsets reaction time).
+    const speedBonus = Math.min(maxBonus, Math.max(0, maxBonus * ((timeLeftAtAnswer + 0.75) / timeLimit)));
     const roundedSpeedBonus = Math.round(speedBonus);
     const roundedStreakBonus = Math.round(streakBonus);
 

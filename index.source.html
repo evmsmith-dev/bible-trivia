@@ -10,8 +10,8 @@
   <meta name="theme-color" content="#4CAF50">
   <meta name="bt-minified-marker-allquestions" content="const allQuestions=">
   <title>Bible Trivia - Fun Bible Questions!</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="vendor/fonts/fredoka.css">
+  <script src="vendor/confetti.browser.js" defer></script>
   <link rel="stylesheet" href="src/ui/styles.css">
 </head>
 <body>
@@ -156,7 +156,6 @@
   <script src="src/core/runtime-state.js"></script>
   <script src="src/core/runtime-engine.js"></script>
   <script src="src/core/runtime-utils.js"></script>
-  <script src="src/data/questions-bank-generated.js"></script>
   <script src="src/data/questions-bank.js"></script>
   <script src="src/data/fallback-questions.js"></script>
   <script src="src/data/runtime-questions.js"></script>
@@ -193,10 +192,11 @@
       <details class="howto-section">
         <summary>Mode Scoring And Timing</summary>
         <ul>
-          <li>🟢 Easy: 50 pts/question, 25 seconds (max 500 per game).</li>
-          <li>🟠 Medium: 100 pts/question, 25 seconds (max 1000 per game).</li>
-          <li>🔴 Hard: 150 pts/question, 21 seconds (max 1500 per game).</li>
-          <li>⚫ Super Hard: 250 pts/question, 18 seconds (max 2500 per game) - Elite Challenge.</li>
+          <li>🟢 Easy: 50 pts/question, 25 seconds.</li>
+          <li>🟠 Medium: 100 pts/question, 25 seconds.</li>
+          <li>🔴 Hard: 150 pts/question, 21 seconds.</li>
+          <li>⚫ Super Hard: 250 pts/question, 18 seconds - Elite Challenge.</li>
+          <li>Correct answers also earn a <b>speed bonus</b> (up to double the base points) and a <b>streak bonus</b>.</li>
           <li>Change this anytime in <b>Player Profile -&gt; Settings</b>.</li>
         </ul>
       </details>
@@ -309,10 +309,10 @@
           </button>
         </div>
         <p class="setting-description">
-          <b>🟢 Easy:</b> 🟢 questions • 50 pts • 25 sec • Max 500<br>
-          <b>🟠 Medium:</b> 🟢 & 🟠 questions • 100 pts • 25 sec • Max 1000<br>
-          <b>🔴 Hard:</b> 🟠 & 🔴 questions • 150 pts • 21 sec • Max 1500<br>
-          <b>⚫ Super Hard:</b> 🔴 only • 250 pts • 18 sec • Max 2500
+          <b>🟢 Easy:</b> 🟢 questions • 50 pts • 25 sec • + bonuses<br>
+          <b>🟠 Medium:</b> 🟢 & 🟠 questions • 100 pts • 25 sec • + bonuses<br>
+          <b>🔴 Hard:</b> 🟠 & 🔴 questions • 150 pts • 21 sec • + bonuses<br>
+          <b>⚫ Super Hard:</b> 🔴 only • 250 pts • 18 sec • + bonuses
         </p>
       </div>
 

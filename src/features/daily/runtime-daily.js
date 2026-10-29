@@ -436,7 +436,9 @@
     const scheduleDailyChallengePulseReset = typeof payload.scheduleDailyChallengePulseReset === "function"
       ? payload.scheduleDailyChallengePulseReset
       : (() => {});
-    const isHighScoreCelebrationActive = Boolean(payload.isHighScoreCelebrationActive);
+    const isHighScoreCelebrationActive = typeof payload.isHighScoreCelebrationActive === "function"
+      ? payload.isHighScoreCelebrationActive
+      : (() => Boolean(payload.isHighScoreCelebrationActive));
 
     const dailyChallengeLink = getElementById("daily-challenge-link");
     const dailyChallengeOverlay = getElementById("daily-challenge-overlay");
@@ -463,7 +465,7 @@
 
     dailyStartBtn && dailyStartBtn.addEventListener("click", () => {
       if (dailyStartBtn.disabled) return;
-      if (isHighScoreCelebrationActive) return;
+      if (isHighScoreCelebrationActive()) return;
       resetBonusCarryStreak();
       closeDailyChallengeOverlay();
       setWelcomeDisplay();

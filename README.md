@@ -4,8 +4,8 @@ Static Bible trivia app for web and GitHub Pages.
 
 ## Version Info
 
-- Runtime cache version: `bible-trivia-cache-v1.9.107` (`service-worker.js`)
-- Package version: `1.9.107` (`package.json`)
+- Runtime cache version: `bible-trivia-cache-v1.9.108` (`service-worker.js`)
+- Package version: `1.9.108` (`package.json`)
 - Daily challenge mode version: `v1` (`index.source.html`)
 
 ## App Overview
@@ -18,10 +18,10 @@ Bible Trivia is a single-page quiz game focused on Scripture knowledge. Players 
 - Question pool expanded to 1000+ questions
 - Difficulty support (`easy`, `medium`, `hard`, `superHard`) with visible per-question difficulty tags
 - Mode-based scoring and timers:
-  - Easy: 50 pts, 25s (max 500/game)
-  - Medium: 100 pts, 25s (max 1000/game)
-  - Hard: 150 pts, 21s (max 1500/game)
-  - Super Hard: 250 pts, 18s (max 2500/game)
+  - Easy: 50 pts, 25s
+  - Medium: 100 pts, 25s
+  - Hard: 150 pts, 21s
+  - Super Hard: 250 pts, 18s
 - Timed gameplay with countdown display, progress bar, timeout handling, and per-question feedback states
 - Round scoring with progress dots, correct-count tracking, and end-of-round summary
 - Speed bonus and streak bonus system (streak tiers begin at 3, cap at 10)
@@ -159,4 +159,4 @@ npm run minify:with-js:css:py # writes index.min.js.html + src/ui/styles.min.css
 
 `service-worker.js` caches `index.html` and core assets. After changing deploy behavior/content, bump `CACHE_NAME` so existing users receive fresh files.
 
-Current cache version: `bible-trivia-cache-v1.9.107`.
+Current cache version: `bible-trivia-cache-v1.9.108`.

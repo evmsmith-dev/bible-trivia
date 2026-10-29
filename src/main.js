@@ -79,10 +79,10 @@
     }
 
     const modeDescriptions = {
-      easy: "<b>🟢 Easy:</b> 🟢 questions • 50 pts • 25 sec • Max 500 per game",
-      medium: "<b>🟠 Medium:</b> 🟢 & 🟠 questions • 100 pts • 25 sec • Max 1000 per game",
-      hard: "<b>🔴 Hard:</b> 🟠 & 🔴 questions • 150 pts • 21 sec • Max 1500 per game",
-      superHard: "<b>⚫ Super Hard:</b> 🔴 questions only • 250 pts • 18 sec • Max 2500 per game — Elite Challenge!",
+      easy: "<b>🟢 Easy:</b> 🟢 questions • 50 pts • 25 sec • + bonuses",
+      medium: "<b>🟠 Medium:</b> 🟢 & 🟠 questions • 100 pts • 25 sec • + bonuses",
+      hard: "<b>🔴 Hard:</b> 🟠 & 🔴 questions • 150 pts • 21 sec • + bonuses",
+      superHard: "<b>⚫ Super Hard:</b> 🔴 questions only • 250 pts • 18 sec • + bonuses — Elite Challenge!",
     };
 
     const reviewPreferenceDescriptions = {
