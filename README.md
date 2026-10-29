@@ -4,7 +4,7 @@ A Bible trivia game that runs in the browser and installs as an app (PWA) on pho
 
 ## Features
 
-- 1,000+ questions across Old Testament, New Testament and General, in four modes:
+- 750+ reviewed questions across Old Testament, New Testament and General, in four modes:
 
   | Mode | Questions | Base points | Time |
   |---|---|---|---|

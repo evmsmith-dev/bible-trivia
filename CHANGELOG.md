@@ -2,6 +2,11 @@
 
 ## 2.1.0
 
+### Question bank review
+- Added 100 new questions: 50 easy (Old Testament and General) and 50 hard.
+- Reviewed every original question: 81 were corrected or removed for errors (wrong facts, two right answers, claims from tradition rather than Scripture), and 316 duplicates were removed.
+- The bank now has 752 questions. The How to Play count updates automatically.
+
 ### New
 - **Fewer repeats.** The app remembers the last 500 questions shown on the device, and new rounds pick unseen questions first, then the ones seen longest ago.
 - **Fairer Daily Challenge retries.** The first attempt still uses the day's shared question set. Each retry gets a different set of questions, so a retry can't be passed by remembering answers. An attempt counts as soon as it starts.

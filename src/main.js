@@ -17,6 +17,9 @@ async function loadQuestions() {
   const questions = await response.json();
   state.questions = questions;
   state.questionsById = new Map(questions.map((question) => [question.id, question]));
+  // Shown in How to Play, rounded down to the nearest 50 (e.g. "750+").
+  const countEl = byId("question-count");
+  if (countEl) countEl.textContent = `${Math.floor(questions.length / 50) * 50}+`;
 }
 
 async function start() {
