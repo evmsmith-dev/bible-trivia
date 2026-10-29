@@ -1,162 +1,100 @@
 # Bible Trivia
 
-Static Bible trivia app for web and GitHub Pages.
+A Bible trivia game that runs in the browser and installs as an app (PWA) on phones and computers. Players answer timed multiple-choice questions, earn speed and streak bonuses, level up, and take a Daily Challenge. It works offline after the first visit.
 
-## Version Info
+## Features
 
-- Runtime cache version: `bible-trivia-cache-v1.9.107` (`service-worker.js`)
-- Package version: `1.9.107` (`package.json`)
-- Daily challenge mode version: `v1` (`index.source.html`)
+- 750+ reviewed questions across Old Testament, New Testament and General, in four modes:
 
-## App Overview
+  | Mode | Questions | Base points | Time |
+  |---|---|---|---|
+  | 🟢 Easy | easy | 50 | 25 s |
+  | 🟠 Medium | easy + medium | 100 | 25 s |
+  | 🔴 Hard | medium + hard | 150 | 21 s |
+  | ⚫ Super Hard | hard | 250 | 18 s |
 
-Bible Trivia is a single-page quiz game focused on Scripture knowledge. Players answer multiple-choice questions under a timer, receive immediate feedback, and see their score progression throughout each round. The app is designed to work well on desktop and mobile and can be installed as a PWA.
+  Each round has 10 questions, balanced 4 Old Testament / 4 New Testament / 2 General.
+- Speed bonus (up to double the base points) and a streak bonus (from 3 in a row, capped at 10) that carries across "Play" rounds.
+- Rounds prefer questions the player hasn't seen recently (the last 500 are remembered on the device).
+- Daily Challenge: the same 10 questions for everyone on a given day, and a different set on each retry. Scoring 70%+ completes it and adds +5% base points for the rest of the day. Completed days build a daily streak, and results can be shared as an emoji grid.
+- Player profile with name, 24 avatars and 12 levels. Levels count correct answers in normal games only.
+- Round review with Bible Gateway links, top scores per mode, game history, lifetime stats and daily results.
+- Keyboard play (keys 1–4), Escape closes dialogs, and animations are reduced for players who ask for less motion.
+- Everything is saved on the device (IndexedDB, with localStorage as a fallback). There are no accounts and no server.
 
-## Current Feature Set
+## Project layout
 
-- Multiple-choice Bible questions across Old Testament, New Testament, and General categories
-- Question pool expanded to 1000+ questions
-- Difficulty support (`easy`, `medium`, `hard`, `superHard`) with visible per-question difficulty tags
-- Mode-based scoring and timers:
-  - Easy: 50 pts, 25s (max 500/game)
-  - Medium: 100 pts, 25s (max 1000/game)
-  - Hard: 150 pts, 21s (max 1500/game)
-  - Super Hard: 250 pts, 18s (max 2500/game)
-- Timed gameplay with countdown display, progress bar, timeout handling, and per-question feedback states
-- Round scoring with progress dots, correct-count tracking, and end-of-round summary
-- Speed bonus and streak bonus system (streak tiers begin at 3, cap at 10)
-- Streak carryover support across normal rounds, with carryover messaging
-- Daily Challenge mode with once-per-day flow and completion tracking
-- Daily bonus unlock: reaching 70%+ in Daily Challenge grants +5% base-point bonus for the rest of that day
-- Review flow for completed rounds, including per-question correctness and references
-- Configurable post-round review preference (`ask`, `alwaysReview`, `alwaysSkip`)
-- Single local Player profile (no login required)
-- Player profile editor with save-only updates for name and avatar
-- Built-in avatar picker with paged options (24 total: 8 emoji + 16 bundled image avatars)
-- Level system tied to lifetime correct answers in normal gameplay modes (daily challenge excluded)
-- Player entry point on Welcome and Summary screens
-- Player overlay actions to open Settings and Leaderboard overlays
-- Player Stats overlay tabs: Top Scores, Game History, Stats, and Daily
-- IndexedDB-backed persistence with localStorage fallback/migration for compatible data
-- PWA support through `manifest.json` and `service-worker.js`
-- Offline-first behavior using service worker asset caching
-- Update notification flow when a new service worker version is installed
-
-## Player Profile System
-
-- Default player is auto-created as `Player` with the first built-in avatar.
-- Name validation rules:
-  - Leading/trailing spaces are trimmed before validation.
-  - Length must be between 2 and 15 characters after trim.
-- Avatar rules:
-  - Only built-in avatars are available.
-  - No custom upload support.
-  - Avatars include emoji and bundled SVG images.
-  - Bundled image avatars are stored in `icons/avatars/` and cached for offline play.
-- Only one player is supported.
-- A `Reset Player` action is available in the Player overlay.
-
-### Level Thresholds
-
-Levels increase based on lifetime non-daily correct answers:
-
-1. Level 1: `0-24`
-2. Level 2: `25-59`
-3. Level 3: `60-109`
-4. Level 4: `110-179`
-5. Level 5: `180-269`
-6. Level 6: `270-389`
-7. Level 7: `390-539`
-8. Level 8: `540-729`
-9. Level 9: `730-969`
-10. Level 10: `970-1269`
-11. Level 11: `1270-1639`
-12. Level 12: `1640+`
-
-### Overlay and Navigation Updates
-
-- Welcome screen:
-  - Settings and Leaderboard links are replaced by the Player entry card (avatar, name, level).
-- Game summary:
-  - The previous leaderboard link is replaced by a Player entry link.
-- Player overlay:
-  - Allows changing name/avatar (saved only when `Save Profile` is clicked).
-  - Provides buttons to open Settings and Leaderboard overlays above it.
-  - When those overlays close, Player overlay remains visible.
-
-### Data Storage Scope
-
-- Persisted datasets are player-scoped via storage key prefixes.
-- IndexedDB is used when available, with localStorage fallback and migration for compatible legacy records.
-
-## Minification Workflow
-
-This project now uses a source-to-deploy workflow:
-
-- Edit: `index.source.html` (human-readable source)
-- Deploy file: `index.html` (minified output used by GitHub Pages)
-- Deploy stylesheet: `src/ui/styles.min.css` (generated from `src/ui/styles.css`)
-- Deploy scripts: local `*.min.js` files generated from referenced external scripts in `index.source.html`
-- Optional artifacts:
-  - `index.min.html` (HTML+CSS minified, JS not minified)
-  - `index.min.js.html` (HTML+CSS+inline JS minified)
-
-## Why This Setup
-
-GitHub Pages serves `index.html` by default. The workflow keeps a readable source file while generating a smaller deployable page.
-
-## Python-First Commands (Works Without Node/npm)
-
-Run from the repository root.
-
-### 1) Build deployable minified `index.html` (with inline JS + external CSS + external JS minification)
-
-```powershell
-py scripts/minify_safe.py --source index.source.html --minify-js --minify-external-css --minify-external-js --output index.html
+```
+index.html               page markup (loads src/main.js as an ES module)
+data/questions.json      the question bank. Each question has a permanent id
+src/
+  config.js              all game rules and labels: modes, points, timers, levels, streaks, avatars
+  state.js               the single in-memory state
+  main.js                startup: load questions and saved data, wire up screens
+  game.js                the game loop: countdown, questions, timer, scoring, review, summary
+  lib/                   pure logic (unit-tested): scoring, question selection, saved-record shapes, utils
+  storage/store.js       saving and loading (IndexedDB + localStorage fallback)
+  features/              player profile, daily challenge, stats, settings
+  ui/                    overlays, celebrations, update banner, styles.css
+vendor/                  self-hosted confetti library and Fredoka font, so the app works offline
+service-worker.js        offline caching. The build fills in the file list and version
+scripts/                 build, local server, question validator
+tests/unit/              Node unit tests for src/lib
+tests/e2e/               Playwright tests that play the game in desktop and mobile browsers
 ```
 
-### 2) Verify minified `index.html` still contains critical app markers
+## Working on it
 
-```powershell
-py scripts/test_minified.py index.html index.source.html
+You need [Node.js](https://nodejs.org/) 20 or newer.
+
+```bash
+npm install                 # once
+npx playwright install chromium   # once, for the browser tests
+
+npm start                   # play the source version at http://localhost:8080
+npm test                    # validate questions + unit tests + build + browser tests
+npm run preview             # build and play the production version at http://localhost:8080
 ```
 
-### 3) One-step publish prep (recommended)
+The source runs directly in the browser with no build step, so you can edit a file and refresh. Use `npm start` rather than opening `index.html` from disk, because ES modules need a web server.
 
-```powershell
-py scripts/publish_prep.py
+### Changing game rules
+
+Edit `src/config.js`. The Settings and How to Play text is generated from it.
+
+### Adding or editing questions
+
+Edit `data/questions.json`, then run `npm run validate:questions`. Each question looks like this:
+
+```json
+{"id": 1009, "q": "Who was the first man created by God?", "opts": ["Noah", "Adam", "Abraham", "Moses"], "ans": 1, "ref": "Genesis 2:7", "category": "Old Testament", "difficulty": "easy"}
 ```
 
-This command does both build and verification.
+- `id`: use the next unused number. **Never change or reuse an id.** Saved Daily Challenges refer to questions by id.
+- `opts`: exactly 4 different options. `ans` is the index of the correct one (0–3). Order doesn't matter, because options are shuffled when shown.
+- `category`: `Old Testament`, `New Testament` or `General`. `difficulty`: `easy`, `medium` or `hard`.
+- `ref`: a scripture reference, or `""`.
 
-## npm Script Aliases
+The validator fails on structural problems and duplicate questions. `--verbose` lists questions that look alike so you can review them.
 
-If Node.js/npm is installed, these aliases are available in `package.json`:
+New questions can be drafted as a batch in `data/proposed/`, each batch with a review sheet (`*-review.csv`, which opens in Excel). After review, add the approved ones with:
 
-```powershell
-npm run build:pages:py
-npm run verify:pages:py
-npm run publish:prep:py
+```bash
+node scripts/merge-questions.mjs data/proposed/batch-01-easy.json --skip 1663,1670   # ids to leave out
 ```
 
-Additional outputs:
+## Deploying
 
-```powershell
-npm run minify:safe:py        # writes index.min.html
-npm run minify:with-js:py     # writes index.min.js.html
-npm run minify:safe:css:py    # writes index.min.html + src/ui/styles.min.css
-npm run minify:with-js:css:py # writes index.min.js.html + src/ui/styles.min.css + local *.min.js files
-```
+Pushing to `main` runs `.github/workflows/deploy.yml`. It validates the questions, runs all tests, builds `dist/` and publishes it to GitHub Pages.
 
-## GitHub Pages Publish Steps
+One-time setup: in the GitHub repo, go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
 
-1. Edit `index.source.html`.
-2. Run `py scripts/publish_prep.py`.
-3. Commit and push updated files (including `index.html`).
-4. Open the GitHub Pages site and hard refresh once.
+The build gives the service worker a new version whenever any file changes. Installed apps then show an "update available" banner on the Home screen, and there's no cache name to bump by hand. To release a version with a new number, change `version` in `package.json`.
 
-## Service Worker Cache Note
+## Saved data compatibility
 
-`service-worker.js` caches `index.html` and core assets. After changing deploy behavior/content, bump `CACHE_NAME` so existing users receive fresh files.
+Version 2 reads the same IndexedDB database (`BibleTriviaDB_player_primary`) and localStorage keys (`bibleTriviaPlayer_primary_*`) as version 1, so players keep their scores, history, settings and profile. One change on first load: the level counter is rebuilt from normal-game history, because version 1 mistakenly counted Daily Challenge answers toward levels.
 
-Current cache version: `bible-trivia-cache-v1.9.107`.
+## Debugging
+
+Add `?debug` to the URL, or run `localStorage.setItem("bibleTrivia_debug", "1")` in the console, to see storage logs.

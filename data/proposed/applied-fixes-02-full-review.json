@@ -1,0 +1,1848 @@
+[
+{
+"id": 18,
+"remove": true
+},
+{
+"id": 22,
+"remove": true
+},
+{
+"id": 24,
+"set": {
+"q": "On what mountain did Moses receive the Ten Commandments?",
+"opts": [
+"Mount Sinai",
+"Mount Zion",
+"Mount of Olives",
+"Mount Carmel"
+]
+}
+},
+{
+"id": 41,
+"remove": true
+},
+{
+"id": 44,
+"remove": true
+},
+{
+"id": 50,
+"remove": true
+},
+{
+"id": 65,
+"remove": true
+},
+{
+"id": 71,
+"remove": true
+},
+{
+"id": 72,
+"set": {
+"q": "According to John's Gospel, to which former high priest was Jesus taken first after his arrest?",
+"ref": "John 18:12-13"
+}
+},
+{
+"id": 76,
+"remove": true
+},
+{
+"id": 80,
+"set": {
+"q": "Whom did King Solomon appoint as priest in place of Abiathar?",
+"ref": "1 Kings 2:35"
+}
+},
+{
+"id": 81,
+"set": {
+"q": "Before which Roman governor in Caesarea was Paul tried after his arrest in Jerusalem?",
+"ref": "Acts 23:23-24; 24:1-27"
+}
+},
+{
+"id": 82,
+"set": {
+"q": "Which of Job's three friends was the first to speak to him?",
+"ref": "Job 4:1"
+}
+},
+{
+"id": 85,
+"set": {
+"q": "What does the name Golgotha mean?",
+"opts": [
+"Place of the skull",
+"Hill of olives",
+"Garden of sorrow",
+"Valley of death"
+],
+"ans": 0,
+"ref": "Matthew 27:33"
+}
+},
+{
+"id": 91,
+"remove": true
+},
+{
+"id": 92,
+"remove": true
+},
+{
+"id": 93,
+"set": {
+"opts": [
+"Shadrach, Meshach, and Abednego",
+"Eldad, Medad, and Hur",
+"Ham, Shem, and Japheth",
+"Belteshazzar, Shadrach, and Meshach"
+],
+"ans": 0
+}
+},
+{
+"id": 96,
+"set": {
+"q": "Which former high priest was the father-in-law of Caiaphas?",
+"ref": "John 18:13"
+}
+},
+{
+"id": 101,
+"set": {
+"q": "Which prophet wrote, 'They will look on me, the one they have pierced'?",
+"ref": "Zechariah 12:10; John 19:37"
+}
+},
+{
+"id": 103,
+"remove": true
+},
+{
+"id": 106,
+"remove": true
+},
+{
+"id": 114,
+"remove": true
+},
+{
+"id": 115,
+"remove": true
+},
+{
+"id": 116,
+"remove": true
+},
+{
+"id": 119,
+"set": {
+"opts": [
+"Romans",
+"Colossians",
+"Ephesians",
+"1 Timothy"
+],
+"ans": 0,
+"ref": "Romans 4"
+}
+},
+{
+"id": 121,
+"set": {
+"opts": [
+"Proverbs",
+"Lamentations",
+"Ecclesiastes",
+"Job"
+],
+"ans": 0,
+"ref": "Proverbs 9:10"
+}
+},
+{
+"id": 122,
+"remove": true
+},
+{
+"id": 125,
+"remove": true
+},
+{
+"id": 127,
+"remove": true
+},
+{
+"id": 128,
+"remove": true
+},
+{
+"id": 129,
+"remove": true
+},
+{
+"id": 132,
+"remove": true
+},
+{
+"id": 139,
+"remove": true
+},
+{
+"id": 144,
+"set": {
+"q": "Besides murder, what had Barabbas taken part in?",
+"opts": [
+"An uprising in the city",
+"Robbing the temple",
+"Tax fraud",
+"Blasphemy"
+],
+"ans": 0,
+"ref": "Mark 15:7; Luke 23:19",
+"category": "New Testament"
+}
+},
+{
+"id": 149,
+"remove": true
+},
+{
+"id": 160,
+"set": {
+"q": "Which city did King Omri make the capital of the northern kingdom of Israel?"
+}
+},
+{
+"id": 165,
+"remove": true
+},
+{
+"id": 172,
+"remove": true
+},
+{
+"id": 173,
+"set": {
+"q": "Which Gospel writer addressed two books to a man named Theophilus?",
+"ref": "Luke 1:3; Acts 1:1"
+}
+},
+{
+"id": 177,
+"remove": true
+},
+{
+"id": 178,
+"remove": true
+},
+{
+"id": 181,
+"set": {
+"opts": [
+"Persian Empire",
+"Greek Empire",
+"Roman Empire",
+"Egyptian Empire"
+],
+"ans": 0
+}
+},
+{
+"id": 186,
+"remove": true
+},
+{
+"id": 193,
+"remove": true
+},
+{
+"id": 196,
+"remove": true
+},
+{
+"id": 197,
+"remove": true
+},
+{
+"id": 198,
+"remove": true
+},
+{
+"id": 203,
+"remove": true
+},
+{
+"id": 204,
+"remove": true
+},
+{
+"id": 205,
+"remove": true
+},
+{
+"id": 207,
+"remove": true
+},
+{
+"id": 214,
+"remove": true
+},
+{
+"id": 215,
+"remove": true
+},
+{
+"id": 218,
+"set": {
+"q": "In Luke's account of Jesus' birth, which town is called 'the town of David'?",
+"ref": "Luke 2:4"
+}
+},
+{
+"id": 227,
+"set": {
+"opts": [
+"Cherubim and a flaming sword",
+"An angel with a trumpet",
+"A pillar of fire",
+"A cloud"
+],
+"ans": 0
+}
+},
+{
+"id": 238,
+"remove": true
+},
+{
+"id": 253,
+"remove": true
+},
+{
+"id": 258,
+"remove": true
+},
+{
+"id": 259,
+"remove": true
+},
+{
+"id": 268,
+"remove": true
+},
+{
+"id": 271,
+"remove": true
+},
+{
+"id": 274,
+"remove": true
+},
+{
+"id": 277,
+"remove": true
+},
+{
+"id": 278,
+"remove": true
+},
+{
+"id": 279,
+"remove": true
+},
+{
+"id": 281,
+"remove": true
+},
+{
+"id": 286,
+"remove": true
+},
+{
+"id": 288,
+"remove": true
+},
+{
+"id": 290,
+"set": {
+"q": "According to John's Gospel, who came to the tomb early on the first day of the week and found the stone removed?",
+"opts": [
+"Mary Magdalene",
+"Peter",
+"John",
+"Nicodemus"
+],
+"ans": 0
+}
+},
+{
+"id": 293,
+"remove": true
+},
+{
+"id": 294,
+"remove": true
+},
+{
+"id": 296,
+"remove": true
+},
+{
+"id": 298,
+"remove": true
+},
+{
+"id": 300,
+"remove": true
+},
+{
+"id": 305,
+"remove": true
+},
+{
+"id": 309,
+"remove": true
+},
+{
+"id": 310,
+"remove": true
+},
+{
+"id": 315,
+"remove": true
+},
+{
+"id": 316,
+"remove": true
+},
+{
+"id": 317,
+"remove": true
+},
+{
+"id": 321,
+"remove": true
+},
+{
+"id": 326,
+"remove": true
+},
+{
+"id": 327,
+"set": {
+"q": "Which book of the Bible has the most chapters?"
+}
+},
+{
+"id": 333,
+"set": {
+"q": "The word 'Bible' comes from a Greek word meaning what?",
+"opts": [
+"Books",
+"Laws",
+"Truths",
+"Songs"
+],
+"ans": 0
+}
+},
+{
+"id": 336,
+"set": {
+"q": "Counting words, which Gospel is the longest?"
+}
+},
+{
+"id": 341,
+"remove": true
+},
+{
+"id": 342,
+"remove": true
+},
+{
+"id": 343,
+"remove": true
+},
+{
+"id": 344,
+"remove": true
+},
+{
+"id": 349,
+"remove": true
+},
+{
+"id": 350,
+"remove": true
+},
+{
+"id": 353,
+"remove": true
+},
+{
+"id": 354,
+"remove": true
+},
+{
+"id": 358,
+"remove": true
+},
+{
+"id": 361,
+"remove": true
+},
+{
+"id": 362,
+"remove": true
+},
+{
+"id": 367,
+"remove": true
+},
+{
+"id": 370,
+"remove": true
+},
+{
+"id": 374,
+"remove": true
+},
+{
+"id": 378,
+"remove": true
+},
+{
+"id": 379,
+"remove": true
+},
+{
+"id": 384,
+"remove": true
+},
+{
+"id": 386,
+"remove": true
+},
+{
+"id": 387,
+"remove": true
+},
+{
+"id": 388,
+"remove": true
+},
+{
+"id": 389,
+"remove": true
+},
+{
+"id": 390,
+"remove": true
+},
+{
+"id": 392,
+"remove": true
+},
+{
+"id": 393,
+"set": {
+"q": "Which prophet told Jeroboam's wife that her sick son would die?",
+"ref": "1 Kings 14:1-12"
+}
+},
+{
+"id": 404,
+"remove": true
+},
+{
+"id": 408,
+"set": {
+"q": "Which king set up a golden image and ordered everyone to bow down to it?"
+}
+},
+{
+"id": 411,
+"remove": true
+},
+{
+"id": 412,
+"remove": true
+},
+{
+"id": 418,
+"set": {
+"q": "Which prophet foretold a 'new covenant' written on people's hearts?",
+"ref": "Jeremiah 31:31-33"
+}
+},
+{
+"id": 419,
+"remove": true
+},
+{
+"id": 421,
+"remove": true
+},
+{
+"id": 422,
+"remove": true
+},
+{
+"id": 425,
+"remove": true
+},
+{
+"id": 430,
+"remove": true
+},
+{
+"id": 431,
+"remove": true
+},
+{
+"id": 438,
+"remove": true
+},
+{
+"id": 439,
+"remove": true
+},
+{
+"id": 440,
+"remove": true
+},
+{
+"id": 443,
+"set": {
+"q": "The letter of James is traditionally credited to which James?"
+}
+},
+{
+"id": 444,
+"set": {
+"q": "In the first verse of his letter, Jude calls himself the brother of whom?",
+"opts": [
+"James",
+"John",
+"Peter",
+"Paul"
+],
+"ans": 0,
+"ref": "Jude 1:1"
+}
+},
+{
+"id": 445,
+"remove": true
+},
+{
+"id": 446,
+"remove": true
+},
+{
+"id": 455,
+"remove": true
+},
+{
+"id": 456,
+"remove": true
+},
+{
+"id": 457,
+"remove": true
+},
+{
+"id": 458,
+"remove": true
+},
+{
+"id": 460,
+"remove": true
+},
+{
+"id": 461,
+"remove": true
+},
+{
+"id": 462,
+"remove": true
+},
+{
+"id": 465,
+"remove": true
+},
+{
+"id": 466,
+"remove": true
+},
+{
+"id": 498,
+"remove": true
+},
+{
+"id": 499,
+"remove": true
+},
+{
+"id": 500,
+"remove": true
+},
+{
+"id": 501,
+"remove": true
+},
+{
+"id": 502,
+"remove": true
+},
+{
+"id": 503,
+"remove": true
+},
+{
+"id": 504,
+"remove": true
+},
+{
+"id": 507,
+"remove": true
+},
+{
+"id": 508,
+"remove": true
+},
+{
+"id": 514,
+"remove": true
+},
+{
+"id": 517,
+"remove": true
+},
+{
+"id": 518,
+"remove": true
+},
+{
+"id": 520,
+"remove": true
+},
+{
+"id": 521,
+"remove": true
+},
+{
+"id": 523,
+"remove": true
+},
+{
+"id": 524,
+"remove": true
+},
+{
+"id": 525,
+"remove": true
+},
+{
+"id": 527,
+"remove": true
+},
+{
+"id": 530,
+"set": {
+"q": "Which prophet interpreted Nebuchadnezzar's dream of a great tree that was cut down?",
+"ref": "Daniel 4:10-27"
+}
+},
+{
+"id": 532,
+"set": {
+"ref": "Jeremiah 32:3"
+}
+},
+{
+"id": 534,
+"remove": true
+},
+{
+"id": 535,
+"set": {
+"opts": [
+"Ahaz",
+"Asa",
+"Amon",
+"Jehoiakim"
+],
+"ans": 0
+}
+},
+{
+"id": 548,
+"remove": true
+},
+{
+"id": 550,
+"remove": true
+},
+{
+"id": 551,
+"remove": true
+},
+{
+"id": 563,
+"remove": true
+},
+{
+"id": 566,
+"set": {
+"q": "Which of the seven deacons preached in Samaria after persecution scattered the church?"
+}
+},
+{
+"id": 567,
+"set": {
+"q": "Which evangelist baptized the Ethiopian official?",
+"opts": [
+"Philip",
+"Peter",
+"Stephen",
+"Paul"
+],
+"ans": 0
+}
+},
+{
+"id": 569,
+"remove": true
+},
+{
+"id": 570,
+"remove": true
+},
+{
+"id": 572,
+"remove": true
+},
+{
+"id": 574,
+"remove": true
+},
+{
+"id": 575,
+"remove": true
+},
+{
+"id": 576,
+"remove": true
+},
+{
+"id": 577,
+"remove": true
+},
+{
+"id": 579,
+"remove": true
+},
+{
+"id": 580,
+"remove": true
+},
+{
+"id": 581,
+"remove": true
+},
+{
+"id": 582,
+"remove": true
+},
+{
+"id": 583,
+"remove": true
+},
+{
+"id": 584,
+"remove": true
+},
+{
+"id": 585,
+"remove": true
+},
+{
+"id": 586,
+"remove": true
+},
+{
+"id": 587,
+"remove": true
+},
+{
+"id": 588,
+"remove": true
+},
+{
+"id": 590,
+"remove": true
+},
+{
+"id": 591,
+"remove": true
+},
+{
+"id": 592,
+"set": {
+"q": "Which apostle is traditionally credited with three letters about love, truth and discernment?"
+}
+},
+{
+"id": 593,
+"set": {
+"q": "Which New Testament letter quotes Enoch while warning about false teachers?",
+"ref": "Jude 1:14-15"
+}
+},
+{
+"id": 604,
+"set": {
+"opts": [
+"Esther",
+"Proverbs",
+"Ruth",
+"Obadiah"
+],
+"ans": 0,
+"ref": "Book of Esther"
+}
+},
+{
+"id": 605,
+"remove": true
+},
+{
+"id": 606,
+"remove": true
+},
+{
+"id": 607,
+"remove": true
+},
+{
+"id": 608,
+"remove": true
+},
+{
+"id": 613,
+"remove": true
+},
+{
+"id": 618,
+"remove": true
+},
+{
+"id": 643,
+"remove": true
+},
+{
+"id": 647,
+"remove": true
+},
+{
+"id": 648,
+"remove": true
+},
+{
+"id": 657,
+"remove": true
+},
+{
+"id": 659,
+"set": {
+"q": "What did Aaron's staff become when he threw it down before Pharaoh?"
+}
+},
+{
+"id": 661,
+"remove": true
+},
+{
+"id": 665,
+"remove": true
+},
+{
+"id": 666,
+"remove": true
+},
+{
+"id": 668,
+"remove": true
+},
+{
+"id": 670,
+"remove": true
+},
+{
+"id": 671,
+"remove": true
+},
+{
+"id": 679,
+"remove": true
+},
+{
+"id": 683,
+"remove": true
+},
+{
+"id": 685,
+"remove": true
+},
+{
+"id": 687,
+"remove": true
+},
+{
+"id": 688,
+"remove": true
+},
+{
+"id": 691,
+"set": {
+"q": "Which prophet watched Elijah taken up and cried, 'My father! The chariots and horsemen of Israel!'?",
+"opts": [
+"Elisha",
+"Elijah",
+"Isaiah",
+"Jeremiah"
+],
+"ans": 0,
+"ref": "2 Kings 2:11-12"
+}
+},
+{
+"id": 693,
+"remove": true
+},
+{
+"id": 699,
+"remove": true
+},
+{
+"id": 712,
+"set": {
+"opts": [
+"Relative (cousin in the KJV)",
+"Friend",
+"Sister",
+"Aunt"
+],
+"ans": 0
+}
+},
+{
+"id": 716,
+"set": {
+"q": "When Jesus was twelve, where did his parents find him sitting among the teachers?"
+}
+},
+{
+"id": 717,
+"remove": true
+},
+{
+"id": 720,
+"remove": true
+},
+{
+"id": 724,
+"remove": true
+},
+{
+"id": 732,
+"remove": true
+},
+{
+"id": 733,
+"set": {
+"opts": [
+"Fish",
+"Lamb",
+"Dates",
+"Lentil stew"
+],
+"ans": 0
+}
+},
+{
+"id": 736,
+"remove": true
+},
+{
+"id": 738,
+"remove": true
+},
+{
+"id": 739,
+"remove": true
+},
+{
+"id": 740,
+"remove": true
+},
+{
+"id": 741,
+"remove": true
+},
+{
+"id": 742,
+"remove": true
+},
+{
+"id": 744,
+"remove": true
+},
+{
+"id": 746,
+"remove": true
+},
+{
+"id": 750,
+"remove": true
+},
+{
+"id": 752,
+"remove": true
+},
+{
+"id": 761,
+"remove": true
+},
+{
+"id": 763,
+"remove": true
+},
+{
+"id": 764,
+"remove": true
+},
+{
+"id": 767,
+"remove": true
+},
+{
+"id": 769,
+"remove": true
+},
+{
+"id": 790,
+"remove": true
+},
+{
+"id": 791,
+"remove": true
+},
+{
+"id": 792,
+"remove": true
+},
+{
+"id": 793,
+"remove": true
+},
+{
+"id": 794,
+"remove": true
+},
+{
+"id": 806,
+"remove": true
+},
+{
+"id": 811,
+"remove": true
+},
+{
+"id": 818,
+"remove": true
+},
+{
+"id": 819,
+"remove": true
+},
+{
+"id": 828,
+"remove": true
+},
+{
+"id": 829,
+"remove": true
+},
+{
+"id": 847,
+"set": {
+"opts": [
+"Haggai",
+"Jonah",
+"Malachi",
+"Obadiah"
+],
+"ans": 0
+}
+},
+{
+"id": 866,
+"remove": true
+},
+{
+"id": 867,
+"remove": true
+},
+{
+"id": 872,
+"remove": true
+},
+{
+"id": 873,
+"remove": true
+},
+{
+"id": 876,
+"remove": true
+},
+{
+"id": 882,
+"remove": true
+},
+{
+"id": 884,
+"remove": true
+},
+{
+"id": 885,
+"remove": true
+},
+{
+"id": 889,
+"remove": true
+},
+{
+"id": 895,
+"remove": true
+},
+{
+"id": 899,
+"remove": true
+},
+{
+"id": 900,
+"remove": true
+},
+{
+"id": 901,
+"remove": true
+},
+{
+"id": 905,
+"remove": true
+},
+{
+"id": 907,
+"remove": true
+},
+{
+"id": 909,
+"remove": true
+},
+{
+"id": 911,
+"remove": true
+},
+{
+"id": 912,
+"remove": true
+},
+{
+"id": 913,
+"remove": true
+},
+{
+"id": 914,
+"remove": true
+},
+{
+"id": 915,
+"remove": true
+},
+{
+"id": 918,
+"remove": true
+},
+{
+"id": 919,
+"remove": true
+},
+{
+"id": 922,
+"remove": true
+},
+{
+"id": 923,
+"remove": true
+},
+{
+"id": 924,
+"remove": true
+},
+{
+"id": 925,
+"remove": true
+},
+{
+"id": 926,
+"remove": true
+},
+{
+"id": 927,
+"remove": true
+},
+{
+"id": 930,
+"remove": true
+},
+{
+"id": 933,
+"remove": true
+},
+{
+"id": 950,
+"remove": true
+},
+{
+"id": 951,
+"remove": true
+},
+{
+"id": 952,
+"remove": true
+},
+{
+"id": 956,
+"remove": true
+},
+{
+"id": 960,
+"remove": true
+},
+{
+"id": 961,
+"remove": true
+},
+{
+"id": 973,
+"remove": true
+},
+{
+"id": 983,
+"remove": true
+},
+{
+"id": 985,
+"set": {
+"q": "Which Gospel tells of a miraculous catch of fish when Jesus first called Peter?"
+}
+},
+{
+"id": 986,
+"remove": true
+},
+{
+"id": 987,
+"remove": true
+},
+{
+"id": 990,
+"remove": true
+},
+{
+"id": 993,
+"remove": true
+},
+{
+"id": 994,
+"remove": true
+},
+{
+"id": 999,
+"remove": true
+},
+{
+"id": 1001,
+"remove": true
+},
+{
+"id": 1002,
+"set": {
+"q": "Which prophet said God's servant would not break a bruised reed or snuff out a smoldering wick?"
+}
+},
+{
+"id": 1004,
+"remove": true
+},
+{
+"id": 1005,
+"remove": true
+},
+{
+"id": 1007,
+"remove": true
+},
+{
+"id": 1012,
+"remove": true
+},
+{
+"id": 1013,
+"remove": true
+},
+{
+"id": 1020,
+"remove": true
+},
+{
+"id": 1033,
+"remove": true
+},
+{
+"id": 1034,
+"remove": true
+},
+{
+"id": 1035,
+"remove": true
+},
+{
+"id": 1036,
+"remove": true
+},
+{
+"id": 1037,
+"remove": true
+},
+{
+"id": 1038,
+"remove": true
+},
+{
+"id": 1039,
+"remove": true
+},
+{
+"id": 1040,
+"set": {
+"q": "Which prophet described Jerusalem as a cooking pot whose deposit would not go away?"
+}
+},
+{
+"id": 1042,
+"remove": true
+},
+{
+"id": 1046,
+"set": {
+"q": "Which prophet wrote, 'How you have fallen from heaven, morning star, son of the dawn!'?",
+"ref": "Isaiah 14:12"
+}
+},
+{
+"id": 1048,
+"set": {
+"opts": [
+"Joel",
+"Obadiah",
+"Habakkuk",
+"Zephaniah"
+],
+"ans": 0
+}
+},
+{
+"id": 1052,
+"remove": true
+},
+{
+"id": 1054,
+"remove": true
+},
+{
+"id": 1055,
+"remove": true
+},
+{
+"id": 1057,
+"remove": true
+},
+{
+"id": 1058,
+"remove": true
+},
+{
+"id": 1059,
+"remove": true
+},
+{
+"id": 1061,
+"remove": true
+},
+{
+"id": 1062,
+"remove": true
+},
+{
+"id": 1066,
+"remove": true
+},
+{
+"id": 1068,
+"remove": true
+},
+{
+"id": 1071,
+"remove": true
+},
+{
+"id": 1072,
+"remove": true
+},
+{
+"id": 1075,
+"remove": true
+},
+{
+"id": 1077,
+"remove": true
+},
+{
+"id": 1080,
+"remove": true
+},
+{
+"id": 1081,
+"remove": true
+},
+{
+"id": 1082,
+"remove": true
+},
+{
+"id": 1095,
+"remove": true
+},
+{
+"id": 1096,
+"remove": true
+},
+{
+"id": 1097,
+"remove": true
+},
+{
+"id": 1098,
+"remove": true
+},
+{
+"id": 1100,
+"remove": true
+},
+{
+"id": 1103,
+"remove": true
+},
+{
+"id": 1110,
+"remove": true
+},
+{
+"id": 1111,
+"remove": true
+},
+{
+"id": 1112,
+"remove": true
+},
+{
+"id": 1113,
+"remove": true
+},
+{
+"id": 1114,
+"remove": true
+},
+{
+"id": 1115,
+"remove": true
+},
+{
+"id": 1117,
+"set": {
+"opts": [
+"Hosea",
+"Obadiah",
+"Ezekiel",
+"Daniel"
+],
+"ans": 0
+}
+},
+{
+"id": 1122,
+"remove": true
+},
+{
+"id": 1124,
+"remove": true
+},
+{
+"id": 1127,
+"remove": true
+},
+{
+"id": 1141,
+"remove": true
+},
+{
+"id": 1143,
+"remove": true
+},
+{
+"id": 1146,
+"remove": true
+},
+{
+"id": 1147,
+"remove": true
+},
+{
+"id": 1151,
+"remove": true
+},
+{
+"id": 1153,
+"remove": true
+},
+{
+"id": 1157,
+"set": {
+"q": "According to Hebrews 11, who hid a baby for three months because they saw he was no ordinary child?",
+"opts": [
+"Moses' parents",
+"Hannah and Elkanah",
+"Abraham and Sarah",
+"Zechariah and Elizabeth"
+],
+"ans": 0
+}
+},
+{
+"id": 1159,
+"set": {
+"q": "Hebrews 11 says the walls of which city fell by faith?",
+"opts": [
+"Jericho",
+"Ai",
+"Babylon",
+"Nineveh"
+],
+"ans": 0
+}
+},
+{
+"id": 1161,
+"remove": true
+},
+{
+"id": 1162,
+"remove": true
+},
+{
+"id": 1177,
+"remove": true
+},
+{
+"id": 1187,
+"remove": true
+},
+{
+"id": 1197,
+"remove": true
+},
+{
+"id": 1242,
+"remove": true
+},
+{
+"id": 1252,
+"remove": true
+},
+{
+"id": 1262,
+"remove": true
+},
+{
+"id": 1267,
+"remove": true
+},
+{
+"id": 1277,
+"remove": true
+},
+{
+"id": 1292,
+"remove": true
+},
+{
+"id": 1300,
+"remove": true
+},
+{
+"id": 1320,
+"remove": true
+},
+{
+"id": 1325,
+"remove": true
+},
+{
+"id": 1329,
+"remove": true
+},
+{
+"id": 1344,
+"remove": true
+},
+{
+"id": 1354,
+"remove": true
+},
+{
+"id": 1359,
+"remove": true
+},
+{
+"id": 1364,
+"remove": true
+},
+{
+"id": 1369,
+"remove": true
+},
+{
+"id": 1389,
+"remove": true
+},
+{
+"id": 1394,
+"remove": true
+},
+{
+"id": 1414,
+"remove": true
+},
+{
+"id": 1419,
+"remove": true
+},
+{
+"id": 1424,
+"remove": true
+},
+{
+"id": 1429,
+"remove": true
+},
+{
+"id": 1444,
+"remove": true
+},
+{
+"id": 1449,
+"remove": true
+},
+{
+"id": 1454,
+"remove": true
+},
+{
+"id": 1459,
+"remove": true
+},
+{
+"id": 1477,
+"remove": true
+},
+{
+"id": 1482,
+"remove": true
+},
+{
+"id": 1487,
+"remove": true
+},
+{
+"id": 1536,
+"remove": true
+},
+{
+"id": 1561,
+"remove": true
+},
+{
+"id": 1571,
+"remove": true
+},
+{
+"id": 1591,
+"remove": true
+},
+{
+"id": 1596,
+"remove": true
+},
+{
+"id": 1601,
+"remove": true
+},
+{
+"id": 1611,
+"remove": true
+},
+{
+"id": 1616,
+"remove": true
+},
+{
+"id": 1630,
+"remove": true
+},
+{
+"id": 1640,
+"remove": true
+},
+{
+"id": 1645,
+"remove": true
+},
+{
+"id": 1650,
+"remove": true
+},
+{
+"id": 1660,
+"remove": true
+}
+]
