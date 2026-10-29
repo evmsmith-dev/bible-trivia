@@ -5,7 +5,7 @@ import {
 } from "./config.js";
 import { buildDailyShareText } from "./lib/share.js";
 import { getTopScores, normalizeMode, trimHighScores } from "./lib/records.js";
-import { calculatePoints, getNextStreakBonusLabel, getStreakBonus } from "./lib/scoring.js";
+import { calculatePoints, getNextStreakBonusLabel, getStreakBonus, summaryHeadline } from "./lib/scoring.js";
 import { selectQuestionsForMode } from "./lib/selection.js";
 import { bibleGatewayUrl, escapeHtml, getLocalDateKey, hasScriptureReference, pickRandom, shuffled } from "./lib/utils.js";
 import { state } from "./state.js";
@@ -14,7 +14,7 @@ import { byId, replayAnimation, setVisible, showScreen } from "./ui/dom.js";
 import { celebrateDailyCompletion, celebrateHighScore, celebrateLevel, fireConfetti } from "./ui/celebrate.js";
 import { anyOverlayOpen, closeOverlay, openOverlay } from "./ui/overlay.js";
 import { isDailyBonusActive, prepareDailyChallenge, recordDailyResult, renderDailyCard } from "./features/daily.js";
-import { getPlayerLevel, openPlayerSheet, renderPlayerCards } from "./features/player.js";
+import { getPlayerLevel, renderPlayerCards } from "./features/player.js";
 import { openDifficultyPicker, renderModeChip } from "./features/settings.js";
 import { showUpdateBannerIfReady } from "./ui/update-banner.js";
 import { vibrate, VIBRATION } from "./ui/haptics.js";
@@ -475,17 +475,24 @@ function showReview() {
   byId("review-continue").focus({ preventScroll: true });
 }
 
+// The summary reads like Home: the result at the top, then the next step at the bottom
+// (difficulty, a large Play, and Home as a smaller text button).
 function renderSummary({ percent, isDaily, dailyResult }) {
   const { game } = state;
+  const wrong = QUESTIONS_PER_GAME - game.correct;
+  const dots = game.review.map((entry) => (entry.isCorrect ? "✅" : "❌")).join("");
   let dailyHtml = "";
   if (isDaily) {
     const record = dailyResult.record;
+    const streak = state.dailyStats.currentDailyStreak;
     dailyHtml = `
-      <p class="summary-daily-best"><strong>Today's Best: ${record.bestScore}</strong> • Attempts: ${record.attempts}</p>
-      <p class="summary-daily-status"><strong>${dailyResult.passed
-        ? `Daily challenge complete (${DAILY.successPercent}%+).`
-        : `Daily challenge not completed. Reach ${DAILY.successPercent}% or higher to complete.`}</strong></p>
-      <p class="summary-daily-streak"><strong>Daily Streak:</strong> ${state.dailyStats.currentDailyStreak} (Best ${state.dailyStats.bestDailyStreak})</p>`;
+      <div class="summary-daily${dailyResult.passed ? " is-complete" : ""}">
+        <p class="summary-daily-status">${dailyResult.passed
+          ? `✅ Daily Challenge complete (${DAILY.successPercent}%+)`
+          : `Not complete yet: reach ${DAILY.successPercent}% to finish today's challenge`}</p>
+        <p class="summary-daily-meta">Today's best: ${record.bestScore.toLocaleString()} · Attempts: ${record.attempts}</p>
+        <p class="summary-daily-meta">🔥 Daily streak: ${streak} (best ${state.dailyStats.bestDailyStreak})</p>
+      </div>`;
   }
   const carryBonus = getStreakBonus(state.bonusStreak);
   const carryBanner = !isDaily && carryBonus > 0
@@ -496,26 +503,26 @@ function renderSummary({ percent, isDaily, dailyResult }) {
     : "";
 
   el.summary.innerHTML = `
-    <h2>${isDaily ? "Daily Challenge Summary" : "Game Summary"}</h2>
-    <div class="summary-stats">
-      <p>You got <strong>${game.correct}</strong> right out of ${QUESTIONS_PER_GAME} (${percent}%).</p>
-      <p><strong>Total Score: ${game.score} points</strong></p>
-      ${dailyHtml}
-    </div>
+    <header class="summary-head">
+      ${isDaily ? '<p class="summary-eyebrow">🎯 Daily Challenge</p>' : ""}
+      <h2 class="summary-headline">${escapeHtml(summaryHeadline(game.correct, state.profile.name))}</h2>
+      <p class="summary-score" aria-label="${game.correct} of ${QUESTIONS_PER_GAME} right, ${percent}%">
+        <span class="summary-score-big">${game.correct}</span><span class="summary-score-of"> / ${QUESTIONS_PER_GAME} right</span>
+      </p>
+      <p class="summary-points"><span id="summary-points">${game.score.toLocaleString()}</span> points</p>
+      <p class="summary-dots" role="img" aria-label="${game.correct} right, ${wrong} wrong">${dots}</p>
+    </header>
+    ${dailyHtml}
     <button type="button" id="summary-review-btn">📖 Review Answers</button>
-    <div class="summary-player-wrap">
-      <button id="summary-player-btn" type="button" aria-label="Edit player"></button>
-      <span id="summary-player-name" class="summary-player-name"></span>
-      <span id="summary-player-level" class="summary-player-level"></span>
-    </div>
     ${carryBanner}
+    <div class="summary-spacer"></div>
     ${isDaily ? "" : '<button type="button" id="summary-mode-chip" class="mode-chip"></button>'}
     <div class="summary-actions">
-      ${isDaily ? '<button type="button" id="share-daily-btn">📤 Share Result</button><p id="share-status" class="share-status" role="status"></p>' : ""}
-      ${isDaily ? "" : '<button type="button" id="restart-same">&#9654; Play</button>'}
+      ${isDaily
+        ? '<button type="button" id="share-daily-btn">📤 Share Result</button><p id="share-status" class="share-status" role="status"></p>'
+        : '<button type="button" id="restart-same">&#9654; Play</button>'}
       <button type="button" id="restart-change">&#x1F3E0; Home</button>
     </div>`;
-  renderPlayerCards();
 
   byId("restart-same")?.addEventListener("click", () => {
     if (!state.celebrationActive) startNormalGame({ keepStreak: true });
@@ -523,7 +530,6 @@ function renderSummary({ percent, isDaily, dailyResult }) {
   byId("restart-change").addEventListener("click", () => {
     if (!state.celebrationActive) goHome();
   });
-  byId("summary-player-btn").addEventListener("click", () => openPlayerSheet());
   // Change the difficulty for the next round; Play then uses it.
   renderModeChip();
   byId("summary-mode-chip")?.addEventListener("click", () => {

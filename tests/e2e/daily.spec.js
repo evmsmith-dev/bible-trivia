@@ -28,7 +28,9 @@ test.describe("daily challenge", () => {
     await startDaily(page);
     const firstAttempt = await collectQuestions(page, { correct: false });
     await h.expectSummary(page);
-    await expect(page.locator("#summary")).toContainText("Daily challenge not completed");
+    await expect(page.locator("#summary")).toContainText("Not complete yet: reach 70%");
+    await expect(page.locator(".summary-eyebrow")).toHaveText("🎯 Daily Challenge");
+    await expect(page.locator("#share-daily-btn")).toBeVisible();
     await expect(page.locator("#restart-same")).toHaveCount(0);
     await h.goHomeFromSummary(page);
 
@@ -37,7 +39,7 @@ test.describe("daily challenge", () => {
     // A retry can't be passed just by remembering the first attempt's answers.
     expect(secondAttempt.filter((question) => firstAttempt.includes(question))).toEqual([]);
     await h.expectSummary(page);
-    await expect(page.locator("#summary")).toContainText("Daily challenge complete");
+    await expect(page.locator("#summary")).toContainText("Daily Challenge complete (70%+)");
     await expect(page.locator("#summary")).toContainText("Attempts: 2");
     await page.clock.runFor(5000);
     await h.goHomeFromSummary(page);

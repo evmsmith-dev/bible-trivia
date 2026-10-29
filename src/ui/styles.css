@@ -341,13 +341,6 @@
       color: var(--fg-ffffff, white);
     }
 
-    #summary {
-      text-align: center;
-      font-size: 1.5rem;
-      line-height: 1.5;
-      padding-bottom: 40px;
-    }
-
     #round-review {
       display: none;
       text-align: left;
@@ -463,11 +456,6 @@
       box-shadow: 0 8px 24px rgba(255,202,40,0.4);
     }
 
-    #summary h2 {
-      color: var(--primary);
-      font-size: 3rem;
-    }
-
     details {
       margin-top: 20px;
       width: 100%;
@@ -503,34 +491,6 @@
       color: var(--primary-dark);
     }
 
-    /* Per-mode leaderboard container and sections */
-
-    /* Constrain leaderboard section for mobile scroll containment */
-    #summary > h3:first-of-type {
-      margin-top: 20px;
-      margin-bottom: 8px;
-    }
-
-    #summary > h3:first-of-type + table {
-      max-height: 280px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      border: 1px solid var(--bd-e0e0e0, #E0E0E0);
-      border-radius: 8px;
-      display: block;
-    }
-
-    /* Constrain history section for mobile scroll containment */
-    #summary > details {
-      max-height: 300px;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
-    #summary > details > div {
-      overflow-y: inherit;
-    }
-
     button {
       padding: 16px 50px;
       font-size: 1.4rem;
@@ -541,32 +501,6 @@
       transition: all 0.22s;
       box-shadow: 0 6px 20px rgba(0,0,0,0.12);
     }
-
-    #restart-same {
-      background: var(--accent);
-      color: #333;
-      box-shadow: 0 8px 24px rgba(255,202,40,0.4);
-    }
-
-@media (hover: hover) {
-    #restart-same:hover {
-      transform: scale(1.08);
-      box-shadow: 0 12px 32px rgba(255,202,40,0.5);
-    }
-}
-
-    #restart-change {
-      background: var(--bg-42a5f5, #42A5F5);
-      color: var(--fg-ffffff, white);
-      box-shadow: 0 8px 24px rgba(66,165,245,0.4);
-    }
-
-@media (hover: hover) {
-    #restart-change:hover {
-      transform: scale(1.08);
-      box-shadow: 0 12px 32px rgba(66,165,245,0.5);
-    }
-}
 
     .streak-carryover-banner {
       margin: 14px auto 8px;
@@ -613,49 +547,6 @@
       background: var(--bg-e53935, #E53935);
     }
 }
-
-    #summary-player-btn {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      border: 1px solid var(--bd-c8e6c9, #c8e6c9);
-      background: var(--bg-f6fff7, #f6fff7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 10px auto 0;
-      padding: 0;
-      cursor: pointer;
-    }
-
-    #summary-player-btn img {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .summary-player-wrap {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .summary-player-name {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--fg-1b5e20, #1b5e20);
-      text-align: center;
-    }
-
-    .summary-player-level {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--fg-2f5f34, #2f5f34);
-      text-align: center;
-    }
 
     #daily-challenge-overlay {
       position: fixed;
@@ -817,14 +708,6 @@
       .review-card { padding: 12px; }
       .review-question-title { font-size: 1.1rem; }
       .review-row { font-size: 1rem; }
-      /* Leaderboard scroll containment on tablets/small devices */
-      #summary > h3:first-of-type + table {
-        max-height: 240px;
-      }
-      #summary > details {
-        max-height: 270px;
-      }
-      /* Per-mode leaderboards on tablets */
 
     }
 
@@ -1052,17 +935,6 @@
 
   
 
-  /* Tighter scroll constraints for mobile */
-  #summary > h3:first-of-type + table {
-    max-height: 180px;
-    font-size: 0.95rem;
-  }
-
-  #summary > details {
-    max-height: 200px;
-    font-size: 0.95rem;
-  }
-
   table {
     font-size: 0.95rem;
   }
@@ -1071,10 +943,6 @@
     padding: 6px 8px;
   }
 
-  #summary {
-    font-size: 1.2rem;
-    padding-bottom: 30px;
-  }
 
   /* Per-mode leaderboards on mobile */
 
@@ -1160,10 +1028,6 @@
   display: block;
 }
 
-.summary-daily-best { font-size: 1.25rem; margin-top: 16px; }
-.summary-daily-status { font-size: 1.1rem; margin-top: 8px; }
-.summary-daily-streak { font-size: 1.2rem; }
-.summary-actions { margin-top: 30px; }
 
 .load-error {
   color: var(--fg-b71c1c, #b71c1c);
@@ -1330,7 +1194,7 @@ button, input, select, textarea { font-family: inherit; }
   #feedback .feedback-detail { display: block; font-size: 0.95rem; }
 }
 
-/* ---------- Home: current difficulty under Start (opens Settings) ---------- */
+/* ---------- Difficulty button (Home under the greeting, and the summary above Play) ---------- */
 .mode-chip {
   display: flex; /* its own line (under Start on Home, above Play on the summary) */
   align-items: center;
@@ -1413,21 +1277,6 @@ button, input, select, textarea { font-family: inherit; }
   opacity: 0.85;
 }
 
-/* ---------- Summary: Review Answers (replaces the old review question) ---------- */
-#summary-review-btn {
-  display: block;
-  width: min(100%, 420px);
-  margin: 14px auto 0;
-  padding: 12px 16px;
-  border-radius: 999px;
-  border: 2px solid var(--bd-90caf9, #90CAF9);
-  background: var(--bg-e3f2fd, #E3F2FD);
-  color: var(--fg-1565c0, #1565C0);
-  font-size: 1.2rem;
-  font-weight: 600;
-  box-shadow: none;
-}
-
 /* ---------- Pause card (shown when the app returns from the background mid-question) ---------- */
 #pause-overlay {
   position: absolute;
@@ -1455,87 +1304,8 @@ button, input, select, textarea { font-family: inherit; }
   box-shadow: 0 10px 30px rgba(255, 202, 40, 0.4);
 }
 
-/* ---------- Summary on phones: fits the screen, Play and Home side by side ---------- */
-@media (max-width: 640px), (max-height: 760px) {
-  #summary {
-    font-size: clamp(1rem, min(4.6vw, 2.5 * var(--app-vh, 1dvh)), 1.25rem);
-    line-height: 1.35;
-    padding-bottom: 0;
-    margin: auto 0; /* centered in the screen-height card */
-  }
-  #summary h2 { font-size: clamp(1.6rem, min(8vw, 4.6 * var(--app-vh, 1dvh)), 2.4rem); line-height: 1.1; margin: 0.2em 0 0.3em; }
-  #summary > p { margin: 0.3em 0; }
-  #summary .summary-daily-best,
-  #summary .summary-daily-status,
-  #summary .summary-daily-streak { font-size: 1em; margin: 0.3em 0; }
-  .summary-player-wrap { flex-direction: row; justify-content: center; gap: 10px; margin-top: 6px; }
-  #summary-player-btn { width: 44px; height: 44px; margin: 0; }
-  .streak-carryover-banner { margin: 10px 0 0; padding: 8px 10px; font-size: 0.95rem; gap: 8px; }
-  #summary #summary-review-btn { width: 100%; margin: 12px 0 0; padding: 12px 10px; font-size: 1.15rem; }
-  .summary-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-  .summary-actions button { flex: 1 1 0; width: auto; margin: 0; padding: 14px 10px; font-size: 1.3rem; }
-  .summary-actions .share-status { flex-basis: 100%; order: 3; margin: 0; }
-}
-
-/* ---------- Summary on phones held upright: use the whole card ----------
-   The parts share the card's height: spacing and sizes grow on taller screens so the
-   text is easier to read and the buttons easier to tap, and shrink on small ones. */
-@media (max-width: 640px) and (orientation: portrait) {
-  #summary {
-    flex: 1 0 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly; /* spread the sections over the card's full height */
-    gap: clamp(10px, 2 * var(--app-vh, 1dvh), 20px); /* at least this much between sections */
-    margin: 0;
-    padding: clamp(4px, 1.5 * var(--app-vh, 1dvh), 16px) 2px;
-    font-size: clamp(1.05rem, min(5vw, 2.8 * var(--app-vh, 1dvh)), 1.4rem);
-  }
-  #summary > * { margin: 0; }
-  #summary h2 { font-size: clamp(1.8rem, min(9vw, 5.2 * var(--app-vh, 1dvh)), 2.8rem); margin: 0; }
-  #summary > p { line-height: 1.4; }
-  #summary .summary-stats { display: flex; flex-direction: column; gap: 4px; }
-  #summary .summary-stats p { margin: 0; }
-  #summary #summary-review-btn {
-    margin: 0;
-    min-height: clamp(52px, 7.5 * var(--app-vh, 1dvh), 68px);
-    font-size: clamp(1.15rem, min(5.4vw, 2.9 * var(--app-vh, 1dvh)), 1.45rem);
-  }
-  .summary-player-wrap { margin: 0; gap: 12px; }
-  #summary-player-btn { width: clamp(44px, 6.5 * var(--app-vh, 1dvh), 60px); height: clamp(44px, 6.5 * var(--app-vh, 1dvh), 60px); }
-  .summary-player-name { font-size: clamp(1.05rem, min(5vw, 2.7 * var(--app-vh, 1dvh)), 1.35rem); }
-  .summary-player-level { font-size: clamp(0.95rem, min(4.4vw, 2.4 * var(--app-vh, 1dvh)), 1.15rem); }
-  .streak-carryover-banner { margin: 0; font-size: clamp(0.95rem, min(4.4vw, 2.4 * var(--app-vh, 1dvh)), 1.15rem); }
-  #summary .mode-chip { margin: 0 auto; min-height: 44px; font-size: clamp(1.05rem, min(5vw, 2.7 * var(--app-vh, 1dvh)), 1.3rem); }
-  .summary-actions { margin: 0; gap: 12px; }
-  .summary-actions button {
-    min-height: clamp(56px, 8.5 * var(--app-vh, 1dvh), 76px);
-    font-size: clamp(1.3rem, min(6.4vw, 3.4 * var(--app-vh, 1dvh)), 1.7rem);
-  }
-}
-
 /* ---------- Phones held sideways: two columns so nothing needs scrolling ---------- */
 @media (orientation: landscape) and (max-height: 520px) {
-
-  #summary {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-auto-flow: row dense;
-    align-content: center;
-    align-items: center;
-    column-gap: 20px;
-    font-size: 1rem;
-  }
-  #summary > h2, #summary > .summary-stats, #summary > #summary-review-btn { grid-column: 1; }
-  #summary > .summary-player-wrap { grid-column: 2; grid-row: 1; }
-  #summary > .mode-chip { grid-column: 1; margin-top: 8px; }
-  #summary > .streak-carryover-banner { grid-column: 2; grid-row: 2 / span 2; }
-  #summary > .summary-actions { grid-column: 2; grid-row: 4; }
-  #summary > p { margin: 0.2em 0; }
-  #summary h2 { font-size: 1.6rem; margin: 0 0 0.2em; }
-  #summary #summary-review-btn { margin: 8px 0 0; padding: 8px 10px; font-size: 1.05rem; }
-  .summary-actions { margin-top: 10px; }
-  .summary-actions button { padding: 10px; font-size: 1.15rem; }
 
   #pause-overlay h2 { font-size: 1.7rem; }
   #pause-overlay #pause-resume-btn { padding: 10px 24px; font-size: 1.3rem; }
@@ -1736,6 +1506,158 @@ button, input, select, textarea { font-family: inherit; }
   #home-links button { min-height: 44px; flex-direction: row; gap: 6px; }
   .home-greeting { font-size: clamp(1.6rem, 8 * var(--app-vh, 1dvh), 2.2rem); }
   .home-sub { font-size: 1rem; }
+}
+
+/* ==========================================================================
+   Round summary
+   Reads like Home: the result at the top (headline, big score, points, ✅/❌ row),
+   Review Answers and any streak news in the middle, and the next step at the bottom
+   within thumb reach (difficulty, a large Play, and Home as a smaller text button).
+   ========================================================================== */
+#summary {
+  display: flex; /* hidden with an inline display: none */
+  flex-direction: column;
+  width: min(100%, 560px);
+  margin: 0 auto;
+  padding: 12px 4px 4px;
+  text-align: center;
+}
+.summary-head { display: flex; flex-direction: column; align-items: center; }
+.summary-eyebrow {
+  margin: 0 0 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--bg-f3e5f5, #F3E5F5);
+  color: var(--fg-6a1b9a, #6A1B9A);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.summary-headline {
+  margin: 0;
+  font-size: 2.4rem;
+  line-height: 1.1;
+  color: var(--fg-1b5e20, #1b5e20);
+  overflow-wrap: anywhere;
+}
+.summary-score { margin: 14px 0 0; line-height: 1; color: var(--fg-2f5f34, #2f5f34); font-weight: 700; }
+.summary-score-big { font-size: 4.6rem; color: var(--primary); }
+.summary-score-of { font-size: 1.5rem; }
+.summary-points { margin: 8px 0 0; font-size: 1.3rem; font-weight: 700; color: var(--fg-f57f17, #f57f17); }
+.summary-dots { margin: 12px 0 0; font-size: 1.35rem; letter-spacing: 2px; line-height: 1; }
+
+.summary-daily {
+  margin: 18px 0 0;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 2px solid var(--bd-ffe082, #ffe082);
+  background: var(--bg-fff8e1, #fff8e1);
+  color: var(--fg-5d4037, #5d4037);
+}
+.summary-daily.is-complete { border-color: var(--bd-a5d6a7, #a5d6a7); background: var(--bg-e8f5e9, #e8f5e9); color: var(--fg-1b5e20, #1b5e20); }
+.summary-daily p { margin: 0; }
+.summary-daily-status { font-size: 1.1rem; font-weight: 700; }
+.summary-daily-meta { margin-top: 2px !important; font-size: 0.95rem; }
+
+#summary-review-btn {
+  display: block;
+  width: 100%;
+  margin: 20px 0 0;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 2px solid var(--bd-90caf9, #90CAF9);
+  background: var(--bg-e3f2fd, #E3F2FD);
+  color: var(--fg-1565c0, #1565C0);
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: none;
+}
+#summary .streak-carryover-banner { margin: 14px 0 0; max-width: none; }
+.summary-spacer { flex: 1 1 auto; min-height: 24px; }
+
+#summary .mode-chip { margin: 0 auto 12px; }
+.summary-actions { display: flex; flex-direction: column; align-items: stretch; }
+.summary-actions button { width: 100%; margin: 0; }
+#restart-same, #share-daily-btn {
+  padding: 18px 16px;
+  font-size: 2rem;
+}
+#restart-same {
+  background: var(--accent);
+  color: #333;
+  box-shadow: 0 8px 24px rgba(255, 202, 40, 0.4);
+}
+#share-daily-btn { font-size: 1.6rem; }
+#restart-change {
+  width: auto !important;
+  align-self: center;
+  margin-top: 8px !important;
+  padding: 10px 24px;
+  min-height: 48px;
+  background: transparent;
+  color: var(--fg-1b5e20, #1b5e20);
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: none;
+}
+.summary-actions .share-status { margin: 6px 0 0; }
+.summary-actions .share-status:empty { display: none; }
+
+/* Phones held upright: the card fills the screen and sizes follow its height. */
+@media (max-width: 640px), (max-height: 760px) {
+  #summary {
+    flex: 1 0 auto;
+    padding: clamp(6px, 2.4 * var(--app-vh, 1dvh), 26px) 2px calc(clamp(0px, 0.6 * var(--app-vh, 1dvh), 8px) + env(safe-area-inset-bottom, 0px));
+  }
+  .summary-headline { font-size: clamp(1.9rem, min(9.4vw, 5 * var(--app-vh, 1dvh)), 2.7rem); }
+  .summary-score { margin-top: clamp(10px, 2.4 * var(--app-vh, 1dvh), 22px); }
+  .summary-score-big { font-size: clamp(3.4rem, min(18vw, 9.5 * var(--app-vh, 1dvh)), 5.4rem); }
+  .summary-score-of { font-size: clamp(1.2rem, min(5.6vw, 3 * var(--app-vh, 1dvh)), 1.6rem); }
+  .summary-points { font-size: clamp(1.1rem, min(5.2vw, 2.8 * var(--app-vh, 1dvh)), 1.45rem); }
+  .summary-dots { margin-top: clamp(8px, 1.8 * var(--app-vh, 1dvh), 16px); font-size: clamp(1.05rem, min(5.6vw, 2.8 * var(--app-vh, 1dvh)), 1.5rem); letter-spacing: 1px; }
+  .summary-daily { margin-top: clamp(10px, 2 * var(--app-vh, 1dvh), 18px); }
+  #summary-review-btn {
+    margin-top: clamp(14px, 3 * var(--app-vh, 1dvh), 28px);
+    min-height: clamp(48px, 6.6 * var(--app-vh, 1dvh), 60px);
+    font-size: clamp(1.1rem, min(5.2vw, 2.7 * var(--app-vh, 1dvh)), 1.35rem);
+  }
+  #summary .streak-carryover-banner { margin-top: clamp(10px, 2 * var(--app-vh, 1dvh), 18px); padding: 8px 10px; font-size: clamp(0.95rem, min(4.4vw, 2.3 * var(--app-vh, 1dvh)), 1.1rem); }
+  .summary-spacer { min-height: 12px; }
+  /* A little of the free space goes above the result, so it doesn't hug the top on tall phones. */
+  #summary::before { content: ""; flex: 0.3 1 0; }
+  #summary .mode-chip { margin-bottom: clamp(8px, 1.6 * var(--app-vh, 1dvh), 14px); font-size: clamp(1rem, min(4.6vw, 2.4 * var(--app-vh, 1dvh)), 1.2rem); }
+  #restart-same, #share-daily-btn { padding: clamp(12px, 2.4 * var(--app-vh, 1dvh), 20px) 16px; }
+  #restart-same { font-size: clamp(1.6rem, min(8vw, 4.4 * var(--app-vh, 1dvh)), 2.2rem); }
+  #share-daily-btn { font-size: clamp(1.3rem, min(6.4vw, 3.4 * var(--app-vh, 1dvh)), 1.7rem); }
+}
+
+/* Phones held sideways: the result on the left, the next step on the right. */
+@media (orientation: landscape) and (max-height: 520px) {
+  #summary {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-rows: auto auto auto 1fr auto;
+    column-gap: 24px;
+    align-items: start;
+    padding: 0;
+  }
+  .summary-head { grid-column: 1; grid-row: 1 / span 5; align-self: center; }
+  .summary-daily { grid-column: 2; grid-row: 1; margin: 0 0 6px; padding: 6px 10px; }
+  .summary-daily-status { font-size: 0.95rem; }
+  .summary-daily-meta { font-size: 0.85rem; }
+  #summary-review-btn { grid-column: 2; grid-row: 2; margin: 0; padding: 8px 12px; font-size: 1.05rem; }
+  #summary .streak-carryover-banner { grid-column: 2; grid-row: 3; margin: 8px 0 0; padding: 6px 10px; font-size: 0.9rem; }
+  .summary-spacer { display: none; }
+  #summary::before { display: none; }
+  #summary .mode-chip { grid-column: 2; grid-row: 4; align-self: end; margin: 8px auto 8px; }
+  .summary-actions { grid-column: 2; grid-row: 5; }
+  .summary-headline { font-size: clamp(1.5rem, 7 * var(--app-vh, 1dvh), 2rem); }
+  .summary-score { margin-top: 8px; }
+  .summary-score-big { font-size: clamp(2.6rem, 14 * var(--app-vh, 1dvh), 3.6rem); }
+  .summary-score-of { font-size: 1.2rem; }
+  .summary-points { margin-top: 4px; font-size: 1.1rem; }
+  .summary-dots { margin-top: 8px; font-size: 1.1rem; }
+  #restart-same, #share-daily-btn { padding: 10px 16px; font-size: 1.5rem; }
+  #restart-change { margin-top: 2px !important; min-height: 40px; padding: 6px 16px; }
 }
 
 /* ==========================================================================
@@ -2240,7 +2162,7 @@ button, input, select, textarea { font-family: inherit; }
   --bd-bdbdbd: #5b5b5b; /* #BDBDBD · .option.grayed */
   --bd-c5dfc6: #466447; /* #c5dfc6 · .player-level-progress-track */
   --bd-c5e1a5: #5b743f; /* #c5e1a5 · .streak-chip */
-  --bd-c8e6c9: #416642; /* #c8e6c9 · #player-entry-btn, #summary-player-btn */
+  --bd-c8e6c9: #416642; /* #c8e6c9 · #player-entry-btn */
   --bd-d7ecd8: #3f6141; /* #d7ecd8 · .stats-card */
   --bd-d9e9da: #445d45; /* #d9e9da · #how-to-play-overlay .howto-section */
   --bd-d9ecd8: #416140; /* #d9ecd8 · .review-card */
@@ -2257,7 +2179,7 @@ button, input, select, textarea { font-family: inherit; }
   --bg-f2fbf3: #203222; /* #f2fbf3 · .avatar-option.is-selected */
   --bg-f3e5f5: #39273b; /* #F3E5F5 · .tag.daily */
   --bg-f5fff6: #1d2e1f; /* #f5fff6 · .review-card, #daily-challenge-status */
-  --bg-f6fff7: #1d2e1f; /* #f6fff7 · #player-entry-btn, #summary-player-btn */
+  --bg-f6fff7: #1d2e1f; /* #f6fff7 · #player-entry-btn */
   --bg-f7fff7: #1c2d1c; /* #f7fff7 · .avatar-option-icon, #how-to-play-overlay .howto-section */
   --bg-f8f8f8: #272727; /* #f8f8f8 · .leaderboard-empty */
   --bg-f8fff8: #1c2c1c; /* #f8fff8 · .stats-card */

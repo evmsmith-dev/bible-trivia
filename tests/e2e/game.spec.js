@@ -14,8 +14,11 @@ test.describe("normal game", () => {
     // No "review this round?" question: the round goes straight to the summary.
     const summary = page.locator("#summary");
     await expect(summary).toBeVisible();
-    await expect(summary).toContainText("You got 10 right out of 10 (100%)");
-    const score = Number(/Total Score: (\d+)/.exec(await summary.textContent())[1]);
+    await expect(page.locator(".summary-headline")).toHaveText(/^Perfect round, .+!$/);
+    await expect(page.locator(".summary-score")).toHaveAttribute("aria-label", "10 of 10 right, 100%");
+    await expect(page.locator(".summary-score-big")).toHaveText("10");
+    await expect(page.locator(".summary-dots")).toHaveText("✅".repeat(10));
+    const score = Number((await page.locator("#summary-points").textContent()).replace(/,/g, ""));
     expect(score).toBeGreaterThan(1000);
 
     // First game with points is a new high score.
