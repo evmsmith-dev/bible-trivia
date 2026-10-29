@@ -93,7 +93,11 @@
   <!-- ==================== Game screen ==================== -->
   <main id="question-container" style="display:none;">
     <header>
-      <button type="button" id="quit-btn" aria-label="End this round">✕</button>
+      <!-- Top bar: a labelled way out on the left, the running score on the right. -->
+      <div class="game-topbar">
+        <button type="button" id="quit-btn" aria-label="End this round"><span aria-hidden="true">✕</span> End Round</button>
+        <div id="score-display" aria-hidden="true">⭐ 0</div>
+      </div>
       <h1 class="game-title">Bible Trivia</h1>
       <!-- Read out to screen readers; the dots and score below show the same thing visually. -->
       <div id="progress" class="visually-hidden">Question 1 of 10 | Correct: 0 | Score: 0</div>
@@ -106,7 +110,6 @@
       <div class="timer-row" aria-hidden="true">
         <div id="timer-display" class="green">25</div>
         <div id="timer-bar"><div id="timer-fill"></div></div>
-        <div id="score-display" aria-hidden="true">⭐ 0</div>
       </div>
     </header>
 
@@ -151,7 +154,7 @@
   <div id="daily-challenge-overlay" style="display:none;">
     <div class="overlay-backdrop" data-overlay-close></div>
     <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="daily-overlay-title">
-      <button type="button" class="daily-overlay-close overlay-close-button" data-overlay-close aria-label="Close">x</button>
+      <button type="button" class="overlay-close-button" data-overlay-close aria-label="Close">✕</button>
       <h2 id="daily-overlay-title">🎯 Daily Challenge</h2>
       <p id="daily-challenge-status">Loading today's challenge...</p>
       <button id="daily-start-btn" type="button">Start Today's Challenge</button>
@@ -224,7 +227,7 @@
   <div id="how-to-play-overlay" style="display:none;">
     <div class="overlay-backdrop" data-overlay-close></div>
     <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="how-to-play-title">
-      <button type="button" class="overlay-close overlay-close-button" data-overlay-close aria-label="Close">x</button>
+      <button type="button" class="overlay-close-button" data-overlay-close aria-label="Close">✕</button>
       <h2 id="how-to-play-title">How to Play</h2>
 
       <div class="overlay-content">
@@ -304,7 +307,7 @@
   <div id="settings-overlay" style="display:none;">
     <div class="settings-backdrop" data-overlay-close></div>
     <div class="settings-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <button type="button" class="settings-close overlay-close-button" data-overlay-close aria-label="Close settings">x</button>
+      <button type="button" class="overlay-close-button" data-overlay-close aria-label="Close settings">✕</button>
       <h2 id="settings-title">Settings</h2>
 
       <div class="settings-content">

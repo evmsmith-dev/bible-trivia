@@ -584,20 +584,6 @@
       font-size: 2rem;
     }
 
-    #daily-challenge-overlay .daily-overlay-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 40px;
-      height: 40px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
     #daily-challenge-status {
       margin: 0;
       color: var(--fg-2e7d32, #2e7d32);
@@ -793,30 +779,6 @@
   margin: 8px 0;
 }
 
-#how-to-play-overlay .overlay-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 40px;
-  height: 40px;
-  /* border-radius: 50%; */
-  border: none;
-  /*background: var(--primary);
-  color: var(--fg-ffffff, white);
-  font-size: 1.8rem;
-  font-weight: 700;*/
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-.overlay-close-button {
-  padding: 0px;
-  margin: 0px;
-  color: black;
-}
 /* --- Settings Overlay --- */
 
 #settings-overlay {
@@ -879,26 +841,6 @@
   color: var(--fg-555555, #555);
   margin-top: 8px;
 }
-
-#settings-overlay .settings-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 40px;
-  height: 40px;
-  /*border-radius: 50%;*/
-  border: none;
-  /*background: var(--primary);
-  font-size: 1.8rem;
-  font-weight: 700;*/
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-/* --- Leaderboard Overlay --- */
 
 /* --- Difficulty Mode Buttons --- */
 
@@ -1214,25 +1156,69 @@ button, input, select, textarea { font-family: inherit; }
 
 /* ---------- Game: end-round button and confirmation ---------- */
 #question-container > header { position: relative; }
+/* Top bar: "✕ End Round" on the left (labelled, so its purpose is clear), score on the right. */
+.game-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 8px;
+}
 #quit-btn {
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  z-index: 3;
-  width: 40px;
-  height: 40px;
-  min-height: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  min-height: 40px;
   margin: 0;
-  padding: 0;
-  border-radius: 50%;
-  border: 0;
-  background: transparent;
-  color: var(--fg-757575, #757575);
-  font-size: 1.35rem;
+  padding: 6px 14px 6px 12px;
+  border-radius: 999px;
+  border: 2px solid var(--bd-e0e0e0, #e0e0e0);
+  background: var(--bg-ffffff, #ffffff);
+  color: var(--fg-424242, #424242);
+  font-size: 1rem;
+  font-weight: 700;
   line-height: 1;
   box-shadow: none;
   cursor: pointer;
 }
+#quit-btn span { font-size: 1.05em; color: var(--fg-c62828, #c62828); }
+
+/* Close (✕) on the Daily Challenge, Settings and How to Play pop-ups and on the sheets:
+   one look everywhere, a 44px tap target in the corner, and the title keeps clear of it. */
+.overlay-close-button,
+.sheet .sheet-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg-f1f8e9, #f1f8e9);
+  color: var(--fg-1b5e20, #1b5e20);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: none;
+  cursor: pointer;
+}
+#daily-challenge-overlay h2,
+#how-to-play-overlay h2,
+#settings-overlay h2 { padding-right: 52px; line-height: 1.15; }
+@media (max-width: 640px) {
+  #daily-challenge-overlay h2,
+  #how-to-play-overlay h2,
+  #settings-overlay h2 { font-size: clamp(1.5rem, 7vw, 1.8rem); }
+}
+
 #quit-overlay {
   position: fixed;
   inset: 0;
@@ -1744,22 +1730,6 @@ button, input, select, textarea { font-family: inherit; }
   margin: 2px auto 10px;
   border-radius: 999px;
   background: var(--bg-e0e0e0, #e0e0e0);
-}
-.sheet .sheet-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 44px;
-  height: 44px;
-  min-height: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--fg-757575, #757575);
-  font-size: 1.4rem;
-  box-shadow: none;
 }
 .sheet h2 { margin: 0 0 14px; font-size: 1.7rem; color: var(--primary); }
 .sheet-label {
