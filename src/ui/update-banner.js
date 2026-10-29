@@ -11,9 +11,13 @@ export function showUpdateBannerIfReady() {
   const banner = document.createElement("div");
   banner.id = "update-banner";
   banner.setAttribute("role", "status");
-  banner.innerHTML = '<span>A new version of Bible Trivia is available.</span>'
+  banner.setAttribute("aria-labelledby", "update-banner-title");
+  banner.innerHTML = '<p id="update-banner-title" class="update-banner-title">🎉 A new version is available!</p>'
+    + '<p class="update-banner-text">Tap Update to get the latest questions and fixes.</p>'
+    + '<div class="update-banner-actions">'
     + '<button type="button" id="update-banner-btn">Update</button>'
-    + '<button type="button" id="update-banner-dismiss" aria-label="Dismiss update notice">✕</button>';
+    + '<button type="button" id="update-banner-dismiss">Later</button>'
+    + '</div>';
   document.body.appendChild(banner);
   byId("update-banner-btn").addEventListener("click", () => {
     updateRequested = true;

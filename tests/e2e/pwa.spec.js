@@ -38,6 +38,11 @@ test("a new version shows an update banner on the Home screen and reloads on Upd
     await page.evaluate(() => navigator.serviceWorker.getRegistration().then((r) => r.update()));
     const banner = page.locator("#update-banner");
     await expect(banner).toBeVisible({ timeout: 15000 });
+    // The banner uses most of the screen width, so its message doesn't wrap word by word.
+    const viewport = page.viewportSize();
+    const box = await banner.boundingBox();
+    expect(box.width).toBeGreaterThanOrEqual(Math.min(viewport.width - 32, 480) - 1);
+    await expect(page.locator("#update-banner-dismiss")).toHaveText("Later");
     await Promise.all([page.waitForEvent("load"), page.locator("#update-banner-btn").click()]);
     await expect.poll(() => page.evaluate(() => caches.keys())).toEqual(["bible-trivia-TEST"]);
   } finally {
