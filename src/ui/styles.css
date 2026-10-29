@@ -1989,7 +1989,8 @@ button, input, select, textarea { font-family: inherit; }
   font-size: 1.15rem;
   box-shadow: none;
 }
-#player-reset-btn {
+.sheet-actions-spacer { flex: 1; }
+.sheet-danger {
   background: transparent;
   color: var(--fg-c62828, #c62828);
   border: 2px solid var(--bd-ef9a9a, #ef9a9a);
@@ -2138,6 +2139,123 @@ button, input, select, textarea { font-family: inherit; }
 .category-name { font-weight: 600; }
 .category-count { font-weight: 700; }
 .category-track { grid-column: 1 / -1; margin: 4px 0 0; }
+
+/* ---------- Who's playing? ---------- */
+.page-intro { margin: 4px auto 16px; font-size: 1.1rem; line-height: 1.4; color: var(--fg-2f5f34, #2f5f34); }
+.player-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+.player-tile {
+  position: relative;
+  border-radius: 20px;
+  background: var(--card);
+  border: 2px solid var(--bd-d7ecd8, #d7ecd8);
+}
+.player-tile.is-active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25); }
+.player-pick,
+.player-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 170px;
+  margin: 0;
+  padding: 20px 10px 16px;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: var(--fg-1b5e20, #1b5e20);
+  box-shadow: none;
+  cursor: pointer;
+}
+.player-add { border: 2px dashed var(--bd-c8e6c9, #c8e6c9); background: transparent; }
+.player-tile-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-f5fff6, #f5fff6);
+  font-size: 2.8rem;
+  line-height: 1;
+}
+.player-tile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.player-add .player-tile-avatar { color: var(--fg-2f5f34, #2f5f34); font-size: 2.6rem; font-weight: 300; }
+.player-tile-name { font-size: 1.25rem; font-weight: 700; overflow-wrap: anywhere; }
+.player-tile-level { font-size: 0.95rem; color: var(--fg-2f5f34, #2f5f34); }
+.player-edit {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 44px;
+  height: 44px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 1.15rem;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+/* ---------- Scores: Me / Everyone ---------- */
+.scores-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--bd-d7ecd8, #d7ecd8);
+}
+.scores-tab {
+  width: 100%;
+  margin: 0;
+  min-height: 48px;
+  padding: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--fg-2f5f34, #2f5f34);
+  font-size: 1.15rem;
+  font-weight: 700;
+  box-shadow: none;
+}
+.scores-tab.active { background: var(--primary); color: #ffffff; }
+.everyone-list { list-style: none; margin: 10px 0 0; padding: 0; }
+.everyone-row {
+  display: grid;
+  grid-template-columns: 2.2em 44px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--bd-d7ecd8, #d7ecd8);
+}
+.everyone-row:last-child { border-bottom: 0; }
+.everyone-row.is-me { background: var(--bg-f5fff6, #f5fff6); border-radius: 12px; }
+.everyone-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-f5fff6, #f5fff6);
+  font-size: 1.6rem;
+}
+.everyone-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.everyone-name { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
+.everyone-meta { font-size: 0.9rem; color: var(--fg-616161, #616161); }
+.everyone-best { font-size: 1.3rem; font-weight: 700; }
 
 /* ==========================================================================
    Dark mode

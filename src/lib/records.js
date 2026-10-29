@@ -21,14 +21,14 @@ export function sanitizePlayerName(name) {
 
 export const getAvatar = (avatarId) => AVATARS.find((avatar) => avatar.id === avatarId) || AVATARS[0];
 
-export function createDefaultProfile() {
-  return { id: "primary", name: PLAYER_NAME.default, avatarId: AVATARS[0].id, nonDailyCorrectAnswers: 0, levelCountVersion: 2 };
+export function createDefaultProfile(id = "primary") {
+  return { id, name: PLAYER_NAME.default, avatarId: AVATARS[0].id, nonDailyCorrectAnswers: 0, levelCountVersion: 2 };
 }
 
-export function sanitizeProfile(raw) {
+export function sanitizeProfile(raw, id = "primary") {
   const value = raw && typeof raw === "object" ? raw : {};
   return {
-    id: "primary",
+    id,
     name: sanitizePlayerName(value.name) || PLAYER_NAME.default,
     avatarId: AVATARS.some((avatar) => avatar.id === value.avatarId) ? value.avatarId : AVATARS[0].id,
     nonDailyCorrectAnswers: toCount(value.nonDailyCorrectAnswers),

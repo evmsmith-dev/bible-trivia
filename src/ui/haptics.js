@@ -1,13 +1,13 @@
 // Short vibrations on answers. Only devices with the Vibration API get them (Android
 // browsers); iPhones and iPads don't support it, so the setting is hidden there.
-import { KEYS, readLocal, writeLocal } from "../storage/store.js";
+import { DEVICE_KEYS, readLocal, writeLocal } from "../storage/store.js";
 
 export const canVibrate = () => typeof navigator !== "undefined" && typeof navigator.vibrate === "function";
 
-export const isVibrationOn = () => readLocal(KEYS.vibration) !== "off";
+export const isVibrationOn = () => readLocal(DEVICE_KEYS.vibration) !== "off";
 
 export function setVibrationOn(on) {
-  writeLocal(KEYS.vibration, on ? "on" : "off");
+  writeLocal(DEVICE_KEYS.vibration, on ? "on" : "off");
 }
 
 export const VIBRATION = {

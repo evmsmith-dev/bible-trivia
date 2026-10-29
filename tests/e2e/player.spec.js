@@ -18,6 +18,8 @@ test.describe("player and settings", () => {
     await input.fill("  Ruth  ");
     await input.press("Enter"); // Enter saves too
     await expect(page.locator("#player-sheet")).toBeHidden();
+    await expect(page.locator(".player-tile.is-active")).toContainText("Ruth");
+    await h.backToHome(page);
     await expect(page.locator("#player-entry-name")).toHaveText("Ruth");
 
     await page.reload();
@@ -33,6 +35,7 @@ test.describe("player and settings", () => {
     await option.click();
     await expect(option).toHaveAttribute("aria-checked", "true");
     await page.locator("#player-save-btn").click();
+    await h.backToHome(page);
     await expect(page.locator("#player-entry-avatar img")).toHaveAttribute("src", /icons\/avatars\//);
 
     await page.reload();
@@ -46,6 +49,7 @@ test.describe("player and settings", () => {
     await page.locator('#player-avatar-options [data-avatar-id="emoji-cool"]').click();
     await page.locator("#player-sheet .sheet-close").click();
     await expect(page.locator("#player-sheet")).toBeHidden();
+    await h.backToHome(page);
     await expect(page.locator("#player-entry-name")).toHaveText("Player");
     expect((await h.readProfile(page)).avatarId).not.toBe("emoji-cool");
 
@@ -91,6 +95,7 @@ test.describe("player and settings", () => {
     await page.locator("#player-reset-btn").click();
     await expect.poll(async () => (await h.readProfile(page)).nonDailyCorrectAnswers).toBe(0);
     await expect(page.locator("#player-sheet")).toBeHidden();
+    await h.backToHome(page);
     await h.openScores(page);
     await expect(page.locator("#scores-recent-title").locator("..")).toContainText("No games yet");
   });

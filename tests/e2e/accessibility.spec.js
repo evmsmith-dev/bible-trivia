@@ -30,9 +30,17 @@ test("the phone's Back gesture closes pages and sheets instead of leaving the ap
   await expect(page.locator("#scores-page")).toBeHidden();
   await expect(page.locator("#start-btn")).toBeVisible();
 
-  // After closing in the app, the next page reuses the same history entry.
+  // A sheet on top of a page: Back closes the sheet, then the page.
   await h.openPlayerSheet(page);
-  await page.locator("#player-sheet .sheet-close").click();
+  await page.goBack();
+  await expect(page.locator("#player-sheet")).toBeHidden();
+  await expect(page.locator("#players-page")).toBeVisible();
+  await page.goBack();
+  await expect(page.locator("#players-page")).toBeHidden();
+
+  // After closing in the app, the next page reuses the same history entry.
+  await h.openWhosPlaying(page);
+  await page.locator("#players-page .page-back").click();
   await h.openSettings(page);
   await page.goBack();
   await expect(page.locator("#settings-overlay")).toBeHidden();

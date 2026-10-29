@@ -1,11 +1,14 @@
-// Scores page: level and overview, top scores per mode, recent games, right answers by
-// category, and Daily Challenge results. A full page with a back button (Android's Back
+// Scores page. "Me": level and overview, top scores per mode, recent games, right answers by
+// category, and Daily Challenge results. "Everyone" (when 2+ people play on this device):
+// everyone's best score in a mode, ranked. A full page with a back button (Android's Back
 // gesture closes it too; see ui/overlay.js).
 import { CATEGORIES, CATEGORY_EMOJIS, MODES, MODE_KEYS } from "../config.js";
-import { getAverageCorrectSeconds, getTopScores, normalizeMode, sanitizeDailyRecord } from "../lib/records.js";
-import { getLevelProgress } from "../lib/scoring.js";
+import { getAvatar, getAverageCorrectSeconds, getTopScores, normalizeMode, sanitizeDailyRecord } from "../lib/records.js";
+import { getLevel, getLevelProgress } from "../lib/scoring.js";
 import { escapeHtml } from "../lib/utils.js";
 import { state } from "../state.js";
+import { getActivePlayerId, listPlayers, loadPlayerSnapshot } from "../storage/store.js";
+import { avatarHtml } from "./player.js";
 import { byId } from "../ui/dom.js";
 import { openOverlay } from "../ui/overlay.js";
 
@@ -14,6 +17,8 @@ const RECENT_DAILY = 7;
 const MEDALS = ["🥇", "🥈", "🥉"];
 
 let selectedMode = null;
+let view = "me"; // "me" | "everyone"
+let everyone = null; // [{ id, profile, highScores, games }] while the page is open
 
 const number = (value) => Number(value || 0).toLocaleString();
 const modeLabel = (mode) => `${MODES[mode]?.emoji || ""} ${MODES[mode]?.label || "Unknown"}`.trim();
@@ -82,12 +87,7 @@ function topScoresHtml() {
   return `
     <section class="scores-section" aria-labelledby="scores-top-title">
       <h3 id="scores-top-title" class="scores-heading">Top scores</h3>
-      <div class="mode-switch" role="group" aria-label="Difficulty mode">
-        ${MODE_KEYS.map((key) => `
-          <button type="button" class="mode-switch-btn${key === mode ? " active" : ""}" data-mode="${key}" aria-pressed="${key === mode}">
-            <span aria-hidden="true">${MODES[key].emoji}</span> ${MODES[key].shortLabel}
-          </button>`).join("")}
-      </div>
+      ${modeSwitchHtml(mode)}
       ${rows}
       <p class="scores-note">${average === null
         ? `Average answer time appears after your first right answer in ${MODES[mode].label}.`
@@ -156,12 +156,74 @@ function dailyHtml() {
     </section>`;
 }
 
+function modeSwitchHtml(mode) {
+  return `
+      <div class="mode-switch" role="group" aria-label="Difficulty mode">
+        ${MODE_KEYS.map((key) => `
+          <button type="button" class="mode-switch-btn${key === mode ? " active" : ""}" data-mode="${key}" aria-pressed="${key === mode}">
+            <span aria-hidden="true">${MODES[key].emoji}</span> ${MODES[key].shortLabel}
+          </button>`).join("")}
+      </div>`;
+}
+
+function everyoneHtml() {
+  const mode = selectedMode;
+  if (!everyone) return '<section class="scores-section"><p class="scores-empty">Loading everyone’s scores…</p></section>';
+  const activeId = getActivePlayerId();
+  const ranked = everyone
+    .map((player) => ({ ...player, best: getTopScores(player.highScores, mode, 1)[0] || null }))
+    .sort((a, b) => (b.best?.score ?? -1) - (a.best?.score ?? -1) || a.profile.name.localeCompare(b.profile.name));
+  const rows = ranked.map((player, index) => `
+      <li class="everyone-row${player.id === activeId ? " is-me" : ""}">
+        <span class="score-rank" aria-label="${player.best ? `Rank ${index + 1}` : "No score yet"}">${player.best ? MEDALS[index] || index + 1 : "–"}</span>
+        <span class="everyone-avatar" aria-hidden="true">${avatarHtml(getAvatar(player.profile.avatarId))}</span>
+        <span class="everyone-name">
+          <strong>${escapeHtml(player.profile.name)}${player.id === activeId ? " (you)" : ""}</strong>
+          <span class="everyone-meta">Level ${getLevel(player.profile.nonDailyCorrectAnswers)} · ${number(player.games)} ${player.games === 1 ? "game" : "games"}</span>
+        </span>
+        <span class="everyone-best">${player.best ? number(player.best.score) : "–"}</span>
+      </li>`).join("");
+  return `
+    <section class="scores-section" aria-labelledby="scores-everyone-title">
+      <h3 id="scores-everyone-title" class="scores-heading">Best ${MODES[mode].label} score</h3>
+      ${modeSwitchHtml(mode)}
+      <ol class="everyone-list">${rows}</ol>
+      <p class="scores-note">Everyone who plays on this device. Each player's scores stay their own.</p>
+    </section>`;
+}
+
+function tabsHtml() {
+  if (listPlayers().length < 2) return "";
+  return `
+    <div class="scores-tabs" role="group" aria-label="Whose scores">
+      <button type="button" class="scores-tab${view === "me" ? " active" : ""}" data-view="me" aria-pressed="${view === "me"}">Me</button>
+      <button type="button" class="scores-tab${view === "everyone" ? " active" : ""}" data-view="everyone" aria-pressed="${view === "everyone"}">Everyone</button>
+    </div>`;
+}
+
 function renderScores() {
-  byId("scores-content").innerHTML = overviewHtml() + topScoresHtml() + recentGamesHtml() + categoriesHtml() + dailyHtml();
+  const body = view === "everyone"
+    ? everyoneHtml()
+    : overviewHtml() + topScoresHtml() + recentGamesHtml() + categoriesHtml() + dailyHtml();
+  byId("scores-content").innerHTML = tabsHtml() + body;
+}
+
+async function loadEveryone() {
+  const players = listPlayers();
+  const snapshots = await Promise.all(players.map((player) => loadPlayerSnapshot(player.id)));
+  everyone = players.map((player, index) => ({
+    id: player.id,
+    profile: player.id === getActivePlayerId() ? state.profile : player.profile,
+    highScores: snapshots[index].highScores,
+    games: snapshots[index].history.length,
+  }));
+  if (view === "everyone") renderScores();
 }
 
 export function openStats() {
   selectedMode = normalizeMode(state.difficultyMode);
+  view = "me";
+  everyone = null;
   renderScores();
   openOverlay("scores-page", { initialFocus: ".page-back" });
   byId("scores-content").scrollTop = 0;
@@ -170,11 +232,22 @@ export function openStats() {
 export function initStats() {
   byId("home-scores-btn").addEventListener("click", openStats);
   byId("scores-content").addEventListener("click", (event) => {
+    const tab = event.target.closest(".scores-tab");
+    if (tab && tab.dataset.view !== view) {
+      view = tab.dataset.view;
+      renderScores();
+      if (view === "everyone" && !everyone) loadEveryone();
+      document.querySelector(`.scores-tab[data-view="${view}"]`)?.focus();
+      return;
+    }
     const button = event.target.closest(".mode-switch-btn");
     if (!button || button.dataset.mode === selectedMode) return;
     selectedMode = normalizeMode(button.dataset.mode);
-    const section = byId("scores-top-title").closest("section");
-    section.outerHTML = topScoresHtml();
+    if (view === "everyone") {
+      renderScores();
+    } else {
+      byId("scores-top-title").closest("section").outerHTML = topScoresHtml();
+    }
     document.querySelector(`.mode-switch-btn[data-mode="${selectedMode}"]`)?.focus();
   });
 }

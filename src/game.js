@@ -523,7 +523,7 @@ function renderSummary({ percent, isDaily, dailyResult }) {
   byId("restart-change").addEventListener("click", () => {
     if (!state.celebrationActive) goHome();
   });
-  byId("summary-player-btn").addEventListener("click", openPlayerSheet);
+  byId("summary-player-btn").addEventListener("click", () => openPlayerSheet());
   // Change the difficulty for the next round; Play then uses it.
   renderModeChip();
   byId("summary-mode-chip")?.addEventListener("click", () => {
