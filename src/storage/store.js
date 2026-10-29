@@ -247,6 +247,19 @@ function createIndexedDbBackend(db, id) {
       Object.values(STORES).forEach((name) => tx.objectStore(name).clear());
       await transactionDone(tx);
     },
+
+    /** Replaces everything with a snapshot (used when loading a backup). */
+    async replace(snapshot) {
+      const tx = db.transaction(Object.values(STORES), "readwrite");
+      Object.values(STORES).forEach((name) => tx.objectStore(name).clear());
+      snapshot.history.forEach(({ id, ...record }) => tx.objectStore(STORES.history).add(record));
+      snapshot.highScores.forEach(({ id, ...record }) => tx.objectStore(STORES.scores).add(record));
+      tx.objectStore(STORES.settings).put({ key: "difficultyMode", value: snapshot.difficultyMode });
+      tx.objectStore(STORES.stats).put({ ...snapshot.playerStats, key: "lifetime" });
+      Object.values(snapshot.dailyChallenges).forEach((record) => tx.objectStore(STORES.daily).put(record));
+      tx.objectStore(STORES.dailyStats).put({ ...snapshot.dailyStats, key: "lifetime" });
+      await transactionDone(tx);
+    },
   };
 }
 
@@ -286,6 +299,16 @@ function createLocalStorageBackend(id) {
         writeLocal(keys.dailyChallenges, JSON.stringify(snapshot.dailyChallenges));
       }
       return undefined;
+    },
+
+    async replace(next) {
+      snapshot = structuredClone(next);
+      writeLocal(keys.history, JSON.stringify(snapshot.history));
+      writeLocal(keys.highScores, JSON.stringify(snapshot.highScores));
+      writeLocal(keys.difficultyMode, snapshot.difficultyMode);
+      writeLocal(keys.playerStats, JSON.stringify(snapshot.playerStats));
+      writeLocal(keys.dailyStats, JSON.stringify(snapshot.dailyStats));
+      writeLocal(keys.dailyChallenges, JSON.stringify(snapshot.dailyChallenges));
     },
 
     async reset() {
@@ -416,6 +439,12 @@ export async function deletePlayer(id) {
   if (backend.id === id) throw new Error("Switch to another player before deleting this one");
   const ids = players.ids.filter((playerId) => playerId !== id);
   writePlayers({ ids, activeId: ids.includes(players.activeId) ? players.activeId : ids[0] });
+  await removePlayerData(id);
+  return true;
+}
+
+/** Deletes everything saved for one player (their localStorage keys and database). */
+async function removePlayerData(id) {
   const prefix = playerPrefix(id);
   try {
     Object.keys(localStorage).filter((key) => key.startsWith(prefix)).forEach((key) => localStorage.removeItem(key));
@@ -428,7 +457,95 @@ export async function deletePlayer(id) {
       request.onsuccess = request.onerror = request.onblocked = () => resolve();
     });
   }
-  return true;
+}
+
+// ---------- backup file ----------
+// One JSON file with every player on the device, so progress can be kept safe or moved to a
+// new phone. Loading a backup replaces everything saved on this device.
+
+export const BACKUP_APP = "bible-trivia";
+export const BACKUP_VERSION = 1;
+const VALID_ID = /^[a-z0-9]+$/i;
+
+/** Everything saved on this device, as a plain object ready for JSON.stringify. */
+export async function createBackup() {
+  const { ids, activeId } = readPlayers();
+  const players = [];
+  for (const id of ids) {
+    const snapshot = await loadPlayerSnapshot(id);
+    const keys = playerKeys(id);
+    const recent = readLocalJson(keys.recentQuestions, []);
+    players.push({
+      id,
+      ...snapshot,
+      recentQuestionIds: Array.isArray(recent) ? recent.filter(Number.isInteger) : [],
+    });
+  }
+  return {
+    app: BACKUP_APP,
+    version: BACKUP_VERSION,
+    saved: new Date().toISOString(),
+    activeId,
+    device: { theme: readLocal(DEVICE_KEYS.theme), vibration: readLocal(DEVICE_KEYS.vibration) },
+    players,
+  };
+}
+
+/** Checks a parsed backup file and cleans every value in it. Returns null if it isn't one. */
+export function readBackup(data) {
+  if (!data || typeof data !== "object" || data.app !== BACKUP_APP) return null;
+  if (!Number.isInteger(data.version) || data.version < 1 || data.version > BACKUP_VERSION) return null;
+  if (!Array.isArray(data.players)) return null;
+  const seen = new Set();
+  const players = [];
+  for (const raw of data.players) {
+    const id = typeof raw?.id === "string" && VALID_ID.test(raw.id) ? raw.id : null;
+    if (!id || seen.has(id) || players.length >= MAX_PLAYERS) continue;
+    seen.add(id);
+    players.push({
+      id,
+      profile: sanitizeProfile(raw.profile, id),
+      history: sanitizeHistory(raw.history),
+      highScores: trimHighScores(Array.isArray(raw.highScores) ? raw.highScores : []),
+      difficultyMode: normalizeMode(raw.difficultyMode),
+      playerStats: sanitizePlayerStats(raw.playerStats),
+      dailyStats: sanitizeDailyStats(raw.dailyStats),
+      dailyChallenges: recentDaily(Object.values(raw.dailyChallenges && typeof raw.dailyChallenges === "object" ? raw.dailyChallenges : {})),
+      recentQuestionIds: Array.isArray(raw.recentQuestionIds) ? raw.recentQuestionIds.filter(Number.isInteger) : [],
+    });
+  }
+  if (!players.length) return null;
+  const pick = (value, allowed) => (allowed.includes(value) ? value : null);
+  return {
+    saved: typeof data.saved === "string" ? data.saved : null,
+    activeId: seen.has(data.activeId) ? data.activeId : players[0].id,
+    device: {
+      theme: pick(data.device?.theme, ["auto", "light", "dark"]),
+      vibration: pick(data.device?.vibration, ["on", "off"]),
+    },
+    players,
+  };
+}
+
+/** Replaces everything on this device with a backup from readBackup(). Reload the page afterwards. */
+export async function restoreBackup(backup) {
+  backend.close();
+  for (const id of readPlayers().ids) await removePlayerData(id);
+  for (const player of backup.players) {
+    const keys = playerKeys(player.id);
+    writeProfile(player.id, player.profile);
+    writeLocal(keys.recentQuestions, JSON.stringify(player.recentQuestionIds));
+    writeLocal(keys.howToPlaySeen, "1");
+    const target = await openBackend(player.id);
+    try {
+      await target.replace(player);
+    } finally {
+      target.close();
+    }
+  }
+  writePlayers({ ids: backup.players.map((player) => player.id), activeId: backup.activeId });
+  if (backup.device.theme) writeLocal(DEVICE_KEYS.theme, backup.device.theme);
+  if (backup.device.vibration) writeLocal(DEVICE_KEYS.vibration, backup.device.vibration);
 }
 
 // ---------- the active player's data ----------
