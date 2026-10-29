@@ -154,3 +154,35 @@ test("the summary spreads over the whole screen on a tall phone", async ({ page 
   expect(home.height).toBeGreaterThanOrEqual(44);
   expect(await overflow(page)).toBeLessThanOrEqual(0);
 });
+
+test.describe("tablets", () => {
+  for (const [name, width, height] of [["an iPad", 820, 1180], ["an iPad held sideways", 1180, 820]]) {
+    test(`Home, game and summary fill the screen on ${name}`, async ({ page, hasTouch }) => {
+      test.skip(!hasTouch, "the tablet layout is for touch screens");
+      await page.setViewportSize({ width, height });
+      await h.openApp(page);
+      const fills = async (selector) => {
+        const box = await page.locator(selector).boundingBox();
+        expect(box.height).toBeGreaterThan(height * 0.9);
+        expect(await overflow(page)).toBeLessThanOrEqual(0);
+      };
+      await fills("#welcome");
+      expect(await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize))).toBeGreaterThanOrEqual(17);
+      await h.startNormalGame(page);
+      await fills("#question-container");
+      await h.playRound(page, { correctAnswers: 7 });
+      await h.expectSummary(page);
+      await page.clock.runFor(16000);
+      await fills("#question-container");
+    });
+  }
+
+  test("desktop browsers keep the centered card", async ({ page, hasTouch }) => {
+    test.skip(hasTouch, "desktop only");
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await h.openApp(page);
+    const box = await page.locator("#welcome").boundingBox();
+    expect(box.width).toBeLessThanOrEqual(560);
+    expect(box.height).toBeLessThan(900 * 0.9);
+  });
+});

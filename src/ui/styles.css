@@ -1090,10 +1090,12 @@ button, input, select, textarea { font-family: inherit; }
 }
 .tag.daily { background: var(--bg-f3e5f5, #F3E5F5); border-color: var(--bd-ba68c8, #BA68C8); color: var(--fg-6a1b9a, #6A1B9A); }
 
-/* ---------- Phones: each screen fills the viewport exactly, with no scrolling ----------
+/* ---------- Phones and touch tablets: each screen fills the viewport exactly, with no scrolling ----------
+   Tablets (iPad) use the same full-screen layout; the tablet block further down makes the
+   text and buttons bigger to suit the larger screen. ----------
    Sizes use min(vw, dvh) so text and buttons grow on tall phones and shrink on short
    ones (iPhone SE, Safari with its toolbars) instead of jumping at fixed breakpoints. */
-@media (max-width: 640px), (max-height: 760px) {
+@media (max-width: 640px), (max-height: 760px), (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
   body { justify-content: stretch; }
   
   #question-container { display: flex; flex-direction: column; }
@@ -1163,7 +1165,7 @@ button, input, select, textarea { font-family: inherit; }
 #backup-overlay { z-index: 9999; } /* above Settings */
 
 /* Settings on phones: a little more compact, so all three sections fit on most screens. */
-@media (max-width: 640px), (max-height: 760px) {
+@media (max-width: 640px), (max-height: 760px), (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
   #settings-overlay .settings-card { padding: 22px 20px; }
   #settings-overlay h2 { margin-bottom: 10px; }
   .settings-content { font-size: 1.1rem; }
@@ -1487,7 +1489,7 @@ button, input, select, textarea { font-family: inherit; }
 #welcome .load-error { margin: 16px 0; text-align: center; }
 
 /* Phones held upright: the card fills the screen and sizes follow its height. */
-@media (max-width: 640px), (max-height: 760px) {
+@media (max-width: 640px), (max-height: 760px), (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
   #welcome { flex: 1 0 auto; width: 100%; padding: clamp(14px, 2.6 * var(--app-vh, 1dvh), 22px) 18px 0; border-radius: 24px; }
   #home-links { margin: 0 -18px; }
   .home-brand { font-size: clamp(1.25rem, min(6vw, 3 * var(--app-vh, 1dvh)), 1.5rem); }
@@ -1652,7 +1654,7 @@ button, input, select, textarea { font-family: inherit; }
 .summary-actions .share-status:empty { display: none; }
 
 /* Phones held upright: the card fills the screen and sizes follow its height. */
-@media (max-width: 640px), (max-height: 760px) {
+@media (max-width: 640px), (max-height: 760px), (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
   #summary {
     flex: 1 0 auto;
     padding: clamp(6px, 2.4 * var(--app-vh, 1dvh), 26px) 2px calc(clamp(0px, 0.6 * var(--app-vh, 1dvh), 8px) + env(safe-area-inset-bottom, 0px));
@@ -1751,7 +1753,7 @@ button, input, select, textarea { font-family: inherit; }
   .summary-dots { margin-top: 6px; }
   #summary .streak-carryover-banner { margin-top: 8px; }
 }
-@media (max-width: 640px), (max-height: 760px) {
+@media (max-width: 640px), (max-height: 760px), (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
   .summary-badges { margin-top: clamp(6px, 1.4 * var(--app-vh, 1dvh), 12px); padding: 4px 12px; min-height: 36px; font-size: clamp(0.9rem, min(4.2vw, 2.2 * var(--app-vh, 1dvh)), 1.05rem); }
 }
 
@@ -2344,3 +2346,67 @@ button, input, select, textarea { font-family: inherit; }
 /* ---------- Read first: answers unlock a moment after the question appears ---------- */
 #options.is-reading .option { opacity: 0.55; }
 #options.is-reading .option:disabled { cursor: default; }
+
+/* ---------- Touch tablets (iPad): the phone layout, scaled up ----------
+   The full-screen phone layout above applies to tablets too (see "Phones and touch tablets").
+   A larger root font size scales every rem-based size and limit with the screen, and the
+   cards stay a comfortable width on a tablet held sideways. */
+@media (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
+  html { font-size: clamp(17px, 1.7 * var(--app-vh, 1dvh), 22px); }
+  body { padding: max(20px, env(safe-area-inset-top)) 24px max(20px, env(safe-area-inset-bottom)); }
+  #welcome, #question-container { width: 100%; max-width: 780px; margin-inline: auto; }
+  .home-brand img { width: 3rem; height: 3rem; }
+  #player-entry-btn { width: 4rem; height: 4rem; }
+  #player-entry-btn .player-entry-avatar { font-size: 2.4rem; }
+  #player-entry-btn .player-entry-avatar img { width: 3.6rem; height: 3.6rem; }
+  .settings-card, #how-to-play-overlay .overlay-card, #daily-challenge-overlay .overlay-card { max-width: 640px; }
+
+  /* Home */
+  #welcome { padding: 28px 32px 0; }
+  #home-links { margin: 0 -32px; }
+  .home-brand { font-size: 1.7rem; }
+  .home-hello { margin-top: 6vh; }
+  .home-greeting { font-size: 3.6rem; }
+  .home-sub { font-size: 1.4rem; margin-top: 10px; }
+  .home-level { font-size: 1.1rem; margin-top: 18px; }
+  .home-level-track { height: 12px; }
+  .daily-card { margin-top: 5vh; padding: 20px 22px; gap: 16px; }
+  .daily-card-icon { font-size: 2.6rem; }
+  .daily-card-title { font-size: 1.4rem; }
+  .daily-card-status { font-size: 1.15rem; }
+  #welcome .mode-chip { font-size: 1.3rem; padding: 10px 24px; margin-bottom: 18px; }
+  #start-btn { font-size: 2.6rem; padding: 24px 16px; margin-bottom: 28px; }
+  #home-links { padding-top: 12px; padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+  #home-links button { font-size: 1.1rem; min-width: 110px; }
+  .home-link-icon { font-size: 2rem; }
+
+  /* Game */
+  #question-container { padding: 22px 28px; }
+  #quit-btn { font-size: 1.1rem; min-height: 46px; padding: 8px 18px 8px 14px; }
+  #score-display { font-size: 1.6rem; }
+  .streak-chip { font-size: 1rem; padding: 4px 12px; }
+  #progress-dots { font-size: 1.7rem; gap: 6px; }
+  #timer-display { font-size: 1.7rem; }
+  #timer-bar { height: 16px; }
+  #question-container .question-meta .tag { font-size: 1.05rem; padding: 4px 14px; }
+  #question { font-size: 2.4rem; }
+  #options { gap: 16px; }
+  .option { min-height: 14vh; font-size: 1.7rem; padding: 12px 20px; border-radius: 22px; }
+  #feedback { font-size: 2.4rem; }
+
+  /* Summary */
+  .summary-headline { font-size: 3.2rem; }
+  .summary-score-big { font-size: 6.5rem; }
+  .summary-score-of { font-size: 1.9rem; }
+  .summary-points { font-size: 1.7rem; }
+  .summary-dots { font-size: 2rem; margin-top: 18px; }
+  .summary-badges { font-size: 1.15rem; padding: 8px 18px; }
+  #summary-review-btn { font-size: 1.45rem; min-height: 64px; margin-top: 4vh; }
+  .summary-daily-status { font-size: 1.3rem; }
+  .summary-daily-meta { font-size: 1.1rem; }
+  #summary .mode-chip { font-size: 1.3rem; padding: 10px 24px; margin-bottom: 18px; }
+  #restart-same, #daily-retry-btn { font-size: 2.6rem; padding: 22px 16px; }
+  #share-daily-btn { font-size: 2rem; padding: 20px 16px; }
+  #restart-change { font-size: 1.4rem; }
+  .summary-actions.is-daily #restart-change { font-size: 1.6rem; min-height: 68px; }
+}
