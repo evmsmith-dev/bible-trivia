@@ -1,0 +1,22 @@
+[
+  {"id":996,"set":{"q":"Which nation did the prophet Amos condemn for burning the bones of Edom's king to lime?","opts":["Moab","Ammon","Philistia","Tyre"],"ans":0,"ref":"Amos 2:1"}},
+  {"id":997,"set":{"q":"Which king of Judah rebuilt altars to Baal and made an Asherah pole, as Ahab had done?"}},
+  {"id":537,"set":{"q":"Who rebuilt Jericho at the cost of his oldest and youngest sons?","opts":["Hiel of Bethel","Achan","Omri","Jeroboam"],"ans":0}},
+  {"id":167,"set":{"q":"Which king of Israel bought the hill of Samaria and built the city there?","ref":"1 Kings 16:24"}},
+  {"id":1116,"set":{"q":"Which prophet is quoted in Romans 9 about God calling those who were 'not my people' his people?"}},
+  {"id":88,"remove":true},
+  {"id":104,"set":{"q":"Who laughed at Jesus when he said Jairus' daughter was only asleep?","opts":["The mourners at Jairus' house","Herod","Pilate","The chief priests"],"ans":0,"ref":"Mark 5:38-40"}},
+  {"id":1472,"set":{"q":"At whose feet did Paul say he was educated?","opts":["Gamaliel","Annas","Caiaphas","Nicodemus"],"ans":0,"ref":"Acts 22:3"}},
+  {"id":591,"set":{"q":"Which companion of Paul did he call 'the beloved physician'?"}},
+  {"id":394,"remove":true},
+  {"id":102,"set":{"q":"Which valley outside Jerusalem, linked with child sacrifice, gave its name to 'Gehenna'?","opts":["Valley of Hinnom","Kidron Valley","Valley of Elah","Jezreel Valley"],"ans":0,"ref":"Jeremiah 7:31-32"}},
+  {"id":35,"remove":true},
+  {"id":1467,"set":{"q":"Which servant of the church in Cenchreae did Paul commend to the Romans?"}},
+  {"id":77,"set":{"q":"Who is called God's friend in both Isaiah 41:8 and James 2:23?"}},
+  {"id":83,"remove":true},
+  {"id":97,"remove":true},
+  {"id":589,"remove":true},
+  {"id":265,"set":{"q":"Which two men, with their households, were swallowed by the earth after rebelling with Korah against Moses?","opts":["Dathan and Abiram","Nadab and Abihu","Hophni and Phinehas","Jannes and Jambres"],"ans":0,"ref":"Numbers 16:27-33"}},
+  {"id":328,"set":{"q":"Counting words in the original Greek, which is the shortest book in the Bible?"}},
+  {"id":338,"set":{"q":"Counting Luke and Acts together, which New Testament writer wrote the most words?"}}
+]
