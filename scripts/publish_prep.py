@@ -106,10 +106,5 @@ if __name__ == "__main__":
         ]
     )
 
-    # Verify the deployable index.html still contains key app markers.
-    run([sys.executable, "scripts/test_minified.py", "index.html", "index.source.html"])
-    # Verify game history save flow is protected against duplicate persistence regression.
-    run([sys.executable, "scripts/test_history_dedup.py"])
-
     print(f"Version bumped: {previous_version} -> {next_version}")
-    print("Publish prep complete: index.html is minified and verified.")
+    print("Publish prep complete: index.html is minified. Run `npm test` to verify.")

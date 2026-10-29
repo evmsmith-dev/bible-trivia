@@ -331,9 +331,11 @@
       return false;
     }
 
+    // Reload only when the player asked for the update. (A first visit also fires
+    // controllerchange when the service worker claims the page; that must not reload.)
     let reloading = false;
     navigatorObj.serviceWorker.addEventListener("controllerchange", () => {
-      if (reloading) return;
+      if (reloading || !globalScope.__bibleTriviaUpdateRequested) return;
       reloading = true;
       reloadPage();
     });

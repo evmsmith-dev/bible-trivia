@@ -52,7 +52,17 @@
     let useIndexedDB = true;
     let dbReady = false;
 
+    // Diagnostic logging is off by default. Enable with ?debug in the URL or
+    // localStorage.setItem("bibleTrivia_debug", "1").
+    const debugEnabled = (() => {
+      try {
+        return /[?&]debug\b/.test(globalScope.location.search) || globalScope.localStorage.getItem("bibleTrivia_debug") === "1";
+      } catch (_error) {
+        return false;
+      }
+    })();
     const log = (action, data) => {
+      if (!debugEnabled) return;
       const timestamp = new Date().toISOString();
       console.log(`[DBManager ${timestamp}] ${action}`, data || "");
     };
@@ -221,75 +231,6 @@
       });
     };
 
-    const migrateFromLocalStorage = async () => {
-      try {
-        const lsHistory = storageKeys.history ? localStorage.getItem(storageKeys.history) : null;
-        const lsScores = storageKeys.highScores ? localStorage.getItem(storageKeys.highScores) : null;
-        const lsHard = storageKeys.includeHardLegacy ? localStorage.getItem(storageKeys.includeHardLegacy) : null;
-
-        let migrated = false;
-
-        if (lsHistory) {
-          try {
-            const historicalData = JSON.parse(lsHistory);
-            if (Array.isArray(historicalData) && historicalData.length > 0) {
-              for (const record of historicalData) {
-                if (!record.difficultyMode) {
-                  record.difficultyMode = "medium";
-                }
-                if (validators.gameRecord(record)) {
-                  await addGameRecord(record);
-                }
-              }
-              migrated = true;
-              log("Migrated game history from localStorage", `${historicalData.length} records`);
-            }
-          } catch (e) {
-            log("Failed to parse game history from localStorage", e.message);
-          }
-        }
-
-        if (lsScores) {
-          try {
-            const scoresData = JSON.parse(lsScores);
-            if (Array.isArray(scoresData) && scoresData.length > 0) {
-              for (const record of scoresData) {
-                if (!record.difficultyMode) {
-                  record.difficultyMode = "medium";
-                }
-                if (validators.highScore(record)) {
-                  await addHighScore(record);
-                }
-              }
-              migrated = true;
-              log("Migrated high scores from localStorage", `${scoresData.length} records`);
-            }
-          } catch (e) {
-            log("Failed to parse high scores from localStorage", e.message);
-          }
-        }
-
-        if (lsHard !== null) {
-          try {
-            const newValue = "medium";
-            await saveSetting("difficultyMode", newValue);
-            migrated = true;
-            log("Migrated includeHard boolean to difficultyMode string", { oldValue: lsHard, newValue });
-          } catch (e) {
-            log("Failed to migrate difficulty setting from localStorage", e.message);
-          }
-        }
-
-        if (migrated) {
-          log("Migration from localStorage complete");
-        }
-
-        return migrated;
-      } catch (e) {
-        log("Migration failed with error", e.message);
-        throw e;
-      }
-    };
 
     const addGameRecord = (record) => {
       return new Promise((resolve, reject) => {
@@ -815,8 +756,6 @@
 
         await openDatabase();
 
-        log("Skipped localStorage migration for scoped player data");
-
         return true;
       } catch (e) {
         log("Database initialization failed, falling back to localStorage", e.message);
@@ -849,7 +788,6 @@
       loadDailyStats,
       clearDailyChallenges,
       log,
-      migrateFromLocalStorage,
     };
   }
 

@@ -16,7 +16,6 @@ const ASSETS_TO_CACHE = [
   "src/storage/db-manager.min.js",
   "src/storage/profile-store.min.js",
   "src/core/runtime-constants.min.js",
-  "src/core/runtime-state.min.js",
   "src/core/runtime-engine.min.js",
   "src/core/runtime-utils.min.js",
   "src/data/questions-bank.min.js",

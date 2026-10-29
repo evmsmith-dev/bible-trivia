@@ -11,7 +11,7 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
 
     const CoreConstants = window.BibleTriviaConstants || {};
     const GAME_MODE_NORMAL = CoreConstants.GAME_MODE_NORMAL || 'normal';
-    const GAME_MODE_DAILY='daily';
+    const GAME_MODE_DAILY = CoreConstants.GAME_MODE_DAILY || 'daily';
     const DAILY_CHALLENGE_MODE_VERSION = CoreConstants.DAILY_CHALLENGE_MODE_VERSION || 'v1';
     const DAILY_CHALLENGE_DIFFICULTY_MODE = CoreConstants.DAILY_CHALLENGE_DIFFICULTY_MODE || 'medium';
     const DAILY_CHALLENGE_RECENT_LIMIT = Number.isFinite(CoreConstants.DAILY_CHALLENGE_RECENT_LIMIT)
@@ -85,241 +85,135 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
     let timeLeftAtAnswer = 0;
     let difficultyMode = 'medium';  // 'easy' | 'medium' | 'hard' | 'superHard'
     let roundReviewPreference = 'ask'; // 'ask' | 'alwaysReview' | 'alwaysSkip'
-    const RuntimeState = window.BibleTriviaState || {};
-    const appState = typeof RuntimeState.createAppState === 'function'
-      ? RuntimeState.createAppState({
-          gameQuestions,
-          timerInterval,
-          timeLeftAtAnswer,
-          currentIndex,
-          correctCount,
-          totalScore,
-          currentGameStreak,
-          currentGameMaxStreak,
-          bonusCarryStreak,
-          activeDailyChallengeDateKey,
-          activeDailyChallengeRecord,
-          lastRoundReview,
-          pendingHighScoreCelebrationScore,
-          pendingLevelCelebrationLevel,
-          pendingDailyCompletionCelebration,
-          isHighScoreCelebrationActive,
-          gameHistory,
-          highScores,
-          playerProfile,
-          currentGameMode,
-          difficultyMode,
-          roundReviewPreference,
-          playerStats,
-          dailyStats,
-          dailyChallengeMap
-        })
-      : null;
-
     function setCurrentGameMode(nextMode) {
       currentGameMode = String(nextMode || GAME_MODE_NORMAL);
-      if (appState) {
-        appState.setCurrentGameMode(currentGameMode);
-      }
       return currentGameMode;
     }
 
     function setGameQuestions(nextQuestions) {
       gameQuestions = Array.isArray(nextQuestions) ? nextQuestions : [];
-      if (appState) {
-        appState.setGameQuestions(gameQuestions);
-      }
       return gameQuestions;
     }
 
     function setTimerInterval(nextTimerInterval) {
       timerInterval = nextTimerInterval || null;
-      if (appState) {
-        appState.setTimerInterval(timerInterval);
-      }
       return timerInterval;
     }
 
     function setTimeLeftAtAnswer(nextSeconds) {
       const value = Number.isFinite(nextSeconds) ? Math.max(0, nextSeconds) : 0;
       timeLeftAtAnswer = value;
-      if (appState) {
-        appState.setTimeLeftAtAnswer(timeLeftAtAnswer);
-      }
       return timeLeftAtAnswer;
     }
 
     function setCurrentIndex(nextIndex) {
       const value = Number.isFinite(nextIndex) ? Math.max(0, Math.round(nextIndex)) : 0;
       currentIndex = value;
-      if (appState) {
-        appState.setCurrentIndex(currentIndex);
-      }
       return currentIndex;
     }
 
     function setCorrectCount(nextCount) {
       const value = Number.isFinite(nextCount) ? Math.max(0, Math.round(nextCount)) : 0;
       correctCount = value;
-      if (appState) {
-        appState.setCorrectCount(correctCount);
-      }
       return correctCount;
     }
 
     function setTotalScore(nextScore) {
       const value = Number.isFinite(nextScore) ? Math.max(0, Math.round(nextScore)) : 0;
       totalScore = value;
-      if (appState) {
-        appState.setTotalScore(totalScore);
-      }
       return totalScore;
     }
 
     function setCurrentGameStreak(nextStreak) {
       const value = Number.isFinite(nextStreak) ? Math.max(0, Math.round(nextStreak)) : 0;
       currentGameStreak = value;
-      if (appState) {
-        appState.setCurrentGameStreak(currentGameStreak);
-      }
       return currentGameStreak;
     }
 
     function setCurrentGameMaxStreak(nextStreak) {
       const value = Number.isFinite(nextStreak) ? Math.max(0, Math.round(nextStreak)) : 0;
       currentGameMaxStreak = value;
-      if (appState) {
-        appState.setCurrentGameMaxStreak(currentGameMaxStreak);
-      }
       return currentGameMaxStreak;
     }
 
     function setBonusCarryStreak(nextStreak) {
       const value = Number.isFinite(nextStreak) ? Math.max(0, Math.round(nextStreak)) : 0;
       bonusCarryStreak = value;
-      if (appState) {
-        appState.setBonusCarryStreak(bonusCarryStreak);
-      }
       return bonusCarryStreak;
     }
 
     function setActiveDailyChallengeDateKey(nextDateKey) {
       activeDailyChallengeDateKey = nextDateKey === null ? null : String(nextDateKey || '');
-      if (appState) {
-        appState.setActiveDailyChallengeDateKey(activeDailyChallengeDateKey);
-      }
       return activeDailyChallengeDateKey;
     }
 
     function setActiveDailyChallengeRecord(nextRecord) {
       activeDailyChallengeRecord = nextRecord || null;
-      if (appState) {
-        appState.setActiveDailyChallengeRecord(activeDailyChallengeRecord);
-      }
       return activeDailyChallengeRecord;
     }
 
     function setLastRoundReview(nextEntries) {
       lastRoundReview = Array.isArray(nextEntries) ? nextEntries : [];
-      if (appState) {
-        appState.setLastRoundReview(lastRoundReview);
-      }
       return lastRoundReview;
     }
 
     function setPendingHighScoreCelebrationScore(nextScore) {
       pendingHighScoreCelebrationScore = nextScore === null ? null : Number(nextScore);
-      if (appState) {
-        appState.setPendingHighScoreCelebrationScore(pendingHighScoreCelebrationScore);
-      }
       return pendingHighScoreCelebrationScore;
     }
 
     function setPendingLevelCelebrationLevel(nextLevel) {
       pendingLevelCelebrationLevel = nextLevel === null ? null : Number(nextLevel);
-      if (appState) {
-        appState.setPendingLevelCelebrationLevel(pendingLevelCelebrationLevel);
-      }
       return pendingLevelCelebrationLevel;
     }
 
     function setPendingDailyCompletionCelebration(nextValue) {
       pendingDailyCompletionCelebration = Boolean(nextValue);
-      if (appState) {
-        appState.setPendingDailyCompletionCelebration(pendingDailyCompletionCelebration);
-      }
       return pendingDailyCompletionCelebration;
     }
 
     function setIsHighScoreCelebrationActive(nextValue) {
       isHighScoreCelebrationActive = Boolean(nextValue);
-      if (appState) {
-        appState.setIsHighScoreCelebrationActive(isHighScoreCelebrationActive);
-      }
       return isHighScoreCelebrationActive;
     }
 
     function setGameHistory(nextHistory) {
       gameHistory = Array.isArray(nextHistory) ? nextHistory : [];
-      if (appState) {
-        appState.setGameHistory(gameHistory);
-      }
       return gameHistory;
     }
 
     function setHighScores(nextScores) {
       highScores = Array.isArray(nextScores) ? nextScores : [];
-      if (appState) {
-        appState.setHighScores(highScores);
-      }
       return highScores;
     }
 
     function setPlayerProfile(nextProfile) {
       playerProfile = nextProfile;
-      if (appState) {
-        appState.setPlayerProfile(playerProfile);
-      }
       return playerProfile;
     }
 
     function setDifficultyMode(nextMode) {
       difficultyMode = normalizeDifficultyMode(nextMode);
-      if (appState) {
-        appState.setDifficultyMode(difficultyMode);
-      }
       return difficultyMode;
     }
 
     function setRoundReviewPreference(nextPreference) {
       roundReviewPreference = normalizeRoundReviewPreference(nextPreference);
-      if (appState) {
-        appState.setRoundReviewPreference(roundReviewPreference);
-      }
       return roundReviewPreference;
     }
 
     function setPlayerStats(nextStats) {
       playerStats = nextStats;
-      if (appState) {
-        appState.setPlayerStats(playerStats);
-      }
       return playerStats;
     }
 
     function setDailyStats(nextStats) {
       dailyStats = nextStats;
-      if (appState) {
-        appState.setDailyStats(dailyStats);
-      }
       return dailyStats;
     }
 
     function setDailyChallengeMap(nextMap) {
       dailyChallengeMap = nextMap && typeof nextMap === 'object' ? nextMap : {};
-      if (appState) {
-        appState.setDailyChallengeMap(dailyChallengeMap);
-      }
       return dailyChallengeMap;
     }
     const AUTO_ADVANCE_CORRECT_MS = Number.isFinite(CoreConstants.AUTO_ADVANCE_CORRECT_MS)
@@ -343,7 +237,6 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
           profile: 'bibleTriviaPlayer_primary_profile',
           history: 'bibleTriviaPlayer_primary_history',
           highScores: 'bibleTriviaPlayer_primary_highScores',
-          includeHardLegacy: 'bibleTriviaPlayer_primary_includeHardLegacy',
           difficultyMode: 'bibleTriviaPlayer_primary_difficultyMode',
           roundReviewPreference: 'bibleTriviaPlayer_primary_roundReviewPreference',
           playerStats: 'bibleTriviaPlayer_primary_playerStats',
@@ -361,7 +254,6 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
     const STORAGE_KEY_PROFILE = storageKeys.profile;
     const STORAGE_KEY_HISTORY = storageKeys.history;
     const STORAGE_KEY_HIGHSCORES = storageKeys.highScores;
-    const STORAGE_KEY_HARD_TOGGLE = storageKeys.includeHardLegacy;
     const STORAGE_KEY_DIFFICULTY_MODE = storageKeys.difficultyMode;
     const STORAGE_KEY_ROUND_REVIEW_PREFERENCE = storageKeys.roundReviewPreference;
     const STORAGE_KEY_PLAYER_STATS = storageKeys.playerStats;
@@ -384,7 +276,6 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
         profile: STORAGE_KEY_PROFILE,
         history: STORAGE_KEY_HISTORY,
         highScores: STORAGE_KEY_HIGHSCORES,
-        includeHardLegacy: STORAGE_KEY_HARD_TOGGLE,
         difficultyMode: STORAGE_KEY_DIFFICULTY_MODE,
         roundReviewPreference: STORAGE_KEY_ROUND_REVIEW_PREFERENCE,
         playerStats: STORAGE_KEY_PLAYER_STATS,
@@ -413,7 +304,6 @@ const allQuestionsById = questionRuntimePayload?.questionsById instanceof Map
             profile: STORAGE_KEY_PROFILE,
             history: STORAGE_KEY_HISTORY,
             highScores: STORAGE_KEY_HIGHSCORES,
-            includeHardLegacy: STORAGE_KEY_HARD_TOGGLE,
             difficultyMode: STORAGE_KEY_DIFFICULTY_MODE,
             roundReviewPreference: STORAGE_KEY_ROUND_REVIEW_PREFERENCE,
             playerStats: STORAGE_KEY_PLAYER_STATS,
@@ -2204,9 +2094,6 @@ function initializeAppLifecycleBindings({ onSaveProfile, onPageShow } = {}) {
   });
 }
 
-// Marker retained for publish smoke checks after summary markup extraction.
-window.__BT_KEEP_PROFILE_MARKER__ = 'id="summary-player-level"';
-
 let waitingServiceWorker = null;
 
 function isOnWelcomeScreen() {
@@ -2229,6 +2116,7 @@ function showUpdateBannerIfReady() {
   document.body.appendChild(banner);
 
   document.getElementById('update-banner-btn').addEventListener('click', () => {
+    window.__bibleTriviaUpdateRequested = true;
     waitingServiceWorker?.postMessage({ type: 'SKIP_WAITING' });
     banner.remove();
   });
@@ -2236,10 +2124,6 @@ function showUpdateBannerIfReady() {
 }
 
 function registerServiceWorkerWithUpdatePrompt({ serviceWorkerPath = 'service-worker.js' } = {}) {
-  if (window.__BT_KEEP_SW_MARKER__ === true) {
-    navigator.serviceWorker.register('service-worker.js');
-  }
-
   return UiFeature.registerServiceWorkerWithUpdatePrompt({
     navigatorObj: navigator,
     serviceWorkerPath,
@@ -2844,7 +2728,6 @@ function initializeSettingsOverlaySection() {
     getRoundReviewPreference: () => roundReviewPreference,
     saveData,
     logError: (...args) => DBManager.log(...args),
-    onDifficultyChanged: (mode) => console.log('Difficulty mode changed to:', mode)
   });
 }
 

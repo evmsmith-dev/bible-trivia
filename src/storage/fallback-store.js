@@ -39,10 +39,9 @@
         : (Array.isArray(rawScores) ? rawScores : []);
 
       const savedMode = getRaw(storageKeys.difficultyMode);
-      const savedHard = getRaw(storageKeys.includeHardLegacy);
       const difficultyMode = savedMode
         ? (typeof normalizeDifficultyMode === "function" ? normalizeDifficultyMode(savedMode) : String(savedMode))
-        : (savedHard !== null ? "medium" : "medium");
+        : "medium";
 
       const savedReviewPref = getRaw(storageKeys.roundReviewPreference);
       const roundReviewPreference = savedReviewPref

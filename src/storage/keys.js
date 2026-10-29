@@ -9,7 +9,6 @@
       profile: `${storagePrefix}profile`,
       history: `${storagePrefix}history`,
       highScores: `${storagePrefix}highScores`,
-      includeHardLegacy: `${storagePrefix}includeHardLegacy`,
       difficultyMode: `${storagePrefix}difficultyMode`,
       roundReviewPreference: `${storagePrefix}roundReviewPreference`,
       playerStats: `${storagePrefix}playerStats`,
