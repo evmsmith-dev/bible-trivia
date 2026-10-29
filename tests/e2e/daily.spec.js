@@ -7,6 +7,7 @@ async function startDaily(page) {
   await page.locator("#daily-start-btn").click();
   await h.finishCountdown(page);
   await expect(page.locator("#progress")).toContainText("Daily | Question 1 of 10");
+  await expect(page.locator("#daily-tag")).toBeVisible();
 }
 
 async function collectQuestions(page, { correct }) {

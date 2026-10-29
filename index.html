@@ -29,7 +29,7 @@
       <span id="daily-challenge-new-badge" class="daily-new-badge" aria-hidden="true">🔥</span>
     </button>
     <button type="button" id="start-btn">Start</button>
-    <button type="button" id="how-to-play-link" class="link-button">Game Play</button>
+    <button type="button" id="how-to-play-link" class="link-button">How to Play</button>
 
     <div id="player-entry-wrap">
       <button id="player-entry-btn" type="button" aria-label="Open player profile">
@@ -45,7 +45,8 @@
   <main id="question-container" style="display:none;">
     <header>
       <h1 class="game-title">Bible Trivia</h1>
-      <div id="progress">Question 1 of 10 | Correct: 0 | Score: 0</div>
+      <!-- Read out to screen readers; the dots and score below show the same thing visually. -->
+      <div id="progress" class="visually-hidden">Question 1 of 10 | Correct: 0 | Score: 0</div>
       <div id="streak-hud" aria-live="polite">
         <span id="streak-hud-count" class="streak-chip">Streak: 0</span>
         <span id="streak-hud-bonus" class="streak-chip is-bonus">Bonus: +0</span>
@@ -55,16 +56,16 @@
       <div class="timer-row" aria-hidden="true">
         <div id="timer-display" class="green">25</div>
         <div id="timer-bar"><div id="timer-fill"></div></div>
+        <div id="score-display" aria-hidden="true">⭐ 0</div>
       </div>
     </header>
 
-    <div id="question" aria-live="polite"></div>
     <div class="question-meta">
-      <div class="right-side">
-        <span id="difficulty-tag" class="tag difficulty"></span>
-        <span id="category-tag" class="tag category"></span>
-      </div>
+      <span id="daily-tag" class="tag daily" style="display:none;">🎯 Daily</span>
+      <span id="difficulty-tag" class="tag difficulty"></span>
+      <span id="category-tag" class="tag category"></span>
     </div>
+    <div id="question" aria-live="polite"></div>
     <div id="options" role="group" aria-label="Answer options"></div>
     <div id="summary" style="display:none;"></div>
     <div id="round-review" style="display:none;"></div>
@@ -146,7 +147,7 @@
     <div class="overlay-backdrop" data-overlay-close></div>
     <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="how-to-play-title">
       <button type="button" class="overlay-close overlay-close-button" data-overlay-close aria-label="Close">x</button>
-      <h2 id="how-to-play-title">Game Play</h2>
+      <h2 id="how-to-play-title">How to Play</h2>
 
       <div class="overlay-content">
         <details class="howto-section">

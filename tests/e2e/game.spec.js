@@ -88,6 +88,8 @@ test.describe("normal game", () => {
     await h.answer(page, { correct: true });
     await expect(page.locator("#progress")).toContainText("Question 2 of 10");
     await expect(page.locator("#progress")).toContainText("Correct: 1");
+    await expect(page.locator("#score-display")).not.toHaveText("⭐ 0");
+    await expect(page.locator("#daily-tag")).toBeHidden();
   });
 
   test("the points pop-up shows the breakdown and doesn't cover the answers", async ({ page }) => {
