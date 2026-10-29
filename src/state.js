@@ -15,6 +15,7 @@ export const state = {
   playerStats: sanitizePlayerStats(null),
   dailyStats: sanitizeDailyStats(null),
   dailyChallenges: {},
+  recentQuestionIds: [], // oldest first; see config.RECENT_QUESTION_MEMORY
 
   // Current round
   game: {

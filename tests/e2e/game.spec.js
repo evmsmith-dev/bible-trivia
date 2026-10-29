@@ -53,6 +53,8 @@ test.describe("normal game", () => {
     await h.startNormalGame(page);
     await page.clock.runFor(26000); // medium mode: 25 seconds
     await expect(page.locator("#feedback")).toHaveClass(/timeout/);
+    await expect(page.locator("#feedback")).toContainText("Time's up!");
+    await expect(page.locator("#feedback")).toContainText("Answer:");
     await expect(page.locator("#options .option.correct")).toHaveCount(1);
     await page.clock.runFor(3000);
     await expect(page.locator("#progress")).toContainText("Question 2 of 10");
@@ -66,6 +68,38 @@ test.describe("normal game", () => {
     await h.answer(page, { correct: true });
     await expect(page.locator("#progress")).toContainText("Question 2 of 10");
     await expect(page.locator("#progress")).toContainText("Correct: 1");
+  });
+
+  test("the points pop-up shows the breakdown and doesn't cover the answers", async ({ page }) => {
+    await h.startNormalGame(page);
+    await page.locator('#options .option[data-correct="true"]').click();
+    const feedback = page.locator("#feedback");
+    await expect(feedback).toContainText(/\+\d+ pts/);
+    await expect(feedback).toContainText("+100 base");
+    await expect(feedback).toContainText("speed");
+    const popup = await feedback.boundingBox();
+    const question = await page.locator("#question").boundingBox();
+    expect(popup.y + popup.height).toBeLessThanOrEqual(question.y + 1);
+  });
+
+  test("new rounds avoid questions seen recently", async ({ page }) => {
+    const seen = new Set();
+    let repeats = 0;
+    for (let round = 0; round < 3; round++) {
+      if (round === 0) await h.startNormalGame(page);
+      for (let i = 0; i < 10; i++) {
+        const text = await page.locator("#question").textContent();
+        if (seen.has(text)) repeats++;
+        seen.add(text);
+        await h.answer(page, { correct: false });
+      }
+      await h.chooseReview(page, "skip");
+      await page.locator("#restart-same").click();
+      await h.finishCountdown(page);
+    }
+    expect(repeats).toBe(0);
+    // Remembered across reloads.
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("bibleTriviaPlayer_primary_recentQuestionIds")).length)).toBe(31);
   });
 
   test("number keys 1-4 answer the question", async ({ page }) => {

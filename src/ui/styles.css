@@ -2089,4 +2089,78 @@ button.link-button:hover { transform: none; text-decoration: underline; }
   .celebration-highlight { font-size: 3rem; }
 }
 
-.option:disabled { cursor: default; }
+.option:disabled { cursor: default; transform: none; }
+
+/* ---------- Game screen layout (compact header, points pop-up) ---------- */
+
+/* Use the app font on controls too (browsers default buttons/inputs to the system font). */
+button, input, select, textarea { font-family: inherit; }
+
+.timer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+.timer-row #timer-display { min-width: 2.2ch; text-align: right; }
+.timer-row #timer-bar { flex: 1; margin-top: 0; }
+
+/* Points / answer pop-up: sits over the header, never over the question or answers. */
+#feedback {
+  top: 10px;
+  transform: translate(-50%, -6px);
+  font-size: 2.4rem;
+  padding: 12px 28px;
+  border-radius: 20px;
+  min-width: 0;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+#feedback.visible { transform: translate(-50%, 0); }
+#feedback .feedback-detail { display: block; font-size: 1.05rem; font-weight: 600; }
+
+.share-status {
+  font-size: 1rem;
+  white-space: pre-line;
+  margin: 4px 0 0;
+  min-height: 1.2em;
+}
+#share-daily-btn {
+  background: #7e57c2;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(126, 87, 194, 0.35);
+}
+
+/* Phones and short screens: give the question and answers the room. */
+@media (max-width: 640px), (max-height: 760px) {
+  #question-container .game-title { display: none; }
+  #progress { font-size: 1rem; margin: 0 0 6px; }
+  #streak-hud { flex-wrap: nowrap; gap: 6px; margin: 0 0 4px; }
+  .streak-chip { font-size: 0.78rem; padding: 3px 8px; min-width: 0; white-space: nowrap; }
+  #progress-dots { font-size: 0.95rem; gap: 3px; margin: 4px 0; }
+  #progress-dots .current { font-size: 1.1rem; }
+  #timer-display { font-size: 1.05rem; }
+  #timer-bar { height: 10px; }
+  #question { font-size: 1.6rem; margin-bottom: 0.4em; }
+  .question-meta { margin-bottom: 0.8rem; font-size: 0.95rem; }
+  .option { min-height: 58px; padding: 12px 14px; }
+  #feedback { font-size: 1.9rem; padding: 10px 20px; }
+  #feedback .feedback-detail { display: block; font-size: 0.95rem; }
+}
+
+/* Small phones (e.g. iPhone SE). */
+@media (max-width: 400px), (max-height: 680px) {
+  #question-container { padding: 12px; }
+  #progress { font-size: 0.86rem; }
+  .streak-chip { font-size: 0.7rem; padding: 2px 7px; }
+  #progress-dots { font-size: 0.85rem; margin: 2px 0; }
+  #progress-dots .current { font-size: 0.95rem; }
+  #question { font-size: 1.35rem; }
+  .question-meta { margin-bottom: 0.6rem; font-size: 0.85rem; }
+  .question-meta .tag { padding: 3px 10px; }
+  .option { min-height: 50px; padding: 10px 12px; font-size: 1.1rem; margin: 0; }
+  #options { gap: 6px; }
+  #feedback { font-size: 1.6rem; padding: 8px 16px; }
+  #feedback .feedback-detail { font-size: 0.85rem; }
+}

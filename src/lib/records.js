@@ -111,7 +111,9 @@ export function sanitizeDailyRecord(raw) {
     dateKey: String(value.dateKey || "").trim(),
     seed: String(value.seed || ""),
     questionIds: Array.isArray(value.questionIds) ? value.questionIds.filter(Number.isFinite).map(Math.round) : [],
-    attempts: toCount(value.attempts),
+    attempts: toCount(value.attempts), // finished attempts
+    // Started attempts decide which question set a retry gets (older records didn't store it).
+    startedAttempts: Math.max(toCount(value.startedAttempts), toCount(value.attempts)),
     bestScore: toCount(value.bestScore),
     lastScore: toCount(value.lastScore),
     completed: Boolean(value.completed),

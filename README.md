@@ -15,7 +15,8 @@ A Bible trivia game that runs in the browser and installs as an app (PWA) on pho
 
   Each round has 10 questions, balanced 4 Old Testament / 4 New Testament / 2 General.
 - Speed bonus (up to double the base points) and a streak bonus (from 3 in a row, capped at 10) that carries across "Play" rounds.
-- Daily Challenge: the same 10 questions for everyone on a given day. Scoring 70%+ completes it and adds +5% base points for the rest of the day; completed days build a daily streak.
+- Rounds prefer questions the player hasn't seen recently (the last 500 are remembered on the device).
+- Daily Challenge: the same 10 questions for everyone on a given day, and a different set on each retry. Scoring 70%+ completes it and adds +5% base points for the rest of the day. Completed days build a daily streak, and results can be shared as an emoji grid.
 - Player profile with name, 24 avatars and 12 levels. Levels count correct answers in normal games only.
 - Round review with Bible Gateway links, top scores per mode, game history, lifetime stats and daily results.
 - Keyboard play (keys 1–4), Escape closes dialogs, and animations are reduced for players who ask for less motion.

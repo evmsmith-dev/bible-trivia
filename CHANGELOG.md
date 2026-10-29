@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.1.0
+
+### New
+- **Fewer repeats.** The app remembers the last 500 questions shown on the device, and new rounds pick unseen questions first, then the ones seen longest ago.
+- **Fairer Daily Challenge retries.** The first attempt still uses the day's shared question set. Each retry gets a different set of questions, so a retry can't be passed by remembering answers. An attempt counts as soon as it starts.
+- **Share your daily result.** A "Share Result" button on the Daily summary opens the phone's share sheet, or copies the text to the clipboard on other devices. The text looks like this:
+  `Bible Trivia Daily Challenge 🎯 / Thu, Oct 29, 2026 / 🟩🟩🟥🟩… / 8/10 · 1,234 pts`
+
+### Look and feel
+- Buttons and answers use the Fredoka font like the rest of the app.
+- A more compact game header on phones: the title is hidden during play, the chips and dots are smaller, and the timer sits on one line with its bar. The question and all four answers now fit on screen, even on an iPhone SE.
+- The points pop-up sits over the header instead of covering the question and answers. It shows the breakdown (`+100 base · +85 speed · +25 streak`). After a wrong answer or a timeout, it shows the correct answer.
+
 ## 2.0.0
 
 ### Fixes

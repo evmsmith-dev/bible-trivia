@@ -1,14 +1,15 @@
 // The game loop: countdown → questions (timer, answers, scoring) → review → summary.
 import {
   CATEGORIES, CATEGORY_EMOJIS, DAILY, DIFFICULTY_LABELS, ENCOURAGING_VERSES, GAME_MODE_DAILY, GAME_MODE_NORMAL,
-  INCORRECT_MESSAGES, MODES, QUESTIONS_PER_GAME, TIMING,
+  INCORRECT_MESSAGES, MODES, QUESTIONS_PER_GAME, RECENT_QUESTION_MEMORY, TIMING,
 } from "./config.js";
+import { buildDailyShareText } from "./lib/share.js";
 import { getTopScores, normalizeMode, trimHighScores } from "./lib/records.js";
 import { calculatePoints, getNextStreakBonusLabel, getStreakBonus } from "./lib/scoring.js";
 import { selectQuestionsForMode } from "./lib/selection.js";
 import { bibleGatewayUrl, escapeHtml, getLocalDateKey, hasScriptureReference, pickRandom, shuffled } from "./lib/utils.js";
 import { state } from "./state.js";
-import { save, saveProfile } from "./storage/store.js";
+import { save, saveProfile, saveRecentQuestionIds } from "./storage/store.js";
 import { byId, replayAnimation, setVisible, showScreen } from "./ui/dom.js";
 import { celebrateDailyCompletion, celebrateHighScore, celebrateLevel, fireConfetti } from "./ui/celebrate.js";
 import { anyOverlayOpen, closeOverlay, openOverlay } from "./ui/overlay.js";
@@ -68,10 +69,11 @@ function showQuestionLayout(visible) {
   setVisible(el.feedback, visible);
 }
 
-function beginRound({ mode, questions, dailyRecord = null }) {
+function beginRound({ mode, questions, dailyRecord = null, attemptNumber = 1 }) {
   Object.assign(state.game, {
     mode,
     dailyRecord,
+    attemptNumber,
     questions: questions.slice(0, QUESTIONS_PER_GAME),
     index: 0,
     correct: 0,
@@ -96,7 +98,7 @@ export function startNormalGame({ keepStreak = false } = {}) {
   showScreen("game");
   runCountdown(() => beginRound({
     mode: GAME_MODE_NORMAL,
-    questions: selectQuestionsForMode(state.questions, normalizeMode(state.difficultyMode)),
+    questions: selectQuestionsForMode(state.questions, normalizeMode(state.difficultyMode), Math.random, QUESTIONS_PER_GAME, state.recentQuestionIds),
   }));
 }
 
@@ -107,8 +109,8 @@ export function startDailyGame() {
   showScreen("game");
   runCountdown(async () => {
     try {
-      const { record, questions } = await prepareDailyChallenge();
-      beginRound({ mode: GAME_MODE_DAILY, questions, dailyRecord: record });
+      const { record, questions, attemptNumber } = await prepareDailyChallenge();
+      beginRound({ mode: GAME_MODE_DAILY, questions, dailyRecord: record, attemptNumber });
     } catch (error) {
       alert(/already been completed/i.test(error.message)
         ? "Today's Daily Challenge is already completed. Come back tomorrow."
@@ -139,6 +141,7 @@ function showQuestion() {
   }
   const question = game.questions[game.index];
   const correctText = question.opts[question.ans];
+  rememberSeen(question.id);
 
   el.question.textContent = question.q;
   const difficulty = DIFFICULTY_LABELS[question.difficulty] || { emoji: "", label: question.difficulty };
@@ -160,6 +163,14 @@ function showQuestion() {
   answerLocked = false;
   renderProgress();
   startTimer();
+}
+
+/** Remembers shown questions so later rounds can prefer ones the player hasn't seen recently. */
+function rememberSeen(id) {
+  const recent = state.recentQuestionIds.filter((recentId) => recentId !== id);
+  recent.push(id);
+  state.recentQuestionIds = recent.slice(-RECENT_QUESTION_MEMORY);
+  saveRecentQuestionIds(state.recentQuestionIds);
 }
 
 // Time left is computed from a fixed deadline, so it stays accurate when the browser
@@ -188,12 +199,18 @@ function stopTimer() {
   timerHandle = null;
 }
 
-function showFeedback(message, type) {
+function showFeedback(message, type, detail = "") {
   el.feedback.innerHTML = "";
   const line = document.createElement("div");
   line.className = "feedback-main";
   line.textContent = message;
   el.feedback.appendChild(line);
+  if (detail) {
+    const detailLine = document.createElement("div");
+    detailLine.className = "feedback-detail";
+    detailLine.textContent = detail;
+    el.feedback.appendChild(detailLine);
+  }
   el.feedback.className = type;
   void el.feedback.offsetHeight;
   el.feedback.classList.add("visible");
@@ -256,7 +273,11 @@ function handleAnswer(selectedButton) {
     });
     game.score += points.total;
     game.correct += 1;
-    showFeedback(`+${points.total} pts`, "correct");
+    const parts = [`+${points.base} base`];
+    if (points.speedBonus) parts.push(`+${points.speedBonus} speed`);
+    if (points.streakBonus) parts.push(`+${points.streakBonus} streak`);
+    if (points.dailyBonus) parts.push(`+${points.dailyBonus} daily`);
+    showFeedback(`+${points.total} pts`, "correct", parts.join(" · "));
     updateStreakHud({ animate: true });
     fireConfetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
   } else {
@@ -265,7 +286,11 @@ function handleAnswer(selectedButton) {
       selectedButton.classList.remove("grayed");
       selectedButton.classList.add("incorrect");
     }
-    showFeedback(pickRandom(INCORRECT_MESSAGES), selectedButton ? "incorrect" : "timeout");
+    showFeedback(
+      selectedButton ? pickRandom(INCORRECT_MESSAGES) : "Time's up!",
+      selectedButton ? "incorrect" : "timeout",
+      `Answer: ${question.opts[question.ans]}`,
+    );
   }
 
   game.review.push({
@@ -417,6 +442,7 @@ function renderSummary({ percent, isDaily, dailyResult }) {
     </div>
     ${carryBanner}
     <div class="summary-actions">
+      ${isDaily ? '<button type="button" id="share-daily-btn">📤 Share Result</button><p id="share-status" class="share-status" role="status"></p>' : ""}
       ${isDaily ? "" : '<button type="button" id="restart-same">&#9654; Play</button>'}
       <button type="button" id="restart-change">&#x1F3E0; Home</button>
     </div>`;
@@ -429,6 +455,33 @@ function renderSummary({ percent, isDaily, dailyResult }) {
     if (!state.celebrationActive) goHome();
   });
   byId("summary-player-btn").addEventListener("click", openPlayerOverlay);
+  byId("share-daily-btn")?.addEventListener("click", () => shareDailyResult(dailyResult.record.dateKey));
+}
+
+async function shareDailyResult(dateKey) {
+  const { game } = state;
+  const text = buildDailyShareText({
+    dateKey,
+    results: game.review.map((entry) => entry.isCorrect),
+    score: game.score,
+    attemptNumber: game.attemptNumber,
+    url: location.href.split(/[?#]/)[0].replace(/index\.html$/, ""),
+  });
+  const status = byId("share-status");
+  if (navigator.share) {
+    try {
+      await navigator.share({ text });
+      return;
+    } catch (error) {
+      if (error?.name === "AbortError") return; // player closed the share sheet
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    status.textContent = "Result copied — paste it anywhere to share.";
+  } catch {
+    status.textContent = text;
+  }
 }
 
 function showSummary(celebrations) {

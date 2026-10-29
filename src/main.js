@@ -1,7 +1,7 @@
 // App entry point: load questions and saved data, wire up the screens, register the service worker.
 import { reconcileLevelCounter } from "./lib/records.js";
 import { state, applySnapshot } from "./state.js";
-import { initStore, loadAll, saveProfile } from "./storage/store.js";
+import { initStore, loadAll, loadRecentQuestionIds, saveProfile } from "./storage/store.js";
 import { byId, showScreen } from "./ui/dom.js";
 import { initOverlays } from "./ui/overlay.js";
 import { registerServiceWorker } from "./ui/update-banner.js";
@@ -28,6 +28,7 @@ async function start() {
 
   const [snapshot] = await Promise.all([initStore().then(loadAll), loadQuestions()]);
   applySnapshot(snapshot);
+  state.recentQuestionIds = loadRecentQuestionIds();
   state.profile = reconcileLevelCounter(state.profile, state.history);
   saveProfile(state.profile);
 

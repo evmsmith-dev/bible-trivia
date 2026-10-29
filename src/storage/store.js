@@ -30,6 +30,7 @@ export const KEYS = {
   dailyStats: `${PREFIX}dailyStats`,
   dailyChallenges: `${PREFIX}dailyChallenges`,
   dailyPulseAckDate: `${PREFIX}dailyPulseAckDate`,
+  recentQuestions: `${PREFIX}recentQuestionIds`,
 };
 
 // ---------- small localStorage helpers (never throw) ----------
@@ -122,6 +123,16 @@ function emptySnapshot() {
     dailyStats: sanitizeDailyStats(null),
     dailyChallenges: {},
   };
+}
+
+/** Question ids shown recently, oldest first (kept in localStorage; small and per device). */
+export function loadRecentQuestionIds() {
+  const ids = readLocalJson(KEYS.recentQuestions, []);
+  return Array.isArray(ids) ? ids.filter(Number.isInteger) : [];
+}
+
+export function saveRecentQuestionIds(ids) {
+  writeLocal(KEYS.recentQuestions, JSON.stringify(ids));
 }
 
 function loadProfile() {
@@ -292,6 +303,11 @@ export function saveProfile(profile) {
 }
 
 export async function resetAll() {
+  try {
+    localStorage.removeItem(KEYS.recentQuestions);
+  } catch {
+    // ignore
+  }
   try {
     await backend.reset();
   } catch (error) {

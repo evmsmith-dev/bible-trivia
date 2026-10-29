@@ -122,6 +122,9 @@ export const TIMING = {
 
 export const MAX_HIGH_SCORES_PER_MODE = 5;
 
+// How many recently shown questions to remember. New rounds prefer questions seen longest ago.
+export const RECENT_QUESTION_MEMORY = 500;
+
 export const PLAYER_NAME = { min: 2, max: 15, default: "Player" };
 
 export const AVATARS_PER_PAGE = 8;

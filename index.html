@@ -44,7 +44,7 @@
   <!-- ==================== Game screen ==================== -->
   <main id="question-container" style="display:none;">
     <header>
-      <h1>Bible Trivia</h1>
+      <h1 class="game-title">Bible Trivia</h1>
       <div id="progress">Question 1 of 10 | Correct: 0 | Score: 0</div>
       <div id="streak-hud" aria-live="polite">
         <span id="streak-hud-count" class="streak-chip">Streak: 0</span>
@@ -52,8 +52,10 @@
         <span id="streak-hud-next" class="streak-chip is-next">Next bonus at 3</span>
       </div>
       <div id="progress-dots" role="img" aria-label="Question progress"></div>
-      <div id="timer-display" class="green" aria-hidden="true">25</div>
-      <div id="timer-bar" aria-hidden="true"><div id="timer-fill"></div></div>
+      <div class="timer-row" aria-hidden="true">
+        <div id="timer-display" class="green">25</div>
+        <div id="timer-bar"><div id="timer-fill"></div></div>
+      </div>
     </header>
 
     <div id="question" aria-live="polite"></div>

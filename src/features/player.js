@@ -138,6 +138,7 @@ async function resetPlayer(onReset) {
     playerStats: sanitizePlayerStats(null),
     dailyStats: sanitizeDailyStats(null),
     dailyChallenges: {},
+    recentQuestionIds: [],
     difficultyMode: "medium",
     roundReviewPreference: "ask",
     bonusStreak: 0,
