@@ -34,6 +34,7 @@ test.describe("round flow", () => {
 
   test("ending a round between questions resumes on the next question if kept", async ({ page }) => {
     await h.startNormalGame(page);
+    await h.waitForAnswers(page);
     await page.locator('#options .option[data-correct="true"]').click();
     await page.locator("#quit-btn").click();
     await page.keyboard.press("Escape"); // same as Keep Playing
@@ -55,11 +56,13 @@ test.describe("round flow", () => {
   test("keys A–D and 1–4 pick the matching answer", async ({ page }) => {
     await h.startNormalGame(page);
     const second = await page.locator("#options .option").nth(1).textContent();
+    await h.waitForAnswers(page);
     await page.keyboard.press("b");
     await expect(page.locator("#options .option").nth(1)).toHaveClass(/correct|incorrect/);
     expect(second.startsWith("B)")).toBe(true);
     await page.clock.runFor(3000);
 
+    await h.waitForAnswers(page);
     await page.keyboard.press("3");
     await expect(page.locator("#options .option").nth(2)).toHaveClass(/correct|incorrect/);
   });

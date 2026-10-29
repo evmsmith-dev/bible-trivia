@@ -11,6 +11,7 @@ import {
   sanitizeHistory, sanitizePlayerStats, sanitizeProfile, trimHighScores,
 } from "../lib/records.js";
 import { log } from "../lib/debug.js";
+import { sanitizeEarned } from "../lib/badges.js";
 
 const PRIMARY_ID = "primary";
 const MAX_PLAYERS = 8;
@@ -40,6 +41,7 @@ function playerKeys(id) {
     dailyPulseAckDate: `${prefix}dailyPulseAckDate`,
     recentQuestions: `${prefix}recentQuestionIds`,
     howToPlaySeen: `${prefix}howToPlaySeen`,
+    badges: `${prefix}badges`,
   };
 }
 
@@ -152,6 +154,16 @@ export function loadRecentQuestionIds() {
 
 export function saveRecentQuestionIds(ids) {
   writeLocal(KEYS.recentQuestions, JSON.stringify(ids));
+}
+
+/** A player's earned badges ({ [id]: { tier, earnedAt } }), or null if none were ever saved. */
+export function readBadges(id) {
+  const raw = readLocalJson(playerKeys(id).badges, null);
+  return raw && typeof raw === "object" ? sanitizeEarned(raw) : null;
+}
+
+export function writeBadges(id, earned) {
+  writeLocal(playerKeys(id).badges, JSON.stringify(earned));
 }
 
 /** Any player's profile (name, picture, level counter), straight from localStorage. */
@@ -479,6 +491,7 @@ export async function createBackup() {
       id,
       ...snapshot,
       recentQuestionIds: Array.isArray(recent) ? recent.filter(Number.isInteger) : [],
+      badges: readBadges(id) || {},
     });
   }
   return {
@@ -512,6 +525,7 @@ export function readBackup(data) {
       dailyStats: sanitizeDailyStats(raw.dailyStats),
       dailyChallenges: recentDaily(Object.values(raw.dailyChallenges && typeof raw.dailyChallenges === "object" ? raw.dailyChallenges : {})),
       recentQuestionIds: Array.isArray(raw.recentQuestionIds) ? raw.recentQuestionIds.filter(Number.isInteger) : [],
+      badges: sanitizeEarned(raw.badges),
     });
   }
   if (!players.length) return null;
@@ -536,6 +550,7 @@ export async function restoreBackup(backup) {
     writeProfile(player.id, player.profile);
     writeLocal(keys.recentQuestions, JSON.stringify(player.recentQuestionIds));
     writeLocal(keys.howToPlaySeen, "1");
+    writeBadges(player.id, player.badges);
     const target = await openBackend(player.id);
     try {
       await target.replace(player);
@@ -576,6 +591,7 @@ export function saveProfile(profile) {
 export async function resetAll() {
   try {
     localStorage.removeItem(KEYS.recentQuestions);
+    localStorage.removeItem(KEYS.badges);
   } catch {
     // ignore
   }

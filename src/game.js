@@ -15,6 +15,8 @@ import { celebrateDailyCompletion, celebrateHighScore, celebrateLevel, fireConfe
 import { anyOverlayOpen, closeOverlay, ensureBackGuard, openOverlay, setScreenBackHandler } from "./ui/overlay.js";
 import { isDailyBonusActive, prepareDailyChallenge, recordDailyResult, renderDailyCard } from "./features/daily.js";
 import { getPlayerLevel, renderPlayerCards } from "./features/player.js";
+import { checkNewBadges, newBadgesHtml } from "./features/badges.js";
+import { openStats } from "./features/stats.js";
 import { openDifficultyPicker, renderModeChip } from "./features/settings.js";
 import { showUpdateBannerIfReady } from "./ui/update-banner.js";
 import { vibrate, VIBRATION } from "./ui/haptics.js";
@@ -22,6 +24,7 @@ import { vibrate, VIBRATION } from "./ui/haptics.js";
 const el = {};
 let timerHandle = null;
 let advanceHandle = null;
+let unlockHandle = null; // the short wait before answers can be tapped
 let secondsLeft = 0;
 let answerLocked = true;
 let pendingCelebrations = null;
@@ -174,12 +177,27 @@ function showQuestion() {
     button.textContent = `${"ABCD"[i]}) ${option}`;
     button.dataset.correct = String(option === correctText);
     button.dataset.answer = option;
+    button.disabled = true;
     el.options.appendChild(button);
   });
 
-  answerLocked = false;
+  // Read first: the answers unlock (and the timer starts) after a moment.
+  answerLocked = true;
+  el.options.classList.add("is-reading");
   renderProgress();
-  startTimer();
+  resetTimerDisplay();
+  clearTimeout(unlockHandle);
+  unlockHandle = setTimeout(() => unlockAnswers(), TIMING.answerLockMs);
+}
+
+/** Lets the answers be tapped and starts (or resumes) the timer. */
+function unlockAnswers(fromSeconds = null) {
+  clearTimeout(unlockHandle);
+  unlockHandle = null;
+  el.options.classList.remove("is-reading");
+  el.options.querySelectorAll(".option").forEach((button) => { button.disabled = false; });
+  answerLocked = false;
+  startTimer(fromSeconds);
 }
 
 /** Remembers shown questions so later rounds can prefer ones the player hasn't seen recently. */
@@ -213,6 +231,17 @@ function startTimer(fromSeconds = null) {
   timerHandle = setInterval(tick, 100);
 }
 
+/** Shows a full timer while the answers are still locked. */
+function resetTimerDisplay() {
+  stopTimer();
+  const limit = MODES[activeMode()].seconds;
+  secondsLeft = limit;
+  el.timerDisplay.textContent = limit;
+  el.timerDisplay.className = "green";
+  el.timerFill.style.width = "100%";
+  el.timerFill.className = "";
+}
+
 function stopTimer() {
   clearInterval(timerHandle);
   timerHandle = null;
@@ -224,6 +253,13 @@ let pausedSecondsLeft = null;
 
 /** Stops the clock on an unanswered question and covers it until the player taps Resume. */
 function pauseRound() {
+  if (unlockHandle) { // still in the moment before the answers unlock
+    clearTimeout(unlockHandle);
+    unlockHandle = null;
+    pausedSecondsLeft = MODES[activeMode()].seconds;
+    setVisible(el.pauseOverlay, true, "flex");
+    return;
+  }
   if (!timerHandle || answerLocked) return;
   stopTimer();
   pausedSecondsLeft = secondsLeft;
@@ -236,8 +272,7 @@ function resumeRound() {
   setVisible(el.pauseOverlay, false);
   const remaining = pausedSecondsLeft;
   pausedSecondsLeft = null;
-  answerLocked = false;
-  startTimer(remaining);
+  unlockAnswers(remaining);
 }
 
 // ---------- ending a round early ----------
@@ -248,14 +283,15 @@ let endRoundRequested = false;
 function askToEndRound() {
   if (!state.game.active) return;
   let resume = () => {};
-  if (timerHandle && !answerLocked) {
+  if (unlockHandle) {
+    clearTimeout(unlockHandle);
+    unlockHandle = null;
+    resume = () => unlockAnswers();
+  } else if (timerHandle && !answerLocked) {
     stopTimer();
     const remaining = secondsLeft;
     answerLocked = true;
-    resume = () => {
-      answerLocked = false;
-      startTimer(remaining);
-    };
+    resume = () => unlockAnswers(remaining);
   } else if (advanceHandle) {
     clearTimeout(advanceHandle);
     advanceHandle = null;
@@ -408,7 +444,7 @@ async function endGame() {
 
   if (isDaily) {
     const dateKey = game.dailyRecord?.dateKey || getLocalDateKey();
-    dailyResult = recordDailyResult({ dateKey, score: game.score, percent });
+    dailyResult = recordDailyResult({ dateKey, score: game.score, percent, correct: game.correct });
     Object.assign(changes, { dailyRecord: dailyResult.record, dailyStats: state.dailyStats });
   } else {
     const record = {
@@ -434,7 +470,7 @@ async function endGame() {
   const historyId = await save(changes);
   if (changes.addHistory && historyId !== undefined) changes.addHistory.id = historyId;
 
-  renderSummary({ percent, isDaily, dailyResult });
+  renderSummary({ percent, isDaily, dailyResult, newBadges: checkNewBadges() });
 
   // Celebrations play when the player reaches the summary (after the review, if any).
   pendingCelebrations = {
@@ -494,7 +530,7 @@ function summaryActionsHtml(isDaily, passed) {
 
 // The summary reads like Home: the result at the top, then the next step at the bottom
 // (difficulty, a large Play, and Home as a smaller text button).
-function renderSummary({ percent, isDaily, dailyResult }) {
+function renderSummary({ percent, isDaily, dailyResult, newBadges = [] }) {
   const { game } = state;
   const wrong = QUESTIONS_PER_GAME - game.correct;
   const dots = game.review.map((entry) => (entry.isCorrect ? "✅" : "❌")).join("");
@@ -507,8 +543,7 @@ function renderSummary({ percent, isDaily, dailyResult }) {
         <p class="summary-daily-status">${dailyResult.passed
           ? `✅ Daily Challenge complete (${DAILY.successPercent}%+)`
           : `Not complete yet: ${DAILY.successPercent}% needed`}</p>
-        <p class="summary-daily-meta">Today's best: ${record.bestScore.toLocaleString()} · Attempts: ${record.attempts}</p>
-        <p class="summary-daily-meta">🔥 Daily streak: ${streak} (best ${state.dailyStats.bestDailyStreak})</p>
+        <p class="summary-daily-meta">Best today: ${record.bestScore.toLocaleString()} · Tries: ${record.attempts} · 🔥 Streak: ${streak}</p>
       </div>`;
   }
   const carryBonus = getStreakBonus(state.bonusStreak);
@@ -528,6 +563,7 @@ function renderSummary({ percent, isDaily, dailyResult }) {
       </p>
       <p class="summary-points"><span id="summary-points">${game.score.toLocaleString()}</span> points</p>
       <p class="summary-dots" role="img" aria-label="${game.correct} right, ${wrong} wrong">${dots}</p>
+      ${newBadgesHtml(newBadges)}
     </header>
     ${dailyHtml}
     <button type="button" id="summary-review-btn">📖 Review Answers</button>
@@ -549,6 +585,9 @@ function renderSummary({ percent, isDaily, dailyResult }) {
   renderModeChip();
   byId("summary-mode-chip")?.addEventListener("click", () => {
     if (!state.celebrationActive) openDifficultyPicker();
+  });
+  byId("summary-badges-btn")?.addEventListener("click", () => {
+    if (!state.celebrationActive) openStats({ section: "badges" });
   });
   byId("summary-review-btn").addEventListener("click", () => {
     if (!state.celebrationActive) showReview();
@@ -596,6 +635,8 @@ function showSummary(celebrations) {
 
 export function goHome() {
   clearTimeout(advanceHandle);
+  clearTimeout(unlockHandle);
+  unlockHandle = null;
   stopTimer();
   clearPause();
   state.game.active = false;

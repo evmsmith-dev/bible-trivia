@@ -7,8 +7,9 @@ import { getAvatar, getAverageCorrectSeconds, getTopScores, normalizeMode, sanit
 import { getLevel, getLevelProgress } from "../lib/scoring.js";
 import { escapeHtml } from "../lib/utils.js";
 import { state } from "../state.js";
-import { getActivePlayerId, listPlayers, loadPlayerSnapshot } from "../storage/store.js";
+import { getActivePlayerId, listPlayers, loadPlayerSnapshot, readBadges } from "../storage/store.js";
 import { avatarHtml } from "./player.js";
+import { badgesSectionHtml, countEarned } from "./badges.js";
 import { byId } from "../ui/dom.js";
 import { openOverlay } from "../ui/overlay.js";
 
@@ -179,7 +180,7 @@ function everyoneHtml() {
         <span class="everyone-avatar" aria-hidden="true">${avatarHtml(getAvatar(player.profile.avatarId))}</span>
         <span class="everyone-name">
           <strong>${escapeHtml(player.profile.name)}${player.id === activeId ? " (you)" : ""}</strong>
-          <span class="everyone-meta">Level ${getLevel(player.profile.nonDailyCorrectAnswers)} · ${number(player.games)} ${player.games === 1 ? "game" : "games"}</span>
+          <span class="everyone-meta">Level ${getLevel(player.profile.nonDailyCorrectAnswers)} · ${number(player.games)} ${player.games === 1 ? "game" : "games"} · 🏅 ${number(player.badges)}</span>
         </span>
         <span class="everyone-best">${player.best ? number(player.best.score) : "–"}</span>
       </li>`).join("");
@@ -204,7 +205,7 @@ function tabsHtml() {
 function renderScores() {
   const body = view === "everyone"
     ? everyoneHtml()
-    : overviewHtml() + topScoresHtml() + recentGamesHtml() + categoriesHtml() + dailyHtml();
+    : overviewHtml() + badgesSectionHtml() + topScoresHtml() + recentGamesHtml() + categoriesHtml() + dailyHtml();
   byId("scores-content").innerHTML = tabsHtml() + body;
 }
 
@@ -216,21 +217,28 @@ async function loadEveryone() {
     profile: player.id === getActivePlayerId() ? state.profile : player.profile,
     highScores: snapshots[index].highScores,
     games: snapshots[index].history.length,
+    badges: countEarned(player.id === getActivePlayerId() ? state.badges : readBadges(player.id) || {}),
   }));
   if (view === "everyone") renderScores();
 }
 
-export function openStats() {
+/** Opens Scores → Me. `section: "badges"` scrolls to the badges (from the summary's "New badge"). */
+export function openStats({ section = null } = {}) {
   selectedMode = normalizeMode(state.difficultyMode);
   view = "me";
   everyone = null;
   renderScores();
   openOverlay("scores-page", { initialFocus: ".page-back" });
-  byId("scores-content").scrollTop = 0;
+  const content = byId("scores-content");
+  content.scrollTop = 0;
+  if (section === "badges") {
+    const target = byId("scores-badges");
+    content.scrollTop = target.offsetTop - content.offsetTop - 8;
+  }
 }
 
 export function initStats() {
-  byId("home-scores-btn").addEventListener("click", openStats);
+  byId("home-scores-btn").addEventListener("click", () => openStats());
   byId("scores-content").addEventListener("click", (event) => {
     const tab = event.target.closest(".scores-tab");
     if (tab && tab.dataset.view !== view) {

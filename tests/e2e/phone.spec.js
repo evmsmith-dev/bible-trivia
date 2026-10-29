@@ -66,6 +66,7 @@ test.describe("leaving the app mid-question", () => {
   test("does nothing once the question is answered", async ({ page }) => {
     await h.openApp(page);
     await h.startNormalGame(page);
+    await h.waitForAnswers(page);
     await page.locator('#options .option[data-correct="true"]').click();
     await setHidden(page, true);
     await page.clock.runFor(3000);

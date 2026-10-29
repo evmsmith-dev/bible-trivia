@@ -34,6 +34,7 @@ test("a backup saves every player and loading it restores them", async ({ page }
   expect(data.players.map((player) => player.history.length)).toEqual([1, 1]);
   expect(data.activeId).toBe(data.players[1].id);
   expect(data.device.theme).toBe("dark");
+  expect(Object.keys(data.players[1].badges)).toContain("first-steps"); // badges travel with the backup
   await h.backToHome(page);
 
   // Things change after the backup: another round, a new player, light mode.

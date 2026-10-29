@@ -10,6 +10,7 @@ import { registerServiceWorker } from "./ui/update-banner.js";
 import { initDaily, renderDailyCard } from "./features/daily.js";
 import { initPlayer, openWhosPlaying, renderPlayerCards } from "./features/player.js";
 import { initBackup } from "./features/backup.js";
+import { loadBadges } from "./features/badges.js";
 import { initSettings, openHowToPlay, renderModeChip } from "./features/settings.js";
 import { initTheme } from "./ui/theme.js";
 import { initStats } from "./features/stats.js";
@@ -42,6 +43,7 @@ function activatePlayer(snapshot, { welcome = true } = {}) {
   state.profile = reconcileLevelCounter(state.profile, state.history);
   state.bonusStreak = 0;
   saveProfile(state.profile);
+  loadBadges();
   renderPlayerCards();
   renderModeChip();
   renderDailyCard();

@@ -46,6 +46,7 @@ test.describe("normal game", () => {
     await h.answer(page, { correct: true });
     await expect(page.locator("#streak-hud-count")).toHaveText("Streak: 1");
 
+    await h.waitForAnswers(page);
     await page.locator('#options .option[data-correct="false"]').first().click();
     await expect(page.locator("#options .option.correct")).toHaveCount(1);
     await expect(page.locator('#options .option.correct')).toHaveAttribute("data-correct", "true");
@@ -58,10 +59,12 @@ test.describe("normal game", () => {
     const dots = page.locator("#progress-dots span");
     await expect(dots.nth(0)).toHaveText("🔵");
 
+    await h.waitForAnswers(page);
     await page.locator('#options .option[data-correct="true"]').click();
     await expect(dots.nth(0)).toHaveText("✅"); // shown right away, before moving on
     await page.clock.runFor(3000);
 
+    await h.waitForAnswers(page);
     await page.locator('#options .option[data-correct="false"]').first().click();
     await expect(dots.nth(1)).toHaveText("❌");
     await page.clock.runFor(3000);
@@ -98,6 +101,7 @@ test.describe("normal game", () => {
 
   test("the points pop-up shows the breakdown and doesn't cover the answers", async ({ page }) => {
     await h.startNormalGame(page);
+    await h.waitForAnswers(page);
     await page.locator('#options .option[data-correct="true"]').click();
     const feedback = page.locator("#feedback");
     await expect(feedback).toContainText(/\+\d+ pts/);
@@ -130,6 +134,7 @@ test.describe("normal game", () => {
 
   test("number keys 1-4 answer the question", async ({ page }) => {
     await h.startNormalGame(page);
+    await h.waitForAnswers(page);
     await page.keyboard.press("1");
     await expect(page.locator("#options .option.grayed, #options .option.correct").first()).toBeVisible();
     await page.clock.runFor(3000);
