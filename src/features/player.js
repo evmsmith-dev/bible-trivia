@@ -25,10 +25,15 @@ export function renderPlayerCards() {
   const { profile } = state;
   const avatar = getAvatar(profile.avatarId);
   const level = `Level ${getPlayerLevel()}`;
+  const progress = getLevelProgress(profile.nonDailyCorrectAnswers);
 
+  // Home: avatar (top right), "Hi, <name>!", and the level bar under the greeting.
   byId("player-entry-avatar").innerHTML = avatarHtml(avatar);
+  byId("player-entry-btn").setAttribute("aria-label", `${profile.name}: choose who's playing`);
   byId("player-entry-name").textContent = profile.name;
   byId("player-entry-level").textContent = level;
+  byId("home-level-fill").style.width = `${progress.percent}%`;
+  byId("home-level-to-go").textContent = progress.isMaxLevel ? "Top level!" : `${progress.remaining} to go`;
 
   const summaryButton = byId("summary-player-btn");
   if (summaryButton) {

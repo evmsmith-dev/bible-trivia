@@ -43,31 +43,50 @@
 </head>
 <body>
 
-  <!-- ==================== Welcome screen ==================== -->
+  <!-- ==================== Home screen ==================== -->
+  <!-- Reading at the top (who's playing, level, today's challenge); tapping at the bottom
+       (difficulty, Start, and the Scores / Settings / Help bar), where a thumb reaches. -->
   <main id="welcome">
-    <h1>Bible Trivia</h1>
-    <h2>Fun Bible Questions!</h2>
-    <p>Test your knowledge of God's Word!</p>
-
-    <button type="button" id="daily-challenge-link" class="link-button">
-      <span>🎯 Daily Challenge</span>
-      <span id="daily-challenge-new-badge" class="daily-new-badge" aria-hidden="true">🔥</span>
-    </button>
-    <button type="button" id="start-btn">Start</button>
-    <button type="button" id="mode-chip" class="mode-chip" aria-label="Difficulty mode: Medium. Change difficulty">🟠 Medium ▾</button>
-
-    <div id="player-entry-wrap">
+    <header class="home-top">
+      <h1 class="home-brand">
+        <img src="icons/bibletrivia_icon_x96.png" alt="" width="40" height="40">
+        <span>Bible Trivia</span>
+      </h1>
       <button id="player-entry-btn" type="button" aria-label="Choose who's playing">
         <span class="player-entry-avatar" id="player-entry-avatar" aria-hidden="true">🙂</span>
       </button>
-      <span class="player-entry-name" id="player-entry-name">Player</span>
-      <span class="player-entry-level" id="player-entry-level">Level 1</span>
-    </div>
-    <div id="home-links">
-      <button type="button" id="home-scores-btn">🏆 Scores</button>
-      <button type="button" id="home-settings-btn">⚙️ Settings</button>
-      <button type="button" id="how-to-play-link">❓ Help</button>
-    </div>
+    </header>
+
+    <section class="home-hello" aria-label="Player">
+      <p class="home-greeting">Hi, <span id="player-entry-name">Player</span>!</p>
+      <p class="home-sub">Ready to test your knowledge of God's Word?</p>
+      <div class="home-level">
+        <span id="player-entry-level">Level 1</span>
+        <span class="home-level-track" aria-hidden="true"><span id="home-level-fill" class="home-level-fill"></span></span>
+        <span id="home-level-to-go" class="home-level-to-go"></span>
+      </div>
+    </section>
+
+    <button type="button" id="daily-challenge-link" class="daily-card">
+      <span class="daily-card-icon" aria-hidden="true">🎯</span>
+      <span class="daily-card-text">
+        <span class="daily-card-title">Today's Daily Challenge</span>
+        <span id="daily-card-status" class="daily-card-status">Not started</span>
+      </span>
+      <span id="daily-challenge-new-badge" class="daily-new-badge" aria-hidden="true">New</span>
+      <span class="daily-card-go" aria-hidden="true">›</span>
+    </button>
+
+    <div class="home-spacer"></div>
+
+    <button type="button" id="mode-chip" class="mode-chip" aria-label="Difficulty mode: Medium. Change difficulty">🟠 Medium ▾</button>
+    <button type="button" id="start-btn">Start</button>
+
+    <nav id="home-links" aria-label="More">
+      <button type="button" id="home-scores-btn"><span class="home-link-icon" aria-hidden="true">🏆</span><span>Scores</span></button>
+      <button type="button" id="home-settings-btn"><span class="home-link-icon" aria-hidden="true">⚙️</span><span>Settings</span></button>
+      <button type="button" id="how-to-play-link"><span class="home-link-icon" aria-hidden="true">❓</span><span>Help</span></button>
+    </nav>
     <noscript><p>Bible Trivia needs JavaScript turned on.</p></noscript>
   </main>
 
@@ -225,14 +244,14 @@
           <ul id="howto-mode-list"></ul>
           <ul>
             <li>Correct answers also earn a <b>speed bonus</b> (up to double the base points) and a <b>streak bonus</b>.</li>
-            <li>Change it anytime by tapping the mode under <b>Start</b> (or above <b>Play</b> after a round).</li>
+            <li>Change it anytime by tapping the mode just above <b>Start</b> (or above <b>Play</b> after a round).</li>
           </ul>
         </details>
 
         <details class="howto-section">
           <summary>Your Player and Scores</summary>
           <ul>
-            <li>Tap your picture on Home to see <b>Who's playing?</b> Pick your name, tap <b>✏️</b> to change a name or picture, or <b>Add player</b> for someone new (up to 8 on one device).</li>
+            <li>Tap your picture in the top corner of Home to see <b>Who's playing?</b> Pick your name, tap <b>✏️</b> to change a name or picture, or <b>Add player</b> for someone new (up to 8 on one device).</li>
             <li>Each player has their own level, scores, difficulty and Daily Challenge streak. When more than one person plays, the app asks who's playing when it opens.</li>
             <li><b>🏆 Scores</b> shows your level, top scores for each mode, recent games, right answers by category, and Daily Challenge results. <b>Everyone</b> ranks the players on this device.</li>
             <li><b>⚙️ Settings</b> changes light or dark appearance, and vibration (on phones that support it).</li>

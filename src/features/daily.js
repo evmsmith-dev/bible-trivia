@@ -4,7 +4,7 @@
 import { DAILY, QUESTIONS_PER_GAME } from "../config.js";
 import { applyDailyCompletion, createDailySeed, sanitizeDailyRecord } from "../lib/records.js";
 import { selectQuestionsForMode } from "../lib/selection.js";
-import { createSeededRandom, escapeHtml, getLocalDateKey } from "../lib/utils.js";
+import { createSeededRandom, escapeHtml, getDateKeyOffset, getLocalDateKey } from "../lib/utils.js";
 import { state } from "../state.js";
 import { KEYS, readLocal, save, writeLocal } from "../storage/store.js";
 import { byId } from "../ui/dom.js";
@@ -95,13 +95,28 @@ const statusText = (record) => {
   return record.attempts > 0 ? "In progress" : "Not started";
 };
 
-/** The Daily Challenge link pulses until the player opens it (once per day) or completes the day. */
+/** The streak as of today: it only counts if the last completed day was today or yesterday. */
+export function currentDailyStreak(today = getLocalDateKey()) {
+  const { currentDailyStreak: streak, lastCompletedDateKey: last } = state.dailyStats;
+  return last === today || last === getDateKeyOffset(today, -1) ? streak : 0;
+}
+
+/** Home's Daily Challenge card (status and streak) and the Daily Challenge popup. The card
+ *  shows "New" until the player opens it (once per day) or completes the day. */
 export function renderDailyCard() {
   const today = getLocalDateKey();
   const record = getDailyRecord(today);
   const shouldPulse = readLocal(KEYS.dailyPulseAckDate) !== today && !record?.completed;
-  byId("daily-challenge-link").classList.toggle("daily-link-pulse", shouldPulse);
+  const card = byId("daily-challenge-link");
+  card.classList.toggle("daily-link-pulse", shouldPulse);
+  card.classList.toggle("is-complete", Boolean(record?.completed));
   byId("daily-challenge-new-badge").classList.toggle("is-visible", shouldPulse);
+
+  const streak = currentDailyStreak(today);
+  const status = record?.completed ? "✅ Completed" : statusText(record);
+  const streakText = streak ? `🔥 ${streak}-day streak` : "Start a streak today";
+  byId("daily-card-status").textContent = `${status} · ${streakText}`;
+  card.setAttribute("aria-label", `Today's Daily Challenge: ${status.replace("✅ ", "")}, ${streak ? `${streak}-day streak` : "no streak yet"}`);
 
   byId("daily-challenge-status").innerHTML = `${escapeHtml(statusText(record))}<br>`
     + `Point Bonus: ${isDailyBonusActive(today) ? "Active (+5% base/question)" : "Inactive"}`;
