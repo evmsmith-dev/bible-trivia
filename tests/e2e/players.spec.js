@@ -50,9 +50,7 @@ test.describe("several players on one device", () => {
 
     await h.addPlayer(page, "Sam");
     await expect(page.locator("#mode-chip")).toHaveText("🟠 Medium ▾");
-    await page.locator("#mode-chip").click();
-    await page.locator('.difficulty-btn[data-mode="easy"]').click();
-    await page.keyboard.press("Escape");
+    await h.chooseDifficulty(page, "easy");
     await expect(page.locator("#mode-chip")).toHaveText("🟢 Easy ▾");
     expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe("dark");
 

@@ -1159,50 +1159,6 @@
 }
 
 /* --- Difficulty Mode Buttons --- */
-.difficulty-selector {
-  display: flex;
-  gap: 8px;
-  margin: 16px 0;
-  width: 100%;
-}
-
-.difficulty-btn {
-  flex: 1;
-  padding: 16px 12px;
-  border: 2px solid var(--bd-e0e0e0, #E0E0E0);
-  border-radius: 12px;
-  background: var(--bg-ffffff, white);
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: all 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Fredoka', Arial, sans-serif;
-  color: var(--fg-333333, #333);
-}
-
-.difficulty-btn:active {
-  transform: scale(0.95);
-}
-
-.difficulty-btn.active {
-  background: var(--primary);
-  color: var(--fg-ffffff, white);
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
-
-.difficulty-btn .emoji {
-  font-size: 1.6rem;
-  display: block;
-}
-
-.difficulty-btn .label {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
 
 .pref-selector {
   display: flex;
@@ -1234,14 +1190,8 @@
 .theme-btn { min-width: 0; }
 
 @media (max-width: 480px) {
-  .difficulty-btn {
-    padding: 14px 10px;
-    font-size: 1rem;
-  }
+
   
-  .difficulty-btn .emoji {
-    font-size: 1.4rem;
-  }
 
   /* Tighter scroll constraints for mobile */
   #summary > h3:first-of-type + table {
@@ -2140,6 +2090,34 @@ button, input, select, textarea { font-family: inherit; }
 .category-count { font-weight: 700; }
 .category-track { grid-column: 1 / -1; margin: 4px 0 0; }
 
+/* ---------- Difficulty picker (sheet) ---------- */
+.sheet h2:focus { outline: none; } /* focused on open so the keyboard stays closed */
+.difficulty-options { display: flex; flex-direction: column; gap: 10px; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
+.difficulty-option {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr 1.6rem;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 2px solid var(--bd-d7ecd8, #d7ecd8);
+  background: var(--bg-f5fff6, #f5fff6);
+  color: var(--fg-1b5e20, #1b5e20);
+  text-align: left;
+  box-shadow: none;
+  cursor: pointer;
+}
+.difficulty-option.is-selected { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25); }
+.difficulty-option-emoji { font-size: 1.8rem; line-height: 1; text-align: center; }
+.difficulty-option-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.difficulty-option-name { font-size: 1.25rem; font-weight: 700; }
+.difficulty-option-tagline { font-size: 0.85rem; font-weight: 600; color: var(--fg-e65100, #e65100); }
+.difficulty-option-detail { font-size: 0.95rem; color: var(--fg-616161, #616161); }
+.difficulty-option-check { font-size: 1.4rem; font-weight: 700; color: var(--primary); text-align: center; }
+
 /* ---------- Who's playing? ---------- */
 .page-intro { margin: 4px auto 16px; font-size: 1.1rem; line-height: 1.4; color: var(--fg-2f5f34, #2f5f34); }
 .player-cards {
@@ -2322,7 +2300,7 @@ button, input, select, textarea { font-family: inherit; }
   --fg-2f4f31: #d3e5d4; /* #2f4f31 · .player-name-display-label, .player-field label,
     .player-field-label */
   --fg-2f5f34: #cee7d0; /* #2f5f34 · #progress, .player-entry-level */
-  --fg-333333: #e0e0e0; /* #333 · .difficulty-btn, .celebration-subtitle (yellow buttons keep #333) */
+  --fg-333333: #e0e0e0; /* #333 · .celebration-subtitle (yellow buttons keep #333) */
   --fg-33691e: #d2efc7; /* #33691e · .streak-chip */
   --fg-424242: #dbdbdb; /* #424242 · #welcome p, #quit-overlay p */
   --fg-444444: #dbdbdb; /* #444 · #how-to-play-overlay .overlay-content, .settings-content */

@@ -153,13 +153,25 @@
     </div>
   </div>
 
+  <!-- ==================== Difficulty (sheet from the bottom; opened by the 🟠 Medium ▾ buttons) ==================== -->
+  <div id="difficulty-sheet" class="sheet-overlay" style="display:none;">
+    <div class="sheet-backdrop" data-overlay-close></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="difficulty-title">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button type="button" class="sheet-close" data-overlay-close aria-label="Close">✕</button>
+      <h2 id="difficulty-title" tabindex="-1">Choose difficulty</h2>
+      <!-- Options generated from config.MODES -->
+      <div id="difficulty-options" class="difficulty-options" role="radiogroup" aria-labelledby="difficulty-title"></div>
+    </div>
+  </div>
+
   <!-- ==================== Edit player (sheet from the bottom) ==================== -->
   <div id="player-sheet" class="sheet-overlay" style="display:none;">
     <div class="sheet-backdrop" data-overlay-close></div>
     <form class="sheet" id="player-form" role="dialog" aria-modal="true" aria-labelledby="player-sheet-title" novalidate>
       <div class="sheet-handle" aria-hidden="true"></div>
       <button type="button" class="sheet-close" data-overlay-close aria-label="Close without saving">✕</button>
-      <h2 id="player-sheet-title">Edit player</h2>
+      <h2 id="player-sheet-title" tabindex="-1">Edit player</h2>
 
       <div class="player-level-card" id="player-level-card">
         <div class="player-level-avatar" id="player-sheet-avatar" aria-hidden="true"></div>
@@ -213,7 +225,7 @@
           <ul id="howto-mode-list"></ul>
           <ul>
             <li>Correct answers also earn a <b>speed bonus</b> (up to double the base points) and a <b>streak bonus</b>.</li>
-            <li>Change this anytime by tapping the mode under <b>Start</b>, or in <b>⚙️ Settings</b>.</li>
+            <li>Change it anytime by tapping the mode under <b>Start</b> (or above <b>Play</b> after a round).</li>
           </ul>
         </details>
 
@@ -223,7 +235,7 @@
             <li>Tap your picture on Home to see <b>Who's playing?</b> Pick your name, tap <b>✏️</b> to change a name or picture, or <b>Add player</b> for someone new (up to 8 on one device).</li>
             <li>Each player has their own level, scores, difficulty and Daily Challenge streak. When more than one person plays, the app asks who's playing when it opens.</li>
             <li><b>🏆 Scores</b> shows your level, top scores for each mode, recent games, right answers by category, and Daily Challenge results. <b>Everyone</b> ranks the players on this device.</li>
-            <li><b>⚙️ Settings</b> changes the difficulty mode, light or dark appearance, and vibration (on phones that support it).</li>
+            <li><b>⚙️ Settings</b> changes light or dark appearance, and vibration (on phones that support it).</li>
             <li><b>Delete player</b> (or <b>Reset player</b> when you're the only one) is at the bottom of the player screen, and asks you to confirm first.</li>
             <li>Your level goes up with correct answers in normal games (Daily Challenge answers don't count).</li>
           </ul>
@@ -277,13 +289,6 @@
       <h2 id="settings-title">Settings</h2>
 
       <div class="settings-content">
-        <div class="setting-item">
-          <span class="setting-label" id="difficulty-label">Difficulty Mode</span>
-          <!-- Buttons generated from config.MODES -->
-          <div class="difficulty-selector" id="difficulty-selector" role="group" aria-labelledby="difficulty-label"></div>
-          <p id="mode-description" class="setting-description"></p>
-        </div>
-
         <div class="setting-item">
           <span class="setting-label" id="theme-label">Appearance</span>
           <div class="pref-selector" role="group" aria-labelledby="theme-label">

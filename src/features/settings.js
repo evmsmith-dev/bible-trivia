@@ -1,5 +1,5 @@
-// Settings overlay (difficulty mode, appearance, vibration), the Home mode button, and the How to Play overlay.
-// Mode buttons and descriptions are generated from config.MODES.
+// Settings overlay (appearance, vibration), the difficulty picker behind the "🟠 Medium ▾"
+// buttons, and the How to Play overlay. Difficulty options are generated from config.MODES.
 import { MODES, MODE_KEYS } from "../config.js";
 import { normalizeMode } from "../lib/records.js";
 import { state } from "../state.js";
@@ -7,20 +7,9 @@ import { save } from "../storage/store.js";
 import { byId, setVisible } from "../ui/dom.js";
 import { canVibrate, isVibrationOn, setVibrationOn, vibrate, VIBRATION } from "../ui/haptics.js";
 import { getThemePreference, setThemePreference } from "../ui/theme.js";
-import { openOverlay } from "../ui/overlay.js";
-
-const modeSummary = (mode) => {
-  const m = MODES[mode];
-  return `<b>${m.emoji} ${m.label}:</b> ${m.questionsText} • ${m.basePoints} pts • ${m.seconds} sec • + bonuses${m.tagline ? ` — ${m.tagline}` : ""}`;
-};
+import { closeOverlay, openOverlay } from "../ui/overlay.js";
 
 function renderSettings() {
-  document.querySelectorAll(".difficulty-btn").forEach((button) => {
-    const active = button.dataset.mode === state.difficultyMode;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", String(active));
-  });
-  byId("mode-description").innerHTML = modeSummary(state.difficultyMode);
   const theme = getThemePreference();
   document.querySelectorAll(".theme-btn").forEach((button) => {
     const active = button.dataset.value === theme;
@@ -36,7 +25,7 @@ function renderSettings() {
   });
 }
 
-/** The "🟠 Medium ▾" buttons (under Start on Home, above Play on the summary): show the current mode and open Settings. */
+/** The "🟠 Medium ▾" buttons (under Start on Home, above Play on the summary): show the current mode and open the picker. */
 export function renderModeChip() {
   const m = MODES[normalizeMode(state.difficultyMode)];
   document.querySelectorAll(".mode-chip").forEach((chip) => {
@@ -47,7 +36,40 @@ export function renderModeChip() {
 
 export function openSettings() {
   renderSettings();
-  openOverlay("settings-overlay", { initialFocus: ".difficulty-btn.active" });
+  openOverlay("settings-overlay", { initialFocus: ".theme-btn.active" });
+}
+
+// ---------- difficulty picker ----------
+
+function renderDifficultyOptions() {
+  const current = normalizeMode(state.difficultyMode);
+  byId("difficulty-options").innerHTML = MODE_KEYS.map((mode) => {
+    const m = MODES[mode];
+    const selected = mode === current;
+    return `
+      <button type="button" class="difficulty-option${selected ? " is-selected" : ""}" data-mode="${mode}"
+              role="radio" aria-checked="${selected}">
+        <span class="difficulty-option-emoji" aria-hidden="true">${m.emoji}</span>
+        <span class="difficulty-option-text">
+          <span class="difficulty-option-name">${m.label}${m.tagline ? ` <span class="difficulty-option-tagline">${m.tagline}</span>` : ""}</span>
+          <span class="difficulty-option-detail">${m.questionsText} · ${m.basePoints} pts · ${m.seconds} sec</span>
+        </span>
+        <span class="difficulty-option-check" aria-hidden="true">${selected ? "✓" : ""}</span>
+      </button>`;
+  }).join("");
+}
+
+/** Opened by the "🟠 Medium ▾" buttons. Tapping a mode chooses it and closes the picker. */
+export function openDifficultyPicker() {
+  renderDifficultyOptions();
+  openOverlay("difficulty-sheet", { initialFocus: ".difficulty-option.is-selected" });
+}
+
+function chooseDifficulty(mode) {
+  state.difficultyMode = normalizeMode(mode);
+  save({ settings: { difficultyMode: state.difficultyMode } });
+  renderModeChip();
+  closeOverlay("difficulty-sheet");
 }
 
 function renderHowToPlay() {
@@ -58,19 +80,9 @@ function renderHowToPlay() {
 }
 
 export function initSettings() {
-  byId("difficulty-selector").innerHTML = MODE_KEYS.map((mode) => `
-    <button type="button" class="difficulty-btn" data-mode="${mode}" aria-pressed="false">
-      <span class="emoji" aria-hidden="true">${MODES[mode].emoji}</span>
-      <span class="label">${MODES[mode].shortLabel}</span>
-    </button>`).join("");
-
-  byId("difficulty-selector").addEventListener("click", (event) => {
-    const button = event.target.closest(".difficulty-btn");
-    if (!button) return;
-    state.difficultyMode = normalizeMode(button.dataset.mode);
-    renderSettings();
-    renderModeChip();
-    save({ settings: { difficultyMode: state.difficultyMode } });
+  byId("difficulty-options").addEventListener("click", (event) => {
+    const option = event.target.closest(".difficulty-option");
+    if (option) chooseDifficulty(option.dataset.mode);
   });
 
   document.querySelectorAll(".theme-btn").forEach((button) => {
@@ -88,7 +100,7 @@ export function initSettings() {
     });
   });
 
-  byId("mode-chip").addEventListener("click", openSettings);
+  byId("mode-chip").addEventListener("click", openDifficultyPicker);
   byId("home-settings-btn").addEventListener("click", openSettings);
   renderModeChip();
 

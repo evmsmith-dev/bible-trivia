@@ -20,9 +20,7 @@ test("Scores shows the overview, top scores per mode, recent games and categorie
     await page.clock.runFor(16000); // let celebrations finish
   }
   await h.goHomeFromSummary(page);
-  await page.locator("#mode-chip").click();
-  await page.locator('.difficulty-btn[data-mode="easy"]').click();
-  await page.keyboard.press("Escape");
+  await h.chooseDifficulty(page, "easy");
   await h.startNormalGame(page);
   await h.playRound(page, { correctAnswers: 10 });
   await h.expectSummary(page);

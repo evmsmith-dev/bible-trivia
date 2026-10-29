@@ -15,7 +15,7 @@ import { celebrateDailyCompletion, celebrateHighScore, celebrateLevel, fireConfe
 import { anyOverlayOpen, closeOverlay, openOverlay } from "./ui/overlay.js";
 import { isDailyBonusActive, prepareDailyChallenge, recordDailyResult, renderDailyCard } from "./features/daily.js";
 import { getPlayerLevel, openPlayerSheet, renderPlayerCards } from "./features/player.js";
-import { openSettings, renderModeChip } from "./features/settings.js";
+import { openDifficultyPicker, renderModeChip } from "./features/settings.js";
 import { showUpdateBannerIfReady } from "./ui/update-banner.js";
 import { vibrate, VIBRATION } from "./ui/haptics.js";
 
@@ -527,7 +527,7 @@ function renderSummary({ percent, isDaily, dailyResult }) {
   // Change the difficulty for the next round; Play then uses it.
   renderModeChip();
   byId("summary-mode-chip")?.addEventListener("click", () => {
-    if (!state.celebrationActive) openSettings();
+    if (!state.celebrationActive) openDifficultyPicker();
   });
   byId("summary-review-btn").addEventListener("click", () => {
     if (!state.celebrationActive) showReview();

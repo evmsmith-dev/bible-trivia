@@ -58,9 +58,8 @@ test.describe("player and settings", () => {
   });
 
   test("difficulty mode persists and changes the timer", async ({ page }) => {
-    await h.openSettings(page);
-    await page.locator('.difficulty-btn[data-mode="hard"]').click();
-    await expect(page.locator('.difficulty-btn[data-mode="hard"]')).toHaveClass(/active/);
+    await h.chooseDifficulty(page, "hard");
+    await expect(page.locator("#mode-chip")).toHaveText("🔴 Hard ▾");
 
     await page.reload();
     await h.waitForReady(page);
@@ -71,10 +70,7 @@ test.describe("player and settings", () => {
   test("the mode button on Home shows the difficulty and changes it", async ({ page }) => {
     const chip = page.locator("#mode-chip");
     await expect(chip).toHaveText("🟠 Medium ▾");
-    await chip.click();
-    await expect(page.locator("#settings-overlay")).toBeVisible();
-    await page.locator('.difficulty-btn[data-mode="easy"]').click();
-    await page.locator("#settings-overlay .settings-close").click();
+    await h.chooseDifficulty(page, "easy");
     await expect(chip).toHaveText("🟢 Easy ▾");
 
     await page.reload();
@@ -137,6 +133,7 @@ test("data saved by the previous version still loads; an inflated level counter 
   await expect(page.locator(".game-list").first().locator(".game-row")).toHaveCount(5);
   await expect(page.locator(".game-list").first()).toContainText("Jan 2"); // old-style dates still read well
   await page.keyboard.press("Escape");
-  await h.openSettings(page);
-  await expect(page.locator('.difficulty-btn[data-mode="superHard"]')).toHaveClass(/active/);
+  await expect(page.locator("#mode-chip")).toHaveText("⚫ Super Hard ▾");
+  await page.locator("#mode-chip").click();
+  await expect(page.locator('.difficulty-option[data-mode="superHard"]')).toHaveAttribute("aria-checked", "true");
 });

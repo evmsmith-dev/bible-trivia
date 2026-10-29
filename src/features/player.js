@@ -134,7 +134,8 @@ export function openPlayerSheet({ id = getActivePlayerId() } = {}) {
   if (state.celebrationActive) return;
   editingId = id;
   renderPlayerSheet();
-  openOverlay("player-sheet", { initialFocus: "#player-name-input" });
+  // Focus the title, not the name box, so a phone's keyboard only opens when the name is tapped.
+  openOverlay("player-sheet", { initialFocus: "#player-sheet-title" });
   document.querySelector("#player-sheet .sheet").scrollTop = 0; // start at the top on phones
 }
 

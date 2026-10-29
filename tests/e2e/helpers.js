@@ -63,6 +63,14 @@ export async function openScores(page) {
   await expect(page.locator("#scores-page")).toBeVisible();
 }
 
+/** Chooses a difficulty with a "🟠 Medium ▾" button (Home's, unless another is given). */
+export async function chooseDifficulty(page, mode, chip = page.locator("#mode-chip")) {
+  await chip.click();
+  await expect(page.locator("#difficulty-sheet")).toBeVisible();
+  await page.locator(`.difficulty-option[data-mode="${mode}"]`).click();
+  await expect(page.locator("#difficulty-sheet")).toBeHidden(); // choosing closes the picker
+}
+
 /** Settings (⚙️ on Home). */
 export async function openSettings(page) {
   await page.locator("#home-settings-btn").click();

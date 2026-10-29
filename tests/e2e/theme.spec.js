@@ -5,7 +5,7 @@ const theme = (page) => page.evaluate(() => document.documentElement.dataset.the
 const bodyBackground = (page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
 
 async function openSettings(page) {
-  await page.locator("#mode-chip").click();
+  await page.locator("#home-settings-btn").click();
   await expect(page.locator("#settings-overlay")).toBeVisible();
 }
 
