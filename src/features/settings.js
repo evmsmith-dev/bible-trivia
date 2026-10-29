@@ -1,4 +1,4 @@
-// Settings overlay (difficulty mode, vibration), the Home mode button, and the How to Play overlay.
+// Settings overlay (difficulty mode, appearance, vibration), the Home mode button, and the How to Play overlay.
 // Mode buttons and descriptions are generated from config.MODES.
 import { MODES, MODE_KEYS } from "../config.js";
 import { normalizeMode } from "../lib/records.js";
@@ -6,6 +6,7 @@ import { state } from "../state.js";
 import { save } from "../storage/store.js";
 import { byId, setVisible } from "../ui/dom.js";
 import { canVibrate, isVibrationOn, setVibrationOn, vibrate, VIBRATION } from "../ui/haptics.js";
+import { getThemePreference, setThemePreference } from "../ui/theme.js";
 import { openOverlay } from "../ui/overlay.js";
 
 const modeSummary = (mode) => {
@@ -20,6 +21,12 @@ function renderSettings() {
     button.setAttribute("aria-pressed", String(active));
   });
   byId("mode-description").innerHTML = modeSummary(state.difficultyMode);
+  const theme = getThemePreference();
+  document.querySelectorAll(".theme-btn").forEach((button) => {
+    const active = button.dataset.value === theme;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
   setVisible(byId("vibration-setting"), canVibrate());
   const vibrationValue = isVibrationOn() ? "on" : "off";
   document.querySelectorAll(".vibration-btn").forEach((button) => {
@@ -64,6 +71,13 @@ export function initSettings() {
     renderSettings();
     renderModeChip();
     save({ settings: { difficultyMode: state.difficultyMode } });
+  });
+
+  document.querySelectorAll(".theme-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      setThemePreference(button.dataset.value);
+      renderSettings();
+    });
   });
 
   document.querySelectorAll(".vibration-btn").forEach((button) => {
