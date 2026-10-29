@@ -1,9 +1,9 @@
 // Validates the question bank. Exits non-zero on errors; prints warnings for likely near-duplicates.
-// Usage: node scripts/validate-questions.mjs [path-to-question-bank]
+// Usage: node scripts/validate-questions.mjs [path-to-question-bank] [--verbose]
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
-const file = process.argv[2] || "data/questions.json";
+const file = process.argv.slice(2).find((arg) => !arg.startsWith("--")) || "data/questions.json";
 const DIFFICULTIES = ["easy", "medium", "hard"];
 const CATEGORIES = ["Old Testament", "New Testament", "General"];
 
