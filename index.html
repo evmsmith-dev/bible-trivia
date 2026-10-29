@@ -22,6 +22,19 @@
       if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content", "#101510");
     })();
   </script>
+  <script>
+    // Screens are sized from the window's real height. Some Android browsers report a
+    // CSS screen height (vh/dvh) taller than the space the app actually has, which made
+    // the game screen scroll. --app-vh is 1% of the measured height (styles fall back to dvh).
+    (function () {
+      var root = document.documentElement;
+      function measure() { root.style.setProperty("--app-vh", window.innerHeight / 100 + "px"); }
+      measure();
+      window.addEventListener("resize", measure);
+      window.addEventListener("orientationchange", function () { setTimeout(measure, 250); });
+      window.addEventListener("pageshow", measure);
+    })();
+  </script>
   <link rel="stylesheet" href="vendor/fonts/fredoka.css">
   <link rel="stylesheet" href="src/ui/styles.css">
   <script src="vendor/confetti.browser.js" defer></script>
