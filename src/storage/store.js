@@ -31,6 +31,7 @@ export const KEYS = {
   dailyChallenges: `${PREFIX}dailyChallenges`,
   dailyPulseAckDate: `${PREFIX}dailyPulseAckDate`,
   recentQuestions: `${PREFIX}recentQuestionIds`,
+  vibration: `${PREFIX}vibration`,
 };
 
 // ---------- small localStorage helpers (never throw) ----------
