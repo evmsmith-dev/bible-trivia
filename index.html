@@ -67,6 +67,12 @@
     </div>
     <div id="question" aria-live="polite"></div>
     <div id="options" role="group" aria-label="Answer options"></div>
+    <!-- Covers the question when the app comes back from the background; the timer waits. -->
+    <div id="pause-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+      <h2 id="pause-title">⏸️ Paused</h2>
+      <p>The timer stopped while you were away.</p>
+      <button type="button" id="pause-resume-btn">Resume</button>
+    </div>
     <div id="summary" style="display:none;"></div>
     <div id="round-review" style="display:none;"></div>
     <div id="feedback" role="status" aria-live="assertive"></div>
@@ -264,6 +270,16 @@
             <button type="button" class="review-pref-btn" data-value="alwaysSkip" aria-pressed="false">Always Skip</button>
           </div>
           <p id="review-pref-description" class="setting-description"></p>
+        </div>
+
+        <!-- Shown only on devices that can vibrate (not iPhone or iPad). -->
+        <div class="setting-item" id="vibration-setting" style="display:none;">
+          <span class="setting-label" id="vibration-label">Vibration</span>
+          <div class="review-pref-selector" role="group" aria-labelledby="vibration-label">
+            <button type="button" class="vibration-btn" data-value="on" aria-pressed="true">On</button>
+            <button type="button" class="vibration-btn" data-value="off" aria-pressed="false">Off</button>
+          </div>
+          <p class="setting-description">A short buzz for a right answer, a double buzz for a wrong one.</p>
         </div>
       </div>
     </div>

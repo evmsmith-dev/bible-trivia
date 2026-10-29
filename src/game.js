@@ -16,6 +16,7 @@ import { anyOverlayOpen, closeOverlay, openOverlay } from "./ui/overlay.js";
 import { isDailyBonusActive, prepareDailyChallenge, recordDailyResult, renderDailyCard } from "./features/daily.js";
 import { getPlayerLevel, openPlayerOverlay, renderPlayerCards } from "./features/player.js";
 import { showUpdateBannerIfReady } from "./ui/update-banner.js";
+import { vibrate, VIBRATION } from "./ui/haptics.js";
 
 const el = {};
 let timerHandle = null;
@@ -86,6 +87,7 @@ function beginRound({ mode, questions, dailyRecord = null, attemptNumber = 1 }) 
   });
   setVisible(el.summary, false);
   setVisible(el.review, false);
+  clearPause();
   showQuestionLayout(true);
   updateStreakHud();
   showQuestion();
@@ -178,12 +180,14 @@ function rememberSeen(id) {
   saveRecentQuestionIds(state.recentQuestionIds);
 }
 
-// Time left is computed from a fixed deadline, so it stays accurate when the browser
-// throttles timers (background tabs) or pauses the page (switching apps on a phone).
-function startTimer() {
+// Time left is computed from a deadline, so it stays accurate when the browser throttles
+// timers. When the app goes to the background the timer pauses instead (see pauseRound),
+// and `fromSeconds` restarts it with the time that was left.
+function startTimer(fromSeconds = null) {
   const limit = MODES[activeMode()].seconds;
-  const deadline = performance.now() + limit * 1000;
-  secondsLeft = limit;
+  const start = fromSeconds ?? limit;
+  const deadline = performance.now() + start * 1000;
+  secondsLeft = start;
   stopTimer();
   const tick = () => {
     secondsLeft = Math.max(0, (deadline - performance.now()) / 1000);
@@ -202,6 +206,33 @@ function startTimer() {
 function stopTimer() {
   clearInterval(timerHandle);
   timerHandle = null;
+}
+
+// ---------- pausing when the app goes to the background ----------
+
+let pausedSecondsLeft = null;
+
+/** Stops the clock on an unanswered question and covers it until the player taps Resume. */
+function pauseRound() {
+  if (!timerHandle || answerLocked) return;
+  stopTimer();
+  pausedSecondsLeft = secondsLeft;
+  answerLocked = true;
+  setVisible(el.pauseOverlay, true, "flex");
+}
+
+function resumeRound() {
+  if (pausedSecondsLeft === null) return;
+  setVisible(el.pauseOverlay, false);
+  const remaining = pausedSecondsLeft;
+  pausedSecondsLeft = null;
+  answerLocked = false;
+  startTimer(remaining);
+}
+
+function clearPause() {
+  pausedSecondsLeft = null;
+  setVisible(el.pauseOverlay, false);
 }
 
 function showFeedback(message, type, detail = "") {
@@ -284,9 +315,11 @@ function handleAnswer(selectedButton) {
     if (points.dailyBonus) parts.push(`+${points.dailyBonus} daily`);
     showFeedback(`+${points.total} pts`, "correct", parts.join(" · "));
     updateStreakHud({ animate: true });
+    vibrate(VIBRATION.correct);
     fireConfetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
   } else {
     recordIncorrectAnswer();
+    vibrate(VIBRATION.wrong);
     if (selectedButton) {
       selectedButton.classList.remove("grayed");
       selectedButton.classList.add("incorrect");
@@ -491,7 +524,7 @@ async function shareDailyResult(dateKey) {
 
 function showSummary(celebrations) {
   setVisible(el.review, false);
-  setVisible(el.summary, true);
+  setVisible(el.summary, true, ""); // "" lets the stylesheet choose block or grid (landscape)
   pendingCelebrations = null;
   if (celebrations?.highScore !== null && celebrations?.highScore !== undefined) celebrateHighScore(celebrations.highScore);
   if (celebrations?.level) {
@@ -503,6 +536,7 @@ function showSummary(celebrations) {
 export function goHome() {
   clearTimeout(advanceHandle);
   stopTimer();
+  clearPause();
   state.game.active = false;
   resetBonusStreak();
   showScreen("welcome");
@@ -533,6 +567,7 @@ export function initGame() {
     options: byId("options"),
     feedback: byId("feedback"),
     summary: byId("summary"),
+    pauseOverlay: byId("pause-overlay"),
     review: byId("round-review"),
     countdownOverlay: byId("countdown-overlay"),
     countdownNumber: byId("countdown-number"),
@@ -552,5 +587,9 @@ export function initGame() {
   });
 
   byId("start-btn").addEventListener("click", () => startNormalGame());
+  byId("pause-resume-btn").addEventListener("click", resumeRound);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") pauseRound();
+  });
   updateStreakHud();
 }

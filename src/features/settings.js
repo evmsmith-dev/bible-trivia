@@ -4,7 +4,8 @@ import { MODES, MODE_KEYS, REVIEW_PREFERENCES } from "../config.js";
 import { normalizeMode, normalizeReviewPreference } from "../lib/records.js";
 import { state } from "../state.js";
 import { save } from "../storage/store.js";
-import { byId } from "../ui/dom.js";
+import { byId, setVisible } from "../ui/dom.js";
+import { canVibrate, isVibrationOn, setVibrationOn, vibrate, VIBRATION } from "../ui/haptics.js";
 import { openOverlay } from "../ui/overlay.js";
 
 const modeSummary = (mode) => {
@@ -25,6 +26,13 @@ function renderSettings() {
     button.setAttribute("aria-pressed", String(active));
   });
   byId("review-pref-description").textContent = REVIEW_PREFERENCES[state.roundReviewPreference];
+  setVisible(byId("vibration-setting"), canVibrate());
+  const vibrationValue = isVibrationOn() ? "on" : "off";
+  document.querySelectorAll(".vibration-btn").forEach((button) => {
+    const active = button.dataset.value === vibrationValue;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
 }
 
 export function openSettings() {
@@ -52,6 +60,14 @@ export function initSettings() {
     state.difficultyMode = normalizeMode(button.dataset.mode);
     renderSettings();
     save({ settings: { difficultyMode: state.difficultyMode } });
+  });
+
+  document.querySelectorAll(".vibration-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      setVibrationOn(button.dataset.value === "on");
+      renderSettings();
+      vibrate(VIBRATION.correct); // a sample buzz when turned on
+    });
   });
 
   document.querySelectorAll(".review-pref-btn").forEach((button) => {
