@@ -13,10 +13,11 @@
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
   <script>
     // Pick light or dark before the page draws, so there's no white flash.
-    // Keep the key in step with KEYS.theme in src/storage/store.js.
+    // Keep the key in step with DEVICE_KEYS.theme in src/storage/store.js (the second key is
+    // where older versions saved it; the app moves it on startup).
     (function () {
       var pref = "auto";
-      try { pref = localStorage.getItem("bibleTriviaPlayer_primary_theme") || "auto"; } catch (e) {}
+      try { pref = localStorage.getItem("bibleTrivia_theme") || localStorage.getItem("bibleTriviaPlayer_primary_theme") || "auto"; } catch (e) {}
       var dark = pref === "dark" || (pref !== "light" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
       document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
       if (dark) document.querySelector('meta[name="theme-color"]').setAttribute("content", "#101510");
@@ -57,7 +58,7 @@
     <button type="button" id="how-to-play-link" class="link-button">How to Play</button>
 
     <div id="player-entry-wrap">
-      <button id="player-entry-btn" type="button" aria-label="Edit player">
+      <button id="player-entry-btn" type="button" aria-label="Choose who's playing">
         <span class="player-entry-avatar" id="player-entry-avatar" aria-hidden="true">🙂</span>
       </button>
       <span class="player-entry-name" id="player-entry-name">Player</span>
@@ -138,15 +139,41 @@
     </div>
   </div>
 
+  <!-- ==================== Who's playing? (full page) ==================== -->
+  <div id="players-page" class="page-overlay" style="display:none;">
+    <div class="page" role="dialog" aria-modal="true" aria-labelledby="players-title">
+      <header class="page-header">
+        <button type="button" class="page-back" data-overlay-close aria-label="Back">←</button>
+        <h2 id="players-title">Who's playing?</h2>
+      </header>
+      <div class="page-body">
+        <p class="page-intro">Pick your name to keep your own scores. New here? Add yourself.</p>
+        <div id="player-cards" class="player-cards"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Difficulty (sheet from the bottom; opened by the 🟠 Medium ▾ buttons) ==================== -->
+  <div id="difficulty-sheet" class="sheet-overlay" style="display:none;">
+    <div class="sheet-backdrop" data-overlay-close></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="difficulty-title">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button type="button" class="sheet-close" data-overlay-close aria-label="Close">✕</button>
+      <h2 id="difficulty-title" tabindex="-1">Choose difficulty</h2>
+      <!-- Options generated from config.MODES -->
+      <div id="difficulty-options" class="difficulty-options" role="radiogroup" aria-labelledby="difficulty-title"></div>
+    </div>
+  </div>
+
   <!-- ==================== Edit player (sheet from the bottom) ==================== -->
   <div id="player-sheet" class="sheet-overlay" style="display:none;">
     <div class="sheet-backdrop" data-overlay-close></div>
     <form class="sheet" id="player-form" role="dialog" aria-modal="true" aria-labelledby="player-sheet-title" novalidate>
       <div class="sheet-handle" aria-hidden="true"></div>
       <button type="button" class="sheet-close" data-overlay-close aria-label="Close without saving">✕</button>
-      <h2 id="player-sheet-title">Edit player</h2>
+      <h2 id="player-sheet-title" tabindex="-1">Edit player</h2>
 
-      <div class="player-level-card">
+      <div class="player-level-card" id="player-level-card">
         <div class="player-level-avatar" id="player-sheet-avatar" aria-hidden="true"></div>
         <div class="player-level-info">
           <div class="player-level-text" id="player-level-display">Level 1</div>
@@ -165,7 +192,10 @@
       <div id="player-avatar-options" role="radiogroup" aria-labelledby="avatar-options-label"></div>
 
       <div class="sheet-actions">
-        <button type="button" id="player-reset-btn">Reset player</button>
+        <!-- One of these shows: Delete when there are other players, Reset for the only player. -->
+        <button type="button" id="player-delete-btn" class="sheet-danger">Delete player</button>
+        <button type="button" id="player-reset-btn" class="sheet-danger">Reset player</button>
+        <span class="sheet-actions-spacer"></span>
         <button type="submit" id="player-save-btn">Save</button>
       </div>
     </form>
@@ -195,17 +225,18 @@
           <ul id="howto-mode-list"></ul>
           <ul>
             <li>Correct answers also earn a <b>speed bonus</b> (up to double the base points) and a <b>streak bonus</b>.</li>
-            <li>Change this anytime by tapping the mode under <b>Start</b>, or in <b>⚙️ Settings</b>.</li>
+            <li>Change it anytime by tapping the mode under <b>Start</b> (or above <b>Play</b> after a round).</li>
           </ul>
         </details>
 
         <details class="howto-section">
           <summary>Your Player and Scores</summary>
           <ul>
-            <li>Tap your picture on the Home or Summary screen to change your name or picture, then tap <b>Save</b>.</li>
-            <li><b>🏆 Scores</b> shows your level, top scores for each mode, recent games, right answers by category, and Daily Challenge results.</li>
-            <li><b>⚙️ Settings</b> changes the difficulty mode, light or dark appearance, and vibration (on phones that support it).</li>
-            <li><b>Reset player</b> (at the bottom of the player screen) clears this player's saved progress after you confirm.</li>
+            <li>Tap your picture on Home to see <b>Who's playing?</b> Pick your name, tap <b>✏️</b> to change a name or picture, or <b>Add player</b> for someone new (up to 8 on one device).</li>
+            <li>Each player has their own level, scores, difficulty and Daily Challenge streak. When more than one person plays, the app asks who's playing when it opens.</li>
+            <li><b>🏆 Scores</b> shows your level, top scores for each mode, recent games, right answers by category, and Daily Challenge results. <b>Everyone</b> ranks the players on this device.</li>
+            <li><b>⚙️ Settings</b> changes light or dark appearance, and vibration (on phones that support it).</li>
+            <li><b>Delete player</b> (or <b>Reset player</b> when you're the only one) is at the bottom of the player screen, and asks you to confirm first.</li>
             <li>Your level goes up with correct answers in normal games (Daily Challenge answers don't count).</li>
           </ul>
         </details>
@@ -258,13 +289,6 @@
       <h2 id="settings-title">Settings</h2>
 
       <div class="settings-content">
-        <div class="setting-item">
-          <span class="setting-label" id="difficulty-label">Difficulty Mode</span>
-          <!-- Buttons generated from config.MODES -->
-          <div class="difficulty-selector" id="difficulty-selector" role="group" aria-labelledby="difficulty-label"></div>
-          <p id="mode-description" class="setting-description"></p>
-        </div>
-
         <div class="setting-item">
           <span class="setting-label" id="theme-label">Appearance</span>
           <div class="pref-selector" role="group" aria-labelledby="theme-label">

@@ -63,16 +63,49 @@ export async function openScores(page) {
   await expect(page.locator("#scores-page")).toBeVisible();
 }
 
+/** Chooses a difficulty with a "🟠 Medium ▾" button (Home's, unless another is given). */
+export async function chooseDifficulty(page, mode, chip = page.locator("#mode-chip")) {
+  await chip.click();
+  await expect(page.locator("#difficulty-sheet")).toBeVisible();
+  await page.locator(`.difficulty-option[data-mode="${mode}"]`).click();
+  await expect(page.locator("#difficulty-sheet")).toBeHidden(); // choosing closes the picker
+}
+
 /** Settings (⚙️ on Home). */
 export async function openSettings(page) {
   await page.locator("#home-settings-btn").click();
   await expect(page.locator("#settings-overlay")).toBeVisible();
 }
 
-/** The Edit player sheet (tap the avatar on Home). */
-export async function openPlayerSheet(page) {
+/** "Who's playing?" (tap the avatar on Home). */
+export async function openWhosPlaying(page) {
   await page.locator("#player-entry-btn").click();
+  await expect(page.locator("#players-page")).toBeVisible();
+}
+
+/** The Edit player sheet for the current player (avatar on Home, then ✏️ on their card). */
+export async function openPlayerSheet(page) {
+  await openWhosPlaying(page);
+  await page.locator(".player-tile.is-active .player-edit").click();
   await expect(page.locator("#player-sheet")).toBeVisible();
+}
+
+/** Closes any open pages, sheets and popups (Escape closes the top one each time). */
+export async function backToHome(page) {
+  for (let i = 0; i < 4 && await page.locator("#players-page, #player-sheet, #scores-page, #settings-overlay").filter({ visible: true }).count(); i++) {
+    await page.keyboard.press("Escape");
+  }
+  await expect(page.locator("#start-btn")).toBeVisible();
+}
+
+/** Adds a player from "Who's playing?" (they become the current player). */
+export async function addPlayer(page, name) {
+  await openWhosPlaying(page);
+  await page.locator("#player-add-btn").click();
+  await page.locator("#player-name-input").fill(name);
+  await page.locator("#player-save-btn").click();
+  await expect(page.locator("#players-page")).toBeHidden();
+  await expect(page.locator("#player-entry-name")).toHaveText(name);
 }
 
 export async function readProfile(page) {

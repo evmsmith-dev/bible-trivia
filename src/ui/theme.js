@@ -1,13 +1,13 @@
 // Light/dark theme. index.html sets data-theme before the page draws; this module keeps it
 // in step with the Appearance setting (auto/light/dark) and with the device when on auto.
-import { KEYS, readLocal, writeLocal } from "../storage/store.js";
+import { DEVICE_KEYS, readLocal, writeLocal } from "../storage/store.js";
 
 export const THEME_PREFERENCES = ["auto", "light", "dark"];
 const THEME_COLORS = { light: "#4CAF50", dark: "#101510" };
 const darkQuery = typeof matchMedia === "function" ? matchMedia("(prefers-color-scheme: dark)") : null;
 
 export function getThemePreference() {
-  const value = readLocal(KEYS.theme);
+  const value = readLocal(DEVICE_KEYS.theme);
   return THEME_PREFERENCES.includes(value) ? value : "auto";
 }
 
@@ -24,7 +24,7 @@ export function applyTheme(preference = getThemePreference()) {
 
 export function setThemePreference(preference) {
   const value = THEME_PREFERENCES.includes(preference) ? preference : "auto";
-  writeLocal(KEYS.theme, value);
+  writeLocal(DEVICE_KEYS.theme, value);
   applyTheme(value);
 }
 

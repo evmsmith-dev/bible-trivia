@@ -86,9 +86,7 @@ test("the summary's mode button changes the difficulty for the next round", asyn
 
   const chip = page.locator("#summary-mode-chip");
   await expect(chip).toHaveText("🟠 Medium ▾");
-  await chip.click();
-  await page.locator('.difficulty-btn[data-mode="hard"]').click();
-  await page.keyboard.press("Escape");
+  await h.chooseDifficulty(page, "hard", chip);
   await expect(chip).toHaveText("🔴 Hard ▾");
   await expect(page.locator("#mode-chip")).toHaveText("🔴 Hard ▾"); // Home matches
 

@@ -1159,50 +1159,6 @@
 }
 
 /* --- Difficulty Mode Buttons --- */
-.difficulty-selector {
-  display: flex;
-  gap: 8px;
-  margin: 16px 0;
-  width: 100%;
-}
-
-.difficulty-btn {
-  flex: 1;
-  padding: 16px 12px;
-  border: 2px solid var(--bd-e0e0e0, #E0E0E0);
-  border-radius: 12px;
-  background: var(--bg-ffffff, white);
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: all 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Fredoka', Arial, sans-serif;
-  color: var(--fg-333333, #333);
-}
-
-.difficulty-btn:active {
-  transform: scale(0.95);
-}
-
-.difficulty-btn.active {
-  background: var(--primary);
-  color: var(--fg-ffffff, white);
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
-
-.difficulty-btn .emoji {
-  font-size: 1.6rem;
-  display: block;
-}
-
-.difficulty-btn .label {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
 
 .pref-selector {
   display: flex;
@@ -1234,14 +1190,8 @@
 .theme-btn { min-width: 0; }
 
 @media (max-width: 480px) {
-  .difficulty-btn {
-    padding: 14px 10px;
-    font-size: 1rem;
-  }
+
   
-  .difficulty-btn .emoji {
-    font-size: 1.4rem;
-  }
 
   /* Tighter scroll constraints for mobile */
   #summary > h3:first-of-type + table {
@@ -1989,7 +1939,8 @@ button, input, select, textarea { font-family: inherit; }
   font-size: 1.15rem;
   box-shadow: none;
 }
-#player-reset-btn {
+.sheet-actions-spacer { flex: 1; }
+.sheet-danger {
   background: transparent;
   color: var(--fg-c62828, #c62828);
   border: 2px solid var(--bd-ef9a9a, #ef9a9a);
@@ -2139,6 +2090,151 @@ button, input, select, textarea { font-family: inherit; }
 .category-count { font-weight: 700; }
 .category-track { grid-column: 1 / -1; margin: 4px 0 0; }
 
+/* ---------- Difficulty picker (sheet) ---------- */
+.sheet h2:focus { outline: none; } /* focused on open so the keyboard stays closed */
+.difficulty-options { display: flex; flex-direction: column; gap: 10px; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
+.difficulty-option {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr 1.6rem;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 2px solid var(--bd-d7ecd8, #d7ecd8);
+  background: var(--bg-f5fff6, #f5fff6);
+  color: var(--fg-1b5e20, #1b5e20);
+  text-align: left;
+  box-shadow: none;
+  cursor: pointer;
+}
+.difficulty-option.is-selected { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25); }
+.difficulty-option-emoji { font-size: 1.8rem; line-height: 1; text-align: center; }
+.difficulty-option-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.difficulty-option-name { font-size: 1.25rem; font-weight: 700; }
+.difficulty-option-tagline { font-size: 0.85rem; font-weight: 600; color: var(--fg-e65100, #e65100); }
+.difficulty-option-detail { font-size: 0.95rem; color: var(--fg-616161, #616161); }
+.difficulty-option-check { font-size: 1.4rem; font-weight: 700; color: var(--primary); text-align: center; }
+
+/* ---------- Who's playing? ---------- */
+.page-intro { margin: 4px auto 16px; font-size: 1.1rem; line-height: 1.4; color: var(--fg-2f5f34, #2f5f34); }
+.player-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+.player-tile {
+  position: relative;
+  border-radius: 20px;
+  background: var(--card);
+  border: 2px solid var(--bd-d7ecd8, #d7ecd8);
+}
+.player-tile.is-active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25); }
+.player-pick,
+.player-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 170px;
+  margin: 0;
+  padding: 20px 10px 16px;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: var(--fg-1b5e20, #1b5e20);
+  box-shadow: none;
+  cursor: pointer;
+}
+.player-add { border: 2px dashed var(--bd-c8e6c9, #c8e6c9); background: transparent; }
+.player-tile-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-f5fff6, #f5fff6);
+  font-size: 2.8rem;
+  line-height: 1;
+}
+.player-tile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.player-add .player-tile-avatar { color: var(--fg-2f5f34, #2f5f34); font-size: 2.6rem; font-weight: 300; }
+.player-tile-name { font-size: 1.25rem; font-weight: 700; overflow-wrap: anywhere; }
+.player-tile-level { font-size: 0.95rem; color: var(--fg-2f5f34, #2f5f34); }
+.player-edit {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 44px;
+  height: 44px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 1.15rem;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+/* ---------- Scores: Me / Everyone ---------- */
+.scores-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--bd-d7ecd8, #d7ecd8);
+}
+.scores-tab {
+  width: 100%;
+  margin: 0;
+  min-height: 48px;
+  padding: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--fg-2f5f34, #2f5f34);
+  font-size: 1.15rem;
+  font-weight: 700;
+  box-shadow: none;
+}
+.scores-tab.active { background: var(--primary); color: #ffffff; }
+.everyone-list { list-style: none; margin: 10px 0 0; padding: 0; }
+.everyone-row {
+  display: grid;
+  grid-template-columns: 2.2em 44px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--bd-d7ecd8, #d7ecd8);
+}
+.everyone-row:last-child { border-bottom: 0; }
+.everyone-row.is-me { background: var(--bg-f5fff6, #f5fff6); border-radius: 12px; }
+.everyone-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-f5fff6, #f5fff6);
+  font-size: 1.6rem;
+}
+.everyone-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.everyone-name { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
+.everyone-meta { font-size: 0.9rem; color: var(--fg-616161, #616161); }
+.everyone-best { font-size: 1.3rem; font-weight: 700; }
+
 /* ==========================================================================
    Dark mode
    Every color in this file is written as var(--role-hex, #hex): the fallback is the
@@ -2204,7 +2300,7 @@ button, input, select, textarea { font-family: inherit; }
   --fg-2f4f31: #d3e5d4; /* #2f4f31 · .player-name-display-label, .player-field label,
     .player-field-label */
   --fg-2f5f34: #cee7d0; /* #2f5f34 · #progress, .player-entry-level */
-  --fg-333333: #e0e0e0; /* #333 · .difficulty-btn, .celebration-subtitle (yellow buttons keep #333) */
+  --fg-333333: #e0e0e0; /* #333 · .celebration-subtitle (yellow buttons keep #333) */
   --fg-33691e: #d2efc7; /* #33691e · .streak-chip */
   --fg-424242: #dbdbdb; /* #424242 · #welcome p, #quit-overlay p */
   --fg-444444: #dbdbdb; /* #444 · #how-to-play-overlay .overlay-content, .settings-content */
