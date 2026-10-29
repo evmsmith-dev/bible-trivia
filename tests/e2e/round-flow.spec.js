@@ -76,3 +76,23 @@ test("the retired review preference is removed from storage", async ({ page }) =
   await h.playRound(page, { correctAnswers: 5 });
   await expect(page.locator("#summary-review-btn")).toBeVisible();
 });
+
+test("the summary's mode button changes the difficulty for the next round", async ({ page }) => {
+  await h.openApp(page);
+  await h.startNormalGame(page);
+  await h.playRound(page, { correctAnswers: 5 });
+  await h.expectSummary(page);
+  await page.clock.runFor(16000); // let any celebration finish
+
+  const chip = page.locator("#summary-mode-chip");
+  await expect(chip).toHaveText("🟠 Medium ▾");
+  await chip.click();
+  await page.locator('.difficulty-btn[data-mode="hard"]').click();
+  await page.keyboard.press("Escape");
+  await expect(chip).toHaveText("🔴 Hard ▾");
+  await expect(page.locator("#mode-chip")).toHaveText("🔴 Hard ▾"); // Home matches
+
+  await page.locator("#restart-same").click();
+  await h.finishCountdown(page);
+  await expect(page.locator("#timer-display")).toHaveText("21"); // Hard's timer
+});

@@ -1557,8 +1557,8 @@ button, input, select, textarea { font-family: inherit; }
 }
 
 /* ---------- Home: current difficulty under Start (opens Settings) ---------- */
-#mode-chip {
-  display: flex; /* its own line under Start */
+.mode-chip {
+  display: flex; /* its own line (under Start on Home, above Play on the summary) */
   align-items: center;
   gap: 6px;
   width: fit-content;
@@ -1732,6 +1732,7 @@ button, input, select, textarea { font-family: inherit; }
   .summary-player-name { font-size: clamp(1.05rem, min(5vw, 2.7 * var(--app-vh, 1dvh)), 1.35rem); }
   .summary-player-level { font-size: clamp(0.95rem, min(4.4vw, 2.4 * var(--app-vh, 1dvh)), 1.15rem); }
   .streak-carryover-banner { margin: 0; font-size: clamp(0.95rem, min(4.4vw, 2.4 * var(--app-vh, 1dvh)), 1.15rem); }
+  #summary .mode-chip { margin: 0 auto; min-height: 44px; font-size: clamp(1.05rem, min(5vw, 2.7 * var(--app-vh, 1dvh)), 1.3rem); }
   .summary-actions { margin: 0; gap: 12px; }
   .summary-actions button {
     min-height: clamp(56px, 8.5 * var(--app-vh, 1dvh), 76px);
@@ -1775,6 +1776,7 @@ button, input, select, textarea { font-family: inherit; }
   }
   #summary > h2, #summary > .summary-stats, #summary > #summary-review-btn { grid-column: 1; }
   #summary > .summary-player-wrap { grid-column: 2; grid-row: 1; }
+  #summary > .mode-chip { grid-column: 1; margin-top: 8px; }
   #summary > .streak-carryover-banner { grid-column: 2; grid-row: 2 / span 2; }
   #summary > .summary-actions { grid-column: 2; grid-row: 4; }
   #summary > p { margin: 0.2em 0; }

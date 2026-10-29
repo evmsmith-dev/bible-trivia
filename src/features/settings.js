@@ -36,13 +36,13 @@ function renderSettings() {
   });
 }
 
-/** The "🟠 Medium ▾" button under Start: shows the current mode and opens Settings. */
+/** The "🟠 Medium ▾" buttons (under Start on Home, above Play on the summary): show the current mode and open Settings. */
 export function renderModeChip() {
-  const chip = byId("mode-chip");
-  if (!chip) return;
   const m = MODES[normalizeMode(state.difficultyMode)];
-  chip.textContent = `${m.emoji} ${m.label} ▾`;
-  chip.setAttribute("aria-label", `Difficulty mode: ${m.label}. Change difficulty`);
+  document.querySelectorAll(".mode-chip").forEach((chip) => {
+    chip.textContent = `${m.emoji} ${m.label} ▾`;
+    chip.setAttribute("aria-label", `Difficulty mode: ${m.label}. Change difficulty`);
+  });
 }
 
 export function openSettings() {

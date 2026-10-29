@@ -15,6 +15,7 @@ import { celebrateDailyCompletion, celebrateHighScore, celebrateLevel, fireConfe
 import { anyOverlayOpen, closeOverlay, openOverlay } from "./ui/overlay.js";
 import { isDailyBonusActive, prepareDailyChallenge, recordDailyResult, renderDailyCard } from "./features/daily.js";
 import { getPlayerLevel, openPlayerSheet, renderPlayerCards } from "./features/player.js";
+import { openSettings, renderModeChip } from "./features/settings.js";
 import { showUpdateBannerIfReady } from "./ui/update-banner.js";
 import { vibrate, VIBRATION } from "./ui/haptics.js";
 
@@ -508,6 +509,7 @@ function renderSummary({ percent, isDaily, dailyResult }) {
       <span id="summary-player-level" class="summary-player-level"></span>
     </div>
     ${carryBanner}
+    ${isDaily ? "" : '<button type="button" id="summary-mode-chip" class="mode-chip"></button>'}
     <div class="summary-actions">
       ${isDaily ? '<button type="button" id="share-daily-btn">📤 Share Result</button><p id="share-status" class="share-status" role="status"></p>' : ""}
       ${isDaily ? "" : '<button type="button" id="restart-same">&#9654; Play</button>'}
@@ -522,6 +524,11 @@ function renderSummary({ percent, isDaily, dailyResult }) {
     if (!state.celebrationActive) goHome();
   });
   byId("summary-player-btn").addEventListener("click", openPlayerSheet);
+  // Change the difficulty for the next round; Play then uses it.
+  renderModeChip();
+  byId("summary-mode-chip")?.addEventListener("click", () => {
+    if (!state.celebrationActive) openSettings();
+  });
   byId("summary-review-btn").addEventListener("click", () => {
     if (!state.celebrationActive) showReview();
   });
