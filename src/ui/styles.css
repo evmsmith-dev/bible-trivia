@@ -1303,7 +1303,6 @@ button.link-button:hover { transform: none; text-decoration: underline; }
 }
 #daily-challenge-link.link-button { display: flex; margin: 16px auto 0; }
 /* Each Welcome link sits on its own line, centered under the Start button. */
-#how-to-play-link.link-button { display: block; margin: 10px auto 0; }
 
 /* Visible keyboard focus everywhere. */
 :focus-visible {
@@ -1460,8 +1459,10 @@ button, input, select, textarea { font-family: inherit; }
   #welcome h1 { font-size: clamp(2.3rem, min(12vw, 7 * var(--app-vh, 1dvh)), 3.6rem); line-height: 1.05; margin: 0; }
   #welcome h2 { font-size: clamp(1.5rem, min(7.5vw, 4.4 * var(--app-vh, 1dvh)), 2.4rem); line-height: 1.1; margin: 0; }
   #welcome p  { font-size: clamp(1.05rem, min(5vw, 2.7 * var(--app-vh, 1dvh)), 1.4rem); line-height: 1.35; margin: 0; }
-  #welcome #daily-challenge-link,
-  #welcome #how-to-play-link { margin: 0 auto; padding: 8px 16px; font-size: clamp(1.1rem, min(5.2vw, 2.8 * var(--app-vh, 1dvh)), 1.4rem); width: auto; }
+  #welcome #daily-challenge-link { margin: 0 auto; padding: 8px 16px; font-size: clamp(1.1rem, min(5.2vw, 2.8 * var(--app-vh, 1dvh)), 1.4rem); width: auto; }
+  /* Scores, Settings and Help in one row, even on a 375px-wide phone. */
+  #welcome #home-links { gap: 6px; }
+  #welcome #home-links button { padding: 6px 10px; font-size: clamp(0.95rem, 4.1vw, 1.1rem); }
   #welcome #mode-chip { margin: -4px auto 0; padding: 6px 16px; font-size: clamp(1rem, min(4.6vw, 2.5 * var(--app-vh, 1dvh)), 1.2rem); }
   #welcome #start-btn {
     margin: 0;
@@ -1709,8 +1710,7 @@ button, input, select, textarea { font-family: inherit; }
   #welcome h2 { font-size: clamp(1.3rem, 6 * var(--app-vh, 1dvh), 2rem); }
   #welcome p { font-size: clamp(1rem, 4.4 * var(--app-vh, 1dvh), 1.3rem); }
   #welcome #start-btn { padding: 10px 16px; font-size: 1.6rem; }
-  #welcome #daily-challenge-link,
-  #welcome #how-to-play-link { padding: 4px 12px; }
+  #welcome #daily-challenge-link { padding: 4px 12px; }
   #player-entry-wrap { flex-direction: row; justify-content: center; gap: 8px; }
   #player-entry-btn { width: 44px; height: 44px; }
   #player-entry-btn .player-entry-avatar { width: 40px; height: 40px; font-size: 1.4rem; }
@@ -1748,14 +1748,15 @@ button, input, select, textarea { font-family: inherit; }
 /* ---------- Home: Scores and Settings ---------- */
 #home-links {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   margin: 12px auto 0;
 }
 #home-links button {
   width: auto;
   margin: 0;
-  padding: 8px 16px;
+  padding: 8px 14px;
   min-height: 44px;
   border-radius: 999px;
   border: 2px solid var(--bd-c8e6c9, #c8e6c9);

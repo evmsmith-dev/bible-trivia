@@ -1,13 +1,15 @@
 // App entry point: load questions and saved data, wire up the screens, register the service worker.
 import { reconcileLevelCounter } from "./lib/records.js";
 import { state, applySnapshot } from "./state.js";
-import { initStore, listPlayers, loadAll, loadRecentQuestionIds, moveDeviceSettings, saveProfile } from "./storage/store.js";
+import {
+  initStore, KEYS, listPlayers, loadAll, loadRecentQuestionIds, moveDeviceSettings, readLocal, saveProfile, writeLocal,
+} from "./storage/store.js";
 import { byId, showScreen } from "./ui/dom.js";
 import { initOverlays } from "./ui/overlay.js";
 import { registerServiceWorker } from "./ui/update-banner.js";
 import { initDaily, renderDailyCard } from "./features/daily.js";
 import { initPlayer, openWhosPlaying, renderPlayerCards } from "./features/player.js";
-import { initSettings, renderModeChip } from "./features/settings.js";
+import { initSettings, openHowToPlay, renderModeChip } from "./features/settings.js";
 import { initTheme } from "./ui/theme.js";
 import { initStats } from "./features/stats.js";
 import { initGame, startDailyGame } from "./game.js";
@@ -23,8 +25,17 @@ async function loadQuestions() {
   if (countEl) countEl.textContent = `${Math.floor(questions.length / 50) * 50}+`;
 }
 
+/** How to Play opens by itself the first time a player uses the app (a new device, or a newly
+ *  added player). Players who already have games or right answers have clearly found their way. */
+function welcomeNewPlayer() {
+  if (readLocal(KEYS.howToPlaySeen)) return;
+  writeLocal(KEYS.howToPlaySeen, "1");
+  if (state.history.length || state.profile.nonDailyCorrectAnswers) return;
+  openHowToPlay({ firstSection: true });
+}
+
 /** Puts a player's saved data into the app (at startup, and when someone else starts playing). */
-function activatePlayer(snapshot) {
+function activatePlayer(snapshot, { welcome = true } = {}) {
   applySnapshot(snapshot);
   state.recentQuestionIds = loadRecentQuestionIds();
   state.profile = reconcileLevelCounter(state.profile, state.history);
@@ -33,6 +44,7 @@ function activatePlayer(snapshot) {
   renderPlayerCards();
   renderModeChip();
   renderDailyCard();
+  if (welcome) welcomeNewPlayer();
 }
 
 async function start() {
@@ -46,12 +58,13 @@ async function start() {
 
   const [snapshot] = await Promise.all([initStore().then(loadAll), loadQuestions()]);
   initDaily({ startDaily: startDailyGame });
-  activatePlayer(snapshot);
+  // When more than one person plays on this device, ask who's playing at launch (How to Play
+  // waits until a new player is picked).
+  const askWhosPlaying = listPlayers().length > 1;
   showScreen("welcome");
+  activatePlayer(snapshot, { welcome: !askWhosPlaying });
   document.body.classList.add("is-ready");
-
-  // When more than one person plays on this device, ask who's playing at launch.
-  if (listPlayers().length > 1) openWhosPlaying({ atLaunch: true });
+  if (askWhosPlaying) openWhosPlaying({ atLaunch: true });
 
   addEventListener("pagehide", () => saveProfile(state.profile));
   addEventListener("pageshow", renderPlayerCards); // refresh when restored from the back/forward cache

@@ -5,7 +5,19 @@ import { expect } from "@playwright/test";
 export const PROFILE_KEY = "bibleTriviaPlayer_primary_profile";
 export const DB_NAME = "BibleTriviaDB_player_primary";
 
-export async function openApp(page, { clock = true } = {}) {
+/** Most tests start on a fresh device, where How to Play would open by itself; mark it seen. */
+export async function skipFirstRunHelp(page) {
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem("bibleTriviaPlayer_primary_howToPlaySeen", "1");
+    } catch {
+      // storage blocked: nothing to skip
+    }
+  });
+}
+
+export async function openApp(page, { clock = true, firstRunHelp = false } = {}) {
+  if (!firstRunHelp) await skipFirstRunHelp(page);
   if (clock) {
     await page.clock.install();
   }
@@ -105,6 +117,10 @@ export async function addPlayer(page, name) {
   await page.locator("#player-name-input").fill(name);
   await page.locator("#player-save-btn").click();
   await expect(page.locator("#players-page")).toBeHidden();
+  // A new player sees How to Play once.
+  await expect(page.locator("#how-to-play-overlay")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#how-to-play-overlay")).toBeHidden();
   await expect(page.locator("#player-entry-name")).toHaveText(name);
 }
 

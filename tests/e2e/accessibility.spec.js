@@ -72,16 +72,26 @@ test("opening a player's sheet doesn't focus the name box (no phone keyboard)", 
   await expect(page.locator("#player-name-input")).not.toBeFocused();
 });
 
-test("the mode button and How to Play each sit on their own line below Start", async ({ page }) => {
+test("the mode button sits under Start; Help is in one row with Scores and Settings", async ({ page }) => {
   const start = await page.locator("#start-btn").boundingBox();
   const mode = await page.locator("#mode-chip").boundingBox();
-  const howTo = await page.locator("#how-to-play-link").boundingBox();
   expect(mode.y).toBeGreaterThanOrEqual(start.y + start.height - 6);
-  expect(howTo.y).toBeGreaterThanOrEqual(mode.y + mode.height);
-  // Centered under Start (within a few pixels).
-  for (const box of [mode, howTo]) {
-    expect(Math.abs((box.x + box.width / 2) - (start.x + start.width / 2))).toBeLessThan(4);
-  }
+  expect(Math.abs((mode.x + mode.width / 2) - (start.x + start.width / 2))).toBeLessThan(4);
+
+  await expect(page.locator("#how-to-play-link")).toHaveText("❓ Help");
+  const boxes = await Promise.all(["#home-scores-btn", "#home-settings-btn", "#how-to-play-link"]
+    .map((selector) => page.locator(selector).boundingBox()));
+  for (const box of boxes) expect(Math.abs(box.y - boxes[0].y)).toBeLessThan(2); // one row
+
+  await page.locator("#how-to-play-link").click();
+  await expect(page.locator("#how-to-play-overlay")).toBeVisible();
+});
+
+test("the Scores, Settings and Help row fits on one line on the smallest phone", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 });
+  const boxes = await Promise.all(["#home-scores-btn", "#home-settings-btn", "#how-to-play-link"]
+    .map((selector) => page.locator(selector).boundingBox()));
+  for (const box of boxes) expect(Math.abs(box.y - boxes[0].y)).toBeLessThan(2);
 });
 
 test.describe("phone layout", () => {

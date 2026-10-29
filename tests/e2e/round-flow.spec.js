@@ -66,6 +66,7 @@ test.describe("round flow", () => {
 });
 
 test("the retired review preference is removed from storage", async ({ page }) => {
+  await h.skipFirstRunHelp(page);
   await page.addInitScript(() => localStorage.setItem("bibleTriviaPlayer_primary_roundReviewPreference", "alwaysSkip"));
   await page.clock.install();
   await page.goto("index.html");
