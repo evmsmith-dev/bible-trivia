@@ -139,3 +139,15 @@ test("the measured window height is set before the app starts", async ({ page })
   await page.setViewportSize({ width: 390, height: 600 });
   await expect.poll(() => page.evaluate(() => document.documentElement.style.getPropertyValue("--app-vh"))).toBe("6px");
 });
+
+test("the summary spreads over the whole screen on a tall phone", async ({ page }) => {
+  await page.setViewportSize({ width: 412, height: 795 });
+  await h.openApp(page);
+  await reachSummary(page);
+  const title = await page.locator("#summary h2").boundingBox();
+  const play = await page.locator("#restart-same").boundingBox();
+  expect(title.y).toBeLessThan(795 * 0.2); // starts near the top…
+  expect(play.y + play.height).toBeGreaterThan(795 * 0.75); // …and the buttons sit low, near the thumb
+  expect(play.height).toBeGreaterThanOrEqual(56);
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+});
