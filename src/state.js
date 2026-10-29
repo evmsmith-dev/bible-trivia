@@ -15,6 +15,7 @@ export const state = {
   dailyStats: sanitizeDailyStats(null),
   dailyChallenges: {},
   recentQuestionIds: [], // oldest first; see config.RECENT_QUESTION_MEMORY
+  badges: {}, // earned badge levels: { [id]: { tier, earnedAt } }; see features/badges.js
 
   // Current round
   game: {

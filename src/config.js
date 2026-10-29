@@ -106,6 +106,10 @@ export const LEVEL_THRESHOLDS = [0, 25, 60, 110, 180, 270, 390, 540, 730, 970, 1
 
 export const TIMING = {
   countdownSeconds: 3,
+  // Answers can't be tapped for this long after a question appears (the timer starts after it),
+  // so tapping straight through a round without reading doesn't work, and a tap meant for the
+  // last question can't land on the next one.
+  answerLockMs: 1000,
   autoAdvanceCorrectMs: 2200,
   autoAdvanceWrongMs: 2800,
   feedbackShowMs: 2200,

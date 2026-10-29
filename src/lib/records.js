@@ -110,6 +110,7 @@ export function sanitizeDailyRecord(raw) {
     // Started attempts decide which question set a retry gets (older records didn't store it).
     startedAttempts: Math.max(toCount(value.startedAttempts), toCount(value.attempts)),
     bestScore: toCount(value.bestScore),
+    bestCorrect: toCount(value.bestCorrect), // most right answers in one attempt (added with badges)
     lastScore: toCount(value.lastScore),
     completed: Boolean(value.completed),
     completedAt: value.completedAt ? String(value.completedAt) : null,

@@ -71,13 +71,14 @@ export async function prepareDailyChallenge() {
 }
 
 /** Records a finished daily round. Returns what the summary needs. */
-export function recordDailyResult({ dateKey, score, percent }) {
+export function recordDailyResult({ dateKey, score, percent, correct = 0 }) {
   const passed = percent >= DAILY.successPercent;
   const record = sanitizeDailyRecord(getDailyRecord(dateKey) || { dateKey, seed: createDailySeed(dateKey) });
   const firstCompletion = passed && !record.completed;
   record.attempts += 1;
   record.lastScore = score;
   record.bestScore = Math.max(record.bestScore, score);
+  record.bestCorrect = Math.max(record.bestCorrect, correct);
   if (passed) {
     record.completed = true;
     record.completedAt = record.completedAt || new Date().toISOString();

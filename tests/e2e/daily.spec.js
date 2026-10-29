@@ -40,7 +40,7 @@ test.describe("daily challenge", () => {
     expect(secondAttempt.filter((question) => firstAttempt.includes(question))).toEqual([]);
     await h.expectSummary(page);
     await expect(page.locator("#summary")).toContainText("Daily Challenge complete (70%+)");
-    await expect(page.locator("#summary")).toContainText("Attempts: 2");
+    await expect(page.locator("#summary")).toContainText("Tries: 2");
     await page.clock.runFor(5000);
     await h.goHomeFromSummary(page);
 

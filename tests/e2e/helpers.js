@@ -46,8 +46,15 @@ export async function currentQuestionNumber(page) {
   return Number(/Question (\d+)/.exec(text)[1]);
 }
 
+/** Answers unlock a moment after each question appears (config TIMING.answerLockMs). */
+export async function waitForAnswers(page) {
+  await page.clock.runFor(1000);
+  await expect(page.locator("#options .option").first()).toBeEnabled();
+}
+
 /** Answer the visible question correctly or incorrectly, then let the game advance. */
 export async function answer(page, { correct }) {
+  await waitForAnswers(page);
   const option = page.locator(`#options .option[data-correct="${correct ? "true" : "false"}"]`).first();
   await option.click();
   await page.clock.runFor(3000);
