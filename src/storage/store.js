@@ -39,6 +39,7 @@ function playerKeys(id) {
     dailyChallenges: `${prefix}dailyChallenges`,
     dailyPulseAckDate: `${prefix}dailyPulseAckDate`,
     recentQuestions: `${prefix}recentQuestionIds`,
+    howToPlaySeen: `${prefix}howToPlaySeen`,
   };
 }
 

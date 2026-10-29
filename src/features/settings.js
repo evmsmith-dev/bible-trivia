@@ -72,6 +72,14 @@ function chooseDifficulty(mode) {
   closeOverlay("difficulty-sheet");
 }
 
+/** How to Play. `firstSection` opens one section (used when it opens by itself for a new player). */
+export function openHowToPlay({ firstSection = false } = {}) {
+  document.querySelectorAll("#how-to-play-overlay .howto-section").forEach((section, index) => {
+    section.toggleAttribute("open", firstSection && index === 0);
+  });
+  openOverlay("how-to-play-overlay");
+}
+
 function renderHowToPlay() {
   byId("howto-mode-list").innerHTML = MODE_KEYS.map((mode) => {
     const m = MODES[mode];
@@ -105,8 +113,5 @@ export function initSettings() {
   renderModeChip();
 
   renderHowToPlay();
-  byId("how-to-play-link").addEventListener("click", () => {
-    document.querySelectorAll("#how-to-play-overlay .howto-section").forEach((section) => section.removeAttribute("open"));
-    openOverlay("how-to-play-overlay");
-  });
+  byId("how-to-play-link").addEventListener("click", () => openHowToPlay());
 }
