@@ -120,6 +120,10 @@
       filter: saturate(1.05);
     }
 
+    #progress-dots .missed {
+      color: #c62828;
+    }
+
     #progress-dots .current {
       color: #1565c0;
       transform: scale(1.15);

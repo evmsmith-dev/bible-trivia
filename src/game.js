@@ -126,11 +126,14 @@ function renderProgress() {
   const { game } = state;
   const prefix = game.mode === GAME_MODE_DAILY ? "Daily | " : "";
   el.progress.textContent = `${prefix}Question ${Math.min(game.index + 1, QUESTIONS_PER_GAME)} of ${QUESTIONS_PER_GAME} | Correct: ${game.correct} | Score: ${game.score}`;
+  // Answered questions show ✅ (correct) or ❌ (wrong or timed out) as soon as they're answered.
   el.progressDots.innerHTML = Array.from({ length: QUESTIONS_PER_GAME }, (_, i) => {
-    if (i < game.index) return '<span class="done">✅</span>';
+    const answered = game.review[i];
+    if (answered) return answered.isCorrect ? '<span class="done">✅</span>' : '<span class="missed">❌</span>';
     return i === game.index ? '<span class="current">🔵</span>' : '<span class="pending">⚪</span>';
   }).join("");
-  el.progressDots.setAttribute("aria-label", `Question ${game.index + 1} of ${QUESTIONS_PER_GAME}`);
+  const wrong = game.review.filter((entry) => !entry.isCorrect).length;
+  el.progressDots.setAttribute("aria-label", `Question ${Math.min(game.index + 1, QUESTIONS_PER_GAME)} of ${QUESTIONS_PER_GAME}: ${game.correct} correct, ${wrong} wrong`);
 }
 
 function showQuestion() {

@@ -49,6 +49,26 @@ test.describe("normal game", () => {
     await expect(page.locator("#streak-hud-count")).toHaveText("Streak: 0");
   });
 
+  test("progress dots show a check for right answers and a cross for wrong ones", async ({ page }) => {
+    await h.startNormalGame(page);
+    const dots = page.locator("#progress-dots span");
+    await expect(dots.nth(0)).toHaveText("🔵");
+
+    await page.locator('#options .option[data-correct="true"]').click();
+    await expect(dots.nth(0)).toHaveText("✅"); // shown right away, before moving on
+    await page.clock.runFor(3000);
+
+    await page.locator('#options .option[data-correct="false"]').first().click();
+    await expect(dots.nth(1)).toHaveText("❌");
+    await page.clock.runFor(3000);
+
+    await page.clock.runFor(26000); // let question 3 time out
+    await expect(dots.nth(2)).toHaveText("❌");
+    await page.clock.runFor(3000);
+    await expect(dots.nth(3)).toHaveText("🔵");
+    await expect(dots.nth(4)).toHaveText("⚪");
+  });
+
   test("running out of time counts as incorrect and advances", async ({ page }) => {
     await h.startNormalGame(page);
     await page.clock.runFor(26000); // medium mode: 25 seconds
