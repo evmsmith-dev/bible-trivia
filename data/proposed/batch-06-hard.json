@@ -1,0 +1,842 @@
+[
+  {
+    "id": 1986,
+    "q": "Which of David's wives despised him for dancing as the ark came into Jerusalem?",
+    "opts": [
+      "Abigail",
+      "Michal",
+      "Bathsheba",
+      "Ahinoam"
+    ],
+    "ans": 1,
+    "ref": "2 Samuel 6:16",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1987,
+    "q": "Who was Bathsheba's first husband?",
+    "opts": [
+      "Uriah the Hittite",
+      "Joab",
+      "Nathan",
+      "Ahithophel"
+    ],
+    "ans": 0,
+    "ref": "2 Samuel 11:3",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1988,
+    "q": "Which son of David tried to make himself king before Solomon was crowned?",
+    "opts": [
+      "Absalom",
+      "Amnon",
+      "Chileab",
+      "Adonijah"
+    ],
+    "ans": 3,
+    "ref": "1 Kings 1:5",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1989,
+    "q": "Which king of Tyre supplied cedar wood for Solomon's temple?",
+    "opts": [
+      "Ben-Hadad",
+      "Achish",
+      "Hiram",
+      "Hazael"
+    ],
+    "ans": 2,
+    "ref": "1 Kings 5:1-10",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1990,
+    "q": "What were the two bronze pillars at the front of Solomon's temple named?",
+    "opts": [
+      "Urim and Thummim",
+      "Jakin and Boaz",
+      "Gog and Magog",
+      "Ebal and Gerizim"
+    ],
+    "ans": 1,
+    "ref": "1 Kings 7:21",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1991,
+    "q": "What did Elijah throw over Elisha to call him to follow?",
+    "opts": [
+      "His cloak",
+      "A rope",
+      "Oil",
+      "A yoke"
+    ],
+    "ans": 0,
+    "ref": "1 Kings 19:19",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1992,
+    "q": "Before Elijah was taken up, what did Elisha ask for?",
+    "opts": [
+      "His chariot",
+      "Long life",
+      "A blessing for Israel",
+      "A double portion of his spirit"
+    ],
+    "ans": 3,
+    "ref": "2 Kings 2:9",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1993,
+    "q": "Who was struck with Naaman's leprosy after secretly taking silver and clothes from him?",
+    "opts": [
+      "Naaman's servant girl",
+      "Elisha",
+      "Gehazi",
+      "Joash"
+    ],
+    "ans": 2,
+    "ref": "2 Kings 5:20-27",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1994,
+    "q": "Which queen killed the royal family of Judah and seized the throne for six years?",
+    "opts": [
+      "Jezebel",
+      "Athaliah",
+      "Maacah",
+      "Vashti"
+    ],
+    "ans": 1,
+    "ref": "2 Kings 11:1-3",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1995,
+    "q": "Which Assyrian king besieged Jerusalem in the days of Hezekiah?",
+    "opts": [
+      "Sennacherib",
+      "Nebuchadnezzar",
+      "Tiglath-Pileser",
+      "Cyrus"
+    ],
+    "ans": 0,
+    "ref": "2 Kings 18:13",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1996,
+    "q": "How many Assyrian soldiers did the angel of the Lord strike down in one night outside Jerusalem?",
+    "opts": [
+      "18,000",
+      "3,000",
+      "1,000",
+      "185,000"
+    ],
+    "ans": 3,
+    "ref": "2 Kings 19:35",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1997,
+    "q": "Which Babylonian king released King Jehoiachin from prison?",
+    "opts": [
+      "Nebuchadnezzar",
+      "Belshazzar",
+      "Evil-Merodach",
+      "Nabopolassar"
+    ],
+    "ans": 2,
+    "ref": "2 Kings 25:27",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1998,
+    "q": "What was Esther's Hebrew name?",
+    "opts": [
+      "Abihail",
+      "Hadassah",
+      "Jemimah",
+      "Keziah"
+    ],
+    "ans": 1,
+    "ref": "Esther 2:7",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1999,
+    "q": "Which official, with Tobiah, mocked and opposed Nehemiah's rebuilding of the wall?",
+    "opts": [
+      "Sanballat",
+      "Haman",
+      "Rehum",
+      "Geshem"
+    ],
+    "ans": 0,
+    "ref": "Nehemiah 2:10, 2:19, 4:1",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2000,
+    "q": "How many days did it take to finish rebuilding Jerusalem's wall under Nehemiah?",
+    "opts": [
+      "40",
+      "70",
+      "7",
+      "52"
+    ],
+    "ans": 3,
+    "ref": "Nehemiah 6:15",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2001,
+    "q": "In which land did Job live?",
+    "opts": [
+      "Ur",
+      "Edom",
+      "Uz",
+      "Teman"
+    ],
+    "ans": 2,
+    "ref": "Job 1:1",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2002,
+    "q": "Which young man spoke to Job after his three friends had finished?",
+    "opts": [
+      "Eliphaz",
+      "Elihu",
+      "Bildad",
+      "Zophar"
+    ],
+    "ans": 1,
+    "ref": "Job 32:2-6",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2003,
+    "q": "What Babylonian name was Daniel given?",
+    "opts": [
+      "Belteshazzar",
+      "Belshazzar",
+      "Abednego",
+      "Shadrach"
+    ],
+    "ans": 0,
+    "ref": "Daniel 1:7",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2004,
+    "q": "Which angel does Daniel call a great prince who protects Israel?",
+    "opts": [
+      "Gabriel",
+      "Raphael",
+      "Uriel",
+      "Michael"
+    ],
+    "ans": 3,
+    "ref": "Daniel 10:13, 12:1",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2005,
+    "q": "What did God send to kill the plant that shaded Jonah?",
+    "opts": [
+      "Locusts",
+      "A hot wind alone",
+      "A worm",
+      "Fire"
+    ],
+    "ans": 2,
+    "ref": "Jonah 4:7",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2006,
+    "q": "Which psalm says, \"Be still, and know that I am God\"?",
+    "opts": [
+      "Psalm 23",
+      "Psalm 46",
+      "Psalm 91",
+      "Psalm 121"
+    ],
+    "ans": 1,
+    "ref": "Psalm 46:10",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2007,
+    "q": "Proverbs 30 is credited to whom?",
+    "opts": [
+      "Agur son of Jakeh",
+      "Solomon",
+      "King Lemuel",
+      "Asaph"
+    ],
+    "ans": 0,
+    "ref": "Proverbs 30:1",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2008,
+    "q": "After Noah's drunkenness, whom did Noah curse?",
+    "opts": [
+      "Ham",
+      "Japheth",
+      "Shem",
+      "Canaan, son of Ham"
+    ],
+    "ans": 3,
+    "ref": "Genesis 9:24-25",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2009,
+    "q": "Who was the mighty hunter before the Lord who founded cities like Babel and Nineveh?",
+    "opts": [
+      "Esau",
+      "Ishmael",
+      "Nimrod",
+      "Cush"
+    ],
+    "ans": 2,
+    "ref": "Genesis 10:8-12",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2010,
+    "q": "In Ruth, what did the closer relative take off to show he gave up his right to redeem?",
+    "opts": [
+      "His cloak",
+      "His sandal",
+      "His ring",
+      "His belt"
+    ],
+    "ans": 1,
+    "ref": "Ruth 4:7-8",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2011,
+    "q": "On which street in Damascus was Saul staying when Ananias came to him?",
+    "opts": [
+      "Straight Street",
+      "Temple Street",
+      "King's Highway",
+      "Market Street"
+    ],
+    "ans": 0,
+    "ref": "Acts 9:11",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2012,
+    "q": "In whose house in Damascus was Saul staying?",
+    "opts": [
+      "Ananias",
+      "Simon",
+      "Barnabas",
+      "Judas"
+    ],
+    "ans": 3,
+    "ref": "Acts 9:11",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2013,
+    "q": "What was the name of the queen of the Ethiopians whose official Philip baptized?",
+    "opts": [
+      "Bernice",
+      "Drusilla",
+      "Candace",
+      "Sheba"
+    ],
+    "ans": 2,
+    "ref": "Acts 8:27",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2014,
+    "q": "In which city was the centurion Cornelius stationed?",
+    "opts": [
+      "Joppa",
+      "Caesarea",
+      "Jerusalem",
+      "Antioch"
+    ],
+    "ans": 1,
+    "ref": "Acts 10:1",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2015,
+    "q": "What was the name of Cornelius's regiment?",
+    "opts": [
+      "The Italian Regiment",
+      "The Augustan Cohort",
+      "The Praetorian Guard",
+      "The Tenth Legion"
+    ],
+    "ans": 0,
+    "ref": "Acts 10:1",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2016,
+    "q": "Which Herod was struck down by an angel and eaten by worms after accepting praise as a god?",
+    "opts": [
+      "Herod the Great",
+      "Herod Antipas",
+      "Herod Archelaus",
+      "Herod Agrippa I"
+    ],
+    "ans": 3,
+    "ref": "Acts 12:21-23",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2017,
+    "q": "Where did John Mark leave Paul and Barnabas on the first missionary journey?",
+    "opts": [
+      "Paphos",
+      "Lystra",
+      "Perga in Pamphylia",
+      "Antioch"
+    ],
+    "ans": 2,
+    "ref": "Acts 13:13",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2018,
+    "q": "At the Jerusalem council, who gave the final judgment that Gentile believers should not be troubled?",
+    "opts": [
+      "Peter",
+      "James",
+      "Paul",
+      "Barnabas"
+    ],
+    "ans": 1,
+    "ref": "Acts 15:13-19",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2019,
+    "q": "Lydia, the seller of purple cloth, came from which city?",
+    "opts": [
+      "Thyatira",
+      "Philippi",
+      "Ephesus",
+      "Laodicea"
+    ],
+    "ans": 0,
+    "ref": "Acts 16:14",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2020,
+    "q": "In which city did a mob attack Jason's house looking for Paul and Silas?",
+    "opts": [
+      "Berea",
+      "Corinth",
+      "Philippi",
+      "Thessalonica"
+    ],
+    "ans": 3,
+    "ref": "Acts 17:5",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2021,
+    "q": "What was written on the altar Paul saw in Athens?",
+    "opts": [
+      "\"To the god of Israel\"",
+      "\"To Zeus the Savior\"",
+      "\"To an unknown god\"",
+      "\"To the gods of Rome\""
+    ],
+    "ans": 2,
+    "ref": "Acts 17:23",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2022,
+    "q": "Which member of the Areopagus believed after Paul's speech in Athens?",
+    "opts": [
+      "Demetrius",
+      "Dionysius",
+      "Gallio",
+      "Sosthenes"
+    ],
+    "ans": 1,
+    "ref": "Acts 17:34",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2023,
+    "q": "Whose seven sons tried to cast out demons \"in the name of Jesus whom Paul preaches\" and were beaten?",
+    "opts": [
+      "Sceva",
+      "Ananias",
+      "Annas",
+      "Alexander"
+    ],
+    "ans": 0,
+    "ref": "Acts 19:13-16",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2024,
+    "q": "Which goddess were the silversmiths of Ephesus defending when they rioted?",
+    "opts": [
+      "Athena",
+      "Aphrodite",
+      "Hera",
+      "Artemis"
+    ],
+    "ans": 3,
+    "ref": "Acts 19:24-28",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2025,
+    "q": "Which Roman commander sent Paul to Governor Felix with a letter?",
+    "opts": [
+      "Julius",
+      "Cornelius",
+      "Claudius Lysias",
+      "Publius"
+    ],
+    "ans": 2,
+    "ref": "Acts 23:26",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2026,
+    "q": "How many men swore not to eat or drink until they had killed Paul?",
+    "opts": [
+      "Twelve",
+      "More than forty",
+      "Seven",
+      "About a hundred"
+    ],
+    "ans": 1,
+    "ref": "Acts 23:12-13",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2027,
+    "q": "Which lawyer brought the case against Paul before Felix?",
+    "opts": [
+      "Tertullus",
+      "Theophilus",
+      "Tychicus",
+      "Trophimus"
+    ],
+    "ans": 0,
+    "ref": "Acts 24:1",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2028,
+    "q": "What was the name of the centurion who guarded Paul on the voyage to Rome?",
+    "opts": [
+      "Cornelius",
+      "Longinus",
+      "Claudius",
+      "Julius"
+    ],
+    "ans": 3,
+    "ref": "Acts 27:1",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2029,
+    "q": "What figurehead was on the ship that carried Paul from Malta to Italy?",
+    "opts": [
+      "An eagle",
+      "Neptune",
+      "The twin gods Castor and Pollux",
+      "A lion"
+    ],
+    "ans": 2,
+    "ref": "Acts 28:11",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2030,
+    "q": "What was the name of the chief official of Malta whose father Paul healed?",
+    "opts": [
+      "Julius",
+      "Publius",
+      "Gallio",
+      "Lysias"
+    ],
+    "ans": 1,
+    "ref": "Acts 28:7-8",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2031,
+    "q": "How long did Paul stay in his own rented house in Rome at the end of Acts?",
+    "opts": [
+      "Two years",
+      "Six months",
+      "Three years",
+      "Forty days"
+    ],
+    "ans": 0,
+    "ref": "Acts 28:30",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2032,
+    "q": "Besides Philemon, which woman does Paul greet at the start of his letter to Philemon?",
+    "opts": [
+      "Phoebe",
+      "Chloe",
+      "Priscilla",
+      "Apphia"
+    ],
+    "ans": 3,
+    "ref": "Philemon 1:2",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2033,
+    "q": "Paul pleaded with Euodia and which other woman in Philippi to agree in the Lord?",
+    "opts": [
+      "Lydia",
+      "Tryphena",
+      "Syntyche",
+      "Damaris"
+    ],
+    "ans": 2,
+    "ref": "Philippians 4:2",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2034,
+    "q": "In which letter does Paul call himself \"a Hebrew of Hebrews\"?",
+    "opts": [
+      "Galatians",
+      "Philippians",
+      "Romans",
+      "Hebrews"
+    ],
+    "ans": 1,
+    "ref": "Philippians 3:5",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2035,
+    "q": "Which church in Revelation lived \"where Satan has his throne\"?",
+    "opts": [
+      "Pergamum",
+      "Smyrna",
+      "Sardis",
+      "Ephesus"
+    ],
+    "ans": 0,
+    "ref": "Revelation 2:13",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2036,
+    "q": "To which church in Revelation did Jesus say, \"I have placed before you an open door\"?",
+    "opts": [
+      "Laodicea",
+      "Thyatira",
+      "Smyrna",
+      "Philadelphia"
+    ],
+    "ans": 3,
+    "ref": "Revelation 3:7-8",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2037,
+    "q": "Who was the faithful witness put to death in Pergamum, according to Revelation?",
+    "opts": [
+      "Stephen",
+      "James",
+      "Antipas",
+      "Timothy"
+    ],
+    "ans": 2,
+    "ref": "Revelation 2:13",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2038,
+    "q": "What name does Revelation give the false prophetess in the church at Thyatira?",
+    "opts": [
+      "Delilah",
+      "Jezebel",
+      "Herodias",
+      "Athaliah"
+    ],
+    "ans": 1,
+    "ref": "Revelation 2:20",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2039,
+    "q": "Where does Revelation say the kings of the world gather for battle?",
+    "opts": [
+      "Armageddon",
+      "Babylon",
+      "The Valley of Hinnom",
+      "Megiddo's gate"
+    ],
+    "ans": 0,
+    "ref": "Revelation 16:16",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2040,
+    "q": "How many people from the tribes of Israel were sealed in Revelation 7?",
+    "opts": [
+      "12,000",
+      "70,000",
+      "1,000",
+      "144,000"
+    ],
+    "ans": 3,
+    "ref": "Revelation 7:4",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2041,
+    "q": "What were the twelve gates of the New Jerusalem made of?",
+    "opts": [
+      "Gold",
+      "Jasper",
+      "Pearls",
+      "Sapphire"
+    ],
+    "ans": 2,
+    "ref": "Revelation 21:21",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2042,
+    "q": "According to James, which prophet prayed that it would not rain, and it did not rain for three and a half years?",
+    "opts": [
+      "Elisha",
+      "Elijah",
+      "Samuel",
+      "Moses"
+    ],
+    "ans": 1,
+    "ref": "James 5:17",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2043,
+    "q": "Which church in Revelation was told, \"You have a reputation of being alive, but you are dead\"?",
+    "opts": [
+      "Sardis",
+      "Laodicea",
+      "Ephesus",
+      "Smyrna"
+    ],
+    "ans": 0,
+    "ref": "Revelation 3:1",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2044,
+    "q": "In which city did Paul oppose Peter to his face?",
+    "opts": [
+      "Jerusalem",
+      "Corinth",
+      "Rome",
+      "Antioch"
+    ],
+    "ans": 3,
+    "ref": "Galatians 2:11",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2045,
+    "q": "How many days did Paul stay with Peter on his first visit to Jerusalem after his conversion, according to Galatians?",
+    "opts": [
+      "Three",
+      "Forty",
+      "Fifteen",
+      "Seven"
+    ],
+    "ans": 2,
+    "ref": "Galatians 1:18",
+    "category": "New Testament",
+    "difficulty": "hard"
+  }
+]

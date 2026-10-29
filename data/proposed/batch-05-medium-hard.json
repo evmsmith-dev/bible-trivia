@@ -1,0 +1,1052 @@
+[
+  {
+    "id": 1911,
+    "q": "Which of Jacob's sons suggested selling Joseph rather than killing him?",
+    "opts": [
+      "Reuben",
+      "Judah",
+      "Levi",
+      "Simeon"
+    ],
+    "ans": 1,
+    "ref": "Genesis 37:26-27",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1912,
+    "q": "Which brother did Joseph keep in Egypt as a hostage while the others went home?",
+    "opts": [
+      "Simeon",
+      "Benjamin",
+      "Judah",
+      "Reuben"
+    ],
+    "ans": 0,
+    "ref": "Genesis 42:24",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1913,
+    "q": "What were the names of Joseph's two sons born in Egypt?",
+    "opts": [
+      "Perez and Zerah",
+      "Hophni and Phinehas",
+      "Gershom and Eliezer",
+      "Manasseh and Ephraim"
+    ],
+    "ans": 3,
+    "ref": "Genesis 41:50-52",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1914,
+    "q": "Which left-handed judge killed King Eglon of Moab?",
+    "opts": [
+      "Othniel",
+      "Shamgar",
+      "Ehud",
+      "Gideon"
+    ],
+    "ans": 2,
+    "ref": "Judges 3:15-21",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1915,
+    "q": "Which woman killed the Canaanite commander Sisera with a tent peg?",
+    "opts": [
+      "Deborah",
+      "Jael",
+      "Delilah",
+      "Abigail"
+    ],
+    "ans": 1,
+    "ref": "Judges 4:21",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1916,
+    "q": "What was the name of the son born to Ruth and Boaz?",
+    "opts": [
+      "Obed",
+      "Jesse",
+      "Perez",
+      "Mahlon"
+    ],
+    "ans": 0,
+    "ref": "Ruth 4:13-17",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1917,
+    "q": "Which commander of David's army killed Absalom?",
+    "opts": [
+      "Abner",
+      "Benaiah",
+      "Amasa",
+      "Joab"
+    ],
+    "ans": 3,
+    "ref": "2 Samuel 18:14",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1918,
+    "q": "After his dream at Bethel, what did Jacob set up as a pillar and pour oil on?",
+    "opts": [
+      "An altar of bronze",
+      "A wooden post",
+      "The stone he had used as a pillow",
+      "A pile of twelve stones"
+    ],
+    "ans": 2,
+    "ref": "Genesis 28:18",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1919,
+    "q": "Nehemiah was cupbearer to which Persian king?",
+    "opts": [
+      "Cyrus",
+      "Artaxerxes",
+      "Darius",
+      "Xerxes"
+    ],
+    "ans": 1,
+    "ref": "Nehemiah 1:11-2:1",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1920,
+    "q": "Which scribe read the Book of the Law aloud to the people at the Water Gate?",
+    "opts": [
+      "Ezra",
+      "Nehemiah",
+      "Baruch",
+      "Shaphan"
+    ],
+    "ans": 0,
+    "ref": "Nehemiah 8:1-3",
+    "category": "Old Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1921,
+    "q": "In which village did Mary, Martha and Lazarus live?",
+    "opts": [
+      "Bethlehem",
+      "Bethsaida",
+      "Capernaum",
+      "Bethany"
+    ],
+    "ans": 3,
+    "ref": "John 11:1",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1922,
+    "q": "When Jesus cast the demons out of a man, into which animals did they go?",
+    "opts": [
+      "Goats",
+      "Sheep",
+      "Pigs",
+      "Dogs"
+    ],
+    "ans": 2,
+    "ref": "Mark 5:12-13",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1923,
+    "q": "In which town did Peter raise Tabitha (Dorcas) from the dead?",
+    "opts": [
+      "Lydda",
+      "Joppa",
+      "Caesarea",
+      "Jericho"
+    ],
+    "ans": 1,
+    "ref": "Acts 9:36-41",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1924,
+    "q": "In Jesus' parable, what did the merchant sell everything he had to buy?",
+    "opts": [
+      "One pearl of great value",
+      "A field with treasure",
+      "A vineyard",
+      "A flock of sheep"
+    ],
+    "ans": 0,
+    "ref": "Matthew 13:45-46",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1925,
+    "q": "The name Pentecost means which day after Passover?",
+    "opts": [
+      "The fortieth",
+      "The seventh",
+      "The twelfth",
+      "The fiftieth"
+    ],
+    "ans": 3,
+    "ref": "Acts 2:1; Leviticus 23:15-16",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1926,
+    "q": "Which Roman emperor ordered all Jews to leave Rome, causing Priscilla and Aquila to move to Corinth?",
+    "opts": [
+      "Nero",
+      "Tiberius",
+      "Claudius",
+      "Augustus"
+    ],
+    "ans": 2,
+    "ref": "Acts 18:2",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1927,
+    "q": "In the parable of the sower, what happened to the seed on rocky ground?",
+    "opts": [
+      "Birds ate it",
+      "It sprang up but withered because it had no root",
+      "Thorns choked it",
+      "It produced a hundredfold"
+    ],
+    "ans": 1,
+    "ref": "Matthew 13:5-6, 13:20-21",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1928,
+    "q": "What did the Philippian jailer ask Paul and Silas?",
+    "opts": [
+      "\"What must I do to be saved?\"",
+      "\"Who are you?\"",
+      "\"Why did you not escape?\"",
+      "\"Can you heal my son?\""
+    ],
+    "ans": 0,
+    "ref": "Acts 16:30",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1929,
+    "q": "To which church did Paul write that the day of the Lord will come like a thief in the night?",
+    "opts": [
+      "Corinth",
+      "Rome",
+      "Galatia",
+      "Thessalonica"
+    ],
+    "ans": 3,
+    "ref": "1 Thessalonians 5:2",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1930,
+    "q": "According to 1 Peter, how many people were saved in Noah's ark?",
+    "opts": [
+      "Two",
+      "Twelve",
+      "Eight",
+      "Seven"
+    ],
+    "ans": 2,
+    "ref": "1 Peter 3:20",
+    "category": "New Testament",
+    "difficulty": "medium"
+  },
+  {
+    "id": 1931,
+    "q": "Whom did Abraham marry after Sarah died?",
+    "opts": [
+      "Hagar",
+      "Keturah",
+      "Milcah",
+      "Bilhah"
+    ],
+    "ans": 1,
+    "ref": "Genesis 25:1",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1932,
+    "q": "What did Rachel steal from her father Laban when Jacob's family left?",
+    "opts": [
+      "His household gods",
+      "His silver cup",
+      "His signet ring",
+      "His best sheep"
+    ],
+    "ans": 0,
+    "ref": "Genesis 31:19",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1933,
+    "q": "On the way to which town did Rachel die giving birth to Benjamin?",
+    "opts": [
+      "Bethel",
+      "Hebron",
+      "Shechem",
+      "Ephrath (Bethlehem)"
+    ],
+    "ans": 3,
+    "ref": "Genesis 35:16-19",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1934,
+    "q": "What name did Jacob give the place where he wrestled with God?",
+    "opts": [
+      "Bethel",
+      "Mahanaim",
+      "Peniel",
+      "Gilgal"
+    ],
+    "ans": 2,
+    "ref": "Genesis 32:30",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1935,
+    "q": "What Egyptian name did Pharaoh give Joseph?",
+    "opts": [
+      "Belteshazzar",
+      "Zaphenath-Paneah",
+      "Potiphera",
+      "Ramses"
+    ],
+    "ans": 1,
+    "ref": "Genesis 41:45",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1936,
+    "q": "Who was Joseph's Egyptian wife?",
+    "opts": [
+      "Asenath",
+      "Zipporah",
+      "Keturah",
+      "Tamar"
+    ],
+    "ans": 0,
+    "ref": "Genesis 41:45",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1937,
+    "q": "What were the names of the two Hebrew midwives who would not kill the baby boys?",
+    "opts": [
+      "Miriam and Jochebed",
+      "Adah and Zillah",
+      "Orpah and Ruth",
+      "Shiphrah and Puah"
+    ],
+    "ans": 3,
+    "ref": "Exodus 1:15-17",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1938,
+    "q": "Who were Moses' parents?",
+    "opts": [
+      "Kohath and Miriam",
+      "Levi and Leah",
+      "Amram and Jochebed",
+      "Hur and Elisheba"
+    ],
+    "ans": 2,
+    "ref": "Exodus 6:20",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1939,
+    "q": "What was the name of Moses' first son?",
+    "opts": [
+      "Eliezer",
+      "Gershom",
+      "Nadab",
+      "Eleazar"
+    ],
+    "ans": 1,
+    "ref": "Exodus 2:22",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1940,
+    "q": "At which oasis did Israel camp by twelve springs and seventy palm trees?",
+    "opts": [
+      "Elim",
+      "Marah",
+      "Rephidim",
+      "Kadesh"
+    ],
+    "ans": 0,
+    "ref": "Exodus 15:27",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1941,
+    "q": "Which grandson of Aaron stopped a plague by spearing an Israelite man and a Midianite woman?",
+    "opts": [
+      "Eleazar",
+      "Korah",
+      "Abihu",
+      "Phinehas"
+    ],
+    "ans": 3,
+    "ref": "Numbers 25:7-8",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1942,
+    "q": "Who was stoned for taking forbidden plunder from Jericho?",
+    "opts": [
+      "Korah",
+      "Zimri",
+      "Achan",
+      "Hiel"
+    ],
+    "ans": 2,
+    "ref": "Joshua 7:20-25",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1943,
+    "q": "Which people tricked Joshua into a treaty by pretending to come from far away with worn-out bread and sandals?",
+    "opts": [
+      "The Jebusites",
+      "The Gibeonites",
+      "The Amorites",
+      "The Moabites"
+    ],
+    "ans": 1,
+    "ref": "Joshua 9:3-15",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1944,
+    "q": "At age 85, which city and hill country did Caleb ask Joshua to give him?",
+    "opts": [
+      "Hebron",
+      "Jericho",
+      "Shiloh",
+      "Beersheba"
+    ],
+    "ans": 0,
+    "ref": "Joshua 14:10-13",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1945,
+    "q": "Who was Samson's father?",
+    "opts": [
+      "Elkanah",
+      "Jesse",
+      "Kish",
+      "Manoah"
+    ],
+    "ans": 3,
+    "ref": "Judges 13:2, 13:24",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1946,
+    "q": "Which judge had thirty sons who rode thirty donkeys?",
+    "opts": [
+      "Ibzan",
+      "Abdon",
+      "Jair",
+      "Tola"
+    ],
+    "ans": 2,
+    "ref": "Judges 10:3-4",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1947,
+    "q": "Which word could the Ephraimites not say correctly, giving them away to Jephthah's men?",
+    "opts": [
+      "Hosanna",
+      "Shibboleth",
+      "Ebenezer",
+      "Maranatha"
+    ],
+    "ans": 1,
+    "ref": "Judges 12:5-6",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1948,
+    "q": "After her husband and sons died, what did Naomi ask to be called?",
+    "opts": [
+      "Mara",
+      "Hannah",
+      "Orpah",
+      "Leah"
+    ],
+    "ans": 0,
+    "ref": "Ruth 1:20",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1949,
+    "q": "Who was Hannah's husband?",
+    "opts": [
+      "Eli",
+      "Manoah",
+      "Boaz",
+      "Elkanah"
+    ],
+    "ans": 3,
+    "ref": "1 Samuel 1:1-2",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1950,
+    "q": "Who was King Saul's father?",
+    "opts": [
+      "Abner",
+      "Ner",
+      "Kish",
+      "Jesse"
+    ],
+    "ans": 2,
+    "ref": "1 Samuel 9:1-2",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1951,
+    "q": "What was Saul looking for when he first met the prophet Samuel?",
+    "opts": [
+      "A wife",
+      "His father's lost donkeys",
+      "A place to camp",
+      "A sword"
+    ],
+    "ans": 1,
+    "ref": "1 Samuel 9:3-20",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1952,
+    "q": "Which Edomite killed the priests of Nob on Saul's orders?",
+    "opts": [
+      "Doeg",
+      "Abner",
+      "Achish",
+      "Nabal"
+    ],
+    "ans": 0,
+    "ref": "1 Samuel 22:18",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1953,
+    "q": "Which wise woman stopped David from attacking her foolish husband Nabal, and later married David?",
+    "opts": [
+      "Michal",
+      "Ahinoam",
+      "Bathsheba",
+      "Abigail"
+    ],
+    "ans": 3,
+    "ref": "1 Samuel 25:3, 25:39-42",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1954,
+    "q": "Which Philistine king of Gath did David pretend to be insane in front of?",
+    "opts": [
+      "Agag",
+      "Abimelech",
+      "Achish",
+      "Goliath"
+    ],
+    "ans": 2,
+    "ref": "1 Samuel 21:10-15",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1955,
+    "q": "Who died after touching the ark of the covenant to steady it on a cart?",
+    "opts": [
+      "Ahio",
+      "Uzzah",
+      "Obed-Edom",
+      "Abinadab"
+    ],
+    "ans": 1,
+    "ref": "2 Samuel 6:6-7",
+    "category": "Old Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1956,
+    "q": "Zechariah, father of John the Baptist, belonged to which priestly division?",
+    "opts": [
+      "Abijah",
+      "Aaron",
+      "Levi",
+      "Zadok"
+    ],
+    "ans": 0,
+    "ref": "Luke 1:5",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1957,
+    "q": "Anna the prophetess was from which tribe?",
+    "opts": [
+      "Judah",
+      "Levi",
+      "Benjamin",
+      "Asher"
+    ],
+    "ans": 3,
+    "ref": "Luke 2:36",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1958,
+    "q": "According to Luke, who was governor of Syria at the time of the census when Jesus was born?",
+    "opts": [
+      "Pilate",
+      "Felix",
+      "Quirinius",
+      "Festus"
+    ],
+    "ans": 2,
+    "ref": "Luke 2:2",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1959,
+    "q": "In which town did Jesus raise a widow's only son from the dead during his funeral?",
+    "opts": [
+      "Cana",
+      "Nain",
+      "Bethany",
+      "Emmaus"
+    ],
+    "ans": 1,
+    "ref": "Luke 7:11-15",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1960,
+    "q": "Which ruler did Jesus call \"that fox\"?",
+    "opts": [
+      "Herod Antipas",
+      "Pilate",
+      "Caiaphas",
+      "Caesar"
+    ],
+    "ans": 0,
+    "ref": "Luke 13:31-32",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1961,
+    "q": "What name did the demon-possessed man in the region of the Gerasenes give when Jesus asked?",
+    "opts": [
+      "Beelzebul",
+      "Abaddon",
+      "Mammon",
+      "Legion"
+    ],
+    "ans": 3,
+    "ref": "Mark 5:9",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1962,
+    "q": "About how many pigs rushed into the lake when Jesus sent the demons into them?",
+    "opts": [
+      "Two hundred",
+      "Five hundred",
+      "Two thousand",
+      "Five thousand"
+    ],
+    "ans": 2,
+    "ref": "Mark 5:13",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1963,
+    "q": "Herodias, who wanted John the Baptist dead, had been the wife of which brother of Herod?",
+    "opts": [
+      "Archelaus",
+      "Philip",
+      "Agrippa",
+      "Andrew"
+    ],
+    "ans": 1,
+    "ref": "Mark 6:17",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1964,
+    "q": "What did the Syrophoenician woman say even the dogs eat under the table?",
+    "opts": [
+      "The children's crumbs",
+      "The bones",
+      "The leftover bread",
+      "The fish"
+    ],
+    "ans": 0,
+    "ref": "Mark 7:28",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1965,
+    "q": "What Aramaic word did Jesus say when he healed a deaf man, meaning \"Be opened\"?",
+    "opts": [
+      "Talitha koum",
+      "Eloi",
+      "Maranatha",
+      "Ephphatha"
+    ],
+    "ans": 3,
+    "ref": "Mark 7:34",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1966,
+    "q": "What does Jesus' Aramaic phrase \"Talitha koum\" mean?",
+    "opts": [
+      "Be opened",
+      "Peace be with you",
+      "Little girl, get up",
+      "Come and see"
+    ],
+    "ans": 2,
+    "ref": "Mark 5:41",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1967,
+    "q": "In Matthew and Mark's lists of the apostles, which name stands where Luke has \"Judas son of James\"?",
+    "opts": [
+      "Bartholomew",
+      "Thaddaeus",
+      "Matthias",
+      "Simon"
+    ],
+    "ans": 1,
+    "ref": "Matthew 10:3; Mark 3:18; Luke 6:16",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1968,
+    "q": "Which woman, the wife of Herod's steward Chuza, helped support Jesus?",
+    "opts": [
+      "Joanna",
+      "Susanna",
+      "Salome",
+      "Martha"
+    ],
+    "ans": 0,
+    "ref": "Luke 8:3",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1969,
+    "q": "Who was the father of the apostle James (not James son of Zebedee)?",
+    "opts": [
+      "Clopas",
+      "Zebedee",
+      "Jonah",
+      "Alphaeus"
+    ],
+    "ans": 3,
+    "ref": "Mark 3:18",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1970,
+    "q": "How many demons had come out of Mary Magdalene?",
+    "opts": [
+      "Two",
+      "Twelve",
+      "Seven",
+      "One"
+    ],
+    "ans": 2,
+    "ref": "Luke 8:2; Mark 16:9",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1971,
+    "q": "Which two disciples asked Jesus if they should call fire down on a Samaritan village?",
+    "opts": [
+      "Peter and Andrew",
+      "James and John",
+      "Philip and Thomas",
+      "Peter and John"
+    ],
+    "ans": 1,
+    "ref": "Luke 9:52-55",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1972,
+    "q": "In Luke 10, how many others did Jesus send out two by two ahead of him?",
+    "opts": [
+      "Seventy-two",
+      "Twelve",
+      "Forty",
+      "One hundred twenty"
+    ],
+    "ans": 0,
+    "ref": "Luke 10:1",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1973,
+    "q": "In the story of the rich man and Lazarus, where did the angels carry Lazarus?",
+    "opts": [
+      "To the temple",
+      "To the Mount of Olives",
+      "To Paradise with Elijah",
+      "To Abraham's side"
+    ],
+    "ans": 3,
+    "ref": "Luke 16:22",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1974,
+    "q": "In Jesus' parable of the rich fool, what did the man plan to build?",
+    "opts": [
+      "A tower",
+      "A palace",
+      "Bigger barns",
+      "A new house"
+    ],
+    "ans": 2,
+    "ref": "Luke 12:18",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1975,
+    "q": "What was the name of the Pharisee at whose house a sinful woman anointed Jesus' feet?",
+    "opts": [
+      "Nicodemus",
+      "Simon",
+      "Gamaliel",
+      "Jairus"
+    ],
+    "ans": 1,
+    "ref": "Luke 7:36-40",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1976,
+    "q": "What was the Aramaic name of the Stone Pavement, where Pilate sat in judgment?",
+    "opts": [
+      "Gabbatha",
+      "Golgotha",
+      "Bethesda",
+      "Akeldama"
+    ],
+    "ans": 0,
+    "ref": "John 19:13",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1977,
+    "q": "Simon of Cyrene was the father of which two men?",
+    "opts": [
+      "James and John",
+      "Ananias and Aeneas",
+      "Aquila and Apollos",
+      "Alexander and Rufus"
+    ],
+    "ans": 3,
+    "ref": "Mark 15:21",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1978,
+    "q": "About how much myrrh and aloes did Nicodemus bring for Jesus' burial?",
+    "opts": [
+      "A small jar",
+      "About 5 pounds",
+      "About 75 pounds",
+      "About 500 pounds"
+    ],
+    "ans": 2,
+    "ref": "John 19:39",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1979,
+    "q": "How many large fish were in the net when the risen Jesus told the disciples where to cast it?",
+    "opts": [
+      "77",
+      "153",
+      "144",
+      "200"
+    ],
+    "ans": 1,
+    "ref": "John 21:11",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1980,
+    "q": "To which disciple did Jesus say, \"When you are old … someone else will dress you and lead you where you do not want to go\"?",
+    "opts": [
+      "Peter",
+      "John",
+      "Thomas",
+      "Andrew"
+    ],
+    "ans": 0,
+    "ref": "John 21:18-19",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1981,
+    "q": "From which hill did Jesus ascend into heaven, according to Acts?",
+    "opts": [
+      "Mount Sinai",
+      "Mount Zion",
+      "Mount Tabor",
+      "The Mount of Olives"
+    ],
+    "ans": 3,
+    "ref": "Acts 1:9-12",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1982,
+    "q": "What was Barnabas's given name before the apostles called him Barnabas?",
+    "opts": [
+      "John",
+      "Simon",
+      "Joseph",
+      "Silas"
+    ],
+    "ans": 2,
+    "ref": "Acts 4:36",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1983,
+    "q": "Barnabas came from which island?",
+    "opts": [
+      "Crete",
+      "Cyprus",
+      "Malta",
+      "Patmos"
+    ],
+    "ans": 1,
+    "ref": "Acts 4:36",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1984,
+    "q": "Which of the seven men chosen in Acts 6 was a convert to Judaism from Antioch?",
+    "opts": [
+      "Nicolas",
+      "Stephen",
+      "Philip",
+      "Prochorus"
+    ],
+    "ans": 0,
+    "ref": "Acts 6:5",
+    "category": "New Testament",
+    "difficulty": "hard"
+  },
+  {
+    "id": 1985,
+    "q": "In his letter to Titus, what profession does Paul give for Zenas?",
+    "opts": [
+      "Physician",
+      "Tentmaker",
+      "Tax collector",
+      "Lawyer"
+    ],
+    "ans": 3,
+    "ref": "Titus 3:13",
+    "category": "New Testament",
+    "difficulty": "hard"
+  }
+]
