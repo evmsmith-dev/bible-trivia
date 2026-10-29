@@ -29,6 +29,7 @@
       <span id="daily-challenge-new-badge" class="daily-new-badge" aria-hidden="true">🔥</span>
     </button>
     <button type="button" id="start-btn">Start</button>
+    <button type="button" id="mode-chip" aria-label="Difficulty mode: Medium. Change difficulty">🟠 Medium ▾</button>
     <button type="button" id="how-to-play-link" class="link-button">How to Play</button>
 
     <div id="player-entry-wrap">
@@ -44,6 +45,7 @@
   <!-- ==================== Game screen ==================== -->
   <main id="question-container" style="display:none;">
     <header>
+      <button type="button" id="quit-btn" aria-label="End this round">✕</button>
       <h1 class="game-title">Bible Trivia</h1>
       <!-- Read out to screen readers; the dots and score below show the same thing visually. -->
       <div id="progress" class="visually-hidden">Question 1 of 10 | Correct: 0 | Score: 0</div>
@@ -81,6 +83,20 @@
   <div id="countdown-overlay" style="display:none;">
     <div id="game-start-text"><h1>Round starts in: </h1></div>
     <div id="countdown-number">3</div>
+    <p id="countdown-skip-hint">Tap to start now</p>
+  </div>
+
+  <!-- ==================== End-round confirmation ==================== -->
+  <div id="quit-overlay" style="display:none;">
+    <div class="overlay-backdrop" data-overlay-close></div>
+    <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="quit-title">
+      <h2 id="quit-title">End this round?</h2>
+      <p>This round won't be saved. The timer is stopped while you decide.</p>
+      <div class="quit-actions">
+        <button type="button" id="quit-keep-btn" data-overlay-close>Keep Playing</button>
+        <button type="button" id="quit-confirm-btn">End Round</button>
+      </div>
+    </div>
   </div>
 
   <!-- ==================== Daily Challenge overlay ==================== -->
@@ -183,7 +199,7 @@
             <li>Edit your name with the pencil icon, then tap ✓ to save.</li>
             <li>Choose your avatar and use Previous/Next to browse more avatar pages.</li>
             <li>Use <b>Player Stats</b> to view Top Scores, Game History, Stats, and Daily results.</li>
-            <li>Use <b>Settings</b> to change difficulty mode and round review preference.</li>
+            <li>Use <b>Settings</b> to change difficulty mode (or tap the mode under <b>Start</b>).</li>
             <li><b>Reset Player</b> clears this player's saved progress after confirmation.</li>
             <li>Your level goes up with correct answers in normal games (Daily Challenge answers don't count).</li>
           </ul>
@@ -262,38 +278,15 @@
           <p id="mode-description" class="setting-description"></p>
         </div>
 
-        <div class="setting-item">
-          <span class="setting-label" id="review-pref-label">Post-Round Review</span>
-          <div class="review-pref-selector" role="group" aria-labelledby="review-pref-label">
-            <button type="button" class="review-pref-btn" data-value="ask" aria-pressed="true">Ask</button>
-            <button type="button" class="review-pref-btn" data-value="alwaysReview" aria-pressed="false">Always Review</button>
-            <button type="button" class="review-pref-btn" data-value="alwaysSkip" aria-pressed="false">Always Skip</button>
-          </div>
-          <p id="review-pref-description" class="setting-description"></p>
-        </div>
-
         <!-- Shown only on devices that can vibrate (not iPhone or iPad). -->
         <div class="setting-item" id="vibration-setting" style="display:none;">
           <span class="setting-label" id="vibration-label">Vibration</span>
-          <div class="review-pref-selector" role="group" aria-labelledby="vibration-label">
+          <div class="pref-selector" role="group" aria-labelledby="vibration-label">
             <button type="button" class="vibration-btn" data-value="on" aria-pressed="true">On</button>
             <button type="button" class="vibration-btn" data-value="off" aria-pressed="false">Off</button>
           </div>
           <p class="setting-description">A short buzz for a right answer, a double buzz for a wrong one.</p>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== Round review choice ==================== -->
-  <div id="review-choice-overlay" style="display:none;">
-    <div class="review-choice-backdrop"></div>
-    <div class="review-choice-card" role="dialog" aria-modal="true" aria-labelledby="review-choice-title">
-      <h3 id="review-choice-title">Review This Round?</h3>
-      <p>You can review your answers with scripture references, or skip directly to the summary.</p>
-      <div class="review-choice-actions">
-        <button id="overlay-review-btn" type="button">Review Round</button>
-        <button id="overlay-skip-btn" type="button">Skip to Results</button>
       </div>
     </div>
   </div>

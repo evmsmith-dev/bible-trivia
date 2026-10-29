@@ -1,18 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  applyDailyCompletion, normalizeMode, normalizeReviewPreference, reconcileLevelCounter, sanitizeDailyStats,
+  applyDailyCompletion, normalizeMode, reconcileLevelCounter, sanitizeDailyStats,
   sanitizePlayerName, sanitizePlayerStats, sanitizeProfile, trimHighScores,
 } from "../../src/lib/records.js";
 
-test("mode and review preference normalisation accepts old spellings", () => {
+test("mode normalisation accepts old spellings", () => {
   assert.equal(normalizeMode("Super Hard"), "superHard");
   assert.equal(normalizeMode("superHard"), "superHard");
   assert.equal(normalizeMode("HARD"), "hard");
   assert.equal(normalizeMode(undefined), "medium");
-  assert.equal(normalizeReviewPreference("always review"), "alwaysReview");
-  assert.equal(normalizeReviewPreference("alwaysSkip"), "alwaysSkip");
-  assert.equal(normalizeReviewPreference("nonsense"), "ask");
 });
 
 test("player names are trimmed and must be 2-15 characters", () => {

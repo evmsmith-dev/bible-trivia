@@ -11,21 +11,24 @@ test.describe("normal game", () => {
     await expect(page.locator("#progress")).toContainText("Question 1 of 10");
     await h.playRound(page, { correctAnswers: 10 });
 
-    await h.chooseReview(page, "review");
-    await expect(page.locator("#round-review .review-card")).toHaveCount(10);
-    await expect(page.locator("#round-review .review-result-badge.correct")).toHaveCount(10);
-    await page.locator("#review-continue").click();
-
+    // No "review this round?" question: the round goes straight to the summary.
     const summary = page.locator("#summary");
     await expect(summary).toBeVisible();
     await expect(summary).toContainText("You got 10 right out of 10 (100%)");
-    await expect(summary).toContainText("Matthew 25:21"); // top encouragement tier
     const score = Number(/Total Score: (\d+)/.exec(await summary.textContent())[1]);
     expect(score).toBeGreaterThan(1000);
 
     // First game with points is a new high score.
     await expect(page.locator("#highscore-celebration")).toBeVisible();
     await page.clock.runFor(5000);
+
+    // Review Answers opens the review from the summary, and Back returns to it.
+    await page.locator("#summary-review-btn").click();
+    await expect(page.locator("#round-review .review-card")).toHaveCount(10);
+    await expect(page.locator("#round-review .review-result-badge.correct")).toHaveCount(10);
+    await page.locator("#review-continue").click();
+    await expect(summary).toBeVisible();
+    await expect(page.locator("#highscore-celebration")).toBeHidden(); // celebrations don't replay
 
     // History and top score survive a reload.
     await page.reload();
@@ -115,7 +118,7 @@ test.describe("normal game", () => {
         seen.add(text);
         await h.answer(page, { correct: false });
       }
-      await h.chooseReview(page, "skip");
+      await h.expectSummary(page);
       await page.locator("#restart-same").click();
       await h.finishCountdown(page);
     }
@@ -135,7 +138,7 @@ test.describe("normal game", () => {
   test("Play again keeps the streak bonus; Home resets it", async ({ page }) => {
     await h.startNormalGame(page);
     await h.playRound(page, { correctAnswers: 10 });
-    await h.chooseReview(page, "skip");
+    await h.expectSummary(page);
     await page.clock.runFor(5000);
     await expect(page.locator(".streak-carryover-banner")).toBeVisible();
 
@@ -144,7 +147,7 @@ test.describe("normal game", () => {
     await expect(page.locator("#streak-hud-count")).toHaveText("Streak: 10");
 
     await h.playRound(page, { correctAnswers: 0 });
-    await h.chooseReview(page, "skip");
+    await h.expectSummary(page);
     await page.clock.runFor(5000);
     await h.goHomeFromSummary(page);
     await h.startNormalGame(page);

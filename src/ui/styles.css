@@ -462,64 +462,13 @@
       box-shadow: 0 8px 24px rgba(255,202,40,0.4);
     }
 
-    #review-choice-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
 
-    #review-choice-overlay .review-choice-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.55);
-    }
 
-    #review-choice-overlay .review-choice-card {
-      position: relative;
-      width: min(520px, 92vw);
-      background: white;
-      border-radius: 20px;
-      padding: 24px 22px;
-      box-shadow: 0 12px 36px rgba(0,0,0,0.28);
-      z-index: 1;
-      text-align: center;
-    }
 
-    #review-choice-overlay h3 {
-      margin: 0;
-      color: var(--primary);
-      font-size: 2rem;
-    }
 
-    #review-choice-overlay p {
-      margin: 10px 0 0;
-      color: #4e6b50;
-      font-size: 1.15rem;
-      line-height: 1.45;
-    }
 
-    #review-choice-overlay .review-choice-actions {
-      margin-top: 18px;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
 
-    #overlay-review-btn {
-      background: var(--accent);
-      color: #333;
-      box-shadow: 0 8px 24px rgba(255,202,40,0.36);
-    }
 
-    #overlay-skip-btn {
-      background: #90a4ae;
-      color: white;
-      box-shadow: 0 8px 24px rgba(120,144,156,0.3);
-    }
 
     #summary h2 {
       color: var(--primary);
@@ -990,15 +939,6 @@
 
 
 
-    #encouraging-verse {
-      font-style: italic;
-      color: var(--primary);
-      font-size: 1.3rem;
-      margin: 20px 0;
-      padding: 12px;
-      background: rgba(200, 230, 201, 0.4);
-      border-radius: 12px;
-    }
 
 #countdown-overlay {
   position: fixed;
@@ -1897,13 +1837,12 @@
   font-weight: 600;
 }
 
-.review-pref-selector {
+.pref-selector {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.review-pref-btn,
 .vibration-btn {
   flex: 1 1 30%;
   min-width: 120px;
@@ -1917,7 +1856,6 @@
   font-size: 1rem;
 }
 
-.review-pref-btn.active,
 .vibration-btn.active {
   background: var(--primary);
   border-color: var(--primary);
@@ -1925,9 +1863,6 @@
   box-shadow: 0 6px 16px rgba(76, 175, 80, 0.28);
 }
 
-#review-pref-description {
-  margin: 10px 0 0;
-}
 
 @media (max-width: 480px) {
   .difficulty-btn {
@@ -2231,6 +2166,7 @@ button, input, select, textarea { font-family: inherit; }
   #welcome p  { font-size: clamp(1.05rem, min(5vw, 2.7dvh), 1.4rem); line-height: 1.35; margin: 0; }
   #welcome #daily-challenge-link,
   #welcome #how-to-play-link { margin: 0 auto; padding: 8px 16px; font-size: clamp(1.1rem, min(5.2vw, 2.8dvh), 1.4rem); width: auto; }
+  #welcome #mode-chip { margin: -4px auto 0; padding: 6px 16px; font-size: clamp(1rem, min(4.6vw, 2.5dvh), 1.2rem); }
   #welcome #start-btn {
     margin: 0;
     padding: clamp(12px, 2.4dvh, 22px) 16px;
@@ -2274,6 +2210,104 @@ button, input, select, textarea { font-family: inherit; }
   #feedback .feedback-detail { display: block; font-size: 0.95rem; }
 }
 
+/* ---------- Home: current difficulty under Start (opens Settings) ---------- */
+#mode-chip {
+  display: flex; /* its own line under Start */
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin: 12px auto 0;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 2px solid #c8e6c9;
+  background: #f5fff6;
+  color: #1b5e20;
+  font-size: 1.15rem;
+  font-weight: 600;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+/* ---------- Game: end-round button and confirmation ---------- */
+#question-container > header { position: relative; }
+#quit-btn {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  color: #757575;
+  font-size: 1.35rem;
+  line-height: 1;
+  box-shadow: none;
+  cursor: pointer;
+}
+#quit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+#quit-overlay .overlay-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); }
+#quit-overlay .overlay-card {
+  position: relative;
+  z-index: 2;
+  width: min(90%, 420px);
+  padding: 22px 22px 18px;
+  border-radius: 20px;
+  border: 2px solid #c8e6c9;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+#quit-overlay h2 { margin: 0 0 6px; color: var(--primary); font-size: 1.7rem; }
+#quit-overlay p { margin: 0 0 16px; font-size: 1.1rem; color: #424242; line-height: 1.4; }
+#quit-overlay .quit-actions { display: flex; gap: 10px; }
+#quit-overlay .quit-actions button {
+  flex: 1 1 0;
+  width: auto;
+  margin: 0;
+  padding: 12px 10px;
+  min-height: 48px;
+  font-size: 1.15rem;
+  border-radius: 999px;
+}
+#quit-keep-btn { background: var(--primary); color: #ffffff; }
+#quit-confirm-btn { background: #ffebee; color: #b71c1c; box-shadow: none; }
+
+/* ---------- Countdown: tap to skip ---------- */
+#countdown-overlay { cursor: pointer; }
+#countdown-skip-hint {
+  margin: 12px 0 0;
+  font-size: 1.15rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+/* ---------- Summary: Review Answers (replaces the old review question) ---------- */
+#summary-review-btn {
+  display: block;
+  width: min(100%, 420px);
+  margin: 14px auto 0;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 2px solid #90CAF9;
+  background: #E3F2FD;
+  color: #1565C0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: none;
+}
+
 /* ---------- Pause card (shown when the app returns from the background mid-question) ---------- */
 #pause-overlay {
   position: absolute;
@@ -2311,19 +2345,14 @@ button, input, select, textarea { font-family: inherit; }
   }
   #summary h2 { font-size: clamp(1.6rem, min(8vw, 4.6dvh), 2.4rem); line-height: 1.1; margin: 0.2em 0 0.3em; }
   #summary > p { margin: 0.3em 0; }
-  #summary #encouraging-verse {
-    font-size: clamp(0.95rem, min(4.2vw, 2.3dvh), 1.15rem);
-    line-height: 1.35;
-    margin: 10px 0;
-    padding: 8px 12px;
-  }
   #summary .summary-daily-best,
   #summary .summary-daily-status,
   #summary .summary-daily-streak { font-size: 1em; margin: 0.3em 0; }
   .summary-player-wrap { flex-direction: row; justify-content: center; gap: 10px; margin-top: 6px; }
   #summary-player-btn { width: 44px; height: 44px; margin: 0; }
   .streak-carryover-banner { margin: 10px 0 0; padding: 8px 10px; font-size: 0.95rem; gap: 8px; }
-  .summary-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  #summary #summary-review-btn { width: 100%; margin: 12px 0 0; padding: 12px 10px; font-size: 1.15rem; }
+  .summary-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
   .summary-actions button { flex: 1 1 0; width: auto; margin: 0; padding: 14px 10px; font-size: 1.3rem; }
   .summary-actions .share-status { flex-basis: 100%; order: 3; margin: 0; }
 }
@@ -2362,13 +2391,13 @@ button, input, select, textarea { font-family: inherit; }
     column-gap: 20px;
     font-size: 1rem;
   }
-  #summary > h2, #summary > p, #summary #encouraging-verse { grid-column: 1; }
+  #summary > h2, #summary > p, #summary > #summary-review-btn { grid-column: 1; }
   #summary > .summary-player-wrap { grid-column: 2; grid-row: 1; }
   #summary > .streak-carryover-banner { grid-column: 2; grid-row: 2 / span 2; }
   #summary > .summary-actions { grid-column: 2; grid-row: 4; }
   #summary > p { margin: 0.2em 0; }
   #summary h2 { font-size: 1.6rem; margin: 0 0 0.2em; }
-  #summary #encouraging-verse { font-size: 0.95rem; margin: 6px 0; }
+  #summary #summary-review-btn { margin: 8px 0 0; padding: 8px 10px; font-size: 1.05rem; }
   .summary-actions { margin-top: 10px; }
   .summary-actions button { padding: 10px; font-size: 1.15rem; }
 

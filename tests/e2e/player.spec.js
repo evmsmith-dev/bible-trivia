@@ -47,23 +47,24 @@ test.describe("player profile and settings", () => {
     await expect(page.locator("#timer-display")).toHaveText("21");
   });
 
-  test("'Always skip' review preference goes straight to the summary", async ({ page }) => {
-    await page.locator("#player-entry-btn").click();
-    await page.locator("#player-open-settings-btn").click();
-    await page.locator('.review-pref-btn[data-value="alwaysSkip"]').click();
+  test("the mode button on Home shows the difficulty and changes it", async ({ page }) => {
+    const chip = page.locator("#mode-chip");
+    await expect(chip).toHaveText("🟠 Medium ▾");
+    await chip.click();
+    await expect(page.locator("#settings-overlay")).toBeVisible();
+    await page.locator('.difficulty-btn[data-mode="easy"]').click();
     await page.locator("#settings-overlay .settings-close").click();
-    await page.locator("#player-overlay .player-close").click();
+    await expect(chip).toHaveText("🟢 Easy ▾");
 
-    await h.startNormalGame(page);
-    await h.playRound(page, { correctAnswers: 3 });
-    await expect(page.locator("#review-choice-overlay")).toBeHidden();
-    await expect(page.locator("#summary")).toContainText("You got 3 right");
+    await page.reload();
+    await h.waitForReady(page);
+    await expect(chip).toHaveText("🟢 Easy ▾");
   });
 
   test("reset player clears progress", async ({ page }) => {
     await h.startNormalGame(page);
     await h.playRound(page, { correctAnswers: 10 });
-    await h.chooseReview(page, "skip");
+    await h.expectSummary(page);
     await page.clock.runFor(5000);
     await h.goHomeFromSummary(page);
     expect((await h.readProfile(page)).nonDailyCorrectAnswers).toBe(10);
