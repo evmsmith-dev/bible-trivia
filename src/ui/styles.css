@@ -1599,6 +1599,36 @@ button, input, select, textarea { font-family: inherit; }
   font-weight: 600;
   box-shadow: none;
 }
+/* Daily Challenge: leaving is a full-size button, not a text link. */
+#daily-retry-btn {
+  padding: 18px 16px;
+  font-size: 2rem;
+  background: var(--accent);
+  color: #333;
+  box-shadow: 0 8px 24px rgba(255, 202, 40, 0.4);
+}
+.summary-actions.is-daily #restart-change {
+  width: 100% !important;
+  align-self: stretch;
+  margin-top: 12px !important;
+  padding: 14px 16px;
+  min-height: 56px;
+  border: 2px solid var(--bd-66bb6a, #66bb6a);
+  background: var(--bg-f5fff6, #f5fff6);
+  font-size: 1.4rem;
+}
+#share-daily-btn.is-small {
+  width: auto;
+  align-self: center;
+  margin-top: 6px;
+  padding: 8px 20px;
+  min-height: 44px;
+  background: transparent;
+  color: var(--fg-6a1b9a, #6A1B9A);
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: none;
+}
 .summary-actions .share-status { margin: 6px 0 0; }
 .summary-actions .share-status:empty { display: none; }
 
@@ -1626,7 +1656,14 @@ button, input, select, textarea { font-family: inherit; }
   #summary::before { content: ""; flex: 0.3 1 0; }
   #summary .mode-chip { margin-bottom: clamp(8px, 1.6 * var(--app-vh, 1dvh), 14px); font-size: clamp(1rem, min(4.6vw, 2.4 * var(--app-vh, 1dvh)), 1.2rem); }
   #restart-same, #share-daily-btn { padding: clamp(12px, 2.4 * var(--app-vh, 1dvh), 20px) 16px; }
-  #restart-same { font-size: clamp(1.6rem, min(8vw, 4.4 * var(--app-vh, 1dvh)), 2.2rem); }
+  #restart-same, #daily-retry-btn { font-size: clamp(1.6rem, min(8vw, 4.4 * var(--app-vh, 1dvh)), 2.2rem); }
+  #daily-retry-btn { padding: clamp(12px, 2.4 * var(--app-vh, 1dvh), 20px) 16px; }
+  .summary-actions.is-daily #restart-change {
+    margin-top: clamp(8px, 1.6 * var(--app-vh, 1dvh), 14px) !important;
+    min-height: clamp(48px, 7 * var(--app-vh, 1dvh), 62px);
+    padding: 8px 16px;
+    font-size: clamp(1.15rem, min(5.6vw, 2.9 * var(--app-vh, 1dvh)), 1.5rem);
+  }
   #share-daily-btn { font-size: clamp(1.3rem, min(6.4vw, 3.4 * var(--app-vh, 1dvh)), 1.7rem); }
 }
 
@@ -1656,7 +1693,9 @@ button, input, select, textarea { font-family: inherit; }
   .summary-score-of { font-size: 1.2rem; }
   .summary-points { margin-top: 4px; font-size: 1.1rem; }
   .summary-dots { margin-top: 8px; font-size: 1.1rem; }
-  #restart-same, #share-daily-btn { padding: 10px 16px; font-size: 1.5rem; }
+  #restart-same, #share-daily-btn, #daily-retry-btn { padding: 10px 16px; font-size: 1.5rem; }
+  .summary-actions.is-daily #restart-change { margin-top: 8px !important; min-height: 44px; padding: 6px 16px; font-size: 1.2rem; }
+  #share-daily-btn.is-small { margin-top: 2px; min-height: 36px; padding: 4px 16px; font-size: 1rem; }
   #restart-change { margin-top: 2px !important; min-height: 40px; padding: 6px 16px; }
 }
 

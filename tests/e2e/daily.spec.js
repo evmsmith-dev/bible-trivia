@@ -28,7 +28,7 @@ test.describe("daily challenge", () => {
     await startDaily(page);
     const firstAttempt = await collectQuestions(page, { correct: false });
     await h.expectSummary(page);
-    await expect(page.locator("#summary")).toContainText("Not complete yet: reach 70%");
+    await expect(page.locator("#summary")).toContainText("Not complete yet: 70% needed");
     await expect(page.locator(".summary-eyebrow")).toHaveText("🎯 Daily Challenge");
     await expect(page.locator("#share-daily-btn")).toBeVisible();
     await expect(page.locator("#restart-same")).toHaveCount(0);
@@ -47,6 +47,28 @@ test.describe("daily challenge", () => {
     await page.locator("#daily-challenge-link").click();
     await expect(page.locator("#daily-start-btn")).toBeDisabled();
     await expect(page.locator("#daily-challenge-status")).toContainText("Active");
+  });
+
+  test("a missed challenge offers Try Again, then Back to Home; a completed one offers Share", async ({ page }) => {
+    await startDaily(page);
+    await h.playRound(page, { correctAnswers: 3 });
+    await h.expectSummary(page);
+    const buttons = page.locator(".summary-actions button");
+    await expect(buttons).toHaveText(["🔁 Try Again", "🏠 Back to Home", "📤 Share result"]);
+    const retry = await page.locator("#daily-retry-btn").boundingBox();
+    const home = await page.locator("#restart-change").boundingBox();
+    expect(home.width).toBeGreaterThan(retry.width * 0.95); // a full-size button, not a text link
+
+    await page.locator("#daily-retry-btn").click();
+    await h.finishCountdown(page);
+    await expect(page.locator("#progress")).toContainText("Daily | Question 1 of 10");
+    await h.playRound(page, { correctAnswers: 8 });
+    await h.expectSummary(page);
+    await page.clock.runFor(5000);
+    await expect(buttons).toHaveText(["📤 Share Result", "🏠 Back to Home"]);
+    await expect(page.locator("#daily-retry-btn")).toHaveCount(0);
+    await page.locator("#restart-change").click();
+    await expect(page.locator("#start-btn")).toBeVisible();
   });
 
   test("the result can be shared as an emoji grid", async ({ page }) => {
