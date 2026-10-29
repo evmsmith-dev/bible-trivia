@@ -7,8 +7,8 @@ export function setVisible(element, visible, display = "block") {
 
 /** Switches between the Welcome screen and the game screen. */
 export function showScreen(name) {
-  setVisible(byId("welcome"), name === "welcome");
-  setVisible(byId("question-container"), name === "game");
+  setVisible(byId("welcome"), name === "welcome", "");
+  setVisible(byId("question-container"), name === "game", "");
 }
 
 export const isWelcomeVisible = () => byId("welcome")?.style.display !== "none";
