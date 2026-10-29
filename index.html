@@ -258,6 +258,7 @@
             <li>Each player has their own level, scores, difficulty and Daily Challenge streak. When more than one person plays, the app asks who's playing when it opens.</li>
             <li><b>🏆 Scores</b> shows your level, top scores for each mode, recent games, right answers by category, and Daily Challenge results. <b>Everyone</b> ranks the players on this device.</li>
             <li><b>⚙️ Settings</b> changes light or dark appearance, and vibration (on phones that support it).</li>
+            <li>Scores are saved only on this device. In <b>⚙️ Settings → Backup</b>, <b>Save backup</b> puts everyone's progress in a file in your downloads. On a new phone or tablet, <b>Load backup</b> and choose that file to carry on where you left off (it replaces what's on that device).</li>
             <li><b>Delete player</b> (or <b>Reset player</b> when you're the only one) is at the bottom of the player screen, and asks you to confirm first.</li>
             <li>Your level goes up with correct answers in normal games (Daily Challenge answers don't count).</li>
           </ul>
@@ -330,6 +331,30 @@
           </div>
           <p class="setting-description">A short buzz for a right answer, a double buzz for a wrong one.</p>
         </div>
+
+        <div class="setting-item">
+          <span class="setting-label" id="backup-label">Backup</span>
+          <div class="pref-selector" role="group" aria-labelledby="backup-label">
+            <button type="button" id="backup-save-btn">💾 Save backup</button>
+            <button type="button" id="backup-load-btn">📂 Load backup</button>
+          </div>
+          <p id="backup-status" class="backup-status" role="status"></p>
+          <p class="setting-description">Scores are saved only on this device. Save a backup file to keep everyone's progress safe, or to move it to a new phone or tablet.</p>
+          <input type="file" id="backup-file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Load a backup: confirmation ==================== -->
+  <div id="backup-overlay" class="confirm-overlay" style="display:none;">
+    <div class="overlay-backdrop" data-overlay-close></div>
+    <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="backup-confirm-title">
+      <h2 id="backup-confirm-title">Load this backup?</h2>
+      <p id="backup-confirm-text"></p>
+      <div class="quit-actions">
+        <button type="button" id="backup-cancel-btn" data-overlay-close>Cancel</button>
+        <button type="button" id="backup-confirm-btn">Load Backup</button>
       </div>
     </div>
   </div>

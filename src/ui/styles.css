@@ -851,7 +851,9 @@
 }
 
 .vibration-btn,
-.theme-btn {
+.theme-btn,
+#backup-save-btn,
+#backup-load-btn {
   flex: 1 1 30%;
   min-width: 120px;
   padding: 10px 12px;
@@ -1154,6 +1156,23 @@ button, input, select, textarea { font-family: inherit; }
   cursor: pointer;
 }
 
+/* ---------- Settings → Backup ---------- */
+#backup-save-btn, #backup-load-btn { flex: 1 1 0; min-width: 0; font-weight: 600; white-space: nowrap; }
+.backup-status { margin: 8px 0 0; min-height: 0; font-size: 1.05rem; font-weight: 600; color: var(--fg-2e7d32, #2e7d32); }
+.backup-status:empty { display: none; }
+#backup-overlay { z-index: 9999; } /* above Settings */
+
+/* Settings on phones: a little more compact, so all three sections fit on most screens. */
+@media (max-width: 640px), (max-height: 760px) {
+  #settings-overlay .settings-card { padding: 22px 20px; }
+  #settings-overlay h2 { margin-bottom: 10px; }
+  .settings-content { font-size: 1.1rem; }
+  .setting-item { margin-bottom: 16px; }
+  .setting-item:last-child { margin-bottom: 0; }
+  #settings-overlay .setting-label { font-size: 1.25rem; margin-bottom: 8px; }
+  .setting-description { font-size: 1rem; line-height: 1.4; margin-top: 6px; }
+}
+
 /* ---------- Game: end-round button and confirmation ---------- */
 #question-container > header { position: relative; }
 /* Top bar: "✕ End Round" on the left (labelled, so its purpose is clear), score on the right. */
@@ -1183,6 +1202,20 @@ button, input, select, textarea { font-family: inherit; }
   cursor: pointer;
 }
 #quit-btn span { font-size: 1.05em; color: var(--fg-c62828, #c62828); }
+/* Phones held sideways: no row of its own. End Round and the score sit either side of the
+   streak chips, where there's room to spare, so the question and answers keep the height. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .game-topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+  .game-topbar > * { pointer-events: auto; }
+  #quit-btn { min-height: 36px; padding: 4px 12px 4px 10px; font-size: 0.95rem; }
+}
 
 /* Close (✕) on the Daily Challenge, Settings and How to Play pop-ups and on the sheets:
    one look everywhere, a 44px tap target in the corner, and the title keeps clear of it. */
@@ -1219,7 +1252,7 @@ button, input, select, textarea { font-family: inherit; }
   #settings-overlay h2 { font-size: clamp(1.5rem, 7vw, 1.8rem); }
 }
 
-#quit-overlay {
+#quit-overlay, .confirm-overlay {
   position: fixed;
   inset: 0;
   z-index: 9998;
@@ -1227,8 +1260,8 @@ button, input, select, textarea { font-family: inherit; }
   align-items: center;
   justify-content: center;
 }
-#quit-overlay .overlay-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); }
-#quit-overlay .overlay-card {
+#quit-overlay .overlay-backdrop, .confirm-overlay .overlay-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); }
+#quit-overlay .overlay-card, .confirm-overlay .overlay-card {
   position: relative;
   z-index: 2;
   width: min(90%, 420px);
@@ -1239,10 +1272,10 @@ button, input, select, textarea { font-family: inherit; }
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   text-align: center;
 }
-#quit-overlay h2 { margin: 0 0 6px; color: var(--primary); font-size: 1.7rem; }
-#quit-overlay p { margin: 0 0 16px; font-size: 1.1rem; color: var(--fg-424242, #424242); line-height: 1.4; }
-#quit-overlay .quit-actions { display: flex; gap: 10px; }
-#quit-overlay .quit-actions button {
+#quit-overlay h2, .confirm-overlay h2 { margin: 0 0 6px; color: var(--primary); font-size: 1.7rem; }
+#quit-overlay p, .confirm-overlay p { margin: 0 0 16px; font-size: 1.1rem; color: var(--fg-424242, #424242); line-height: 1.4; }
+#quit-overlay .quit-actions, .confirm-overlay .quit-actions { display: flex; gap: 10px; }
+#quit-overlay .quit-actions button, .confirm-overlay .quit-actions button {
   flex: 1 1 0;
   width: auto;
   margin: 0;
@@ -1251,8 +1284,8 @@ button, input, select, textarea { font-family: inherit; }
   font-size: 1.15rem;
   border-radius: 999px;
 }
-#quit-keep-btn { background: var(--primary); color: var(--fg-ffffff, #ffffff); }
-#quit-confirm-btn { background: var(--bg-ffebee, #ffebee); color: var(--fg-b71c1c, #b71c1c); box-shadow: none; }
+#quit-keep-btn, #backup-cancel-btn { background: var(--primary); color: var(--fg-ffffff, #ffffff); }
+#quit-confirm-btn, #backup-confirm-btn { background: var(--bg-ffebee, #ffebee); color: var(--fg-b71c1c, #b71c1c); box-shadow: none; }
 
 /* ---------- Countdown: tap to skip ---------- */
 #countdown-overlay { cursor: pointer; }
