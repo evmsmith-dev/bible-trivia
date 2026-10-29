@@ -116,3 +116,26 @@ test("the vibration setting is hidden on devices that can't vibrate", async ({ p
   await expect(page.locator("#settings-title")).toBeVisible();
   await expect(page.locator("#vibration-setting")).toBeHidden();
 });
+
+test("the game fits the real window even when the browser reports a taller screen", async ({ page }) => {
+  // Some Android phones report a CSS screen height (dvh) taller than the window the app gets.
+  // Recreate that: the browser says 915px, but the app really has 795px.
+  await page.setViewportSize({ width: 412, height: 915 });
+  await h.openApp(page);
+  await h.startNormalGame(page);
+  const realHeight = 795;
+  await page.evaluate((px) => document.documentElement.style.setProperty("--app-vh", `${px / 100}px`), realHeight);
+
+  const card = await page.locator("#question-container").boundingBox();
+  const lastAnswer = await page.locator("#options .option").last().boundingBox();
+  expect(card.y + card.height).toBeLessThanOrEqual(realHeight);
+  expect(lastAnswer.y + lastAnswer.height).toBeLessThanOrEqual(realHeight);
+});
+
+test("the measured window height is set before the app starts", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await h.openApp(page);
+  expect(await page.evaluate(() => document.documentElement.style.getPropertyValue("--app-vh"))).toBe("7px");
+  await page.setViewportSize({ width: 390, height: 600 });
+  await expect.poll(() => page.evaluate(() => document.documentElement.style.getPropertyValue("--app-vh"))).toBe("6px");
+});
