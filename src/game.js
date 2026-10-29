@@ -1,6 +1,6 @@
 // The game loop: countdown → questions (timer, answers, scoring) → review → summary.
 import {
-  CATEGORIES, CATEGORY_EMOJIS, DAILY, DIFFICULTY_LABELS, ENCOURAGING_VERSES, GAME_MODE_DAILY, GAME_MODE_NORMAL,
+  CATEGORIES, CATEGORY_EMOJIS, DAILY, DIFFICULTY_LABELS, GAME_MODE_DAILY, GAME_MODE_NORMAL,
   INCORRECT_MESSAGES, MODES, QUESTIONS_PER_GAME, RECENT_QUESTION_MEMORY, TIMING,
 } from "./config.js";
 import { buildDailyShareText } from "./lib/share.js";
@@ -43,10 +43,21 @@ function resetBonusStreak() {
 
 // ---------- starting a round ----------
 
+/** 3-2-1 before a round. A tap anywhere on the countdown starts the round straight away. */
 function runCountdown(onDone) {
   let count = TIMING.countdownSeconds;
+  let finished = false;
   el.countdownNumber.textContent = count;
   setVisible(el.countdownOverlay, true, "flex");
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+    clearInterval(interval);
+    el.countdownOverlay.onclick = null;
+    setVisible(el.countdownOverlay, false);
+    onDone();
+  };
+  el.countdownOverlay.onclick = finish;
   const interval = setInterval(() => {
     count -= 1;
     if (count > 0) {
@@ -56,9 +67,7 @@ function runCountdown(onDone) {
       el.countdownNumber.style.animation = "";
       return;
     }
-    clearInterval(interval);
-    setVisible(el.countdownOverlay, false);
-    onDone();
+    finish();
   }, 1000);
 }
 
@@ -230,6 +239,39 @@ function resumeRound() {
   startTimer(remaining);
 }
 
+// ---------- ending a round early ----------
+
+let endRoundRequested = false;
+
+/** The ✕ in the header. Stops the clock while the player decides; Keep Playing picks up where it left off. */
+function askToEndRound() {
+  if (!state.game.active) return;
+  let resume = () => {};
+  if (timerHandle && !answerLocked) {
+    stopTimer();
+    const remaining = secondsLeft;
+    answerLocked = true;
+    resume = () => {
+      answerLocked = false;
+      startTimer(remaining);
+    };
+  } else if (advanceHandle) {
+    clearTimeout(advanceHandle);
+    advanceHandle = null;
+    resume = () => {
+      state.game.index += 1;
+      showQuestion();
+    };
+  }
+  endRoundRequested = false;
+  openOverlay("quit-overlay", {
+    initialFocus: "#quit-keep-btn",
+    onClose: () => {
+      if (!endRoundRequested) resume();
+    },
+  });
+}
+
 function clearPause() {
   pausedSecondsLeft = null;
   setVisible(el.pauseOverlay, false);
@@ -341,6 +383,7 @@ function handleAnswer(selectedButton) {
   renderProgress();
 
   advanceHandle = setTimeout(() => {
+    advanceHandle = null;
     game.index += 1;
     showQuestion();
   }, isCorrect ? TIMING.autoAdvanceCorrectMs : TIMING.autoAdvanceWrongMs);
@@ -398,25 +441,7 @@ async function endGame() {
     level: !isDaily && getPlayerLevel() > game.startLevel ? getPlayerLevel() : null,
     dailyCompleted: Boolean(dailyResult?.passed),
   };
-  const choice = await askReviewChoice();
-  if (choice === "review") showReview();
-  else showSummary(pendingCelebrations);
-}
-
-function askReviewChoice() {
-  if (state.roundReviewPreference === "alwaysReview") return Promise.resolve("review");
-  if (state.roundReviewPreference === "alwaysSkip") return Promise.resolve("skip");
-  return new Promise((resolve) => {
-    const choose = (choice) => {
-      closeOverlay("review-choice-overlay");
-      byId("overlay-review-btn").onclick = null;
-      byId("overlay-skip-btn").onclick = null;
-      resolve(choice);
-    };
-    byId("overlay-review-btn").onclick = () => choose("review");
-    byId("overlay-skip-btn").onclick = () => choose("skip");
-    openOverlay("review-choice-overlay", { dismissible: false, initialFocus: "#overlay-review-btn" });
-  });
+  showSummary(pendingCelebrations);
 }
 
 function showReview() {
@@ -438,8 +463,11 @@ function showReview() {
     <h2>Round Review</h2>
     <p id="round-review-subtitle">Review the questions from your last completed round.</p>
     <section id="review-questions-list">${cards}</section>
-    <div id="round-review-actions"><button type="button" id="review-continue">Continue to Results</button></div>`;
-  byId("review-continue").addEventListener("click", () => showSummary(pendingCelebrations));
+    <div id="round-review-actions"><button type="button" id="review-continue">Back to Results</button></div>`;
+  byId("review-continue").addEventListener("click", () => {
+    showSummary(null);
+    byId("summary-review-btn")?.focus({ preventScroll: true });
+  });
   setVisible(el.summary, false);
   setVisible(el.review, true);
   el.review.scrollTop = 0;
@@ -448,7 +476,6 @@ function showReview() {
 
 function renderSummary({ percent, isDaily, dailyResult }) {
   const { game } = state;
-  const verse = ENCOURAGING_VERSES.filter((tier) => percent >= tier.minPercent).pop();
   let dailyHtml = "";
   if (isDaily) {
     const record = dailyResult.record;
@@ -471,7 +498,7 @@ function renderSummary({ percent, isDaily, dailyResult }) {
     <h2>${isDaily ? "Daily Challenge Summary" : "Game Summary"}</h2>
     <p>You got <strong>${game.correct}</strong> right out of ${QUESTIONS_PER_GAME} (${percent}%).</p>
     <p><strong>Total Score: ${game.score} points</strong></p>
-    <p id="encouraging-verse">${escapeHtml(verse.text)}</p>
+    <button type="button" id="summary-review-btn">📖 Review Answers</button>
     ${dailyHtml}
     <div class="summary-player-wrap">
       <button id="summary-player-btn" type="button" aria-label="Open player profile"></button>
@@ -493,6 +520,9 @@ function renderSummary({ percent, isDaily, dailyResult }) {
     if (!state.celebrationActive) goHome();
   });
   byId("summary-player-btn").addEventListener("click", openPlayerOverlay);
+  byId("summary-review-btn").addEventListener("click", () => {
+    if (!state.celebrationActive) showReview();
+  });
   byId("share-daily-btn")?.addEventListener("click", () => shareDailyResult(dailyResult.record.dateKey));
 }
 
@@ -578,16 +608,24 @@ export function initGame() {
     if (button && !button.disabled) handleAnswer(button);
   });
 
-  // Number keys 1–4 answer the current question.
+  // Keys 1–4 or A–D answer the current question (the answers are labelled A–D).
   document.addEventListener("keydown", (event) => {
-    if (!["1", "2", "3", "4"].includes(event.key) || answerLocked || anyOverlayOpen()) return;
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    const index = "1234".indexOf(event.key) >= 0 ? "1234".indexOf(event.key) : "abcd".indexOf(event.key.toLowerCase());
+    if (event.key.length !== 1 || index < 0 || answerLocked || anyOverlayOpen()) return;
     if (event.target instanceof HTMLInputElement) return;
-    const button = el.options.querySelectorAll(".option")[Number(event.key) - 1];
+    const button = el.options.querySelectorAll(".option")[index];
     if (button && !button.disabled) handleAnswer(button);
   });
 
   byId("start-btn").addEventListener("click", () => startNormalGame());
   byId("pause-resume-btn").addEventListener("click", resumeRound);
+  byId("quit-btn").addEventListener("click", askToEndRound);
+  byId("quit-confirm-btn").addEventListener("click", () => {
+    endRoundRequested = true;
+    closeOverlay("quit-overlay");
+    goHome();
+  });
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") pauseRound();
   });

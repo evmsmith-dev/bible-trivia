@@ -7,7 +7,7 @@ import { initOverlays } from "./ui/overlay.js";
 import { registerServiceWorker } from "./ui/update-banner.js";
 import { initDaily, renderDailyCard } from "./features/daily.js";
 import { initPlayer, renderPlayerCards } from "./features/player.js";
-import { initSettings, openSettings } from "./features/settings.js";
+import { initSettings, openSettings, renderModeChip } from "./features/settings.js";
 import { initStats, openStats } from "./features/stats.js";
 import { initGame, startDailyGame } from "./game.js";
 
@@ -27,7 +27,7 @@ async function start() {
   initGame();
   initSettings();
   initStats();
-  initPlayer({ openStats, openSettings, onReset: renderDailyCard });
+  initPlayer({ openStats, openSettings, onReset: () => { renderDailyCard(); renderModeChip(); } });
 
   const [snapshot] = await Promise.all([initStore().then(loadAll), loadQuestions()]);
   applySnapshot(snapshot);
@@ -37,6 +37,7 @@ async function start() {
 
   initDaily({ startDaily: startDailyGame });
   renderPlayerCards();
+  renderModeChip();
   showScreen("welcome");
   document.body.classList.add("is-ready");
 

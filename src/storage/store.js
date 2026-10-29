@@ -3,7 +3,7 @@
 // so existing players keep their progress. The profile has always lived in localStorage.
 import { DAILY } from "../config.js";
 import {
-  createDefaultProfile, normalizeMode, normalizeReviewPreference, sanitizeDailyMap, sanitizeDailyStats,
+  createDefaultProfile, normalizeMode, sanitizeDailyMap, sanitizeDailyStats,
   sanitizeHistory, sanitizePlayerStats, sanitizeProfile, trimHighScores,
 } from "../lib/records.js";
 import { log } from "../lib/debug.js";
@@ -25,7 +25,6 @@ export const KEYS = {
   history: `${PREFIX}history`,
   highScores: `${PREFIX}highScores`,
   difficultyMode: `${PREFIX}difficultyMode`,
-  roundReviewPreference: `${PREFIX}roundReviewPreference`,
   playerStats: `${PREFIX}playerStats`,
   dailyStats: `${PREFIX}dailyStats`,
   dailyChallenges: `${PREFIX}dailyChallenges`,
@@ -119,7 +118,6 @@ function emptySnapshot() {
     history: [],
     highScores: [],
     difficultyMode: "medium",
-    roundReviewPreference: "ask",
     playerStats: sanitizePlayerStats(null),
     dailyStats: sanitizeDailyStats(null),
     dailyChallenges: {},
@@ -157,11 +155,10 @@ function createIndexedDbBackend(db) {
     async load() {
       const names = Object.values(STORES);
       const tx = db.transaction(names, "readonly");
-      const [history, scores, mode, review, stats, daily, dailyStats] = await Promise.all([
+      const [history, scores, mode, stats, daily, dailyStats] = await Promise.all([
         promisify(tx.objectStore(STORES.history).getAll()),
         promisify(tx.objectStore(STORES.scores).getAll()),
         promisify(tx.objectStore(STORES.settings).get("difficultyMode")),
-        promisify(tx.objectStore(STORES.settings).get("roundReviewPreference")),
         promisify(tx.objectStore(STORES.stats).get("lifetime")),
         promisify(tx.objectStore(STORES.daily).getAll()),
         promisify(tx.objectStore(STORES.dailyStats).get("lifetime")),
@@ -171,7 +168,6 @@ function createIndexedDbBackend(db) {
         history: sanitizeHistory(history),
         highScores: trimHighScores(scores || []),
         difficultyMode: normalizeMode(mode?.value),
-        roundReviewPreference: normalizeReviewPreference(review?.value),
         playerStats: sanitizePlayerStats(stats),
         dailyStats: sanitizeDailyStats(dailyStats),
         dailyChallenges: recentDaily(daily || []),
@@ -230,7 +226,6 @@ function createLocalStorageBackend() {
         history: sanitizeHistory(readLocalJson(KEYS.history, [])),
         highScores: trimHighScores(readLocalJson(KEYS.highScores, []) || []),
         difficultyMode: normalizeMode(readLocal(KEYS.difficultyMode)),
-        roundReviewPreference: normalizeReviewPreference(readLocal(KEYS.roundReviewPreference)),
         playerStats: sanitizePlayerStats(readLocalJson(KEYS.playerStats, null)),
         dailyStats: sanitizeDailyStats(readLocalJson(KEYS.dailyStats, null)),
         dailyChallenges: recentDaily(Object.values(dailyMap && typeof dailyMap === "object" ? dailyMap : {})),
@@ -245,7 +240,6 @@ function createLocalStorageBackend() {
       }
       if (changes.highScores) writeLocal(KEYS.highScores, JSON.stringify(changes.highScores));
       if (changes.settings?.difficultyMode) writeLocal(KEYS.difficultyMode, changes.settings.difficultyMode);
-      if (changes.settings?.roundReviewPreference) writeLocal(KEYS.roundReviewPreference, changes.settings.roundReviewPreference);
       if (changes.playerStats) writeLocal(KEYS.playerStats, JSON.stringify(changes.playerStats));
       if (changes.dailyStats) writeLocal(KEYS.dailyStats, JSON.stringify(changes.dailyStats));
       if (changes.dailyRecord) {
@@ -257,7 +251,7 @@ function createLocalStorageBackend() {
 
     async reset() {
       snapshot = emptySnapshot();
-      [KEYS.history, KEYS.highScores, KEYS.difficultyMode, KEYS.roundReviewPreference, KEYS.playerStats, KEYS.dailyStats, KEYS.dailyChallenges]
+      [KEYS.history, KEYS.highScores, KEYS.difficultyMode, KEYS.playerStats, KEYS.dailyStats, KEYS.dailyChallenges]
         .forEach((key) => { try { localStorage.removeItem(key); } catch { /* ignore */ } });
     },
   };
@@ -267,14 +261,32 @@ function createLocalStorageBackend() {
 
 let backend = createLocalStorageBackend();
 
+// Settings that no longer exist (the post-round review choice moved onto the summary).
+const RETIRED_SETTINGS = ["roundReviewPreference"];
+
+/** Deletes saved values for retired settings. Best effort; nothing reads them any more. */
+function removeRetiredSettings(db) {
+  RETIRED_SETTINGS.forEach((key) => { try { localStorage.removeItem(`${PREFIX}${key}`); } catch { /* ignore */ } });
+  if (!db) return;
+  try {
+    const tx = db.transaction(STORES.settings, "readwrite");
+    RETIRED_SETTINGS.forEach((key) => tx.objectStore(STORES.settings).delete(key));
+  } catch {
+    // ignore
+  }
+}
+
 export async function initStore() {
   try {
     if (typeof indexedDB !== "undefined") {
-      backend = createIndexedDbBackend(await openDatabase());
+      const db = await openDatabase();
+      backend = createIndexedDbBackend(db);
+      removeRetiredSettings(db);
     }
   } catch (error) {
     log("IndexedDB unavailable, using localStorage", error);
   }
+  if (backend.name !== "indexedDB") removeRetiredSettings(null);
   // Ask the browser not to evict saved progress under storage pressure (best effort).
   navigator.storage?.persist?.().catch(() => {});
   return backend.name;

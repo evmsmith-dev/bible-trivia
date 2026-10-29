@@ -6,7 +6,7 @@ const overflow = (page) => page.evaluate(() => document.documentElement.scrollHe
 async function reachSummary(page, { wrong = 3 } = {}) {
   await h.startNormalGame(page);
   await h.playRound(page, { correctAnswers: 10 - wrong });
-  await h.chooseReview(page, "skip");
+  await h.expectSummary(page);
   await expect(page.locator("#summary")).toBeVisible();
   await page.clock.runFor(8000); // let any celebration finish
 }

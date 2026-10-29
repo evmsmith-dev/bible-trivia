@@ -98,13 +98,6 @@ export const DAILY = {
   recentLimit: 30,
 };
 
-export const REVIEW_PREFERENCES = {
-  ask: "Ask each round whether to review or skip (recommended).",
-  alwaysReview: "Always show the Round Review after each game.",
-  alwaysSkip: "Always go straight to the summary results.",
-};
-export const REVIEW_PREFERENCE_KEYS = Object.keys(REVIEW_PREFERENCES);
-
 export const STREAK_BONUS_CAP = 10;
 export const STREAK_BONUS_TABLE = { 3: 25, 4: 50, 5: 80, 6: 115, 7: 150, 8: 185, 9: 220, 10: 260 };
 
@@ -148,9 +141,3 @@ export const AVATARS = [
 
 export const INCORRECT_MESSAGES = ["Not quite!", "Good try!", "Almost!"];
 
-// Listed lowest tier first; the highest tier the player reaches is shown.
-export const ENCOURAGING_VERSES = [
-  { minPercent: 0, text: "Keep going! You can do all things through Christ who strengthens you. - Philippians 4:13" },
-  { minPercent: 50, text: "Great effort! Let's keep learning God's Word together. - 2 Timothy 2:15" },
-  { minPercent: 80, text: "Fantastic! Well done, good and faithful servant! - Matthew 25:21" },
-];

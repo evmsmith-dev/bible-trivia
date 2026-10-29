@@ -1,7 +1,7 @@
-// Settings overlay (difficulty mode, round review preference) and the How to Play overlay.
+// Settings overlay (difficulty mode, vibration), the Home mode button, and the How to Play overlay.
 // Mode buttons and descriptions are generated from config.MODES.
-import { MODES, MODE_KEYS, REVIEW_PREFERENCES } from "../config.js";
-import { normalizeMode, normalizeReviewPreference } from "../lib/records.js";
+import { MODES, MODE_KEYS } from "../config.js";
+import { normalizeMode } from "../lib/records.js";
 import { state } from "../state.js";
 import { save } from "../storage/store.js";
 import { byId, setVisible } from "../ui/dom.js";
@@ -20,12 +20,6 @@ function renderSettings() {
     button.setAttribute("aria-pressed", String(active));
   });
   byId("mode-description").innerHTML = modeSummary(state.difficultyMode);
-  document.querySelectorAll(".review-pref-btn").forEach((button) => {
-    const active = button.dataset.value === state.roundReviewPreference;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", String(active));
-  });
-  byId("review-pref-description").textContent = REVIEW_PREFERENCES[state.roundReviewPreference];
   setVisible(byId("vibration-setting"), canVibrate());
   const vibrationValue = isVibrationOn() ? "on" : "off";
   document.querySelectorAll(".vibration-btn").forEach((button) => {
@@ -33,6 +27,15 @@ function renderSettings() {
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
   });
+}
+
+/** The "🟠 Medium ▾" button under Start: shows the current mode and opens Settings. */
+export function renderModeChip() {
+  const chip = byId("mode-chip");
+  if (!chip) return;
+  const m = MODES[normalizeMode(state.difficultyMode)];
+  chip.textContent = `${m.emoji} ${m.label} ▾`;
+  chip.setAttribute("aria-label", `Difficulty mode: ${m.label}. Change difficulty`);
 }
 
 export function openSettings() {
@@ -59,6 +62,7 @@ export function initSettings() {
     if (!button) return;
     state.difficultyMode = normalizeMode(button.dataset.mode);
     renderSettings();
+    renderModeChip();
     save({ settings: { difficultyMode: state.difficultyMode } });
   });
 
@@ -70,13 +74,8 @@ export function initSettings() {
     });
   });
 
-  document.querySelectorAll(".review-pref-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.roundReviewPreference = normalizeReviewPreference(button.dataset.value);
-      renderSettings();
-      save({ settings: { roundReviewPreference: state.roundReviewPreference } });
-    });
-  });
+  byId("mode-chip").addEventListener("click", openSettings);
+  renderModeChip();
 
   renderHowToPlay();
   byId("how-to-play-link").addEventListener("click", () => {

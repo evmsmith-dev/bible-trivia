@@ -1,6 +1,6 @@
 // Shapes of everything the app saves, plus sanitizers that repair or default bad data.
 // Field names match what earlier versions stored, so existing players keep their progress.
-import { AVATARS, CATEGORIES, DAILY, DEFAULT_MODE, MAX_HIGH_SCORES_PER_MODE, MODE_KEYS, PLAYER_NAME, REVIEW_PREFERENCE_KEYS } from "../config.js";
+import { AVATARS, CATEGORIES, DAILY, DEFAULT_MODE, MAX_HIGH_SCORES_PER_MODE, MODE_KEYS, PLAYER_NAME } from "../config.js";
 import { getDateKeyOffset, toCount } from "./utils.js";
 
 export function normalizeMode(mode) {
@@ -10,11 +10,6 @@ export function normalizeMode(mode) {
   return MODE_KEYS.includes(lower) ? lower : DEFAULT_MODE;
 }
 
-export function normalizeReviewPreference(value) {
-  if (typeof value !== "string") return "ask";
-  const lower = value.trim().toLowerCase().replace(/\s+/g, "");
-  return REVIEW_PREFERENCE_KEYS.find((key) => key.toLowerCase() === lower) || "ask";
-}
 
 // ---------- Player profile ----------
 

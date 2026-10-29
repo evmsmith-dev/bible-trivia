@@ -27,7 +27,7 @@ test.describe("daily challenge", () => {
   test("a failed attempt can be retried with different questions; passing completes the day", async ({ page }) => {
     await startDaily(page);
     const firstAttempt = await collectQuestions(page, { correct: false });
-    await h.chooseReview(page, "skip");
+    await h.expectSummary(page);
     await expect(page.locator("#summary")).toContainText("Daily challenge not completed");
     await expect(page.locator("#restart-same")).toHaveCount(0);
     await h.goHomeFromSummary(page);
@@ -36,7 +36,7 @@ test.describe("daily challenge", () => {
     const secondAttempt = await collectQuestions(page, { correct: true });
     // A retry can't be passed just by remembering the first attempt's answers.
     expect(secondAttempt.filter((question) => firstAttempt.includes(question))).toEqual([]);
-    await h.chooseReview(page, "skip");
+    await h.expectSummary(page);
     await expect(page.locator("#summary")).toContainText("Daily challenge complete");
     await expect(page.locator("#summary")).toContainText("Attempts: 2");
     await page.clock.runFor(5000);
@@ -55,7 +55,7 @@ test.describe("daily challenge", () => {
     await h.waitForReady(page);
     await startDaily(page);
     for (let i = 0; i < 10; i++) await h.answer(page, { correct: i !== 2 });
-    await h.chooseReview(page, "skip");
+    await h.expectSummary(page);
     await page.clock.runFor(5000);
     await page.locator("#share-daily-btn").click();
     const text = await page.evaluate(() => window.__sharedText);
@@ -71,7 +71,7 @@ test.describe("daily challenge", () => {
     await h.waitForReady(page);
     await startDaily(page);
     await h.playRound(page, { correctAnswers: 0 });
-    await h.chooseReview(page, "skip");
+    await h.expectSummary(page);
     await page.locator("#share-daily-btn").click();
     await expect(page.locator("#share-status")).toContainText("copied");
     expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥");
@@ -80,7 +80,7 @@ test.describe("daily challenge", () => {
   test("daily answers do not count toward the player level", async ({ page }) => {
     await startDaily(page);
     await collectQuestions(page, { correct: true });
-    await h.chooseReview(page, "skip");
+    await h.expectSummary(page);
     await page.clock.runFor(5000);
     expect((await h.readProfile(page)).nonDailyCorrectAnswers).toBe(0);
   });

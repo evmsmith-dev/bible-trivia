@@ -140,12 +140,11 @@ async function resetPlayer(onReset) {
     dailyChallenges: {},
     recentQuestionIds: [],
     difficultyMode: "medium",
-    roundReviewPreference: "ask",
     bonusStreak: 0,
   });
   saveProfile(state.profile);
   await resetAll();
-  await save({ settings: { difficultyMode: "medium", roundReviewPreference: "ask" } });
+  await save({ settings: { difficultyMode: "medium" } });
   renderPlayerOverlay();
   renderPlayerCards();
   onReset?.();

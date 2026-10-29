@@ -44,12 +44,16 @@ test("Settings text comes from the mode config", async ({ page }) => {
   await expect(page.locator('.difficulty-btn[data-mode="superHard"]')).toHaveAttribute("aria-pressed", "true");
 });
 
-test("How to Play sits on its own line below the Start button", async ({ page }) => {
+test("the mode button and How to Play each sit on their own line below Start", async ({ page }) => {
   const start = await page.locator("#start-btn").boundingBox();
+  const mode = await page.locator("#mode-chip").boundingBox();
   const howTo = await page.locator("#how-to-play-link").boundingBox();
-  expect(howTo.y).toBeGreaterThanOrEqual(start.y + start.height);
+  expect(mode.y).toBeGreaterThanOrEqual(start.y + start.height - 6);
+  expect(howTo.y).toBeGreaterThanOrEqual(mode.y + mode.height);
   // Centered under Start (within a few pixels).
-  expect(Math.abs((howTo.x + howTo.width / 2) - (start.x + start.width / 2))).toBeLessThan(4);
+  for (const box of [mode, howTo]) {
+    expect(Math.abs((box.x + box.width / 2) - (start.x + start.width / 2))).toBeLessThan(4);
+  }
 });
 
 test.describe("phone layout", () => {

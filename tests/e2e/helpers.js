@@ -47,10 +47,9 @@ export async function playRound(page, { correctAnswers = 10 } = {}) {
   }
 }
 
-export async function chooseReview(page, choice) {
-  const overlay = page.locator("#review-choice-overlay");
-  await expect(overlay).toBeVisible();
-  await page.locator(choice === "review" ? "#overlay-review-btn" : "#overlay-skip-btn").click();
+/** A finished round goes straight to the summary (Review Answers is a button there). */
+export async function expectSummary(page) {
+  await expect(page.locator("#summary")).toBeVisible();
 }
 
 export async function goHomeFromSummary(page) {
