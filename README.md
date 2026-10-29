@@ -77,6 +77,12 @@ Edit `data/questions.json`, then run `npm run validate:questions`. Each question
 
 The validator fails on structural problems and duplicate questions. `--verbose` lists questions that look alike so you can review them.
 
+New questions can be drafted as a batch in `data/proposed/`, each batch with a review sheet (`*-review.csv`, which opens in Excel). After review, add the approved ones with:
+
+```bash
+node scripts/merge-questions.mjs data/proposed/batch-01-easy.json --skip 1663,1670   # ids to leave out
+```
+
 ## Deploying
 
 Pushing to `main` runs `.github/workflows/deploy.yml`. It validates the questions, runs all tests, builds `dist/` and publishes it to GitHub Pages.
