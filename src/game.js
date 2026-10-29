@@ -126,6 +126,8 @@ function renderProgress() {
   const { game } = state;
   const prefix = game.mode === GAME_MODE_DAILY ? "Daily | " : "";
   el.progress.textContent = `${prefix}Question ${Math.min(game.index + 1, QUESTIONS_PER_GAME)} of ${QUESTIONS_PER_GAME} | Correct: ${game.correct} | Score: ${game.score}`;
+  el.scoreDisplay.textContent = `⭐ ${game.score.toLocaleString()}`;
+  setVisible(el.dailyTag, game.mode === GAME_MODE_DAILY, "inline-flex");
   // Answered questions show ✅ (correct) or ❌ (wrong or timed out) as soon as they're answered.
   el.progressDots.innerHTML = Array.from({ length: QUESTIONS_PER_GAME }, (_, i) => {
     const answered = game.review[i];
@@ -524,6 +526,8 @@ export function initGame() {
     timerFill: byId("timer-fill"),
     question: byId("question"),
     questionMeta: document.querySelector(".question-meta"),
+    scoreDisplay: byId("score-display"),
+    dailyTag: byId("daily-tag"),
     difficultyTag: byId("difficulty-tag"),
     categoryTag: byId("category-tag"),
     options: byId("options"),

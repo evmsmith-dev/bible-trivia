@@ -44,7 +44,7 @@ test("Settings text comes from the mode config", async ({ page }) => {
   await expect(page.locator('.difficulty-btn[data-mode="superHard"]')).toHaveAttribute("aria-pressed", "true");
 });
 
-test("Game Play sits on its own line below the Start button", async ({ page }) => {
+test("How to Play sits on its own line below the Start button", async ({ page }) => {
   const start = await page.locator("#start-btn").boundingBox();
   const howTo = await page.locator("#how-to-play-link").boundingBox();
   expect(howTo.y).toBeGreaterThanOrEqual(start.y + start.height);
