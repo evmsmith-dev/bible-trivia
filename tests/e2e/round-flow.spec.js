@@ -113,3 +113,37 @@ test("Back from the review returns to the results, and Back from the results goe
   await expect(page.locator("#start-btn")).toBeVisible();
   await expect(page.locator("#summary")).toBeHidden();
 });
+
+test("the way out of a round is a labelled End Round button", async ({ page }) => {
+  await h.openApp(page);
+  await h.startNormalGame(page);
+  await expect(page.locator("#quit-btn")).toHaveText("✕ End Round");
+  await expect(page.locator("#quit-btn")).toHaveAccessibleName("End this round");
+  const quit = await page.locator("#quit-btn").boundingBox();
+  const score = await page.locator("#score-display").boundingBox();
+  expect(Math.abs(quit.y + quit.height / 2 - (score.y + score.height / 2))).toBeLessThan(4); // one top bar
+  expect(quit.height).toBeGreaterThanOrEqual(40);
+});
+
+for (const [opener, overlay] of [
+  ["#daily-challenge-link", "#daily-challenge-overlay"],
+  ["#home-settings-btn", "#settings-overlay"],
+  ["#how-to-play-link", "#how-to-play-overlay"],
+]) {
+  test(`the close button on ${overlay} is a 44px circle clear of the title`, async ({ page }) => {
+    await h.openApp(page);
+    await page.locator(opener).click();
+    const close = page.locator(`${overlay} .overlay-close-button`);
+    await expect(close).toHaveText("✕");
+    const box = await close.boundingBox();
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    const titleRight = await page.locator(`${overlay} h2`).evaluate((h2) => {
+      const range = document.createRange();
+      range.selectNodeContents(h2);
+      return Math.max(...[...range.getClientRects()].map((rect) => rect.right));
+    });
+    expect(titleRight).toBeLessThanOrEqual(box.x); // the title text never runs under the ✕
+    await close.click();
+    await expect(page.locator(overlay)).toBeHidden();
+  });
+}
