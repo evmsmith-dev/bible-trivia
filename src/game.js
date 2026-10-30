@@ -347,8 +347,10 @@ function recordCorrectAnswer(question, elapsedSeconds) {
   playerStats.allTimeBestStreak = Math.max(playerStats.allTimeBestStreak, playerStats.currentStreak);
 
   if (game.mode !== GAME_MODE_DAILY) {
-    // Levels count normal-game answers only. Saved right away so progress survives closing the app.
+    // Levels count normal-game answers only, weighted by mode. Saved right away so progress
+    // survives closing the app.
     state.profile.nonDailyCorrectAnswers += 1;
+    state.profile.levelPoints += MODES[mode].levelWeight;
     saveProfile(state.profile);
   }
   game.streak += 1;

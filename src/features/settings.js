@@ -52,7 +52,7 @@ function renderDifficultyOptions() {
         <span class="difficulty-option-emoji" aria-hidden="true">${m.emoji}</span>
         <span class="difficulty-option-text">
           <span class="difficulty-option-name">${m.label}${m.tagline ? ` <span class="difficulty-option-tagline">${m.tagline}</span>` : ""}</span>
-          <span class="difficulty-option-detail">${m.questionsText} · ${m.basePoints} pts · ${m.seconds} sec</span>
+          <span class="difficulty-option-detail">${m.questionsText} · ${m.basePoints} pts · ${m.seconds} sec${m.levelWeight > 1 ? ` · ${m.levelWeight}× level` : ""}</span>
         </span>
         <span class="difficulty-option-check" aria-hidden="true">${selected ? "✓" : ""}</span>
       </button>`;

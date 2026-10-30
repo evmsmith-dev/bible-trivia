@@ -35,7 +35,7 @@ export const BADGES = [
   {
     id: "level", group: "Getting started", emoji: "🎓", name: "Climbing Higher", goals: [5, 10, LEVEL_THRESHOLDS.length],
     how: (goal) => (goal === LEVEL_THRESHOLDS.length ? `Reach the top level (Level ${goal}).` : `Reach Level ${goal}.`),
-    value: (data) => getLevel(data.profile?.nonDailyCorrectAnswers),
+    value: (data) => getLevel(data.profile?.levelPoints),
   },
   {
     id: "perfect-round", group: "Skill", emoji: "💯", name: "Perfect Round", goals: [1],

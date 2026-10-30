@@ -9,7 +9,7 @@ const data = (overrides = {}) => ({
   playerStats: sanitizePlayerStats(null),
   dailyStats: sanitizeDailyStats(null),
   dailyChallenges: {},
-  profile: { nonDailyCorrectAnswers: 0 },
+  profile: { nonDailyCorrectAnswers: 0, levelPoints: 0 },
   ...overrides,
 });
 const tierOf = (d, id, earned = {}) => badgeProgress(d, earned).find((entry) => entry.badge.id === id).tier;
@@ -42,7 +42,7 @@ test("Faithful Reader levels at 10, 50 and 100 rounds with 5+ right", () => {
 test("knowledge, level and Daily Challenge badges", () => {
   const playerStats = sanitizePlayerStats({ allTimeBestStreak: 12, correctByCategory: { "Old Testament": 160, "New Testament": 49, General: 30 } });
   const dailyStats = sanitizeDailyStats({ totalDailyCompletions: 3, bestDailyStreak: 8 });
-  const d = data({ playerStats, dailyStats, profile: { nonDailyCorrectAnswers: 400 }, dailyChallenges: { "2026-10-29": { bestCorrect: 10 } } });
+  const d = data({ playerStats, dailyStats, profile: { nonDailyCorrectAnswers: 400, levelPoints: 400 }, dailyChallenges: { "2026-10-29": { bestCorrect: 10 } } });
   assert.equal(tierOf(d, "on-fire"), 1);
   assert.equal(tierOf(d, "ot-scholar"), 2);
   assert.equal(tierOf(d, "nt-scholar"), 0);

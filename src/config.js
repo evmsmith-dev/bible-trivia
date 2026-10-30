@@ -25,6 +25,7 @@ export const CATEGORY_EMOJIS = { "Old Testament": "📜", "New Testament": "✝�
 export const MODES = {
   easy: {
     label: "Easy",
+    levelWeight: 1, // level points per right answer (Hard and Super Hard climb faster)
     shortLabel: "Easy",
     emoji: "🟢",
     basePoints: 50,
@@ -38,6 +39,7 @@ export const MODES = {
   },
   medium: {
     label: "Medium",
+    levelWeight: 1, // level points per right answer (Hard and Super Hard climb faster)
     shortLabel: "Medium",
     emoji: "🟠",
     basePoints: 100,
@@ -54,6 +56,7 @@ export const MODES = {
   },
   hard: {
     label: "Hard",
+    levelWeight: 2, // level points per right answer (Hard and Super Hard climb faster)
     shortLabel: "Hard",
     emoji: "🔴",
     basePoints: 150,
@@ -70,6 +73,7 @@ export const MODES = {
   },
   superHard: {
     label: "Super Hard",
+    levelWeight: 3, // level points per right answer (Hard and Super Hard climb faster)
     shortLabel: "Super",
     emoji: "⚫",
     basePoints: 250,

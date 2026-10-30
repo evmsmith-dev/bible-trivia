@@ -137,3 +137,29 @@ test("data saved by the previous version still loads; an inflated level counter 
   await page.locator("#mode-chip").click();
   await expect(page.locator('.difficulty-option[data-mode="superHard"]')).toHaveAttribute("aria-checked", "true");
 });
+
+test("right answers on Hard and Super Hard count double and triple toward levels", async ({ page }) => {
+  await h.openApp(page);
+  await h.chooseDifficulty(page, "hard");
+  await h.startNormalGame(page);
+  await h.playRound(page, { correctAnswers: 5 });
+  await h.expectSummary(page);
+  await page.clock.runFor(16000);
+  expect(await h.readProfile(page)).toMatchObject({ nonDailyCorrectAnswers: 5, levelPoints: 10 });
+
+  await h.goHomeFromSummary(page);
+  await h.chooseDifficulty(page, "superHard");
+  await h.startNormalGame(page);
+  await h.playRound(page, { correctAnswers: 2 });
+  await h.expectSummary(page);
+  await page.clock.runFor(16000);
+  expect(await h.readProfile(page)).toMatchObject({ nonDailyCorrectAnswers: 7, levelPoints: 16 });
+  await h.goHomeFromSummary(page);
+  await expect(page.locator("#home-level-to-go")).toHaveText("9 to go"); // Level 2 starts at 25 points
+
+  // The difficulty picker says so.
+  await page.locator("#mode-chip").click();
+  await expect(page.locator('.difficulty-option[data-mode="hard"]')).toContainText("2× level");
+  await expect(page.locator('.difficulty-option[data-mode="superHard"]')).toContainText("3× level");
+  await expect(page.locator('.difficulty-option[data-mode="easy"]')).not.toContainText("level");
+});

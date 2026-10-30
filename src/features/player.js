@@ -12,7 +12,7 @@ import {
 import { byId } from "../ui/dom.js";
 import { closeOverlay, isOverlayOpen, openOverlay } from "../ui/overlay.js";
 
-export const getPlayerLevel = () => getLevel(state.profile.nonDailyCorrectAnswers);
+export const getPlayerLevel = () => getLevel(state.profile.levelPoints);
 
 export function avatarHtml(avatar, altText = "") {
   return avatar.type === "image"
@@ -25,7 +25,7 @@ export function renderPlayerCards() {
   const { profile } = state;
   const avatar = getAvatar(profile.avatarId);
   const level = `Level ${getPlayerLevel()}`;
-  const progress = getLevelProgress(profile.nonDailyCorrectAnswers);
+  const progress = getLevelProgress(profile.levelPoints);
 
   // Home: avatar (top right), "Hi, <name>!", and the level bar under the greeting.
   byId("player-entry-avatar").innerHTML = avatarHtml(avatar);
@@ -48,10 +48,10 @@ function renderPlayerChooser() {
     return `
       <div class="player-tile${active ? " is-active" : ""}">
         <button type="button" class="player-pick" data-player-id="${id}" aria-pressed="${active}"
-                aria-label="${name}, Level ${getLevel(profile.nonDailyCorrectAnswers)}${active ? ", playing now" : ""}">
+                aria-label="${name}, Level ${getLevel(profile.levelPoints)}${active ? ", playing now" : ""}">
           <span class="player-tile-avatar" aria-hidden="true">${avatarHtml(getAvatar(profile.avatarId))}</span>
           <span class="player-tile-name">${name}</span>
-          <span class="player-tile-level">Level ${getLevel(profile.nonDailyCorrectAnswers)}</span>
+          <span class="player-tile-level">Level ${getLevel(profile.levelPoints)}</span>
         </button>
         <button type="button" class="player-edit" data-edit-id="${id}" aria-label="Edit ${name}" title="Edit">✏️</button>
       </div>`;
@@ -109,12 +109,12 @@ function renderPlayerSheet() {
   byId("player-sheet-title").textContent = adding ? "New player" : "Edit player";
   byId("player-level-card").style.display = adding ? "none" : "";
   if (!adding) {
-    const progress = getLevelProgress(profile.nonDailyCorrectAnswers);
+    const progress = getLevelProgress(profile.levelPoints);
     byId("player-level-display").textContent = `Level ${progress.level}`;
     byId("player-level-progress-fill").style.width = `${progress.percent}%`;
     byId("player-level-progress-text").textContent = progress.isMaxLevel
       ? "Top level reached!"
-      : `${progress.remaining} more right answers to Level ${progress.level + 1}`;
+      : `${progress.remaining} more level points to Level ${progress.level + 1}`;
   }
   byId("player-name-input").value = adding ? "" : profile.name;
   byId("player-name-input").placeholder = adding ? "Your name" : "";

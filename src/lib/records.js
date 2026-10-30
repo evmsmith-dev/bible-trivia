@@ -22,7 +22,7 @@ export function sanitizePlayerName(name) {
 export const getAvatar = (avatarId) => AVATARS.find((avatar) => avatar.id === avatarId) || AVATARS[0];
 
 export function createDefaultProfile(id = "primary") {
-  return { id, name: PLAYER_NAME.default, avatarId: AVATARS[0].id, nonDailyCorrectAnswers: 0, levelCountVersion: 2 };
+  return { id, name: PLAYER_NAME.default, avatarId: AVATARS[0].id, nonDailyCorrectAnswers: 0, levelPoints: 0, levelCountVersion: 2 };
 }
 
 export function sanitizeProfile(raw, id = "primary") {
@@ -32,6 +32,10 @@ export function sanitizeProfile(raw, id = "primary") {
     name: sanitizePlayerName(value.name) || PLAYER_NAME.default,
     avatarId: AVATARS.some((avatar) => avatar.id === value.avatarId) ? value.avatarId : AVATARS[0].id,
     nonDailyCorrectAnswers: toCount(value.nonDailyCorrectAnswers),
+    // Levels come from level points: each right answer in a normal round adds its mode's
+    // levelWeight (Easy and Medium 1, Hard 2, Super Hard 3). Profiles from before weighting
+    // start with one point per right answer they already had, so no one's level changes.
+    levelPoints: value.levelPoints === undefined ? toCount(value.nonDailyCorrectAnswers) : toCount(value.levelPoints),
     // 2 = nonDailyCorrectAnswers excludes Daily Challenge answers (older versions mixed them in).
     levelCountVersion: value.levelCountVersion === 2 ? 2 : 1,
   };
@@ -44,11 +48,8 @@ export function sanitizeProfile(raw, id = "primary") {
 export function reconcileLevelCounter(profile, history) {
   if (profile.levelCountVersion === 2) return profile;
   const fromHistory = history.reduce((sum, game) => sum + toCount(Number(game?.correct)), 0);
-  return {
-    ...profile,
-    nonDailyCorrectAnswers: history.length > 0 ? fromHistory : profile.nonDailyCorrectAnswers,
-    levelCountVersion: 2,
-  };
+  const count = history.length > 0 ? fromHistory : profile.nonDailyCorrectAnswers;
+  return { ...profile, nonDailyCorrectAnswers: count, levelPoints: count, levelCountVersion: 2 };
 }
 
 // ---------- Lifetime stats ----------
