@@ -134,6 +134,7 @@
 
   <div id="countdown-overlay" style="display:none;">
     <div id="game-start-text"><h1>Round starts in: </h1></div>
+    <p id="countdown-detail" class="countdown-detail"></p>
     <div id="countdown-number">3</div>
     <p id="countdown-skip-hint">Tap to start now</p>
   </div>
@@ -148,17 +149,6 @@
         <button type="button" id="quit-keep-btn" data-overlay-close>Keep Playing</button>
         <button type="button" id="quit-confirm-btn">End Round</button>
       </div>
-    </div>
-  </div>
-
-  <!-- ==================== Daily Challenge overlay ==================== -->
-  <div id="daily-challenge-overlay" style="display:none;">
-    <div class="overlay-backdrop" data-overlay-close></div>
-    <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="daily-overlay-title">
-      <button type="button" class="overlay-close-button" data-overlay-close aria-label="Close">✕</button>
-      <h2 id="daily-overlay-title">🎯 Daily Challenge</h2>
-      <p id="daily-challenge-status">Loading today's challenge...</p>
-      <button id="daily-start-btn" type="button">Start Today's Challenge</button>
     </div>
   </div>
 
@@ -287,9 +277,10 @@
         <details class="howto-section">
           <summary>Daily Challenge</summary>
           <ul>
-            <li>One challenge per day.</li>
-            <li>Reach 70%+ in the Daily Challenge to activate a <b>+5% bonus on base points per correct answer</b> for the rest of that day.</li>
-            <li>The daily +5% base-point bonus resets when the next day starts.</li>
+            <li>One challenge per day: tap <b>Today's Daily Challenge</b> on Home to start it.</li>
+            <li>Get at least 7 of 10 right (70%) to complete it. Not there yet? Tap <b>Try Again</b> for a different set of questions.</li>
+            <li>Completing it gives you <b>+5% points on every right answer</b> in your other rounds for the rest of the day, and keeps your daily streak going.</li>
+            <li>Once it's done, the card shows ✅ until a new challenge is ready the next day.</li>
           </ul>
         </details>
 
@@ -370,5 +361,7 @@
       </div>
     </div>
   </div>
+  <!-- Short messages (for example "Today's challenge is done"). -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

@@ -5,10 +5,11 @@ test.beforeEach(async ({ page }) => {
   await h.openApp(page);
 });
 
-test("Welcome links are keyboard-reachable buttons", async ({ page }) => {
+test("Home's Daily Challenge card is a keyboard-reachable button that starts the challenge", async ({ page }) => {
   await page.locator("#daily-challenge-link").focus();
   await page.keyboard.press("Enter");
-  await expect(page.locator("#daily-challenge-overlay")).toBeVisible();
+  await expect(page.locator("#countdown-overlay")).toBeVisible();
+  await expect(page.locator("#countdown-detail")).toContainText("Daily Challenge");
 });
 
 test("Escape closes the top overlay and returns focus", async ({ page }) => {
