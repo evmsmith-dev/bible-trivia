@@ -28,16 +28,24 @@ test("the Daily Challenge card shows today's status and the streak", async ({ pa
   await expect(page.locator("#daily-card-status")).toHaveText("Not started · Start a streak today");
   await expect(page.locator("#daily-challenge-new-badge")).toBeVisible();
 
-  await card.click(); // opening it acknowledges the day
-  await expect(page.locator("#daily-challenge-overlay")).toBeVisible();
-  await page.locator("#daily-start-btn").click();
+  // A try that doesn't reach 70%: the card shows the tries, best score and what's needed.
+  await card.click();
+  await h.finishCountdown(page);
+  await h.playRound(page, { correctAnswers: 2 });
+  await h.expectSummary(page);
+  await h.goHomeFromSummary(page);
+  await expect(page.locator("#daily-card-status")).toHaveText(/^1 try · best [\d,]+ · 70% needed$/);
+  await expect(page.locator("#daily-challenge-new-badge")).toBeHidden(); // starting it acknowledges the day
+
+  await card.click();
   await h.finishCountdown(page);
   await h.playRound(page, { correctAnswers: 10 });
   await h.expectSummary(page);
   await page.clock.runFor(16000);
   await h.goHomeFromSummary(page);
 
-  await expect(page.locator("#daily-card-status")).toHaveText("✅ Completed · 🔥 1-day streak");
+  await expect(page.locator("#daily-card-status")).toHaveText("Done for today · +5% points on today's rounds");
+  await expect(card.locator(".daily-card-go")).toHaveText("✓");
   await expect(card).toHaveClass(/is-complete/);
   await expect(page.locator("#daily-challenge-new-badge")).toBeHidden();
 });

@@ -548,78 +548,6 @@
     }
 }
 
-    #daily-challenge-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9998;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #daily-challenge-overlay .overlay-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.55);
-    }
-
-    #daily-challenge-overlay .overlay-card {
-      position: relative;
-      background: var(--bg-ffffff, white);
-      padding: 24px 26px;
-      border-radius: 20px;
-      max-width: 520px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-      z-index: 2;
-      text-align: left;
-      border: 2px solid var(--bd-c8e6c9, #c8e6c9);
-    }
-
-    #daily-challenge-overlay h2 {
-      margin-top: 0;
-      color: var(--primary);
-      font-size: 2rem;
-    }
-
-    #daily-challenge-status {
-      margin: 0;
-      color: var(--fg-2e7d32, #2e7d32);
-      font-size: 1.08rem;
-      font-weight: 600;
-      line-height: 1.4;
-      background: var(--bg-f5fff6, #f5fff6);
-      border: 1px solid var(--bd-c8e6c9, #c8e6c9);
-      border-radius: 12px;
-      padding: 10px 12px;
-    }
-
-    #daily-start-btn {
-      width: 100%;
-      margin-top: 12px;
-      font-size: 1.2rem;
-      padding: 14px 22px;
-      border-radius: 12px;
-      background: var(--bg-2e7d32, #2e7d32);
-      color: var(--fg-ffffff, #ffffff);
-      box-shadow: 0 8px 20px rgba(46,125,50,0.28);
-    }
-
-@media (hover: hover) {
-    #daily-start-btn:hover {
-      background: var(--bg-1b5e20, #1b5e20);
-    }
-}
-
-    #daily-start-btn:disabled {
-      background: var(--bg-b0bec5, #b0bec5);
-      box-shadow: none;
-      cursor: not-allowed;
-      color: var(--fg-eceff1, #eceff1);
-    }
-
     #start-btn {
       background: var(--accent);
       color: #333;
@@ -1245,11 +1173,9 @@ button, input, select, textarea { font-family: inherit; }
   box-shadow: none;
   cursor: pointer;
 }
-#daily-challenge-overlay h2,
 #how-to-play-overlay h2,
 #settings-overlay h2 { padding-right: 52px; line-height: 1.15; }
 @media (max-width: 640px) {
-  #daily-challenge-overlay h2,
   #how-to-play-overlay h2,
   #settings-overlay h2 { font-size: clamp(1.5rem, 7vw, 1.8rem); }
 }
@@ -2299,7 +2225,7 @@ button, input, select, textarea { font-family: inherit; }
   --bg-f1f8e9: #2f3924; /* #f1f8e9 · .streak-chip, #update-banner #update-banner-dismiss */
   --bg-f2fbf3: #203222; /* #f2fbf3 · .avatar-option.is-selected */
   --bg-f3e5f5: #39273b; /* #F3E5F5 · .tag.daily */
-  --bg-f5fff6: #1d2e1f; /* #f5fff6 · .review-card, #daily-challenge-status */
+  --bg-f5fff6: #1d2e1f; /* #f5fff6 · .review-card, */
   --bg-f6fff7: #1d2e1f; /* #f6fff7 · #player-entry-btn */
   --bg-f7fff7: #1c2d1c; /* #f7fff7 · .avatar-option-icon, #how-to-play-overlay .howto-section */
   --bg-f8f8f8: #272727; /* #f8f8f8 · .leaderboard-empty */
@@ -2359,7 +2285,7 @@ button, input, select, textarea { font-family: inherit; }
   #player-entry-btn { width: 4rem; height: 4rem; }
   #player-entry-btn .player-entry-avatar { font-size: 2.4rem; }
   #player-entry-btn .player-entry-avatar img { width: 3.6rem; height: 3.6rem; }
-  .settings-card, #how-to-play-overlay .overlay-card, #daily-challenge-overlay .overlay-card { max-width: 640px; }
+  .settings-card, #how-to-play-overlay .overlay-card { max-width: 640px; }
 
   /* Home */
   #welcome { padding: 28px 32px 0; }
@@ -2410,3 +2336,32 @@ button, input, select, textarea { font-family: inherit; }
   #restart-change { font-size: 1.4rem; }
   .summary-actions.is-daily #restart-change { font-size: 1.6rem; min-height: 68px; }
 }
+
+/* ---------- Countdown: what the round is (the Daily Challenge's goal) ---------- */
+.countdown-detail { margin: 0 0 8px; font-size: 1.35rem; font-weight: 700; color: #ffffff; text-align: center; }
+.countdown-detail:empty { display: none; }
+
+/* ---------- Toast: a short message near the bottom that fades ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+  z-index: 12500;
+  width: max-content;
+  max-width: calc(100% - 40px);
+  padding: 12px 20px;
+  border-radius: 16px;
+  background: #263238;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+:root[data-theme="dark"] .toast { background: #e8f5e9; color: #1b5e20; }

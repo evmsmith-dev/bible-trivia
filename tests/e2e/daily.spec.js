@@ -2,9 +2,8 @@ import { test, expect } from "@playwright/test";
 import * as h from "./helpers.js";
 
 async function startDaily(page) {
-  await page.locator("#daily-challenge-link").click();
-  await expect(page.locator("#daily-start-btn")).toBeEnabled();
-  await page.locator("#daily-start-btn").click();
+  await page.locator("#daily-challenge-link").click(); // the card starts it straight away
+  await expect(page.locator("#countdown-detail")).toHaveText("🎯 Daily Challenge · get 7 of 10 right");
   await h.finishCountdown(page);
   await expect(page.locator("#progress")).toContainText("Daily | Question 1 of 10");
   await expect(page.locator("#daily-tag")).toBeVisible();
@@ -44,9 +43,15 @@ test.describe("daily challenge", () => {
     await page.clock.runFor(5000);
     await h.goHomeFromSummary(page);
 
+    // Done for today: the card says so, and tapping it explains instead of starting a round.
+    await expect(page.locator("#daily-card-status")).toContainText("+5% points on today's rounds");
     await page.locator("#daily-challenge-link").click();
-    await expect(page.locator("#daily-start-btn")).toBeDisabled();
-    await expect(page.locator("#daily-challenge-status")).toContainText("Active");
+    await expect(page.locator("#toast")).toHaveText("Today's challenge is done. A new one is ready tomorrow.");
+    await expect(page.locator("#toast")).toHaveClass(/is-visible/);
+    await expect(page.locator("#countdown-overlay")).toBeHidden();
+    await expect(page.locator("#start-btn")).toBeVisible();
+    await page.clock.runFor(3000);
+    await expect(page.locator("#toast")).not.toHaveClass(/is-visible/);
   });
 
   test("a missed challenge offers Try Again, then Back to Home; a completed one offers Share", async ({ page }) => {

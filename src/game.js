@@ -48,8 +48,10 @@ function resetBonusStreak() {
 // ---------- starting a round ----------
 
 /** 3-2-1 before a round. A tap anywhere on the countdown starts the round straight away. */
-function runCountdown(onDone) {
+/** The 3-2-1 before a round. `detail` is an extra line under the title (the Daily Challenge's goal). */
+function runCountdown(onDone, { detail = "" } = {}) {
   let count = TIMING.countdownSeconds;
+  byId("countdown-detail").textContent = detail;
   let finished = false;
   el.countdownNumber.textContent = count;
   setVisible(el.countdownOverlay, true, "flex");
@@ -120,7 +122,6 @@ export function startNormalGame({ keepStreak = false } = {}) {
 export function startDailyGame() {
   if (state.celebrationActive) return;
   resetBonusStreak();
-  closeOverlay("daily-challenge-overlay");
   showScreen("game");
   runCountdown(async () => {
     try {
@@ -132,7 +133,7 @@ export function startDailyGame() {
         : "Could not load today's challenge. Please try again.");
       goHome();
     }
-  });
+  }, { detail: `🎯 Daily Challenge · get ${Math.ceil((DAILY.successPercent / 100) * QUESTIONS_PER_GAME)} of ${QUESTIONS_PER_GAME} right` });
 }
 
 // ---------- questions ----------

@@ -129,7 +129,6 @@ test("the way out of a round is a labelled End Round button", async ({ page }) =
 });
 
 for (const [opener, overlay] of [
-  ["#daily-challenge-link", "#daily-challenge-overlay"],
   ["#home-settings-btn", "#settings-overlay"],
   ["#how-to-play-link", "#how-to-play-overlay"],
 ]) {

@@ -4,11 +4,11 @@
 import { DAILY, QUESTIONS_PER_GAME } from "../config.js";
 import { applyDailyCompletion, createDailySeed, sanitizeDailyRecord } from "../lib/records.js";
 import { selectQuestionsForMode } from "../lib/selection.js";
-import { createSeededRandom, escapeHtml, getDateKeyOffset, getLocalDateKey } from "../lib/utils.js";
+import { createSeededRandom, getDateKeyOffset, getLocalDateKey } from "../lib/utils.js";
 import { state } from "../state.js";
 import { KEYS, readLocal, save, writeLocal } from "../storage/store.js";
 import { byId } from "../ui/dom.js";
-import { openOverlay } from "../ui/overlay.js";
+import { showToast } from "../ui/toast.js";
 
 export const getDailyRecord = (dateKey = getLocalDateKey()) => state.dailyChallenges[dateKey] || null;
 
@@ -88,13 +88,7 @@ export function recordDailyResult({ dateKey, score, percent, correct = 0 }) {
   return { record, passed };
 }
 
-// ---------- Welcome-screen link and overlay ----------
-
-const statusText = (record) => {
-  if (!record) return "Not started";
-  if (record.completed) return "Completed";
-  return record.attempts > 0 ? "In progress" : "Not started";
-};
+// ---------- Home's Daily Challenge card ----------
 
 /** The streak as of today: it only counts if the last completed day was today or yesterday. */
 export function currentDailyStreak(today = getLocalDateKey()) {
@@ -102,8 +96,8 @@ export function currentDailyStreak(today = getLocalDateKey()) {
   return last === today || last === getDateKeyOffset(today, -1) ? streak : 0;
 }
 
-/** Home's Daily Challenge card (status and streak) and the Daily Challenge popup. The card
- *  shows "New" until the player opens it (once per day) or completes the day. */
+/** Home's Daily Challenge card. Tapping it starts today's challenge; once it's complete the
+ *  card turns green and says the +5% bonus is on. Shows "New" until today's is started. */
 export function renderDailyCard() {
   const today = getLocalDateKey();
   const record = getDailyRecord(today);
@@ -114,16 +108,23 @@ export function renderDailyCard() {
   byId("daily-challenge-new-badge").classList.toggle("is-visible", shouldPulse);
 
   const streak = currentDailyStreak(today);
-  const status = record?.completed ? "✅ Completed" : statusText(record);
   const streakText = streak ? `🔥 ${streak}-day streak` : "Start a streak today";
-  byId("daily-card-status").textContent = `${status} · ${streakText}`;
-  card.setAttribute("aria-label", `Today's Daily Challenge: ${status.replace("✅ ", "")}, ${streak ? `${streak}-day streak` : "no streak yet"}`);
-
-  byId("daily-challenge-status").innerHTML = `${escapeHtml(statusText(record))}<br>`
-    + `Point Bonus: ${isDailyBonusActive(today) ? "Active (+5% base/question)" : "Inactive"}`;
-  const startButton = byId("daily-start-btn");
-  startButton.disabled = Boolean(record?.completed);
-  startButton.textContent = record?.completed ? "Completed for Today" : "Start Today's Challenge";
+  let status;
+  let label;
+  if (record?.completed) {
+    status = `Done for today · +${Math.round(DAILY.baseBonusMultiplier * 100)}% points on today's rounds`;
+    label = `Today's Daily Challenge: done. Plus ${Math.round(DAILY.baseBonusMultiplier * 100)} percent points on today's rounds. ${streak}-day streak`;
+  } else if (record?.attempts > 0) {
+    const tries = `${record.attempts} ${record.attempts === 1 ? "try" : "tries"}`;
+    status = `${tries} · best ${record.bestScore.toLocaleString()} · ${DAILY.successPercent}% needed`;
+    label = `Today's Daily Challenge: ${tries}, best ${record.bestScore}, ${DAILY.successPercent} percent needed. Start`;
+  } else {
+    status = `Not started · ${streakText}`;
+    label = `Today's Daily Challenge: not started, ${streak ? `${streak}-day streak` : "no streak yet"}. Start`;
+  }
+  byId("daily-card-status").textContent = status;
+  card.setAttribute("aria-label", label);
+  card.querySelector(".daily-card-go").textContent = record?.completed ? "✓" : "›";
 }
 
 function scheduleMidnightRefresh() {
@@ -136,13 +137,16 @@ function scheduleMidnightRefresh() {
 }
 
 export function initDaily({ startDaily }) {
+  // Tapping the card starts today's challenge (the countdown says what it is). Once it's
+  // done, a short message says when the next one is ready.
   byId("daily-challenge-link").addEventListener("click", () => {
-    writeLocal(KEYS.dailyPulseAckDate, getLocalDateKey());
-    renderDailyCard();
-    openOverlay("daily-challenge-overlay");
-  });
-  byId("daily-start-btn").addEventListener("click", () => {
-    if (byId("daily-start-btn").disabled || state.celebrationActive) return;
+    if (state.celebrationActive) return;
+    const today = getLocalDateKey();
+    if (getDailyRecord(today)?.completed) {
+      showToast("Today's challenge is done. A new one is ready tomorrow.");
+      return;
+    }
+    writeLocal(KEYS.dailyPulseAckDate, today);
     startDaily();
   });
   renderDailyCard();
