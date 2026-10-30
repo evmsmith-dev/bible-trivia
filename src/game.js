@@ -1,15 +1,18 @@
 // The game loop: countdown → questions (timer, answers, scoring) → review → summary.
+// Three kinds of round share it: normal, the Daily Challenge, and Practice (questions the player
+// got wrong, with no timer, points, streak or levels, and a Next button instead of auto-advance).
 import {
-  CATEGORIES, CATEGORY_EMOJIS, DAILY, DIFFICULTY_LABELS, GAME_MODE_DAILY, GAME_MODE_NORMAL,
+  CATEGORIES, CATEGORY_EMOJIS, DAILY, DIFFICULTY_LABELS, GAME_MODE_DAILY, GAME_MODE_NORMAL, GAME_MODE_PRACTICE,
   INCORRECT_MESSAGES, MODES, QUESTIONS_PER_GAME, RECENT_QUESTION_MEMORY, TIMING,
 } from "./config.js";
 import { buildDailyShareText } from "./lib/share.js";
 import { getTopScores, normalizeMode, trimHighScores } from "./lib/records.js";
 import { calculatePoints, getNextStreakBonusLabel, getStreakBonus, summaryHeadline } from "./lib/scoring.js";
 import { selectQuestionsForMode } from "./lib/selection.js";
+import { pickPracticeRound, recordMiss, recordRight } from "./lib/practice.js";
 import { bibleGatewayUrl, escapeHtml, getLocalDateKey, hasScriptureReference, pickRandom, shuffled } from "./lib/utils.js";
 import { state } from "./state.js";
-import { save, saveProfile, saveRecentQuestionIds } from "./storage/store.js";
+import { save, saveProfile, saveRecentQuestionIds, writePractice } from "./storage/store.js";
 import { byId, replayAnimation, setVisible, showScreen } from "./ui/dom.js";
 import { celebrateDailyCompletion, celebrateHighScore, celebrateLevel, fireConfetti } from "./ui/celebrate.js";
 import { anyOverlayOpen, closeOverlay, ensureBackGuard, openOverlay, setScreenBackHandler } from "./ui/overlay.js";
@@ -18,6 +21,7 @@ import { getPlayerLevel, renderPlayerCards } from "./features/player.js";
 import { checkNewBadges, newBadgesHtml } from "./features/badges.js";
 import { openStats } from "./features/stats.js";
 import { openDifficultyPicker, renderModeChip } from "./features/settings.js";
+import { practiceCount, renderPracticeCard } from "./features/practice.js";
 import { showUpdateBannerIfReady } from "./ui/update-banner.js";
 import { vibrate, VIBRATION } from "./ui/haptics.js";
 
@@ -30,6 +34,8 @@ let answerLocked = true;
 let pendingCelebrations = null;
 
 const activeMode = () => (state.game.mode === GAME_MODE_DAILY ? DAILY.difficultyMode : normalizeMode(state.difficultyMode));
+const isPractice = () => state.game.mode === GAME_MODE_PRACTICE;
+const roundLength = () => state.game.questions.length || QUESTIONS_PER_GAME;
 
 // ---------- streak HUD ----------
 
@@ -103,6 +109,11 @@ function beginRound({ mode, questions, dailyRecord = null, attemptNumber = 1 }) 
   setVisible(el.summary, false);
   setVisible(el.review, false);
   clearPause();
+  // Practice hides the timer, points and streak (see styles.css) and says so on End Round.
+  byId("question-container").classList.toggle("is-practice", mode === GAME_MODE_PRACTICE);
+  byId("quit-text").textContent = mode === GAME_MODE_PRACTICE
+    ? "Questions you've already got right stay off your practice list."
+    : "This round won't be saved. The timer is stopped while you decide.";
   showQuestionLayout(true);
   updateStreakHud();
   showQuestion();
@@ -136,22 +147,35 @@ export function startDailyGame() {
   }, { detail: `🎯 Daily Challenge · get ${Math.ceil((DAILY.successPercent / 100) * QUESTIONS_PER_GAME)} of ${QUESTIONS_PER_GAME} right` });
 }
 
+/** Practice: up to 10 of the questions this player most recently got wrong. */
+export function startPracticeGame() {
+  if (state.celebrationActive) return;
+  const questions = pickPracticeRound(state.practice, state.questionsById);
+  if (!questions.length) return;
+  resetBonusStreak();
+  showScreen("game");
+  runCountdown(() => beginRound({ mode: GAME_MODE_PRACTICE, questions }),
+    { detail: `📖 Practice · ${questions.length} ${questions.length === 1 ? "question" : "questions"} · no timer` });
+}
+
 // ---------- questions ----------
 
 function renderProgress() {
   const { game } = state;
-  const prefix = game.mode === GAME_MODE_DAILY ? "Daily | " : "";
-  el.progress.textContent = `${prefix}Question ${Math.min(game.index + 1, QUESTIONS_PER_GAME)} of ${QUESTIONS_PER_GAME} | Correct: ${game.correct} | Score: ${game.score}`;
+  const total = roundLength();
+  const prefix = game.mode === GAME_MODE_DAILY ? "Daily | " : isPractice() ? "Practice | " : "";
+  el.progress.textContent = `${prefix}Question ${Math.min(game.index + 1, total)} of ${total} | Correct: ${game.correct} | Score: ${game.score}`;
   el.scoreDisplay.textContent = `⭐ ${game.score.toLocaleString()}`;
   setVisible(el.dailyTag, game.mode === GAME_MODE_DAILY, "inline-flex");
+  setVisible(el.practiceTag, isPractice(), "inline-flex");
   // Answered questions show ✅ (correct) or ❌ (wrong or timed out) as soon as they're answered.
-  el.progressDots.innerHTML = Array.from({ length: QUESTIONS_PER_GAME }, (_, i) => {
+  el.progressDots.innerHTML = Array.from({ length: total }, (_, i) => {
     const answered = game.review[i];
     if (answered) return answered.isCorrect ? '<span class="done">✅</span>' : '<span class="missed">❌</span>';
     return i === game.index ? '<span class="current">🔵</span>' : '<span class="pending">⚪</span>';
   }).join("");
   const wrong = game.review.filter((entry) => !entry.isCorrect).length;
-  el.progressDots.setAttribute("aria-label", `Question ${Math.min(game.index + 1, QUESTIONS_PER_GAME)} of ${QUESTIONS_PER_GAME}: ${game.correct} correct, ${wrong} wrong`);
+  el.progressDots.setAttribute("aria-label", `Question ${Math.min(game.index + 1, total)} of ${total}: ${game.correct} correct, ${wrong} wrong`);
 }
 
 function showQuestion() {
@@ -162,7 +186,8 @@ function showQuestion() {
   }
   const question = game.questions[game.index];
   const correctText = question.opts[question.ans];
-  rememberSeen(question.id);
+  if (!isPractice()) rememberSeen(question.id);
+  setVisible(el.practiceNext, false);
 
   el.question.textContent = question.q;
   const difficulty = DIFFICULTY_LABELS[question.difficulty] || { emoji: "", label: question.difficulty };
@@ -198,7 +223,7 @@ function unlockAnswers(fromSeconds = null) {
   el.options.classList.remove("is-reading");
   el.options.querySelectorAll(".option").forEach((button) => { button.disabled = false; });
   answerLocked = false;
-  startTimer(fromSeconds);
+  if (!isPractice()) startTimer(fromSeconds); // Practice has no timer
 }
 
 /** Remembers shown questions so later rounds can prefer ones the player hasn't seen recently. */
@@ -254,6 +279,7 @@ let pausedSecondsLeft = null;
 
 /** Stops the clock on an unanswered question and covers it until the player taps Resume. */
 function pauseRound() {
+  if (!state.game.active || isPractice()) return; // nothing is timed in Practice
   if (unlockHandle) { // still in the moment before the answers unlock
     clearTimeout(unlockHandle);
     unlockHandle = null;
@@ -380,6 +406,15 @@ function handleAnswer(selectedButton) {
     else button.classList.add("grayed");
   });
 
+  // Wrong answers (and running out of time) go on the practice list; right ones come off it.
+  state.practice = isCorrect ? recordRight(state.practice, question.id) : recordMiss(state.practice, question.id);
+  writePractice(state.practice);
+
+  if (isPractice()) {
+    answerPractice(question, selectedButton, isCorrect);
+    return;
+  }
+
   if (isCorrect) {
     recordCorrectAnswer(question, MODES[activeMode()].seconds - secondsLeft);
     const points = calculatePoints({
@@ -429,12 +464,58 @@ function handleAnswer(selectedButton) {
   }, isCorrect ? TIMING.autoAdvanceCorrectMs : TIMING.autoAdvanceWrongMs);
 }
 
+/** Practice: no points, streak or levels; show where to read about it and wait for Next. */
+function answerPractice(question, selectedButton, isCorrect) {
+  const { game } = state;
+  if (isCorrect) {
+    game.correct += 1;
+    showFeedback("✅ Right!", "correct", "Off your practice list");
+    vibrate(VIBRATION.correct);
+    fireConfetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+  } else {
+    vibrate(VIBRATION.wrong);
+    selectedButton.classList.remove("grayed");
+    selectedButton.classList.add("incorrect");
+    showFeedback(pickRandom(INCORRECT_MESSAGES), "incorrect", `Answer: ${question.opts[question.ans]}`);
+  }
+  game.review.push({
+    question: question.q,
+    selectedAnswer: selectedButton.dataset.answer,
+    isCorrect,
+    correctAnswer: question.opts[question.ans],
+    scriptureRef: String(question.ref || "").trim(),
+  });
+  renderProgress();
+
+  const ref = String(question.ref || "").trim();
+  el.practiceRef.innerHTML = hasScriptureReference(ref)
+    ? `📖 Read about it: <a href="${escapeHtml(bibleGatewayUrl(ref))}" target="_blank" rel="noopener noreferrer">${escapeHtml(ref)}</a>`
+    : "";
+  setVisible(el.practiceRef, Boolean(el.practiceRef.innerHTML));
+  byId("practice-next-btn").textContent = game.index + 1 >= game.questions.length ? "See results ›" : "Next ›";
+  setVisible(el.practiceNext, true, "flex");
+  byId("practice-next-btn").focus({ preventScroll: true });
+}
+
+function nextPracticeQuestion() {
+  if (!isPractice() || !state.game.active) return;
+  setVisible(el.practiceNext, false);
+  state.game.index += 1;
+  showQuestion();
+}
+
 // ---------- end of round ----------
 
 async function endGame() {
   const { game } = state;
   game.active = false;
   showQuestionLayout(false);
+
+  if (isPractice()) {
+    renderPracticeSummary();
+    showSummary(null);
+    return;
+  }
 
   const percent = Math.round((game.correct / QUESTIONS_PER_GAME) * 100);
   const isDaily = game.mode === GAME_MODE_DAILY;
@@ -482,6 +563,39 @@ async function endGame() {
     dailyCompleted: Boolean(dailyResult?.passed),
   };
   showSummary(pendingCelebrations);
+}
+
+/** The end of a practice round: how it went and what's left on the list. */
+function renderPracticeSummary() {
+  const { game } = state;
+  const total = game.questions.length;
+  const left = practiceCount();
+  const dots = game.review.map((entry) => (entry.isCorrect ? "✅" : "❌")).join("");
+  const status = left
+    ? `${game.correct} off your list · ${left} still to practise`
+    : "🎉 Your practice list is clear!";
+  el.summary.innerHTML = `
+    <header class="summary-head">
+      <p class="summary-eyebrow is-practice">📖 Practice</p>
+      <h2 class="summary-headline">${escapeHtml(left ? `Well done, ${state.profile.name}!` : `All clear, ${state.profile.name}!`)}</h2>
+      <p class="summary-score" aria-label="${game.correct} of ${total} right">
+        <span class="summary-score-big">${game.correct}</span><span class="summary-score-of"> / ${total} right</span>
+      </p>
+      <p class="summary-dots" role="img" aria-label="${game.correct} right, ${total - game.correct} wrong">${dots}</p>
+    </header>
+    <div class="summary-daily summary-practice${left ? "" : " is-complete"}">
+      <p class="summary-daily-status">${status}</p>
+      <p class="summary-daily-meta">Practice rounds don't change your scores or level.</p>
+    </div>
+    <button type="button" id="summary-review-btn">📖 Review Answers</button>
+    <div class="summary-spacer"></div>
+    <div class="summary-actions is-daily">
+      ${left ? '<button type="button" id="practice-again-btn">📖 Practice Again</button>' : ""}
+      <button type="button" id="restart-change">&#x1F3E0; Back to Home</button>
+    </div>`;
+  byId("practice-again-btn")?.addEventListener("click", () => startPracticeGame());
+  byId("restart-change").addEventListener("click", () => goHome());
+  byId("summary-review-btn").addEventListener("click", () => showReview());
 }
 
 function showReview() {
@@ -642,11 +756,13 @@ export function goHome() {
   unlockHandle = null;
   stopTimer();
   clearPause();
+  setVisible(el.practiceNext, false);
   state.game.active = false;
   resetBonusStreak();
   showScreen("welcome");
   renderPlayerCards();
   renderDailyCard();
+  renderPracticeCard();
   showUpdateBannerIfReady();
 }
 
@@ -667,6 +783,9 @@ export function initGame() {
     questionMeta: document.querySelector(".question-meta"),
     scoreDisplay: byId("score-display"),
     dailyTag: byId("daily-tag"),
+    practiceTag: byId("practice-tag"),
+    practiceNext: byId("practice-next"),
+    practiceRef: byId("practice-ref"),
     difficultyTag: byId("difficulty-tag"),
     categoryTag: byId("category-tag"),
     options: byId("options"),
@@ -694,6 +813,7 @@ export function initGame() {
   });
 
   byId("start-btn").addEventListener("click", () => startNormalGame());
+  byId("practice-next-btn").addEventListener("click", nextPracticeQuestion);
   byId("pause-resume-btn").addEventListener("click", resumeRound);
   byId("quit-btn").addEventListener("click", askToEndRound);
   byId("quit-confirm-btn").addEventListener("click", () => {

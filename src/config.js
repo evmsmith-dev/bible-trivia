@@ -93,6 +93,13 @@ export const DEFAULT_MODE = "medium";
 
 export const GAME_MODE_NORMAL = "normal";
 export const GAME_MODE_DAILY = "daily";
+export const GAME_MODE_PRACTICE = "practice";
+
+/** Practice: replays questions the player got wrong. No timer, points, streak or levels. */
+export const PRACTICE = {
+  roundSize: 10, // questions per practice round (fewer if the list is shorter)
+  maxSaved: 200, // the list keeps the most recently missed questions
+};
 
 export const DAILY = {
   modeVersion: "v1", // changing this changes every future day's question set

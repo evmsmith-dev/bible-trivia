@@ -12,6 +12,7 @@ import {
 } from "../lib/records.js";
 import { log } from "../lib/debug.js";
 import { sanitizeEarned } from "../lib/badges.js";
+import { sanitizePractice } from "../lib/practice.js";
 
 const PRIMARY_ID = "primary";
 const MAX_PLAYERS = 8;
@@ -42,6 +43,7 @@ function playerKeys(id) {
     recentQuestions: `${prefix}recentQuestionIds`,
     howToPlaySeen: `${prefix}howToPlaySeen`,
     badges: `${prefix}badges`,
+    practice: `${prefix}practice`,
   };
 }
 
@@ -164,6 +166,13 @@ export function readBadges(id) {
 
 export function writeBadges(id, earned) {
   writeLocal(playerKeys(id).badges, JSON.stringify(earned));
+}
+
+/** The active player's practice list (questions they got wrong); see lib/practice.js. */
+export const readPractice = (id = backend.id) => sanitizePractice(readLocalJson(playerKeys(id).practice, {}));
+
+export function writePractice(list, id = backend.id) {
+  writeLocal(playerKeys(id).practice, JSON.stringify(list));
 }
 
 /** Any player's profile (name, picture, level counter), straight from localStorage. */
@@ -492,6 +501,7 @@ export async function createBackup() {
       ...snapshot,
       recentQuestionIds: Array.isArray(recent) ? recent.filter(Number.isInteger) : [],
       badges: readBadges(id) || {},
+      practice: readPractice(id),
     });
   }
   return {
@@ -526,6 +536,7 @@ export function readBackup(data) {
       dailyChallenges: recentDaily(Object.values(raw.dailyChallenges && typeof raw.dailyChallenges === "object" ? raw.dailyChallenges : {})),
       recentQuestionIds: Array.isArray(raw.recentQuestionIds) ? raw.recentQuestionIds.filter(Number.isInteger) : [],
       badges: sanitizeEarned(raw.badges),
+      practice: sanitizePractice(raw.practice),
     });
   }
   if (!players.length) return null;
@@ -551,6 +562,7 @@ export async function restoreBackup(backup) {
     writeLocal(keys.recentQuestions, JSON.stringify(player.recentQuestionIds));
     writeLocal(keys.howToPlaySeen, "1");
     writeBadges(player.id, player.badges);
+    writePractice(player.practice, player.id);
     const target = await openBackend(player.id);
     try {
       await target.replace(player);
@@ -592,6 +604,7 @@ export async function resetAll() {
   try {
     localStorage.removeItem(KEYS.recentQuestions);
     localStorage.removeItem(KEYS.badges);
+    localStorage.removeItem(KEYS.practice);
   } catch {
     // ignore
   }

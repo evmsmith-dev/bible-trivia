@@ -78,6 +78,16 @@
       <span class="daily-card-go" aria-hidden="true">›</span>
     </button>
 
+    <!-- Practice: replays the questions this player got wrong (no timer or points). -->
+    <button type="button" id="practice-link" class="practice-card">
+      <span class="practice-card-icon" aria-hidden="true">📖</span>
+      <span class="practice-card-text">
+        <span class="practice-card-title">Practice</span>
+        <span id="practice-card-status" class="practice-card-status">Questions you miss will show up here</span>
+      </span>
+      <span id="practice-card-count" class="practice-card-count" aria-hidden="true"></span>
+    </button>
+
     <div class="home-spacer"></div>
 
     <button type="button" id="mode-chip" class="mode-chip" aria-label="Difficulty mode: Medium. Change difficulty">🟠 Medium ▾</button>
@@ -116,11 +126,17 @@
 
     <div class="question-meta">
       <span id="daily-tag" class="tag daily" style="display:none;">🎯 Daily</span>
+      <span id="practice-tag" class="tag practice" style="display:none;">📖 Practice</span>
       <span id="difficulty-tag" class="tag difficulty"></span>
       <span id="category-tag" class="tag category"></span>
     </div>
     <div id="question" aria-live="polite"></div>
     <div id="options" role="group" aria-label="Answer options"></div>
+    <!-- Practice only: after each answer, where to read about it and a Next button (no auto-advance). -->
+    <div id="practice-next" class="practice-next" style="display:none;">
+      <p id="practice-ref" class="practice-ref"></p>
+      <button type="button" id="practice-next-btn">Next ›</button>
+    </div>
     <!-- Covers the question when the app comes back from the background; the timer waits. -->
     <div id="pause-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="pause-title">
       <h2 id="pause-title">⏸️ Paused</h2>
@@ -144,7 +160,7 @@
     <div class="overlay-backdrop" data-overlay-close></div>
     <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="quit-title">
       <h2 id="quit-title">End this round?</h2>
-      <p>This round won't be saved. The timer is stopped while you decide.</p>
+      <p id="quit-text">This round won't be saved. The timer is stopped while you decide.</p>
       <div class="quit-actions">
         <button type="button" id="quit-keep-btn" data-overlay-close>Keep Playing</button>
         <button type="button" id="quit-confirm-btn">End Round</button>
@@ -230,6 +246,16 @@
             <li><b>Question pool:</b> <span id="question-count">750+</span> questions across Old Testament, New Testament, and General categories.</li>
             <li>Read first: the answers light up a moment after each question appears, and the timer starts then.</li>
             <li>On a keyboard, press <b>1–4</b> to answer.</li>
+          </ul>
+        </details>
+
+        <details class="howto-section">
+          <summary>Practice</summary>
+          <ul>
+            <li>Every question you get wrong (or run out of time on) goes on your <b>📖 Practice</b> list on Home.</li>
+            <li>Practice has no timer, points or streak. After each answer, tap the Bible reference to read about it, then <b>Next</b>.</li>
+            <li>Get a question right, in Practice or in any round, and it comes off your list.</li>
+            <li>Practice rounds don't change your scores, level or badges.</li>
           </ul>
         </details>
 
