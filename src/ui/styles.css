@@ -888,6 +888,7 @@ button, input, select, textarea { font-family: inherit; }
   white-space: nowrap;
 }
 .tag.daily { background: var(--bg-f3e5f5, #F3E5F5); border-color: var(--bd-ba68c8, #BA68C8); color: var(--fg-6a1b9a, #6A1B9A); }
+.tag.practice { background: var(--bg-e3f2fd, #E3F2FD); border-color: var(--bd-90caf9, #90CAF9); color: var(--fg-1565c0, #1565C0); }
 
 /* ---------- Phones and touch tablets: each screen fills the viewport exactly, with no scrolling ----------
    Tablets (iPad) use the same full-screen layout; the tablet block further down makes the
@@ -1421,7 +1422,7 @@ button, input, select, textarea { font-family: inherit; }
   box-shadow: none;
 }
 /* Daily Challenge: leaving is a full-size button, not a text link. */
-#daily-retry-btn {
+#daily-retry-btn, #practice-again-btn {
   padding: 18px 16px;
   font-size: 2rem;
   background: var(--accent);
@@ -1477,8 +1478,8 @@ button, input, select, textarea { font-family: inherit; }
   #summary::before { content: ""; flex: 0.3 1 0; }
   #summary .mode-chip { margin-bottom: clamp(8px, 1.6 * var(--app-vh, 1dvh), 14px); font-size: clamp(1rem, min(4.6vw, 2.4 * var(--app-vh, 1dvh)), 1.2rem); }
   #restart-same, #share-daily-btn { padding: clamp(12px, 2.4 * var(--app-vh, 1dvh), 20px) 16px; }
-  #restart-same, #daily-retry-btn { font-size: clamp(1.6rem, min(8vw, 4.4 * var(--app-vh, 1dvh)), 2.2rem); }
-  #daily-retry-btn { padding: clamp(12px, 2.4 * var(--app-vh, 1dvh), 20px) 16px; }
+  #restart-same, #daily-retry-btn, #practice-again-btn { font-size: clamp(1.6rem, min(8vw, 4.4 * var(--app-vh, 1dvh)), 2.2rem); }
+  #daily-retry-btn, #practice-again-btn { padding: clamp(12px, 2.4 * var(--app-vh, 1dvh), 20px) 16px; }
   .summary-actions.is-daily #restart-change {
     margin-top: clamp(8px, 1.6 * var(--app-vh, 1dvh), 14px) !important;
     min-height: clamp(48px, 7 * var(--app-vh, 1dvh), 62px);
@@ -1514,7 +1515,7 @@ button, input, select, textarea { font-family: inherit; }
   .summary-score-of { font-size: 1.2rem; }
   .summary-points { margin-top: 4px; font-size: 1.1rem; }
   .summary-dots { margin-top: 8px; font-size: 1.1rem; }
-  #restart-same, #share-daily-btn, #daily-retry-btn { padding: 10px 16px; font-size: 1.5rem; }
+  #restart-same, #share-daily-btn, #daily-retry-btn, #practice-again-btn { padding: 10px 16px; font-size: 1.5rem; }
   .summary-actions.is-daily #restart-change { margin-top: 8px !important; min-height: 44px; padding: 6px 16px; font-size: 1.2rem; }
   #share-daily-btn.is-small { margin-top: 2px; min-height: 36px; padding: 4px 16px; font-size: 1rem; }
   #restart-change { margin-top: 2px !important; min-height: 40px; padding: 6px 16px; }
@@ -2154,12 +2155,12 @@ button, input, select, textarea { font-family: inherit; }
   /* Home */
   #welcome { padding: 28px 32px 0; }
   .home-brand { font-size: 1.7rem; }
-  .home-hello { margin-top: 6vh; }
+  .home-hello { margin-top: 4vh; }
   .home-greeting { font-size: 3.6rem; }
   .home-sub { font-size: 1.4rem; margin-top: 10px; }
   .home-level { font-size: 1.1rem; margin-top: 18px; }
   .home-level-track { height: 12px; }
-  .daily-card { margin-top: 5vh; padding: 20px 22px; gap: 16px; }
+  .daily-card { margin-top: 3.5vh; padding: 18px 22px; gap: 16px; }
   .daily-card-icon { font-size: 2.6rem; }
   .daily-card-title { font-size: 1.4rem; }
   .daily-card-status { font-size: 1.15rem; }
@@ -2194,7 +2195,7 @@ button, input, select, textarea { font-family: inherit; }
   .summary-daily-status { font-size: 1.3rem; }
   .summary-daily-meta { font-size: 1.1rem; }
   #summary .mode-chip { font-size: 1.3rem; padding: 10px 24px; margin-bottom: 18px; }
-  #restart-same, #daily-retry-btn { font-size: 2.6rem; padding: 22px 16px; }
+  #restart-same, #daily-retry-btn, #practice-again-btn { font-size: 2.6rem; padding: 22px 16px; }
   #share-daily-btn { font-size: 2rem; padding: 20px 16px; }
   #restart-change { font-size: 1.4rem; }
   .summary-actions.is-daily #restart-change { font-size: 1.6rem; min-height: 68px; }
@@ -2228,3 +2229,97 @@ button, input, select, textarea { font-family: inherit; }
 }
 .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
 :root[data-theme="dark"] .toast { background: #e8f5e9; color: #1b5e20; }
+
+/* ==========================================================================
+   Practice: the questions a player got wrong, with no timer, points or streak.
+   ========================================================================== */
+/* Home: the Practice card under today's Daily Challenge. */
+.practice-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 12px 0 0;
+  padding: 10px 16px;
+  border-radius: 18px;
+  border: 2px solid var(--bd-90caf9, #90CAF9);
+  background: var(--bg-e3f2fd, #E3F2FD);
+  color: var(--fg-1565c0, #1565C0);
+  text-align: left;
+  box-shadow: none;
+  cursor: pointer;
+}
+.practice-card.is-empty { opacity: 0.75; }
+.practice-card-icon { font-size: 1.7rem; line-height: 1; }
+.practice-card-text { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+.practice-card-title { font-size: 1.1rem; font-weight: 700; }
+.practice-card-status { font-size: 0.95rem; }
+.practice-card-count {
+  min-width: 2em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--fg-1565c0, #1565C0);
+  color: var(--bg-ffffff, #ffffff);
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+}
+.practice-card-count:empty { display: none; }
+
+/* Game: nothing is timed or scored, so the timer, score and streak are hidden. */
+#question-container.is-practice #streak-hud,
+#question-container.is-practice .timer-row,
+#question-container.is-practice #score-display { display: none; }
+
+/* After each answer: where to read about it, and Next. */
+.practice-next {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+.practice-ref { margin: 0; font-size: 1.05rem; font-weight: 600; text-align: center; color: var(--fg-2f5f34, #2f5f34); }
+.practice-ref a { color: var(--fg-1565c0, #1565C0); }
+#practice-next-btn {
+  width: 100%;
+  margin: 0;
+  padding: 14px 16px;
+  min-height: 56px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #333;
+  font-size: 1.5rem;
+  box-shadow: 0 8px 24px rgba(255, 202, 40, 0.4);
+}
+.summary-eyebrow.is-practice { background: var(--bg-e3f2fd, #E3F2FD); color: var(--fg-1565c0, #1565C0); }
+
+@media (max-width: 640px), (max-height: 760px), (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
+  .practice-card { margin-top: clamp(8px, 1.6 * var(--app-vh, 1dvh), 14px); padding: clamp(8px, 1.2 * var(--app-vh, 1dvh), 12px) 14px; }
+  .practice-next { margin-top: clamp(8px, 1.6 * var(--app-vh, 1dvh), 14px); }
+  #practice-next-btn { min-height: clamp(48px, 7 * var(--app-vh, 1dvh), 64px); font-size: clamp(1.25rem, min(6vw, 3.2 * var(--app-vh, 1dvh)), 1.7rem); }
+  /* Room for the reference and Next under the answers. */
+  #question-container.is-practice .option { min-height: clamp(46px, 8 * var(--app-vh, 1dvh), 80px); }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  .practice-next { flex-direction: row; align-items: center; }
+  .practice-ref { flex: 1; text-align: left; }
+  .practice-card { grid-column: 2; grid-row: 4; align-self: start; margin-top: 10px; padding: 4px 12px; }
+  .practice-card-icon { font-size: 1.3rem; }
+  .practice-card-status { display: none; }
+  #practice-next-btn { width: auto; min-height: 44px; padding: 8px 28px; font-size: 1.2rem; }
+}
+
+/* Tablets: the Practice card matches the Daily Challenge card's larger size. */
+@media (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
+  .practice-card { margin-top: 14px; padding: 14px 22px; gap: 16px; }
+  .practice-card-icon { font-size: 2.2rem; }
+  .practice-card-title { font-size: 1.3rem; }
+  .practice-card-status { font-size: 1.1rem; }
+}
+
+/* Tablets held sideways: a little less space between Home's sections, so the Practice card fits. */
+@media (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) and (orientation: landscape) {
+  .home-hello { margin-top: 2.5vh; }
+  .daily-card { margin-top: 2.5vh; }
+  #start-btn { margin-bottom: 18px; }
+}

@@ -15,6 +15,7 @@ export const state = {
   dailyStats: sanitizeDailyStats(null),
   dailyChallenges: {},
   recentQuestionIds: [], // oldest first; see config.RECENT_QUESTION_MEMORY
+  practice: {}, // questions this player got wrong: { [id]: { misses, lastMissed } }; see lib/practice.js
   badges: {}, // earned badge levels: { [id]: { tier, earnedAt } }; see features/badges.js
 
   // Current round

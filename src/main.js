@@ -2,7 +2,7 @@
 import { reconcileLevelCounter } from "./lib/records.js";
 import { state, applySnapshot } from "./state.js";
 import {
-  initStore, KEYS, listPlayers, loadAll, loadRecentQuestionIds, moveDeviceSettings, readLocal, saveProfile, writeLocal,
+  initStore, KEYS, listPlayers, loadAll, loadRecentQuestionIds, moveDeviceSettings, readLocal, readPractice, saveProfile, writeLocal,
 } from "./storage/store.js";
 import { byId, showScreen } from "./ui/dom.js";
 import { initOverlays } from "./ui/overlay.js";
@@ -11,10 +11,11 @@ import { initDaily, renderDailyCard } from "./features/daily.js";
 import { initPlayer, openWhosPlaying, renderPlayerCards } from "./features/player.js";
 import { initBackup } from "./features/backup.js";
 import { loadBadges } from "./features/badges.js";
+import { initPractice, renderPracticeCard } from "./features/practice.js";
 import { initSettings, openHowToPlay, renderModeChip } from "./features/settings.js";
 import { initTheme } from "./ui/theme.js";
 import { initStats } from "./features/stats.js";
-import { initGame, startDailyGame } from "./game.js";
+import { initGame, startDailyGame, startPracticeGame } from "./game.js";
 
 async function loadQuestions() {
   const response = await fetch("data/questions.json");
@@ -44,6 +45,8 @@ function activatePlayer(snapshot, { welcome = true } = {}) {
   state.bonusStreak = 0;
   saveProfile(state.profile);
   loadBadges();
+  state.practice = readPractice();
+  renderPracticeCard();
   renderPlayerCards();
   renderModeChip();
   renderDailyCard();
@@ -62,6 +65,7 @@ async function start() {
 
   const [snapshot] = await Promise.all([initStore().then(loadAll), loadQuestions()]);
   initDaily({ startDaily: startDailyGame });
+  initPractice({ startPractice: startPracticeGame });
   // When more than one person plays on this device, ask who's playing at launch (How to Play
   // waits until a new player is picked).
   const askWhosPlaying = listPlayers().length > 1;
