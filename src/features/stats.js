@@ -48,7 +48,7 @@ const card = (label, value, detail = "") => `
 
 function overviewHtml() {
   const { history, playerStats, dailyStats, profile } = state;
-  const progress = getLevelProgress(profile.nonDailyCorrectAnswers);
+  const progress = getLevelProgress(profile.levelPoints);
   const asked = history.reduce((sum, game) => sum + (game.total || 0), 0);
   const right = history.reduce((sum, game) => sum + (game.correct || 0), 0);
   const accuracy = asked ? `${Math.round((right / asked) * 100)}%` : "–";
@@ -57,7 +57,7 @@ function overviewHtml() {
       <div class="level-card">
         <div>
           <h3 id="scores-level-title" class="level-title">Level ${progress.level}</h3>
-          <p class="level-detail">${progress.isMaxLevel ? "Top level reached!" : `${progress.remaining} more right answers to Level ${progress.level + 1}`}</p>
+          <p class="level-detail">${progress.isMaxLevel ? "Top level reached!" : `${progress.remaining} more level points to Level ${progress.level + 1}`}</p>
         </div>
         <div class="level-track" role="progressbar" aria-label="Progress to the next level"
              aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(progress.percent)}">
@@ -180,7 +180,7 @@ function everyoneHtml() {
         <span class="everyone-avatar" aria-hidden="true">${avatarHtml(getAvatar(player.profile.avatarId))}</span>
         <span class="everyone-name">
           <strong>${escapeHtml(player.profile.name)}${player.id === activeId ? " (you)" : ""}</strong>
-          <span class="everyone-meta">Level ${getLevel(player.profile.nonDailyCorrectAnswers)} · ${number(player.games)} ${player.games === 1 ? "game" : "games"} · 🏅 ${number(player.badges)}</span>
+          <span class="everyone-meta">Level ${getLevel(player.profile.levelPoints)} · ${number(player.games)} ${player.games === 1 ? "game" : "games"} · 🏅 ${number(player.badges)}</span>
         </span>
         <span class="everyone-best">${player.best ? number(player.best.score) : "–"}</span>
       </li>`).join("");

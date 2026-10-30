@@ -20,8 +20,16 @@ test("player names are trimmed and must be 2-15 characters", () => {
 
 test("profiles are repaired", () => {
   assert.deepEqual(sanitizeProfile({ name: "?", avatarId: "missing", nonDailyCorrectAnswers: -4 }), {
-    id: "primary", name: "Player", avatarId: "emoji-smile", nonDailyCorrectAnswers: 0, levelCountVersion: 1,
+    id: "primary", name: "Player", avatarId: "emoji-smile", nonDailyCorrectAnswers: 0, levelPoints: 0, levelCountVersion: 1,
   });
+});
+
+test("players from before level weighting keep their level", () => {
+  // No levelPoints saved yet: start from the right answers they already had.
+  assert.equal(sanitizeProfile({ nonDailyCorrectAnswers: 120, levelCountVersion: 2 }).levelPoints, 120);
+  // Once saved, level points are their own count (weighted answers can make them higher).
+  assert.equal(sanitizeProfile({ nonDailyCorrectAnswers: 120, levelPoints: 150, levelCountVersion: 2 }).levelPoints, 150);
+  assert.equal(sanitizeProfile({ nonDailyCorrectAnswers: 5, levelPoints: -3 }).levelPoints, 0);
 });
 
 test("old level counters are rebuilt once from normal-game history", () => {
@@ -29,6 +37,7 @@ test("old level counters are rebuilt once from normal-game history", () => {
   const history = [{ correct: 8 }, { correct: 7 }];
   const fixed = reconcileLevelCounter(old, history);
   assert.equal(fixed.nonDailyCorrectAnswers, 15);
+  assert.equal(fixed.levelPoints, 15);
   assert.equal(fixed.levelCountVersion, 2);
   assert.equal(reconcileLevelCounter(fixed, [{ correct: 1 }]), fixed); // only once
   assert.equal(reconcileLevelCounter(old, []).nonDailyCorrectAnswers, 200); // no history: keep
