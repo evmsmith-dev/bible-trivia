@@ -225,6 +225,8 @@
       <span class="sheet-label" id="avatar-options-label">Pick a picture</span>
       <div id="player-avatar-options" role="radiogroup" aria-labelledby="avatar-options-label"></div>
 
+      <button type="button" id="player-practice-clear-btn" class="link-button player-practice-clear" style="display:none;"></button>
+
       <div class="sheet-actions">
         <!-- One of these shows: Delete when there are other players, Reset for the only player. -->
         <button type="button" id="player-delete-btn" class="sheet-danger">Delete player</button>
@@ -258,10 +260,11 @@
         <details class="howto-section">
           <summary>Practice</summary>
           <ul>
-            <li>Every question you get wrong (or run out of time on) goes on your <b>📖 Practice</b> list on Home.</li>
+            <li>Questions you get wrong (or run out of time on) go on your <b>📖 Practice</b> list on Home. It keeps the 10 most recent.</li>
             <li>Practice has no timer, points or streak. After each answer, tap the Bible reference to read about it, then <b>Next</b>.</li>
-            <li>Get a question right, in Practice or in any round, and it comes off your list.</li>
-            <li>Practice rounds don't change your scores, level or badges.</li>
+            <li>Get a question right, in Practice or in any round, and it comes off your list. <b>Clear list</b> on the Practice results (or in your player's settings) starts it fresh.</li>
+            <li>Practice rounds don't change your scores or level. They do count toward the 📖 Learner and 🧹 Clean Slate badges.</li>
+            <li>Don't want it? Turn Practice off in <b>⚙️ Settings</b>.</li>
           </ul>
         </details>
 
@@ -368,12 +371,22 @@
         </div>
 
         <div class="setting-item">
+          <span class="setting-label" id="practice-label">Practice</span>
+          <div class="pref-selector" role="group" aria-labelledby="practice-label">
+            <button type="button" class="practice-btn" data-value="on" aria-pressed="true">On</button>
+            <button type="button" class="practice-btn" data-value="off" aria-pressed="false">Off</button>
+          </div>
+          <p class="setting-description">A Practice card on Home replays up to 10 questions you got wrong, with no timer.</p>
+        </div>
+
+        <div class="setting-item">
           <span class="setting-label" id="backup-label">Backup</span>
           <div class="pref-selector" role="group" aria-labelledby="backup-label">
             <button type="button" id="backup-save-btn">💾 Save backup</button>
             <button type="button" id="backup-load-btn">📂 Load backup</button>
           </div>
           <p id="backup-status" class="backup-status" role="status"></p>
+          <p id="backup-last" class="setting-description backup-last"></p>
           <p class="setting-description">Scores are saved only on this device. Save a backup file to keep everyone's progress safe, or to move it to a new phone or tablet.</p>
           <input type="file" id="backup-file" accept="application/json,.json" hidden>
         </div>

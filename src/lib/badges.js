@@ -3,7 +3,7 @@
 // Challenge records, level), so existing players are credited for what they've already done.
 // A badge with several goals has levels (bronze, silver, gold); once earned, a level is kept
 // even if the data it came from is later trimmed (Daily records only keep the last 30 days).
-import { CATEGORIES, LEVEL_THRESHOLDS, QUESTIONS_PER_GAME } from "../config.js";
+import { CATEGORIES, LEVEL_THRESHOLDS, PRACTICE, QUESTIONS_PER_GAME } from "../config.js";
 import { getLevel } from "./scoring.js";
 import { normalizeMode } from "./records.js";
 
@@ -14,7 +14,7 @@ const best = (values) => values.reduce((max, value) => Math.max(max, Number(valu
 const roundsIn = (data, modes) => rounds(data).filter((game) => modes.includes(normalizeMode(game.difficultyMode)));
 const dailyBestCorrect = (data) => best(Object.values(data.dailyChallenges || {}).map((record) => record?.bestCorrect));
 
-export const BADGE_GROUPS = ["Getting started", "Skill", "Knowledge", "Daily Challenge"];
+export const BADGE_GROUPS = ["Getting started", "Skill", "Knowledge", "Daily Challenge", "Practice"];
 
 /**
  * Each badge: `goals` (one per level) and `value(data)`, the number compared against them.
@@ -91,6 +91,16 @@ export const BADGES = [
     id: "daily-ace", group: "Daily Challenge", emoji: "🏅", name: "Daily Ace", goals: [1],
     how: () => `Get all ${QUESTIONS_PER_GAME} right in a Daily Challenge.`,
     value: (data) => Number(dailyBestCorrect(data) >= QUESTIONS_PER_GAME),
+  },
+  {
+    id: "learner", group: "Practice", emoji: "📖", name: "Learner", goals: [25, 100, 250],
+    how: (goal) => `Get ${goal} questions right in Practice.`,
+    value: (data) => data.playerStats?.practiceCorrect || 0,
+  },
+  {
+    id: "clean-slate", group: "Practice", emoji: "🧹", name: "Clean Slate", goals: [1],
+    how: () => `Empty your practice list by getting a round of ${PRACTICE.cleanSlateMin} or more questions all right.`,
+    value: (data) => data.playerStats?.practiceCleared || 0,
   },
 ];
 

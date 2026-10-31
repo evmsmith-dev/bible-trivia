@@ -80,3 +80,21 @@ test("Cancel keeps everything, and other files are refused", async ({ page }) =>
   await expect(page.locator("#backup-status")).toHaveText("That file isn't a Bible Trivia backup.");
   await expect(page.locator("#backup-overlay")).toBeHidden();
 });
+
+test("loading a backup isn't undone by the player who was playing before it", async ({ page }) => {
+  await h.openApp(page);
+  await h.openPlayerSheet(page);
+  await page.locator("#player-name-input").fill("Before");
+  await page.locator("#player-save-btn").click();
+  await h.backToHome(page);
+  await expect(page.locator("#player-entry-name")).toHaveText("Before");
+
+  const backup = { app: "bible-trivia", version: 1, activeId: "primary",
+    players: [{ id: "primary", profile: { name: "Dad", nonDailyCorrectAnswers: 130, levelPoints: 130, levelCountVersion: 2 } }] };
+  await h.openSettings(page);
+  await page.locator("#backup-file").setInputFiles({ name: "backup.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(backup)) });
+  await page.locator("#backup-confirm-btn").click();
+  await h.waitForReady(page);
+  await expect(page.locator("#player-entry-name")).toHaveText("Dad");
+  await expect(page.locator("#player-entry-level")).toHaveText("Level 4");
+});

@@ -68,6 +68,8 @@ export function sanitizePlayerStats(raw) {
     currentStreak: toCount(value.currentStreak),
     allTimeBestStreak: toCount(value.allTimeBestStreak),
     lastGameMaxStreak: toCount(value.lastGameMaxStreak),
+    practiceCorrect: toCount(value.practiceCorrect), // right answers in Practice (📖 Learner)
+    practiceCleared: toCount(value.practiceCleared), // practice rounds that emptied the list (🧹 Clean Slate)
   };
   for (const mode of MODE_KEYS) {
     stats.correctSecondsByMode[mode] = toCount(value.correctSecondsByMode?.[mode]);
