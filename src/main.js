@@ -12,6 +12,7 @@ import { initPlayer, openWhosPlaying, renderPlayerCards } from "./features/playe
 import { initBackup } from "./features/backup.js";
 import { loadBadges } from "./features/badges.js";
 import { initPractice, renderPracticeCard } from "./features/practice.js";
+import { initVerse } from "./features/verse.js";
 import { initSettings, openHowToPlay, renderModeChip } from "./features/settings.js";
 import { initTheme } from "./ui/theme.js";
 import { initStats } from "./features/stats.js";
@@ -66,6 +67,7 @@ async function start() {
   const [snapshot] = await Promise.all([initStore().then(loadAll), loadQuestions()]);
   initDaily({ startDaily: startDailyGame });
   initPractice({ startPractice: startPracticeGame });
+  initVerse(); // not awaited: Home doesn't wait for the verse
   // When more than one person plays on this device, ask who's playing at launch (How to Play
   // waits until a new player is picked).
   const askWhosPlaying = listPlayers().length > 1;

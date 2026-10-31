@@ -60,7 +60,12 @@
 
     <section class="home-hello" aria-label="Player">
       <p class="home-greeting">Hi, <span id="player-entry-name">Player</span>!</p>
-      <p class="home-sub">Ready to test your knowledge of God's Word?</p>
+      <p class="home-sub" id="home-sub">Ready to test your knowledge of God's Word?</p>
+      <!-- Verse of the day (data/verses.json); replaces the line above once it has loaded. -->
+      <!-- Shortened to a few lines on smaller screens; tap for the whole verse. -->
+      <button type="button" id="home-verse" class="home-verse" aria-haspopup="dialog" hidden>
+        <span class="home-verse-line"><span id="home-verse-ref" class="home-verse-ref"></span> <span id="home-verse-text"></span></span>
+      </button>
       <div class="home-level">
         <span id="player-entry-level">Level 1</span>
         <span class="home-level-track" aria-hidden="true"><span id="home-level-fill" class="home-level-fill"></span></span>
@@ -246,6 +251,7 @@
             <li><b>Question pool:</b> <span id="question-count">750+</span> questions across Old Testament, New Testament, and General categories.</li>
             <li>Read first: the answers light up a moment after each question appears, and the timer starts then.</li>
             <li>On a keyboard, press <b>1–4</b> to answer.</li>
+            <li>Home shows a <b>verse of the day</b>. Tap it for the whole verse and a link to read the chapter. Verses are from the World English Bible (public domain), with "the LORD" for God's name.</li>
           </ul>
         </details>
 
@@ -372,6 +378,19 @@
           <input type="file" id="backup-file" accept="application/json,.json" hidden>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ==================== Verse of the day ==================== -->
+  <div id="verse-overlay" class="confirm-overlay" style="display:none;">
+    <div class="overlay-backdrop" data-overlay-close></div>
+    <div class="overlay-card verse-card" role="dialog" aria-modal="true" aria-labelledby="verse-title">
+      <button type="button" class="overlay-close-button" data-overlay-close aria-label="Close">✕</button>
+      <h2 id="verse-title">📖 Verse of the day</h2>
+      <blockquote id="verse-full-text" class="verse-full-text"></blockquote>
+      <p id="verse-full-ref" class="verse-full-ref"></p>
+      <a id="verse-chapter-link" class="verse-chapter-link" target="_blank" rel="noopener noreferrer"></a>
+      <p class="verse-source">World English Bible (public domain), with "the LORD" for God's name.</p>
     </div>
   </div>
 

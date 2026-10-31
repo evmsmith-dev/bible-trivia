@@ -2323,3 +2323,77 @@ button, input, select, textarea { font-family: inherit; }
   .daily-card { margin-top: 2.5vh; }
   #start-btn { margin-bottom: 18px; }
 }
+
+/* ==========================================================================
+   Verse of the day (Home, under the greeting; tap for the whole verse)
+   ========================================================================== */
+.home-verse {
+  display: block;
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 2px 0 2px 12px;
+  border: 0;
+  border-left: 3px solid var(--primary);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--fg-2f5f34, #2f5f34);
+  text-align: left;
+  font-size: 1.08rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.home-verse[hidden], .home-sub[hidden] { display: none; }
+.home-verse-line {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+.home-verse-ref { font-weight: 700; color: var(--fg-1b5e20, #1b5e20); }
+
+/* The pop-up with the whole verse. */
+#verse-overlay .verse-card { text-align: left; }
+#verse-overlay h2 { padding-right: 52px; font-size: 1.5rem; }
+.verse-full-text { margin: 12px 0 0; padding-left: 12px; border-left: 3px solid var(--primary); font-size: 1.25rem; line-height: 1.45; color: var(--fg-2f3d2f, #2f3d2f); }
+#verse-overlay .verse-full-ref { margin: 8px 0 14px 15px; font-size: 1.05rem; font-weight: 700; color: var(--fg-1b5e20, #1b5e20); }
+.verse-chapter-link {
+  display: block;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--fg-ffffff, #ffffff);
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+#verse-overlay .verse-source { margin: 12px 0 0; font-size: 0.85rem; color: var(--fg-616161, #616161); }
+
+@media (max-width: 640px), (max-height: 760px), (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
+  .home-verse { font-size: clamp(0.95rem, min(4.4vw, 2.3 * var(--app-vh, 1dvh)), 1.15rem); }
+}
+/* Shorter screens: fewer lines (the whole verse is a tap away). */
+@media (max-height: 760px) { .home-verse-line { -webkit-line-clamp: 2; } }
+@media (orientation: landscape) and (max-height: 520px) {
+  .home-verse { margin-top: 4px; font-size: 0.92rem; }
+  .home-verse-line { -webkit-line-clamp: 1; }
+}
+@media (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) {
+  .home-verse { margin-top: 12px; font-size: 1.3rem; }
+}
+@media (hover: none) and (pointer: coarse) and (min-width: 641px) and (min-height: 761px) and (orientation: landscape) {
+  .home-verse { margin-top: 6px; }
+  .home-verse-line { -webkit-line-clamp: 1; }
+}
+/* Very short phones (e.g. 360×640): a little less space between Home's sections. */
+@media (max-height: 680px) and (orientation: portrait) {
+  .home-hello { margin-top: 10px; }
+  .daily-card { margin-top: 10px; padding-top: 8px; padding-bottom: 8px; }
+  .practice-card { margin-top: 8px; padding-top: 6px; padding-bottom: 6px; }
+  .home-spacer { min-height: 6px; }
+  #welcome .mode-chip { margin-bottom: 8px; padding-top: 6px; padding-bottom: 6px; }
+  #start-btn { margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px; }
+  #home-links { padding-top: 4px; }
+  #home-links button { min-height: 46px; padding-top: 4px; padding-bottom: 4px; }
+}
