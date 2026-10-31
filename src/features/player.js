@@ -6,9 +6,11 @@ import { getLevel, getLevelProgress } from "../lib/scoring.js";
 import { escapeHtml } from "../lib/utils.js";
 import { state } from "../state.js";
 import {
-  canAddPlayer, createPlayer, deletePlayer, getActivePlayerId, listPlayers, readProfile, resetAll, save, saveProfile,
+  canAddPlayer, createPlayer, deletePlayer, getActivePlayerId, listPlayers, readPractice, readProfile, resetAll, save, saveProfile,
   switchPlayer, writeProfile,
 } from "../storage/store.js";
+import { clearPractice, isPracticeOn } from "./practice.js";
+import { maybeShowBackupReminder } from "./backup.js";
 import { byId } from "../ui/dom.js";
 import { closeOverlay, isOverlayOpen, openOverlay } from "../ui/overlay.js";
 
@@ -70,7 +72,7 @@ function renderPlayerChooser() {
 export function openWhosPlaying() {
   if (state.celebrationActive || state.game.active) return;
   renderPlayerChooser();
-  openOverlay("players-page", { initialFocus: ".player-tile.is-active .player-pick" });
+  openOverlay("players-page", { initialFocus: ".player-tile.is-active .player-pick", onClose: maybeShowBackupReminder });
 }
 
 async function choosePlayer(id) {
@@ -123,6 +125,11 @@ function renderPlayerSheet() {
   byId("player-delete-btn").style.display = !adding && others ? "" : "none";
   byId("player-reset-btn").style.display = !adding && !others ? "" : "none";
   byId("player-save-btn").textContent = adding ? "Add" : "Save";
+  // Clear practice list: only when this player has something on it (and Practice is on).
+  const practiceSize = adding ? 0 : Object.keys(editingActive() ? state.practice : readPractice(editingId)).length;
+  const clear = byId("player-practice-clear-btn");
+  clear.style.display = practiceSize && isPracticeOn() ? "" : "none";
+  clear.textContent = `Clear practice list (${practiceSize})`;
   draftAvatarId = adding ? AVATARS[listPlayers().length % AVATARS.length].id : profile.avatarId;
   renderAvatarPicker();
 }
@@ -227,4 +234,9 @@ export function initPlayer({ onPlayerChanged: handler }) {
   });
   byId("player-delete-btn").addEventListener("click", removePlayer);
   byId("player-reset-btn").addEventListener("click", resetPlayer);
+  byId("player-practice-clear-btn").addEventListener("click", () => {
+    if (!confirm("Clear the practice list? The questions on it will be removed.")) return;
+    clearPractice(editingId);
+    renderPlayerSheet();
+  });
 }

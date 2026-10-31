@@ -55,6 +55,9 @@ export const DEVICE_KEYS = {
   players: "bibleTrivia_players",
   theme: "bibleTrivia_theme",
   vibration: "bibleTrivia_vibration",
+  practice: "bibleTrivia_practice", // "off" turns Practice off on this device (on by default)
+  lastBackup: "bibleTrivia_lastBackup", // when a backup was last saved (ISO time)
+  backupSnooze: "bibleTrivia_backupSnooze", // "Not now" on the reminder: hidden until this time
 };
 
 // ---------- small localStorage helpers (never throw) ----------
@@ -553,7 +556,12 @@ export function readBackup(data) {
 }
 
 /** Replaces everything on this device with a backup from readBackup(). Reload the page afterwards. */
+// Set while a backup is being restored: the page reloads afterwards, and nothing from the
+// players in memory (e.g. the profile saved on "pagehide") may overwrite what was restored.
+let restoring = false;
+
 export async function restoreBackup(backup) {
+  restoring = true;
   backend.close();
   for (const id of readPlayers().ids) await removePlayerData(id);
   for (const player of backup.players) {
@@ -597,6 +605,7 @@ export async function save(changes) {
 }
 
 export function saveProfile(profile) {
+  if (restoring) return;
   writeProfile(backend.id, profile);
 }
 

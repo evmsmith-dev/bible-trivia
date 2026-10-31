@@ -659,6 +659,7 @@ button {
 }
 
 .vibration-btn,
+.practice-btn,
 .theme-btn,
 #backup-save-btn,
 #backup-load-btn {
@@ -675,6 +676,7 @@ button {
 }
 
 .vibration-btn.active,
+.practice-btn.active,
 .theme-btn.active {
   background: var(--primary);
   border-color: var(--primary);
@@ -685,7 +687,7 @@ button {
 
 /* Update-available banner (shown on the Home screen only).
    Pinned with left and right (not left: 50% + translate), so it can use the full width. */
-#update-banner {
+:is(#update-banner, #backup-reminder) {
   position: fixed;
   left: max(16px, env(safe-area-inset-left, 0px));
   right: max(16px, env(safe-area-inset-right, 0px));
@@ -702,23 +704,23 @@ button {
   box-shadow: 0 10px 34px rgba(0, 0, 0, 0.28);
   text-align: center;
 }
-#update-banner .update-banner-title {
+:is(#update-banner, #backup-reminder) .update-banner-title {
   margin: 0 0 4px;
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.25;
   color: var(--primary-dark);
 }
-#update-banner .update-banner-text {
+:is(#update-banner, #backup-reminder) .update-banner-text {
   margin: 0 0 14px;
   font-size: 1.1rem;
   line-height: 1.35;
 }
-#update-banner .update-banner-actions {
+:is(#update-banner, #backup-reminder) .update-banner-actions {
   display: flex;
   gap: 10px;
 }
-#update-banner .update-banner-actions button {
+:is(#update-banner, #backup-reminder) .update-banner-actions button {
   flex: 1;
   width: auto;
   margin: 0;
@@ -727,11 +729,11 @@ button {
   font-size: 1.2rem;
   border-radius: 999px;
 }
-#update-banner #update-banner-btn {
+#update-banner #update-banner-btn, #backup-reminder #backup-reminder-save {
   background: var(--primary);
   color: var(--fg-ffffff, #ffffff);
 }
-#update-banner #update-banner-dismiss {
+#update-banner #update-banner-dismiss, #backup-reminder #backup-reminder-later {
   background: var(--bg-f1f8e9, #f1f8e9);
   color: var(--fg-2f3d2f, #2f3d2f);
   box-shadow: none;
@@ -2250,6 +2252,7 @@ button, input, select, textarea { font-family: inherit; }
   cursor: pointer;
 }
 .practice-card.is-empty { opacity: 0.75; }
+.practice-card[hidden] { display: none; }
 .practice-card-icon { font-size: 1.7rem; line-height: 1; }
 .practice-card-text { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
 .practice-card-title { font-size: 1.1rem; font-weight: 700; }
@@ -2396,4 +2399,31 @@ button, input, select, textarea { font-family: inherit; }
   #start-btn { margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px; }
   #home-links { padding-top: 4px; }
   #home-links button { min-height: 46px; padding-top: 4px; padding-bottom: 4px; }
+}
+
+/* A button that reads as a text link (Clear list, Clear practice list). */
+.link-button {
+  display: inline;
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--fg-1565c0, #1565C0);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.player-practice-clear { display: block; margin: 14px 0 0; padding: 8px 0; font-size: 1rem; }
+.backup-last { margin-top: 4px !important; font-size: 0.95rem !important; }
+.backup-last:empty { display: none; }
+
+/* The backup reminder sits at the top, so Start and the bottom bar stay free to tap. */
+#backup-reminder {
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  bottom: auto;
 }

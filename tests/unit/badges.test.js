@@ -74,3 +74,11 @@ test("saved badges are cleaned and level names follow the number of levels", () 
   assert.deepEqual([1, 2].map((tier) => tierName(byId["week-streak"], tier)), ["Bronze", "Gold"]);
   assert.equal(tierName(byId["perfect-round"], 1), "");
 });
+
+test("Practice badges come from practice answers and rounds that empty the list", () => {
+  const stats = (practiceCorrect, practiceCleared) => sanitizePlayerStats({ practiceCorrect, practiceCleared });
+  assert.equal(tierOf(data({ playerStats: stats(24, 0) }), "learner"), 0);
+  assert.equal(tierOf(data({ playerStats: stats(100, 0) }), "learner"), 2);
+  assert.equal(tierOf(data({ playerStats: stats(0, 0) }), "clean-slate"), 0);
+  assert.equal(tierOf(data({ playerStats: stats(0, 1) }), "clean-slate"), 1);
+});

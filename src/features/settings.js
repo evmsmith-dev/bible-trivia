@@ -6,6 +6,8 @@ import { state } from "../state.js";
 import { save } from "../storage/store.js";
 import { byId, setVisible } from "../ui/dom.js";
 import { canVibrate, isVibrationOn, setVibrationOn, vibrate, VIBRATION } from "../ui/haptics.js";
+import { isPracticeOn, setPracticeOn } from "./practice.js";
+import { lastBackupText } from "./backup.js";
 import { getThemePreference, setThemePreference } from "../ui/theme.js";
 import { closeOverlay, openOverlay } from "../ui/overlay.js";
 
@@ -23,6 +25,13 @@ function renderSettings() {
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
   });
+  const practiceValue = isPracticeOn() ? "on" : "off";
+  document.querySelectorAll(".practice-btn").forEach((button) => {
+    const active = button.dataset.value === practiceValue;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  byId("backup-last").textContent = lastBackupText();
 }
 
 /** The "🟠 Medium ▾" buttons (under Start on Home, above Play on the summary): show the current mode and open the picker. */
@@ -96,6 +105,13 @@ export function initSettings() {
   document.querySelectorAll(".theme-btn").forEach((button) => {
     button.addEventListener("click", () => {
       setThemePreference(button.dataset.value);
+      renderSettings();
+    });
+  });
+
+  document.querySelectorAll(".practice-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      setPracticeOn(button.dataset.value === "on");
       renderSettings();
     });
   });

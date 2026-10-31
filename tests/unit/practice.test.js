@@ -15,14 +15,15 @@ test("misses go on the list and right answers take them off", () => {
   assert.equal(recordRight(list, 99), list); // not on the list: unchanged
 });
 
-test("a practice round is the 10 most recently missed questions, still in the bank", () => {
+test("the list keeps only the 10 most recent misses, so it stays finishable", () => {
   let list = {};
   for (let id = 1; id <= 15; id++) list = recordMiss(list, id, `2026-10-30T10:${String(id).padStart(2, "0")}:00Z`);
-  list = recordMiss(list, 999, "2026-10-30T11:00:00Z"); // no longer in the bank
-  assert.equal(practiceQuestions(list, bank).length, 15);
+  assert.deepEqual(Object.keys(list).map(Number).sort((a, b) => a - b), [6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
   const round = pickPracticeRound(list, bank, () => 0.5);
   assert.equal(round.length, 10);
-  assert.deepEqual(round.map((q) => q.id).sort((a, b) => a - b), [6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+  // A question that's no longer in the bank is skipped.
+  list = recordMiss(recordRight(list, 6), 999, "2026-10-30T11:00:00Z");
+  assert.equal(practiceQuestions(list, bank).length, 9);
 });
 
 test("saved lists are cleaned and capped", () => {
@@ -30,7 +31,7 @@ test("saved lists are cleaned and capped", () => {
     5: { misses: 1, lastMissed: "" }, 8: { misses: 1, lastMissed: "" },
   });
   const big = Object.fromEntries(Array.from({ length: 250 }, (_, i) => [i + 1, { misses: 1, lastMissed: new Date(Date.UTC(2026, 0, 1, 0, i)).toISOString() }]));
-  const kept = sanitizePractice(big);
-  assert.equal(Object.keys(kept).length, 200);
-  assert.ok(kept[250] && !kept[1]); // the most recent are kept
+  const kept = sanitizePractice(big); // e.g. a list saved before the cap was 10
+  assert.equal(Object.keys(kept).length, 10);
+  assert.ok(kept[250] && kept[241] && !kept[240]); // the most recent are kept
 });

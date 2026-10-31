@@ -9,7 +9,7 @@ import { initOverlays } from "./ui/overlay.js";
 import { registerServiceWorker } from "./ui/update-banner.js";
 import { initDaily, renderDailyCard } from "./features/daily.js";
 import { initPlayer, openWhosPlaying, renderPlayerCards } from "./features/player.js";
-import { initBackup } from "./features/backup.js";
+import { initBackup, maybeShowBackupReminder } from "./features/backup.js";
 import { loadBadges } from "./features/badges.js";
 import { initPractice, renderPracticeCard } from "./features/practice.js";
 import { initVerse } from "./features/verse.js";
@@ -51,7 +51,10 @@ function activatePlayer(snapshot, { welcome = true } = {}) {
   renderPlayerCards();
   renderModeChip();
   renderDailyCard();
-  if (welcome) welcomeNewPlayer();
+  if (welcome) {
+    welcomeNewPlayer();
+    maybeShowBackupReminder(); // (with "Who's playing?" open, it waits until that closes)
+  }
 }
 
 async function start() {

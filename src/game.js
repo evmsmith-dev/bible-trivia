@@ -3,7 +3,7 @@
 // got wrong, with no timer, points, streak or levels, and a Next button instead of auto-advance).
 import {
   CATEGORIES, CATEGORY_EMOJIS, DAILY, DIFFICULTY_LABELS, GAME_MODE_DAILY, GAME_MODE_NORMAL, GAME_MODE_PRACTICE,
-  INCORRECT_MESSAGES, MODES, QUESTIONS_PER_GAME, RECENT_QUESTION_MEMORY, TIMING,
+  INCORRECT_MESSAGES, MODES, PRACTICE, QUESTIONS_PER_GAME, RECENT_QUESTION_MEMORY, TIMING,
 } from "./config.js";
 import { buildDailyShareText } from "./lib/share.js";
 import { getTopScores, normalizeMode, trimHighScores } from "./lib/records.js";
@@ -21,8 +21,9 @@ import { getPlayerLevel, renderPlayerCards } from "./features/player.js";
 import { checkNewBadges, newBadgesHtml } from "./features/badges.js";
 import { openStats } from "./features/stats.js";
 import { openDifficultyPicker, renderModeChip } from "./features/settings.js";
-import { practiceCount, renderPracticeCard } from "./features/practice.js";
+import { clearPractice, isPracticeOn, practiceCount, renderPracticeCard } from "./features/practice.js";
 import { showUpdateBannerIfReady } from "./ui/update-banner.js";
+import { maybeShowBackupReminder } from "./features/backup.js";
 import { vibrate, VIBRATION } from "./ui/haptics.js";
 
 const el = {};
@@ -147,16 +148,19 @@ export function startDailyGame() {
   }, { detail: `🎯 Daily Challenge · get ${Math.ceil((DAILY.successPercent / 100) * QUESTIONS_PER_GAME)} of ${QUESTIONS_PER_GAME} right` });
 }
 
-/** Practice: up to 10 of the questions this player most recently got wrong. */
+/** Practice: the questions this player most recently got wrong (up to 10). Nothing is timed,
+ *  so it starts straight away, without the 3-2-1 countdown. */
 export function startPracticeGame() {
   if (state.celebrationActive) return;
   const questions = pickPracticeRound(state.practice, state.questionsById);
   if (!questions.length) return;
   resetBonusStreak();
   showScreen("game");
-  runCountdown(() => beginRound({ mode: GAME_MODE_PRACTICE, questions }),
-    { detail: `📖 Practice · ${questions.length} ${questions.length === 1 ? "question" : "questions"} · no timer` });
+  practiceStartSize = questions.length;
+  beginRound({ mode: GAME_MODE_PRACTICE, questions });
 }
+
+let practiceStartSize = 0; // the list's size when the round started (for 🧹 Clean Slate)
 
 // ---------- questions ----------
 
@@ -407,8 +411,11 @@ function handleAnswer(selectedButton) {
   });
 
   // Wrong answers (and running out of time) go on the practice list; right ones come off it.
-  state.practice = isCorrect ? recordRight(state.practice, question.id) : recordMiss(state.practice, question.id);
-  writePractice(state.practice);
+  // With Practice turned off in Settings, the list isn't added to.
+  if (isCorrect || isPracticeOn()) {
+    state.practice = isCorrect ? recordRight(state.practice, question.id) : recordMiss(state.practice, question.id);
+    writePractice(state.practice);
+  }
 
   if (isPractice()) {
     answerPractice(question, selectedButton, isCorrect);
@@ -469,6 +476,7 @@ function answerPractice(question, selectedButton, isCorrect) {
   const { game } = state;
   if (isCorrect) {
     game.correct += 1;
+    state.playerStats.practiceCorrect += 1; // for the 📖 Learner badge
     showFeedback("✅ Right!", "correct", "Off your practice list");
     vibrate(VIBRATION.correct);
     fireConfetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
@@ -512,7 +520,10 @@ async function endGame() {
   showQuestionLayout(false);
 
   if (isPractice()) {
-    renderPracticeSummary();
+    // 🧹 Clean Slate: this round emptied a list of 5 or more (clearing the list doesn't count).
+    if (practiceStartSize >= PRACTICE.cleanSlateMin && practiceCount() === 0) state.playerStats.practiceCleared += 1;
+    await save({ playerStats: state.playerStats });
+    renderPracticeSummary(checkNewBadges());
     showSummary(null);
     return;
   }
@@ -566,7 +577,7 @@ async function endGame() {
 }
 
 /** The end of a practice round: how it went and what's left on the list. */
-function renderPracticeSummary() {
+function renderPracticeSummary(newBadges = []) {
   const { game } = state;
   const total = game.questions.length;
   const left = practiceCount();
@@ -582,10 +593,11 @@ function renderPracticeSummary() {
         <span class="summary-score-big">${game.correct}</span><span class="summary-score-of"> / ${total} right</span>
       </p>
       <p class="summary-dots" role="img" aria-label="${game.correct} right, ${total - game.correct} wrong">${dots}</p>
+      ${newBadgesHtml(newBadges)}
     </header>
     <div class="summary-daily summary-practice${left ? "" : " is-complete"}">
       <p class="summary-daily-status">${status}</p>
-      <p class="summary-daily-meta">Practice rounds don't change your scores or level.</p>
+      <p class="summary-daily-meta">Practice rounds don't change your scores or level.${left ? ' <button type="button" id="practice-clear-btn" class="link-button">Clear list</button>' : ""}</p>
     </div>
     <button type="button" id="summary-review-btn">📖 Review Answers</button>
     <div class="summary-spacer"></div>
@@ -594,6 +606,12 @@ function renderPracticeSummary() {
       <button type="button" id="restart-change">&#x1F3E0; Back to Home</button>
     </div>`;
   byId("practice-again-btn")?.addEventListener("click", () => startPracticeGame());
+  byId("practice-clear-btn")?.addEventListener("click", () => {
+    if (!confirm("Clear your practice list? The questions on it will be removed.")) return;
+    clearPractice();
+    renderPracticeSummary();
+  });
+  byId("summary-badges-btn")?.addEventListener("click", () => openStats({ section: "badges" }));
   byId("restart-change").addEventListener("click", () => goHome());
   byId("summary-review-btn").addEventListener("click", () => showReview());
 }
@@ -764,6 +782,7 @@ export function goHome() {
   renderDailyCard();
   renderPracticeCard();
   showUpdateBannerIfReady();
+  maybeShowBackupReminder();
 }
 
 // ---------- setup ----------

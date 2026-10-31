@@ -98,7 +98,8 @@ export const GAME_MODE_PRACTICE = "practice";
 /** Practice: replays questions the player got wrong. No timer, points, streak or levels. */
 export const PRACTICE = {
   roundSize: 10, // questions per practice round (fewer if the list is shorter)
-  maxSaved: 200, // the list keeps the most recently missed questions
+  maxSaved: 10, // the list keeps only the 10 most recently missed questions, so it stays finishable
+  cleanSlateMin: 5, // a round that empties a list of at least this many earns 🧹 Clean Slate
 };
 
 export const DAILY = {

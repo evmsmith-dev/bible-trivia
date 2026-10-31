@@ -7,6 +7,7 @@ export function setVisible(element, visible, display = "block") {
 
 /** Switches between the Welcome screen and the game screen. */
 export function showScreen(name) {
+  if (name !== "welcome") byId("backup-reminder")?.remove(); // the backup reminder is for Home only
   setVisible(byId("welcome"), name === "welcome", "");
   setVisible(byId("question-container"), name === "game", "");
 }
