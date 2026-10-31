@@ -1,6 +1,6 @@
 // Builds the deployable site into dist/:
 //  - bundles + minifies src/main.js → app.js and the stylesheets → app.css (esbuild)
-//  - minifies data/questions.json, copies icons, vendor files and manifest
+//  - minifies data/questions.json and data/verses.json, copies icons, vendor files and manifest
 //  - rewrites index.html to use the bundles
 //  - writes service-worker.js with a precache list and a content-hash version, so every
 //    change produces a new cache automatically (no manual version bumps)
@@ -51,6 +51,8 @@ await build({
 await mkdir(join(DIST, "data"));
 const questions = JSON.parse(await readFile(join(ROOT, "data/questions.json"), "utf8"));
 await writeFile(join(DIST, "data/questions.json"), JSON.stringify(questions));
+const verses = JSON.parse(await readFile(join(ROOT, "data/verses.json"), "utf8"));
+await writeFile(join(DIST, "data/verses.json"), JSON.stringify(verses));
 
 // 3. index.html pointing at the bundles.
 let html = await readFile(join(ROOT, "index.html"), "utf8");
