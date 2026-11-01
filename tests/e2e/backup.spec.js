@@ -98,3 +98,27 @@ test("loading a backup isn't undone by the player who was playing before it", as
   await expect(page.locator("#player-entry-name")).toHaveText("Dad");
   await expect(page.locator("#player-entry-level")).toHaveText("Level 4");
 });
+
+test("Save backup opens the share sheet with a .txt file Android accepts, and Load reads it back", async ({ page }) => {
+  // Imitate Android Chrome: the share sheet only takes certain file types (plain text, not JSON).
+  await page.addInitScript(() => {
+    window.__shared = null;
+    navigator.canShare = (data) => (data?.files || []).every((file) => file.type === "text/plain" && file.name.endsWith(".txt"));
+    navigator.share = async (data) => { window.__shared = { name: data.files[0].name, text: await data.files[0].text() }; };
+  });
+  await h.openApp(page);
+  await playAndGoHome(page, 6);
+  await h.openSettings(page);
+  await page.locator("#backup-save-btn").click();
+  await expect(page.locator("#backup-status")).toHaveText("Backup saved (1 player).");
+  const shared = await page.evaluate(() => window.__shared);
+  expect(shared.name).toMatch(/^bible-trivia-backup-\d{4}-\d{2}-\d{2}\.txt$/);
+  const data = JSON.parse(shared.text);
+  expect(data.app).toBe("bible-trivia");
+  expect(data.players[0].history).toHaveLength(1);
+  await expect(page.locator("#backup-last")).toHaveText(/^Last backup: /);
+
+  // The .txt file loads like a .json one.
+  await page.locator("#backup-file").setInputFiles({ name: shared.name, mimeType: "text/plain", buffer: Buffer.from(shared.text) });
+  await expect(page.locator("#backup-confirm-text")).toContainText("It has 1 player");
+});
