@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Tablets avatar">
+  <rect width="128" height="128" rx="24" fill="#eceff1"/>
+  <circle cx="64" cy="64" r="42" fill="#cfd8dc"/>
+  <path d="M34 50a14 14 0 0 1 28 0v44H34z" fill="#90a4ae"/>
+  <path d="M66 50a14 14 0 0 1 28 0v44H66z" fill="#90a4ae"/>
+  <g stroke="#546e7a" stroke-width="3" stroke-linecap="round">
+    <path d="M41 54h14M41 64h14M41 74h14M41 84h10"/>
+    <path d="M73 54h14M73 64h14M73 74h14M73 84h10"/>
+  </g>
+</svg>

@@ -114,21 +114,35 @@ function recentGamesHtml() {
     </section>`;
 }
 
+// Accuracy needs a few answers in a category before the percentage means much.
+const MIN_FOR_ACCURACY = 5;
+
+/** Each category: how often it's answered right (the bar) and the all-time right-answer count. */
 function categoriesHtml() {
-  const counts = state.playerStats.correctByCategory;
-  const total = CATEGORIES.reduce((sum, category) => sum + counts[category], 0);
-  const most = Math.max(1, ...CATEGORIES.map((category) => counts[category]));
-  const body = total
-    ? CATEGORIES.map((category) => `
+  const { correctByCategory, answeredByCategory, rightByCategory } = state.playerStats;
+  const total = CATEGORIES.reduce((sum, category) => sum + correctByCategory[category] + answeredByCategory[category], 0);
+  const row = (category) => {
+    const answered = answeredByCategory[category];
+    const right = rightByCategory[category];
+    const percent = answered >= MIN_FOR_ACCURACY ? Math.round((right / answered) * 100) : null;
+    const allTime = `${number(correctByCategory[category])} right all-time`;
+    const detail = percent === null
+      ? `${allTime} · % shows after ${MIN_FOR_ACCURACY} answers`
+      : `${number(right)} of ${number(answered)} right · ${allTime}`;
+    return `
         <div class="category-row">
           <span class="category-name">${CATEGORY_EMOJIS[category] || ""} ${category}</span>
-          <span class="category-count">${number(counts[category])}</span>
-          <div class="category-track" aria-hidden="true"><div class="category-fill" style="width:${(counts[category] / most) * 100}%"></div></div>
-        </div>`).join("")
-    : '<p class="scores-empty">Right answers will be counted here by category.</p>';
+          <span class="category-percent">${percent === null ? "–" : `${percent}%`}</span>
+          <div class="category-track" role="img" aria-label="${percent === null ? "Not enough answers yet" : `${percent}% right`}"><div class="category-fill" style="width:${percent ?? 0}%"></div></div>
+          <span class="category-detail">${detail}</span>
+        </div>`;
+  };
+  const body = total
+    ? CATEGORIES.map(row).join("")
+    : '<p class="scores-empty">How often you get each category right will show here.</p>';
   return `
     <section class="scores-section" aria-labelledby="scores-category-title">
-      <h3 id="scores-category-title" class="scores-heading">Right answers by category</h3>
+      <h3 id="scores-category-title" class="scores-heading">Accuracy by category</h3>
       ${body}
     </section>`;
 }

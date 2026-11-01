@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Wheat avatar">
+  <rect width="128" height="128" rx="24" fill="#fff8e1"/>
+  <circle cx="64" cy="64" r="42" fill="#ffecb3"/>
+  <path d="M64 100V42" stroke="#a1887f" stroke-width="4" stroke-linecap="round"/>
+  <g fill="#ffb300">
+    <ellipse cx="64" cy="34" rx="5" ry="9"/>
+    <ellipse cx="55" cy="47" rx="5" ry="9" transform="rotate(-35 55 47)"/>
+    <ellipse cx="73" cy="47" rx="5" ry="9" transform="rotate(35 73 47)"/>
+    <ellipse cx="55" cy="61" rx="5" ry="9" transform="rotate(-35 55 61)"/>
+    <ellipse cx="73" cy="61" rx="5" ry="9" transform="rotate(35 73 61)"/>
+    <ellipse cx="55" cy="75" rx="5" ry="9" transform="rotate(-35 55 75)"/>
+    <ellipse cx="73" cy="75" rx="5" ry="9" transform="rotate(35 73 75)"/>
+  </g>
+</svg>

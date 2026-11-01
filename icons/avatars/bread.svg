@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Bread avatar">
+  <rect width="128" height="128" rx="24" fill="#fbe9e7"/>
+  <circle cx="64" cy="64" r="42" fill="#ffccbc"/>
+  <path d="M28 76c0-16 16-28 36-28s36 12 36 28c0 8-6 12-12 12H40c-6 0-12-4-12-12z" fill="#d7864b"/>
+  <path d="M30 74c4-12 18-20 34-20s30 8 34 20" fill="none" stroke="#e8a46b" stroke-width="3"/>
+  <g stroke="#a0522d" stroke-width="4" stroke-linecap="round">
+    <path d="M46 60l6 10M62 56l6 10M78 60l6 10"/>
+  </g>
+</svg>

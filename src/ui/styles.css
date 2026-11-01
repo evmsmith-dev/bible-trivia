@@ -1912,8 +1912,9 @@ button, input, select, textarea { font-family: inherit; }
 .category-row { display: grid; grid-template-columns: 1fr auto; column-gap: 10px; margin-bottom: 10px; }
 .category-row:last-child { margin-bottom: 0; }
 .category-name { font-weight: 600; }
-.category-count { font-weight: 700; }
+.category-percent { font-weight: 700; font-variant-numeric: tabular-nums; }
 .category-track { grid-column: 1 / -1; margin: 4px 0 0; }
+.category-detail { grid-column: 1 / -1; margin-top: 3px; font-size: 0.8rem; color: var(--gray); }
 
 /* ---------- Difficulty picker (sheet) ---------- */
 .sheet h2:focus { outline: none; } /* focused on open so the keyboard stays closed */

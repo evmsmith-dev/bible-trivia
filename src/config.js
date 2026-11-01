@@ -29,7 +29,7 @@ export const MODES = {
     shortLabel: "Easy",
     emoji: "🟢",
     basePoints: 50,
-    seconds: 25,
+    seconds: 30, // a little longer for younger and newer players
     questionsText: "🟢 questions",
     mix: {
       difficulties: ["easy"],
@@ -118,7 +118,7 @@ export const LEVEL_THRESHOLDS = [0, 25, 60, 110, 180, 270, 390, 540, 730, 970, 1
 
 export const TIMING = {
   countdownSeconds: 3,
-  // Answers can't be tapped for this long after a question appears (the timer starts after it),
+  // Answers can't be tapped for this long after a question appears (the timer is already running),
   // so tapping straight through a round without reading doesn't work, and a tap meant for the
   // last question can't land on the next one.
   answerLockMs: 1000,
@@ -145,7 +145,7 @@ export const AVATARS = [
   { id: "emoji-sunglow", type: "emoji", value: "🌞", label: "Sunny" },
   { id: "emoji-lightbulb", type: "emoji", value: "💡", label: "Bright Idea" },
   { id: "emoji-hands", type: "emoji", value: "🙌", label: "Praise" },
-  ...["dove", "crown", "shield", "star", "olive-branch", "lamb", "fish", "scroll", "ark", "lyre", "lamp", "lion", "rainbow", "mountain", "anchor", "sunflower"]
+  ...["dove", "crown", "shield", "star", "olive-branch", "lamb", "fish", "scroll", "ark", "lyre", "lamp", "lion", "rainbow", "mountain", "anchor", "sunflower", "wheat", "boat", "tablets", "grapes", "bread", "cross"]
     .map((name) => ({
       id: `image-${name}`,
       type: "image",

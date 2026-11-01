@@ -65,6 +65,10 @@ export function sanitizePlayerStats(raw) {
     correctSecondsByMode: zeroByMode(),
     correctCountByMode: zeroByMode(),
     correctByCategory: zeroByCategory(),
+    // Questions answered and right per category (normal and Daily rounds), for the accuracy bars
+    // on Scores. Counted from Nov 2026 on, so it can be smaller than correctByCategory.
+    answeredByCategory: zeroByCategory(),
+    rightByCategory: zeroByCategory(),
     currentStreak: toCount(value.currentStreak),
     allTimeBestStreak: toCount(value.allTimeBestStreak),
     lastGameMaxStreak: toCount(value.lastGameMaxStreak),
@@ -77,6 +81,8 @@ export function sanitizePlayerStats(raw) {
   }
   for (const category of CATEGORIES) {
     stats.correctByCategory[category] = toCount(value.correctByCategory?.[category]);
+    stats.answeredByCategory[category] = toCount(value.answeredByCategory?.[category]);
+    stats.rightByCategory[category] = Math.min(stats.answeredByCategory[category], toCount(value.rightByCategory?.[category]));
   }
   stats.allTimeBestStreak = Math.max(stats.allTimeBestStreak, stats.currentStreak);
   return stats;
