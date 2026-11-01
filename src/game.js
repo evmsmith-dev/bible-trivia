@@ -211,24 +211,34 @@ function showQuestion() {
     el.options.appendChild(button);
   });
 
-  // Read first: the answers unlock (and the timer starts) after a moment.
+  // The timer starts right away; the answers unlock a moment later, so a stray tap from the
+  // last question can't land on this one.
   answerLocked = true;
   el.options.classList.add("is-reading");
   renderProgress();
-  resetTimerDisplay();
+  if (isPractice()) resetTimerDisplay(); // Practice has no timer
+  else startTimer();
   clearTimeout(unlockHandle);
-  unlockHandle = setTimeout(() => unlockAnswers(), TIMING.answerLockMs);
+  unlockHandle = setTimeout(() => enableAnswers(), TIMING.answerLockMs);
 }
 
-/** Lets the answers be tapped and starts (or resumes) the timer. */
-function unlockAnswers(fromSeconds = null) {
+/** Lets the answers be tapped. */
+function enableAnswers() {
   clearTimeout(unlockHandle);
   unlockHandle = null;
   el.options.classList.remove("is-reading");
   el.options.querySelectorAll(".option").forEach((button) => { button.disabled = false; });
   answerLocked = false;
-  if (!isPractice()) startTimer(fromSeconds); // Practice has no timer
 }
+
+/** Carries on after a pause: the timer picks up where it stopped and the answers unlock. */
+function continueQuestion(fromSeconds) {
+  if (!isPractice()) startTimer(fromSeconds);
+  enableAnswers();
+}
+
+/** Whether the current question is still waiting for an answer (timer running or reading). */
+const questionOpen = () => Boolean(timerHandle || unlockHandle);
 
 /** Remembers shown questions so later rounds can prefer ones the player hasn't seen recently. */
 function rememberSeen(id) {
@@ -284,15 +294,10 @@ let pausedSecondsLeft = null;
 /** Stops the clock on an unanswered question and covers it until the player taps Resume. */
 function pauseRound() {
   if (!state.game.active || isPractice()) return; // nothing is timed in Practice
-  if (unlockHandle) { // still in the moment before the answers unlock
-    clearTimeout(unlockHandle);
-    unlockHandle = null;
-    pausedSecondsLeft = MODES[activeMode()].seconds;
-    setVisible(el.pauseOverlay, true, "flex");
-    return;
-  }
-  if (!timerHandle || answerLocked) return;
+  if (!timerHandle) return; // answered already (or not started)
   stopTimer();
+  clearTimeout(unlockHandle); // may still be in the moment before the answers unlock
+  unlockHandle = null;
   pausedSecondsLeft = secondsLeft;
   answerLocked = true;
   setVisible(el.pauseOverlay, true, "flex");
@@ -303,7 +308,7 @@ function resumeRound() {
   setVisible(el.pauseOverlay, false);
   const remaining = pausedSecondsLeft;
   pausedSecondsLeft = null;
-  unlockAnswers(remaining);
+  continueQuestion(remaining);
 }
 
 // ---------- ending a round early ----------
@@ -314,15 +319,14 @@ let endRoundRequested = false;
 function askToEndRound() {
   if (!state.game.active) return;
   let resume = () => {};
-  if (unlockHandle) {
+  if (questionOpen()) {
+    const timed = Boolean(timerHandle);
+    stopTimer();
     clearTimeout(unlockHandle);
     unlockHandle = null;
-    resume = () => unlockAnswers();
-  } else if (timerHandle && !answerLocked) {
-    stopTimer();
-    const remaining = secondsLeft;
+    const remaining = timed ? secondsLeft : null;
     answerLocked = true;
-    resume = () => unlockAnswers(remaining);
+    resume = () => continueQuestion(remaining);
   } else if (advanceHandle) {
     clearTimeout(advanceHandle);
     advanceHandle = null;

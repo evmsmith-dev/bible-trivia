@@ -66,13 +66,16 @@ test("answers can't be tapped until the question has been on screen a moment", a
   await expect(page.locator("#options")).toHaveClass(/is-reading/);
   await page.keyboard.press("1"); // ignored while locked
   await expect(page.locator("#options .option.correct")).toHaveCount(0);
-  await expect(page.locator("#timer-display")).toHaveText("25"); // the timer waits too
 
-  await page.clock.runFor(1000);
+  // The timer doesn't wait for the answers: it's already counting while they're locked.
+  await page.clock.runFor(500);
+  await expect(page.locator("#timer-display")).toHaveText("25"); // 24.5 left, shown rounded up
+  await page.clock.runFor(500);
   await expect(options.first()).toBeEnabled();
   await expect(page.locator("#options")).not.toHaveClass(/is-reading/);
+  await expect(page.locator("#timer-display")).toHaveText("24");
   await page.clock.runFor(2000);
-  await expect(page.locator("#timer-display")).toHaveText("23");
+  await expect(page.locator("#timer-display")).toHaveText("22");
 });
 
 test("ending a round while the answers are still locked, then keeping playing, unlocks them", async ({ page }) => {
