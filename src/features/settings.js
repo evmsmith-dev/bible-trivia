@@ -7,7 +7,7 @@ import { save } from "../storage/store.js";
 import { byId, setVisible } from "../ui/dom.js";
 import { canVibrate, isVibrationOn, setVibrationOn, vibrate, VIBRATION } from "../ui/haptics.js";
 import { isPracticeOn, setPracticeOn } from "./practice.js";
-import { lastBackupText } from "./backup.js";
+import { lastBackupText, prepareBackup } from "./backup.js";
 import { getThemePreference, setThemePreference } from "../ui/theme.js";
 import { closeOverlay, openOverlay } from "../ui/overlay.js";
 
@@ -45,6 +45,7 @@ export function renderModeChip() {
 
 export function openSettings() {
   renderSettings();
+  prepareBackup(); // so Save backup can open the share sheet straight away
   openOverlay("settings-overlay", { initialFocus: ".theme-btn.active" });
 }
 

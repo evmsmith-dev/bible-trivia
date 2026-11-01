@@ -32,27 +32,48 @@ export function lastBackupText() {
 }
 
 /**
- * Makes the backup file and hands it over: the share sheet where there is one, otherwise a
- * download. Returns { how: "shared" | "downloaded" | "cancelled", count }.
+ * The backup, ready to hand over. It's built ahead of time (when Settings opens or the
+ * reminder appears) because phones only open the share sheet straight from a tap: gathering
+ * everyone's data first can take long enough that the tap no longer counts.
+ */
+let prepared = null; // Promise of { json, count }
+
+export function prepareBackup() {
+  prepared = createBackup().then((data) => ({ json: JSON.stringify(data), count: data.players.length }));
+  prepared.catch(() => { prepared = null; });
+  return prepared;
+}
+
+/**
+ * Hands the backup over: the share sheet where there is one (Google Drive, Files, email…),
+ * otherwise a download. Returns { how: "shared" | "downloaded" | "cancelled", count }.
+ *
+ * Shared copies are .txt files: Android's share sheet only takes certain file types (images,
+ * audio, video, PDF, plain text), not .json. The contents are the same, and Load backup reads
+ * either. Downloads stay .json.
  */
 async function writeBackupFile() {
-  const data = await createBackup();
-  const count = data.players.length;
-  const name = `bible-trivia-backup-${getLocalDateKey()}.json`;
-  const json = JSON.stringify(data);
-  const file = typeof File === "function" ? new File([json], name, { type: "application/json" }) : null;
+  // Use the copy made in advance if it's ready; otherwise make one now (sharing may then fall
+  // back to a download if the phone no longer counts the tap).
+  const ready = prepared;
+  prepared = null;
+  const { json, count } = await (ready || prepareBackup());
+  const base = `bible-trivia-backup-${getLocalDateKey()}`;
+  const file = typeof File === "function" ? new File([json], `${base}.txt`, { type: "text/plain" }) : null;
   if (file && navigator.canShare?.({ files: [file] })) {
     try {
       await navigator.share({ files: [file], title: "Bible Trivia backup" });
+      prepareBackup(); // ready for another save
       return { how: "shared", count };
     } catch (error) {
+      prepareBackup();
       if (error?.name === "AbortError") return { how: "cancelled", count };
-      // Sharing failed for another reason: download instead.
+      // Sharing wasn't allowed (for example the tap no longer counted): download instead.
     }
   }
   const link = document.createElement("a");
   link.href = URL.createObjectURL(new Blob([json], { type: "application/json" }));
-  link.download = name;
+  link.download = `${base}.json`;
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -109,6 +130,7 @@ export function maybeShowBackupReminder() {
     + '<button type="button" id="backup-reminder-later">Not now</button>'
     + "</div>";
   document.body.appendChild(banner);
+  prepareBackup();
   byId("backup-reminder-save").addEventListener("click", async () => {
     try {
       const { how } = await writeBackupFile();
