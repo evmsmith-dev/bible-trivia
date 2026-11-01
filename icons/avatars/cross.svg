@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Cross avatar">
+  <rect width="128" height="128" rx="24" fill="#e8f5e9"/>
+  <circle cx="64" cy="64" r="42" fill="#c8e6c9"/>
+  <path d="M30 104c10-6 22-9 34-9s24 3 34 9" fill="#81c784"/>
+  <path d="M58 28h12v18h16v12H70v42H58V58H42V46h16z" fill="#8d6e63"/>
+  <path d="M58 28h4v72h-4zM42 46h16v4H42z" fill="#a1887f"/>
+</svg>

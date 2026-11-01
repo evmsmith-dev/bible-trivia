@@ -49,7 +49,20 @@ test("Scores shows the overview, top scores per mode, recent games and categorie
   await expect(games.first()).toContainText("Easy");
   await expect(games.first()).toContainText("10/10");
 
-  // Right answers by category add up to the total.
-  const counts = await page.locator(".category-count").allTextContents();
-  expect(counts.map(Number).reduce((a, b) => a + b, 0)).toBe(26);
+  // Accuracy by category: each row's "X of Y right" adds up to 26 of 30, and the percentage
+  // (shown once a category has 5 answers) is the bar's width.
+  const rows = page.locator(".category-row");
+  await expect(rows).toHaveCount(3);
+  let right = 0;
+  let answered = 0;
+  for (const text of await rows.locator(".category-detail").allTextContents()) {
+    const match = text.match(/(\d+) of (\d+) right/);
+    expect(match, text).not.toBeNull();
+    right += Number(match[1]);
+    answered += Number(match[2]);
+  }
+  expect([right, answered]).toEqual([26, 30]);
+  const first = rows.first();
+  const percent = (await first.locator(".category-percent").textContent()).replace("%", "");
+  await expect(first.locator(".category-fill")).toHaveAttribute("style", `width:${percent}%`);
 });

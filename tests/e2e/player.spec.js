@@ -29,7 +29,7 @@ test.describe("player and settings", () => {
   test("all pictures show at once, and the choice is saved with Save", async ({ page }) => {
     await h.openPlayerSheet(page);
     const options = page.locator("#player-avatar-options [role=radio]");
-    await expect(options).toHaveCount(24); // every picture (8 emoji + 16 drawings), no paging
+    await expect(options).toHaveCount(30); // every picture (8 emoji + 22 drawings), no paging
     const option = page.locator('#player-avatar-options [data-avatar-id^="image-"]').first();
     const avatarId = await option.getAttribute("data-avatar-id");
     await option.click();

@@ -392,6 +392,14 @@ function recordCorrectAnswer(question, elapsedSeconds) {
   state.bonusStreak += 1;
 }
 
+/** Counts an answer (right, wrong or out of time) toward its category's accuracy. */
+function tallyCategory(category, isCorrect) {
+  const { answeredByCategory, rightByCategory } = state.playerStats;
+  if (answeredByCategory[category] === undefined) return;
+  answeredByCategory[category] += 1;
+  if (isCorrect) rightByCategory[category] += 1;
+}
+
 function recordIncorrectAnswer() {
   state.playerStats.currentStreak = 0;
   state.game.streak = 0;
@@ -426,6 +434,7 @@ function handleAnswer(selectedButton) {
     return;
   }
 
+  tallyCategory(question.category, isCorrect);
   if (isCorrect) {
     recordCorrectAnswer(question, MODES[activeMode()].seconds - secondsLeft);
     const points = calculatePoints({
