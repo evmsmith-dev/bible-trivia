@@ -17,6 +17,13 @@ export function setPracticeOn(on) {
 export const practiceCount = () => practiceQuestions(state.practice, state.questionsById).length;
 
 /** Empties a player's practice list (the active player's unless another id is given). */
+/** Wording for the "Clear list" confirmation (Settings and the Practice summary). */
+export const CLEAR_PRACTICE_CONFIRM = {
+  title: "Clear your practice list?",
+  text: "The questions you missed will be removed from it. Your scores and badges aren't affected.",
+  confirmLabel: "Clear List",
+};
+
 export function clearPractice(id = getActivePlayerId()) {
   writePractice({}, id);
   if (id === getActivePlayerId()) state.practice = {};
