@@ -9,7 +9,8 @@ import {
   canAddPlayer, createPlayer, deletePlayer, getActivePlayerId, listPlayers, readPractice, readProfile, resetAll, save, saveProfile,
   switchPlayer, writeProfile,
 } from "../storage/store.js";
-import { clearPractice, isPracticeOn } from "./practice.js";
+import { CLEAR_PRACTICE_CONFIRM, clearPractice, isPracticeOn } from "./practice.js";
+import { askConfirm } from "../ui/confirm.js";
 import { maybeShowBackupReminder } from "./backup.js";
 import { byId } from "../ui/dom.js";
 import { closeOverlay, isOverlayOpen, openOverlay } from "../ui/overlay.js";
@@ -177,7 +178,12 @@ async function savePlayer() {
 async function removePlayer() {
   const id = editingId;
   const { name } = profileFor(id);
-  if (!confirm(`Delete ${name}? Their level, scores, history and Daily Challenge progress will be removed from this device.`)) return;
+  const sure = await askConfirm({
+    title: `Delete ${name}?`,
+    text: "Their level, scores, history and Daily Challenge progress will be removed from this device.",
+    confirmLabel: "Delete",
+  });
+  if (!sure) return;
   if (id === getActivePlayerId()) {
     // Someone else becomes the player before this one is removed.
     const next = listPlayers().find((player) => player.id !== id);
@@ -189,7 +195,12 @@ async function removePlayer() {
 }
 
 async function resetPlayer() {
-  if (!confirm(`Reset ${state.profile.name}? This clears their level, scores, history and Daily Challenge progress.`)) return;
+  const sure = await askConfirm({
+    title: `Reset ${state.profile.name}?`,
+    text: "This clears their level, scores, history and Daily Challenge progress. Their name and picture stay.",
+    confirmLabel: "Reset",
+  });
+  if (!sure) return;
   const { id, name, avatarId } = state.profile;
   Object.assign(state, {
     profile: { ...createDefaultProfile(id), name, avatarId },
@@ -234,8 +245,8 @@ export function initPlayer({ onPlayerChanged: handler }) {
   });
   byId("player-delete-btn").addEventListener("click", removePlayer);
   byId("player-reset-btn").addEventListener("click", resetPlayer);
-  byId("player-practice-clear-btn").addEventListener("click", () => {
-    if (!confirm("Clear the practice list? The questions on it will be removed.")) return;
+  byId("player-practice-clear-btn").addEventListener("click", async () => {
+    if (!(await askConfirm(CLEAR_PRACTICE_CONFIRM))) return;
     clearPractice(editingId);
     renderPlayerSheet();
   });

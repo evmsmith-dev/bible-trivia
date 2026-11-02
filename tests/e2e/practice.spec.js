@@ -136,8 +136,27 @@ test("Clear list empties the practice list (from the results or Edit player)", a
   await h.openPlayerSheet(page);
   const clear = page.locator("#player-practice-clear-btn");
   await expect(clear).toHaveText("Clear practice list (4)");
-  page.once("dialog", (dialog) => dialog.accept());
+  // The app's own pop-up asks first; Cancel (focused first) leaves the list alone.
   await clear.click();
+  const dialog = page.locator("#confirm-dialog");
+  await expect(dialog).toBeVisible();
+  await expect(page.locator("#confirm-title")).toHaveText("Clear your practice list?");
+  await expect(page.locator("#confirm-cancel-btn")).toBeFocused();
+  await page.locator("#confirm-cancel-btn").click();
+  await expect(dialog).toBeHidden();
+  await expect(page.locator("#player-sheet")).toBeVisible(); // the sheet underneath stays open
+  expect(Object.keys(await practiceList(page))).toHaveLength(4);
+
+  // Back (or Escape) also cancels.
+  await clear.click();
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  expect(Object.keys(await practiceList(page))).toHaveLength(4);
+
+  await clear.click();
+  await page.locator("#confirm-ok-btn").click();
+  await expect(dialog).toBeHidden();
   await expect(clear).toBeHidden();
   expect(await practiceList(page)).toEqual({});
   await h.backToHome(page);

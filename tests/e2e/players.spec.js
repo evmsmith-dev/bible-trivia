@@ -83,10 +83,11 @@ test.describe("several players on one device", () => {
     const guestId = await page.evaluate(() => JSON.parse(localStorage.getItem("bibleTrivia_players")).activeId);
 
     // Delete the current player: the app switches to the other player first.
-    page.once("dialog", (dialog) => dialog.accept());
     await h.openPlayerSheet(page);
     await expect(page.locator("#player-reset-btn")).toBeHidden(); // with others, it's Delete
     await page.locator("#player-delete-btn").click();
+    await expect(page.locator("#confirm-ok-btn")).toHaveText("Delete");
+    await page.locator("#confirm-ok-btn").click();
     await expect(page.locator("#player-sheet")).toBeHidden();
     await expect(page.locator(".player-tile")).toHaveCount(2);
     await expect(page.locator(".player-tile.is-active")).toContainText("Player");

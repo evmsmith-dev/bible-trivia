@@ -86,9 +86,11 @@ test.describe("player and settings", () => {
     await h.goHomeFromSummary(page);
     expect((await h.readProfile(page)).nonDailyCorrectAnswers).toBe(10);
 
-    page.once("dialog", (dialog) => dialog.accept());
     await h.openPlayerSheet(page);
     await page.locator("#player-reset-btn").click();
+    await expect(page.locator("#confirm-dialog")).toBeVisible();
+    await expect(page.locator("#confirm-title")).toHaveText("Reset Player?");
+    await page.locator("#confirm-ok-btn").click();
     await expect.poll(async () => (await h.readProfile(page)).nonDailyCorrectAnswers).toBe(0);
     await expect(page.locator("#player-sheet")).toBeHidden();
     await h.backToHome(page);

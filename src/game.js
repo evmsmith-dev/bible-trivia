@@ -22,7 +22,8 @@ import { getPlayerLevel, renderPlayerCards } from "./features/player.js";
 import { checkNewBadges, newBadgesHtml } from "./features/badges.js";
 import { openStats } from "./features/stats.js";
 import { openDifficultyPicker, renderModeChip } from "./features/settings.js";
-import { clearPractice, isPracticeOn, practiceCount, renderPracticeCard } from "./features/practice.js";
+import { CLEAR_PRACTICE_CONFIRM, clearPractice, isPracticeOn, practiceCount, renderPracticeCard } from "./features/practice.js";
+import { askConfirm } from "./ui/confirm.js";
 import { showUpdateBannerIfReady } from "./ui/update-banner.js";
 import { maybeShowBackupReminder } from "./features/backup.js";
 import { vibrate, VIBRATION } from "./ui/haptics.js";
@@ -649,8 +650,8 @@ function renderPracticeSummary(newBadges = []) {
       <button type="button" id="restart-change">&#x1F3E0; Back to Home</button>
     </div>`;
   byId("practice-again-btn")?.addEventListener("click", () => startPracticeGame());
-  byId("practice-clear-btn")?.addEventListener("click", () => {
-    if (!confirm("Clear your practice list? The questions on it will be removed.")) return;
+  byId("practice-clear-btn")?.addEventListener("click", async () => {
+    if (!(await askConfirm(CLEAR_PRACTICE_CONFIRM))) return;
     clearPractice();
     renderPracticeSummary();
   });
