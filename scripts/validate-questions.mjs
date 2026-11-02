@@ -48,6 +48,11 @@ questions.forEach((question, index) => {
   if (!CATEGORIES.includes(question.category)) errors.push(`${where}: category must be one of ${CATEGORIES.join(", ")}`);
   if (typeof question.ref !== "string") errors.push(`${where}: ref must be a string (may be empty)`);
 
+  // Fill-in-the-blank: one blank, written as exactly three underscores.
+  const underscores = String(question.q).match(/_+/g) || [];
+  if (underscores.length > 1) errors.push(`${where}: a question can have only one blank`);
+  else if (underscores.length === 1 && underscores[0] !== "___") errors.push(`${where}: write the blank as ___ (three underscores)`);
+
   const key = normalize(question.q);
   if (texts.has(key)) errors.push(`${where}: same question text as id ${texts.get(key)}`);
   else texts.set(key, question.id);

@@ -10,6 +10,7 @@ import { getTopScores, normalizeMode, trimHighScores } from "./lib/records.js";
 import { calculatePoints, getNextStreakBonusLabel, getStreakBonus, summaryHeadline } from "./lib/scoring.js";
 import { selectQuestionsForMode } from "./lib/selection.js";
 import { pickPracticeRound, recordMiss, recordRight } from "./lib/practice.js";
+import { splitBlank } from "./lib/blank.js";
 import { bibleGatewayUrl, escapeHtml, getLocalDateKey, hasScriptureReference, pickRandom, shuffled } from "./lib/utils.js";
 import { state } from "./state.js";
 import { save, saveProfile, saveRecentQuestionIds, writePractice } from "./storage/store.js";
@@ -182,6 +183,34 @@ function renderProgress() {
   el.progressDots.setAttribute("aria-label", `Question ${Math.min(game.index + 1, total)} of ${total}: ${game.correct} correct, ${wrong} wrong`);
 }
 
+/** Shows the question; a fill-in-the-blank question gets a drawn blank that the answer fills later. */
+function renderQuestionText(text) {
+  const parts = splitBlank(text);
+  if (!parts) {
+    el.question.textContent = text;
+    return;
+  }
+  const blank = document.createElement("span");
+  blank.className = "blank";
+  blank.innerHTML = '<span class="visually-hidden">blank</span>';
+  el.question.replaceChildren(parts[0], blank, parts[1]);
+}
+
+/** Puts the right answer into the blank once the question is answered. */
+function fillQuestionBlank(answer) {
+  const blank = el.question.querySelector(".blank");
+  if (!blank) return;
+  blank.textContent = answer;
+  blank.classList.add("is-filled");
+}
+
+/** Review text for a question, with any blank filled in and highlighted. */
+function reviewQuestionHtml(text, answer) {
+  const parts = splitBlank(text);
+  if (!parts) return escapeHtml(text);
+  return `${escapeHtml(parts[0])}<span class="blank is-filled">${escapeHtml(answer)}</span>${escapeHtml(parts[1])}`;
+}
+
 function showQuestion() {
   const { game } = state;
   if (game.index >= game.questions.length) {
@@ -193,7 +222,7 @@ function showQuestion() {
   if (!isPractice()) rememberSeen(question.id);
   setVisible(el.practiceNext, false);
 
-  el.question.textContent = question.q;
+  renderQuestionText(question.q);
   const difficulty = DIFFICULTY_LABELS[question.difficulty] || { emoji: "", label: question.difficulty };
   el.difficultyTag.textContent = `${difficulty.emoji} ${difficulty.label}`;
   el.difficultyTag.className = `tag difficulty ${question.difficulty}`;
@@ -421,6 +450,7 @@ function handleAnswer(selectedButton) {
     if (button.dataset.correct === "true") button.classList.add("correct");
     else button.classList.add("grayed");
   });
+  fillQuestionBlank(question.opts[question.ans]);
 
   // Wrong answers (and running out of time) go on the practice list; right ones come off it.
   // With Practice turned off in Settings, the list isn't added to.
@@ -633,7 +663,7 @@ function showReview() {
   const cards = state.game.review.map((entry, index) => `
     <article class="review-card">
       <div class="review-header">
-        <h3 class="review-question-title">Q${index + 1}. ${escapeHtml(entry.question)}</h3>
+        <h3 class="review-question-title">Q${index + 1}. ${reviewQuestionHtml(entry.question, entry.correctAnswer)}</h3>
         <span class="review-result-badge ${entry.isCorrect ? "correct" : "incorrect"}">${entry.isCorrect ? "Correct" : "Incorrect"}</span>
       </div>
       <p class="review-row"><strong>Your answer:</strong> ${escapeHtml(entry.selectedAnswer)}</p>

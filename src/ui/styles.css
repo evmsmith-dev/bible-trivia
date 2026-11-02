@@ -860,6 +860,23 @@ button, input, select, textarea { font-family: inherit; }
   min-height: 1.2em;
 }
 
+/* Fill-in-the-blank: an underlined gap that the right answer fills in once the question is answered. */
+.blank {
+  display: inline-block;
+  min-width: 3.2em;
+  border-bottom: 3px solid currentColor;
+  line-height: 1.1;
+  vertical-align: baseline;
+}
+.blank.is-filled {
+  min-width: 0;
+  padding: 0 0.15em;
+  border-bottom-color: var(--primary);
+  border-radius: 4px 4px 0 0;
+  background: var(--bg-e8f5e9, #E8F5E9);
+  color: var(--primary-dark);
+}
+
 /* ---------- Game header: score beside the timer, tags as one small line above the question ---------- */
 .visually-hidden {
   position: absolute !important;
