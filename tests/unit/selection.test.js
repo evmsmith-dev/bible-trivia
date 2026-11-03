@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { MODES } from "../../src/config.js";
-import { answerKey, openingKey, selectQuestionsForMode } from "../../src/lib/selection.js";
+import { answerKey, openingKey, rememberQuestion, selectQuestionsForMode } from "../../src/lib/selection.js";
 import { createSeededRandom, getDateKeyOffset } from "../../src/lib/utils.js";
 
 const questions = JSON.parse(readFileSync(new URL("../../data/questions.json", import.meta.url), "utf8"));
@@ -70,4 +70,30 @@ test("when a clash can't be avoided, the round is still filled", () => {
     category: ["Old Testament", "New Testament", "General"][i % 3], difficulty: "easy",
   }));
   assert.equal(selectQuestionsForMode(same, "easy", createSeededRandom("clash"), 10).length, 10);
+});
+
+test("the recent list holds as many questions as the bank, never fewer than the floor", () => {
+  let recent = [];
+  for (let id = 1; id <= 1200; id++) recent = rememberQuestion(recent, id, 1000);
+  assert.equal(recent.length, 1000);
+  assert.equal(recent[0], 201); // oldest dropped first
+  recent = rememberQuestion(recent, 500, 1000); // seeing one again moves it to the end
+  assert.equal(recent.at(-1), 500);
+  assert.equal(recent.filter((id) => id === 500).length, 1);
+  let small = [];
+  for (let id = 1; id <= 600; id++) small = rememberQuestion(small, id, 50);
+  assert.equal(small.length, 500); // RECENT_QUESTION_MEMORY floor
+});
+
+test("with the whole bank remembered, Medium plays 60 rounds without a repeat", () => {
+  const random = createSeededRandom("no-repeats");
+  const seen = new Set();
+  let recent = [];
+  for (let round = 1; round <= 60; round++) {
+    for (const q of selectQuestionsForMode(questions, "medium", random, 10, recent)) {
+      assert.ok(!seen.has(q.id), `question ${q.id} repeated in round ${round}`);
+      seen.add(q.id);
+      recent = rememberQuestion(recent, q.id, questions.length);
+    }
+  }
 });

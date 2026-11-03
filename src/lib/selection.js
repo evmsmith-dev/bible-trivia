@@ -5,7 +5,7 @@
 // Within a round, questions avoid sharing a correct answer or an opening ("Which Gospel
 // contains the story…", "Who was the apostle who…") so a round doesn't feel repetitive;
 // a clash is only allowed when nothing else fits.
-import { CATEGORIES, CATEGORY_TARGETS, MODES, QUESTIONS_PER_GAME } from "../config.js";
+import { CATEGORIES, CATEGORY_TARGETS, MODES, QUESTIONS_PER_GAME, RECENT_QUESTION_MEMORY } from "../config.js";
 import { shuffleInPlace } from "./utils.js";
 
 const normalize = (text) => String(text).toLowerCase().replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
@@ -85,4 +85,16 @@ export function selectQuestionsForMode(allQuestions, modeKey, random = Math.rand
     }
   }
   return result.slice(0, count);
+}
+
+/**
+ * Adds a shown question to the player's recent list (oldest first). The list keeps up to the
+ * size of the whole bank (never less than RECENT_QUESTION_MEMORY), so rounds don't forget a
+ * question and repeat it while others are still unseen.
+ */
+export function rememberQuestion(recentIds, id, bankSize = 0) {
+  const limit = Math.max(RECENT_QUESTION_MEMORY, bankSize);
+  const recent = recentIds.filter((recentId) => recentId !== id);
+  recent.push(id);
+  return recent.slice(-limit);
 }

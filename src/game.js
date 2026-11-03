@@ -3,12 +3,12 @@
 // got wrong, with no timer, points, streak or levels, and a Next button instead of auto-advance).
 import {
   CATEGORIES, CATEGORY_EMOJIS, DAILY, DIFFICULTY_LABELS, GAME_MODE_DAILY, GAME_MODE_NORMAL, GAME_MODE_PRACTICE,
-  INCORRECT_MESSAGES, MODES, PRACTICE, QUESTIONS_PER_GAME, RECENT_QUESTION_MEMORY, TIMING,
+  INCORRECT_MESSAGES, MODES, PRACTICE, QUESTIONS_PER_GAME, TIMING,
 } from "./config.js";
 import { buildDailyShareText } from "./lib/share.js";
 import { getTopScores, normalizeMode, trimHighScores } from "./lib/records.js";
 import { calculatePoints, getNextStreakBonusLabel, getStreakBonus, summaryHeadline } from "./lib/scoring.js";
-import { selectQuestionsForMode } from "./lib/selection.js";
+import { rememberQuestion, selectQuestionsForMode } from "./lib/selection.js";
 import { pickPracticeRound, recordMiss, recordRight } from "./lib/practice.js";
 import { splitBlank } from "./lib/blank.js";
 import { bibleGatewayUrl, escapeHtml, getLocalDateKey, hasScriptureReference, pickRandom, shuffled } from "./lib/utils.js";
@@ -272,9 +272,7 @@ const questionOpen = () => Boolean(timerHandle || unlockHandle);
 
 /** Remembers shown questions so later rounds can prefer ones the player hasn't seen recently. */
 function rememberSeen(id) {
-  const recent = state.recentQuestionIds.filter((recentId) => recentId !== id);
-  recent.push(id);
-  state.recentQuestionIds = recent.slice(-RECENT_QUESTION_MEMORY);
+  state.recentQuestionIds = rememberQuestion(state.recentQuestionIds, id, state.questions.length);
   saveRecentQuestionIds(state.recentQuestionIds);
 }
 
