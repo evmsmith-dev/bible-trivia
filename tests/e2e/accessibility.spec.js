@@ -106,7 +106,7 @@ test("the Scores, Settings and Help row fits on one line on the smallest phone",
   for (const box of boxes) expect(Math.abs(box.y - boxes[0].y)).toBeLessThan(2);
 });
 
-test("long questions shrink to fit a small phone, so the answers never scroll off", async ({ page }) => {
+test("long questions shrink to fit a small phone, so the answers (and Practice’s Next) never scroll off", async ({ page }) => {
   // Serve only the longest questions, so every question in the round is a long one.
   await page.route("**/data/questions.json", async (route) => {
     const response = await route.fetch();
@@ -118,11 +118,29 @@ test("long questions shrink to fit a small phone, so the answers never scroll of
   await h.chooseDifficulty(page, "hard");
   await h.startNormalGame(page);
   const overflow = () => page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+  const fontSize = () => page.locator("#question").evaluate((node) => parseFloat(getComputedStyle(node).fontSize));
   for (let i = 0; i < 10; i++) {
     expect(await overflow(), `question ${i + 1}`).toBeLessThanOrEqual(0);
-    const size = await page.locator("#question").evaluate((node) => parseFloat(getComputedStyle(node).fontSize));
-    expect(size).toBeGreaterThanOrEqual(18); // still comfortably readable
-    await h.answer(page, { correct: true });
+    expect(await fontSize()).toBeGreaterThanOrEqual(18); // still comfortably readable
+    await h.answer(page, { correct: false }); // missed, so they go on the practice list
+  }
+  await h.expectSummary(page);
+  await page.clock.runFor(16000);
+  await h.goHomeFromSummary(page);
+
+  // Practice adds "Read about it" and Next under the answers once a question is answered;
+  // they must stay on screen too.
+  await page.locator("#practice-link").click();
+  for (let i = 0; i < 10; i++) {
+    await h.waitForAnswers(page);
+    await page.locator('#options .option[data-correct="false"]').first().click();
+    const next = page.locator("#practice-next-btn");
+    await expect(next).toBeVisible();
+    expect(await overflow(), `practice question ${i + 1}`).toBeLessThanOrEqual(0);
+    expect((await next.boundingBox()).y + (await next.boundingBox()).height).toBeLessThanOrEqual(667);
+    expect(await fontSize()).toBeGreaterThanOrEqual(18);
+    if ((await next.textContent()).includes("See results")) break;
+    await next.click();
   }
 });
 

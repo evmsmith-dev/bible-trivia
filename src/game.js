@@ -566,6 +566,7 @@ function answerPractice(question, selectedButton, isCorrect) {
   setVisible(el.practiceRef, Boolean(el.practiceRef.innerHTML));
   byId("practice-next-btn").textContent = game.index + 1 >= game.questions.length ? "See results ›" : "Next ›";
   setVisible(el.practiceNext, true, "flex");
+  fitQuestion(); // the reference and Next sit under the answers and must stay on screen
   byId("practice-next-btn").focus({ preventScroll: true });
 }
 
