@@ -131,7 +131,9 @@ export const TIMING = {
 
 export const MAX_HIGH_SCORES_PER_MODE = 5;
 
-// How many recently shown questions to remember. New rounds prefer questions seen longest ago.
+// How many recently shown questions each player remembers. New rounds prefer questions seen
+// longest ago. The app actually remembers as many as the whole bank holds (see rememberQuestion),
+// so nothing is forgotten and repeated early; this is only the floor for a small bank.
 export const RECENT_QUESTION_MEMORY = 500;
 
 export const PLAYER_NAME = { min: 2, max: 15, default: "Player" };
