@@ -203,6 +203,27 @@ function fillQuestionBlank(answer) {
   if (!blank) return;
   blank.textContent = answer;
   blank.classList.add("is-filled");
+  fitQuestion(); // a long answer can add a line
+}
+
+/**
+ * Long questions can push the answers off the bottom of a small phone. If the screen would
+ * scroll, the question text steps down in size until everything fits (to no less than 60%).
+ */
+function fitQuestion() {
+  // No transition, so each new size applies at once and can be measured (with "reduce motion"
+  // on, every element gets a tiny transition that would otherwise hide the change).
+  el.question.style.transition = "none";
+  el.question.style.fontSize = "";
+  const root = document.documentElement;
+  const overflows = () => root.scrollHeight > window.innerHeight;
+  if (!state.game.active || !overflows()) return;
+  let size = parseFloat(getComputedStyle(el.question).fontSize);
+  const smallest = size * 0.6;
+  while (overflows() && size > smallest) {
+    size -= 1;
+    el.question.style.fontSize = `${size}px`;
+  }
 }
 
 /** Review text for a question, with any blank filled in and highlighted. */
@@ -250,6 +271,7 @@ function showQuestion() {
   else startTimer();
   clearTimeout(unlockHandle);
   unlockHandle = setTimeout(() => enableAnswers(), TIMING.answerLockMs);
+  fitQuestion(); // last, once the header, progress and timer are in place
 }
 
 /** Lets the answers be tapped. */
@@ -544,6 +566,7 @@ function answerPractice(question, selectedButton, isCorrect) {
   setVisible(el.practiceRef, Boolean(el.practiceRef.innerHTML));
   byId("practice-next-btn").textContent = game.index + 1 >= game.questions.length ? "See results ›" : "Next ›";
   setVisible(el.practiceNext, true, "flex");
+  fitQuestion(); // the reference and Next sit under the answers and must stay on screen
   byId("practice-next-btn").focus({ preventScroll: true });
 }
 
@@ -882,6 +905,8 @@ export function initGame() {
     closeOverlay("quit-overlay");
     goHome();
   });
+  addEventListener("resize", () => fitQuestion()); // turning the phone or resizing the window
+
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") pauseRound();
   });
