@@ -47,7 +47,6 @@ export async function createFirebaseBackend(config, appCheckSiteKey = null, appC
     else signInAnonymously(auth).catch(() => {});
   });
   const gameRef = (code, path = "") => ref(db, `games/${code}${path ? `/${path}` : ""}`);
-  const secureRandom = () => crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
   // Question times use the server's clock, so a phone with its clock set wrong is still in step.
   let offset = 0;
   onValue(ref(db, ".info/serverTimeOffset"), (snap) => { offset = snap.val() || 0; });
@@ -77,7 +76,7 @@ export async function createFirebaseBackend(config, appCheckSiteKey = null, appC
       // The game and this player's "last created" stamp are written together: the rules refuse
       // a second new game within 10 seconds, and refuse a code that's already in use.
       for (let tries = 0; tries < 3; tries++) {
-        const code = makeCode(secureRandom);
+        const code = makeCode();
         const record = { ...newGameRecord({ uid, avatar, bank, settings, now: serverNow() }), created: serverTimestamp() };
         record.expires = serverNow() + GAME_LIFETIME_MS;
         try {

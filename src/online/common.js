@@ -55,7 +55,10 @@ export const timing = (mode = "medium") => {
 const CODE_LETTERS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 export const CODE_LENGTH = 6;
 
-export function makeCode(random = Math.random) {
+/** A secure random number in [0, 1): game codes shouldn't be guessable. */
+export const secureRandom = () => crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
+
+export function makeCode(random = secureRandom) {
   let code = "";
   for (let i = 0; i < CODE_LENGTH; i++) code += CODE_LETTERS[Math.floor(random() * CODE_LETTERS.length)];
   return code;

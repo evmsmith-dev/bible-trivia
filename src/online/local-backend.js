@@ -38,14 +38,18 @@ function transact(code, change) {
   return Promise.resolve(true);
 }
 
+// Random ids from the browser's secure generator, the same as the codes (this backend only runs in
+// the tests, but there's no reason for weaker randomness here).
+const newUid = () => `local-${Array.from(crypto.getRandomValues(new Uint8Array(6)), (b) => b.toString(16).padStart(2, "0")).join("")}`;
+
 export async function createLocalBackend() {
   let uid = sessionStorage.getItem("bibleTrivia_localUid");
-  if (!uid) { uid = `local-${Math.random().toString(36).slice(2, 10)}`; sessionStorage.setItem("bibleTrivia_localUid", uid); }
+  if (!uid) { uid = newUid(); sessionStorage.setItem("bibleTrivia_localUid", uid); }
   const presence = [];
   const setOn = (code, seat, value) => transact(code, (g) => ({ ...g, on: { ...g.on, [seat]: value } }));
   addEventListener("pagehide", () => { for (const [code, seat] of presence) setOn(code, seat, false); });
   // For the tests: act as if this tab's anonymous account had been cleaned up and replaced.
-  window.__triviaNewUid = () => { uid = `local-${Math.random().toString(36).slice(2, 10)}`; sessionStorage.setItem("bibleTrivia_localUid", uid); };
+  window.__triviaNewUid = () => { uid = newUid(); sessionStorage.setItem("bibleTrivia_localUid", uid); };
   return {
     kind: "local",
     get uid() { return uid; },
