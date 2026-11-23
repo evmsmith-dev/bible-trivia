@@ -216,7 +216,11 @@ function fitQuestion() {
   el.question.style.transition = "none";
   el.question.style.fontSize = "";
   const root = document.documentElement;
-  const overflows = () => root.scrollHeight > window.innerHeight;
+  // The window's real height, as measured in index.html (--app-vh is 1% of it). Some Android
+  // browsers report a taller screen than the app really gets, so this is what has to fit.
+  const measured = parseFloat(root.style.getPropertyValue("--app-vh")) * 100;
+  const height = Number.isFinite(measured) && measured > 0 ? Math.min(measured, window.innerHeight) : window.innerHeight;
+  const overflows = () => root.scrollHeight > height;
   if (!state.game.active || !overflows()) return;
   let size = parseFloat(getComputedStyle(el.question).fontSize);
   const smallest = size * 0.6;

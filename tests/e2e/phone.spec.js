@@ -117,11 +117,13 @@ test("the vibration setting is hidden on devices that can't vibrate", async ({ p
 test("the game fits the real window even when the browser reports a taller screen", async ({ page }) => {
   // Some Android phones report a CSS screen height (dvh) taller than the window the app gets.
   // Recreate that: the browser says 915px, but the app really has 795px.
+  // The real height is measured before the round starts, as on a phone, so long questions are
+  // shrunk to fit it (whichever questions the round happens to pick).
   await page.setViewportSize({ width: 412, height: 915 });
   await h.openApp(page);
-  await h.startNormalGame(page);
   const realHeight = 795;
   await page.evaluate((px) => document.documentElement.style.setProperty("--app-vh", `${px / 100}px`), realHeight);
+  await h.startNormalGame(page);
 
   const card = await page.locator("#question-container").boundingBox();
   const lastAnswer = await page.locator("#options .option").last().boundingBox();

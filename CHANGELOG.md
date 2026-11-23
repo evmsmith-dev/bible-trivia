@@ -13,6 +13,8 @@
 - Needs a one-time Firebase setup: see [docs/firebase-setup.md](docs/firebase-setup.md).
 
 ### Also
+- Fix: long questions now shrink to fit the window the app really has. On some Android phones that report a taller screen, the last answer could end up below the bottom of the screen.
+- Security: a patched version of a Firebase sub-dependency (`@grpc/grpc-js`), and Dependabot opens pull requests for dependency updates each week.
 - The built page now carries a Content Security Policy: only the app's own code runs, and it talks only to this site, Firebase and reCAPTCHA.
 
 ## 2.1.0
