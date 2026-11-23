@@ -15,6 +15,6 @@ export const FIREBASE_CONFIG = apiKey: "AIzaSyB_SeFJrwGAJVNuuLxwNTZ9FgYzwKIiOzU"
 // App Check: proves requests come from the real Bible Trivia app, not a script that copied the
 // settings above. Paste the reCAPTCHA site key here (docs/firebase-setup.md, "App Check").
 // It's public too. While this is null, App Check is off.
-export const APP_CHECK_SITE_KEY = null;
+export const APP_CHECK_SITE_KEY = "6Ldn3C0uAAAAAIYXLMrI_5bvv5lGfVnG82tTqZy_";
 // "enterprise" for a reCAPTCHA Enterprise key, or "v3" for a classic reCAPTCHA v3 key.
 export const APP_CHECK_PROVIDER = "enterprise";
