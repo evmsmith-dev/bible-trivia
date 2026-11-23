@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.3
+- How to Play: each section's +/− now stays at the right of its heading, even when a long heading (like "Play Online with Friends") wraps on a narrow screen. The open sign is a proper minus, as wide as the +.
+
 ## 2.2.2
 - Play online: the wording no longer assumes everyone is on a phone. Players can join from any phone, tablet or computer.
 
