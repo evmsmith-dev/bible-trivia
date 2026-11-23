@@ -3,9 +3,9 @@
 // small and works offline. database.rules.json is the server-side half of this file.
 import { initializeApp } from "firebase/app";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider, ReCaptchaV3Provider } from "firebase/app-check";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInAnonymously, signOut, onAuthStateChanged } from "firebase/auth";
 import {
-  getDatabase, ref, get, set, update, remove, onValue, runTransaction, onDisconnect, serverTimestamp,
+  getDatabase, ref, get, set, update, remove, onValue, onDisconnect, serverTimestamp,
   query, orderByChild, endAt, limitToFirst,
 } from "firebase/database";
 import { makeCode, newGameRecord, seatOf, SEATS, withFinish, withNext, withStart, GAME_LIFETIME_MS } from "./common.js";
@@ -29,7 +29,23 @@ export async function createFirebaseBackend(config, appCheckSiteKey = null, appC
       signInAnonymously(auth).catch((error) => { stop(); reject(error); });
     }, reject);
   });
-  const uid = user.uid;
+  // Anonymous accounts can be deleted by Firebase's automatic clean-up (30 days after they were
+  // made, if it's turned on). The saved sign-in then no longer works, so check it, and start
+  // again with a new anonymous id if it's gone. Games last a day, so nothing is lost.
+  let uid = user.uid;
+  try {
+    await user.getIdToken(true);
+  } catch (error) {
+    if (!/user-not-found|user-disabled|user-token-expired|invalid-user-token/.test(String(error?.code))) throw error;
+    await signOut(auth);
+    uid = (await signInAnonymously(auth)).user.uid;
+  }
+  // If the account is removed while the app is open, sign in again (multiplayer.js notices the
+  // new id and takes a new seat in the game it's in).
+  onAuthStateChanged(auth, (u) => {
+    if (u) uid = u.uid;
+    else signInAnonymously(auth).catch(() => {});
+  });
   const gameRef = (code, path = "") => ref(db, `games/${code}${path ? `/${path}` : ""}`);
   const secureRandom = () => crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
   // Question times use the server's clock, so a phone with its clock set wrong is still in step.
@@ -55,17 +71,23 @@ export async function createFirebaseBackend(config, appCheckSiteKey = null, appC
 
   return {
     kind: "firebase",
-    uid,
+    get uid() { return uid; },
     serverNow,
     async create({ avatar, bank, settings }) {
-      for (let tries = 0; tries < 5; tries++) {
+      // The game and this player's "last created" stamp are written together: the rules refuse
+      // a second new game within 10 seconds, and refuse a code that's already in use.
+      for (let tries = 0; tries < 3; tries++) {
         const code = makeCode(secureRandom);
         const record = { ...newGameRecord({ uid, avatar, bank, settings, now: serverNow() }), created: serverTimestamp() };
         record.expires = serverNow() + GAME_LIFETIME_MS;
-        const outcome = await runTransaction(gameRef(code), (game) => (game === null ? record : undefined));
-        if (outcome.committed) return code;
+        try {
+          await update(ref(db), { [`games/${code}`]: record, [`limits/${uid}`]: serverTimestamp() });
+          return code;
+        } catch {
+          // a code clash (very rare) or too soon after the last game: try once more, then give up
+        }
       }
-      throw new Error("busy");
+      throw new Error("slow-down");
     },
     async read(code) {
       return (await get(gameRef(code))).val();
@@ -77,11 +99,13 @@ export async function createFirebaseBackend(config, appCheckSiteKey = null, appC
       if (mine) return { seat: mine };
       for (const seat of SEATS) {
         if (game.p?.[seat]) continue;
+        // The seat and this player's entry in "who's in" are written together, so one player
+        // can't take more than one seat. The rules refuse it if someone took the seat first.
         try {
-          const outcome = await runTransaction(gameRef(code, `p/${seat}`), (s) => (s === null ? { u: uid, a: avatar } : undefined));
-          if (outcome.committed && outcome.snapshot.val()?.u === uid) return { seat };
+          await update(gameRef(code), { [`p/${seat}`]: { u: uid, a: avatar }, [`m/${uid}`]: seat });
+          return { seat };
         } catch {
-          // someone took it first, or the rules refused: try the next seat
+          // taken: try the next seat
         }
       }
       throw new Error("full");

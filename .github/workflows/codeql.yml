@@ -1,0 +1,35 @@
+# Code scanning: GitHub's CodeQL looks through the JavaScript for security problems (for example
+# HTML built from data without escaping) on every push and pull request, and once a week.
+# Findings appear under the repo's Security → Code scanning tab.
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "27 9 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+          config: |
+            paths-ignore:
+              - vendor
+              - data
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"

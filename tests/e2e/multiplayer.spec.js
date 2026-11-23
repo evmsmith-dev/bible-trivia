@@ -191,6 +191,21 @@ test("leaving and coming back rejoins the same seat", async ({ context }) => {
   await expect(host.locator('.mp-player[data-seat="s1"]')).not.toHaveClass(/is-away/);
 });
 
+test("a player whose anonymous account was replaced takes a new seat", async ({ context }) => {
+  await setUp(context);
+  const host = await newPlayer(context);
+  const code = await createGame(host);
+  const p2 = await newPlayer(context);
+  await joinGame(p2, code);
+  await expect(p2.locator('.mp-player.is-me')).toHaveAttribute("data-seat", "s1");
+  // Firebase's clean-up removed Player 2's account; the app signed in again with a new id.
+  await p2.evaluate(() => window.__triviaNewUid());
+  await host.locator('[data-setting="m"][data-value="easy"]').click(); // any change reaches Player 2
+  await expect(p2.locator(".toast")).toHaveText("You were reconnected to the game as a new player.");
+  await expect(p2.locator('.mp-player.is-me')).toHaveAttribute("data-seat", "s2");
+  await expect(host.locator(".mp-lobby .mp-player")).toHaveCount(3);
+});
+
 test("reactions float up on everyone's screen", async ({ context }) => {
   await setUp(context);
   const host = await newPlayer(context);
@@ -238,6 +253,18 @@ test("the host can change the settings in the lobby, and everyone sees them", as
   await expect(p2.locator(".mp-settings-line")).toHaveText("🔴 Hard · 5 questions · First correct");
   await host.locator("#mp-start").click();
   await expect(p2.locator(".mp-meta .tag.difficulty")).toHaveText(/Medium|Hard/); // Hard mode mixes 🟠 and 🔴
+});
+
+test("making games back to back is slowed down", async ({ context }) => {
+  await setUp(context);
+  const host = await newPlayer(context);
+  await createGame(host);
+  await host.locator("#mp-leave").click();
+  await host.locator("#mp-create").click();
+  await expect(host.locator("#mp-join-error")).toHaveText("You just made a game. Wait a few seconds and try again.");
+  await host.waitForTimeout(1100); // the tests run timings at a tenth: 10 s → 1 s
+  await host.locator("#mp-create").click();
+  await expect(host.locator(".mp-big-code")).toHaveText(/^[A-HJKMNP-Z2-9]{6}$/);
 });
 
 test("without Firebase set up, Play online says so", async ({ context }) => {

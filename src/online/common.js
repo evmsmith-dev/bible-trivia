@@ -9,6 +9,7 @@
 //                               // scoring ("first" = first correct gets the point, "everyone" = 2 first / 1 others)
 //   st,                         // "lobby", "playing" or "over" (a round finished)
 //   p: { s0: { u, a }, … },     // seats s0–s7: anonymous player id + avatar number. No names, no free text.
+//   m: { [uid]: "s0", … },      // who's in the game: each player id holds exactly one seat
 //   on: { s0: true, … },        // presence: true while that player has the game open
 //   qs: { r0: "412,88,…" },     // each round's question ids, chosen by the host's phone
 //   q: { r, i, n, at },         // the current question: round key ("r0"), question key ("q3"),
@@ -19,6 +20,7 @@
 //                               // ms = time from unlock to tap measured on the phone, at = server time
 //   rx: { s1: { e, at } },      // the last emoji reaction (one of REACTIONS)
 // }
+// limits/{uid}: when that player last created a game (one new game per 10 seconds per player).
 // database.rules.json enforces the same shape and the same checks on the Firebase server.
 import { AVATARS, MODE_KEYS, MODES } from "../config.js";
 
@@ -45,6 +47,7 @@ export const timing = (mode = "medium") => {
     revealMs: k < 1 ? 2000 : 5000, // the answer and scoreboard between questions (long enough for the tests to read)
     slackMs: 1500 * k, // network allowance at the end of the answer window
     hostGoneMs: 6000 * k, // host offline this long → the next player takes over
+    createGapMs: 10000 * k, // one new game per player per 10 seconds (protects the free plan)
   };
 };
 
@@ -105,6 +108,7 @@ export function newGameRecord({ uid, avatar, bank, settings, now }) {
     set: { m: settings.m, n: settings.n, s: settings.s },
     st: "lobby",
     p: { s0: { u: uid, a: avatar } },
+    m: { [uid]: "s0" },
   };
 }
 
@@ -117,7 +121,7 @@ export function withJoin(game, uid, avatar, now = Date.now()) {
   if (seatOf(game, uid)) return game;
   const seat = SEATS.find((s) => !game.p?.[s]);
   if (!seat) return null;
-  return { ...game, p: { ...game.p, [seat]: { u: uid, a: avatar } } };
+  return { ...game, p: { ...game.p, [seat]: { u: uid, a: avatar } }, m: { ...game.m, [uid]: seat } };
 }
 
 export function withSettings(game, uid, settings) {

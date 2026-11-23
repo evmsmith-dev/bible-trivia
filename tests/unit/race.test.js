@@ -47,6 +47,8 @@ test("joining: seats fill in order, up to 8, and rejoining keeps your seat", () 
   for (let i = 1; i < MAX_SEATS; i++) g = withJoin(g, `P${i}`, i, T0);
   assert.equal(Object.keys(g.p).length, MAX_SEATS);
   assert.equal(g.p.s7.u, "P7");
+  assert.equal(g.m.P7, "s7", "who's in lists each player's one seat");
+  assert.equal(g.m.A, "s0");
   assert.equal(withJoin(g, "late", 1, T0), null, "a full game can't be joined");
   assert.equal(withJoin(g, "P3", 1, T0), g, "rejoining is fine");
   assert.equal(withJoin(g, "Z", 1, g.expires + 1), null, "an expired game can't be joined");
