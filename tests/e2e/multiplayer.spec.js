@@ -253,7 +253,7 @@ test("wrong codes, other app versions and the host's settings are explained", as
   await openOnline(p2);
   await p2.locator("#mp-code-input").fill(code);
   await p2.locator("#mp-join").click();
-  await expect(p2.locator("#mp-join-error")).toContainText("different version of Bible Trivia");
+  await expect(p2.locator("#mp-join-error")).toContainText("different version of Bible Trivia. Every player needs the latest version");
 });
 
 test("the host can change the settings in the lobby, and everyone sees them", async ({ context }) => {
@@ -273,6 +273,8 @@ test("making games back to back is slowed down", async ({ context }) => {
   const host = await newPlayer(context);
   await createGame(host);
   await host.locator("#mp-leave").click();
+  // The wording fits any device, not just phones.
+  await expect(host.locator(".mp-hint").first()).toContainText("each on their own phone, tablet or computer");
   await host.locator("#mp-create").click();
   await expect(host.locator("#mp-join-error")).toHaveText("You just made a game. Wait a few seconds and try again.");
   await host.waitForTimeout(1100); // the tests run timings at a tenth: 10 s → 1 s

@@ -3,7 +3,7 @@
 // A game is stored at games/{code} as:
 // {
 //   created, expires,           // server ms; games are deleted after expires (24 hours)
-//   bank,                       // fingerprint of data/questions.json: every phone must have the same bank
+//   bank,                       // fingerprint of data/questions.json: every device must have the same bank
 //   hs: "s0",                   // the host's seat: starts rounds and moves to the next question
 //   set: { m, n, s },           // mode ("easy"…"superHard"), questions per round (5/10/15),
 //                               // scoring ("first" = first correct gets the point, "everyone" = 2 first / 1 others)
@@ -11,13 +11,13 @@
 //   p: { s0: { u, a }, … },     // seats s0–s7: anonymous player id + avatar number. No names, no free text.
 //   m: { [uid]: "s0", … },      // who's in the game: each player id holds exactly one seat
 //   on: { s0: true, … },        // presence: true while that player has the game open
-//   qs: { r0: "412,88,…" },     // each round's question ids, chosen by the host's phone
+//   qs: { r0: "412,88,…" },     // each round's question ids, chosen by the host's device
 //   q: { r, i, n, at },         // the current question: round key ("r0"), question key ("q3"),
 //                               // its number (3), and the server time it appears
 //   qa: { r0: { q3: at } },     // when each question appeared (kept, so old answers can be timed)
 //   ans: { r0: { q3: { s1: { c, ms, at } } } },
 //                               // c = the chosen option's ORIGINAL index (0–3, not its place on screen),
-//                               // ms = time from unlock to tap measured on the phone, at = server time
+//                               // ms = time from unlock to tap measured on the device, at = server time
 //   rx: { s1: { e, at } },      // the last emoji reaction (one of REACTIONS)
 // }
 // limits/{uid}: when that player last created a game (one new game per 10 seconds per player).
@@ -41,7 +41,7 @@ const scale = () => (typeof window !== "undefined" && window.__TRIVIA_FAST ? 0.1
 export const timing = (mode = "medium") => {
   const k = scale();
   return {
-    leadMs: 3000 * k, // the 3-2-1 before each question (all phones show it at the same server time)
+    leadMs: 3000 * k, // the 3-2-1 before each question (every device shows it at the same server time)
     lockMs: (mode === "easy" ? 2500 : 2000) * k, // reading time before answers can be tapped
     answerMs: (MODES[mode] || MODES.medium).seconds * 1000 * k,
     revealMs: k < 1 ? 2000 : 5000, // the answer and scoreboard between questions (long enough for the tests to read)
@@ -76,7 +76,7 @@ export function cleanCode(text) {
   return code.length === CODE_LENGTH && [...code].every((c) => CODE_LETTERS.includes(c)) ? code : null;
 }
 
-/** A short fingerprint of the question bank (FNV-1a over its JSON), so phones can tell if they match. */
+/** A short fingerprint of the question bank (FNV-1a over its JSON), so devices can tell if they match. */
 export function bankFingerprint(questions) {
   const text = JSON.stringify(questions);
   let a = 2166136261;
@@ -193,7 +193,7 @@ export function withReaction(game, uid, e, now = Date.now()) {
   return { ...game, rx: { ...game.rx, [seat]: { e, at: now } } };
 }
 
-/** A seated player takes over as host when the host's phone has gone offline. */
+/** A seated player takes over as host when the host's device has gone offline. */
 export function withHostClaim(game, uid) {
   const seat = seatOf(game, uid);
   if (!seat || seat === game.hs || isOnline(game, game.hs)) return null;

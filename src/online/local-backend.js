@@ -1,6 +1,6 @@
 // A stand-in for Firebase used by the browser tests: games live in localStorage and changes are
 // announced over a BroadcastChannel, so several tabs in one browser can play each other exactly
-// like phones would through Firebase. Each tab is its own player (its id is in sessionStorage).
+// like separate devices would through Firebase. Each tab is its own player (its id is in sessionStorage).
 // It applies the same checks as the server rules, through the pure moves in common.js.
 import {
   makeCode, newGameRecord, timing, seatOf, withAnswer, withFinish, withHostClaim, withJoin, withNext, withReaction, withSettings, withStart,

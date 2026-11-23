@@ -1,10 +1,11 @@
-// Play online: up to 8 players on their own phones answer the same questions at the same time.
+// Play online: up to 8 players, each on their own phone, tablet or computer, answer the same
+// questions at the same time.
 // The first right answer gets the point (or, with "Everyone scores", 2 for first and 1 for any
 // other right answer), and the most points wins the round.
 //
 // One player creates a game and shares its code or a link; the others join with it. The host's
-// phone picks the questions and moves the game on; every phone works out the scores itself from
-// the answers stored on the server (src/lib/race.js), so they always agree. If the host's phone
+// device picks the questions and moves the game on; every device works out the scores itself from
+// the answers stored on the server (src/lib/race.js), so they always agree. If the host's device
 // goes offline, the next player takes over. Only avatars and answers are shared: no names, no chat.
 import { CATEGORY_EMOJIS, DIFFICULTY_LABELS, MODES, MODE_KEYS } from "../config.js";
 import { questionResult, resultOf, roundWinners, standings, usedIds, roundsWon } from "../lib/race.js";
@@ -132,7 +133,7 @@ function renderSetup() {
     ${saved?.code ? `<button type="button" id="mp-rejoin" class="mp-rejoin" data-code="${escapeHtml(saved.code)}">↩ Rejoin game <strong>${escapeHtml(saved.code)}</strong></button>` : ""}
     <section class="mp-card">
       <h3>Start a game</h3>
-      <p class="mp-hint">Up to ${MAX_SEATS} players, each on their own phone. Everyone gets the same questions, and the first right answer gets the point.</p>
+      <p class="mp-hint">Up to ${MAX_SEATS} players, each on their own phone, tablet or computer. Everyone gets the same questions, and the first right answer gets the point.</p>
       <div id="mp-settings">${settingsHtml(draft, true)}</div>
       <button type="button" id="mp-create" class="mp-primary">Create game</button>
     </section>
@@ -157,7 +158,7 @@ function setCodeChip(code) {
 const joinMessages = {
   "not-found": "There's no game with that code. Check it and try again.",
   full: `That game is full (${MAX_SEATS} players).`,
-  version: "That game is on a different version of Bible Trivia. Both phones need the latest version: tap Update on Home, or close and reopen the app.",
+  version: "That game is on a different version of Bible Trivia. Every player needs the latest version: tap Update on Home, or close and reopen the app.",
   offline: "Couldn't connect. Check your internet connection and try again.",
   "slow-down": "You just made a game. Wait a few seconds and try again.",
 };
@@ -251,7 +252,7 @@ function update(game) {
 }
 
 /**
- * This phone's anonymous id changed (Firebase's clean-up removed the old account and the app
+ * This device's anonymous id changed (Firebase's clean-up removed the old account and the app
  * signed in again), so its old seat isn't its own any more: take a new one, once per id.
  */
 function retakeSeat() {
@@ -320,7 +321,7 @@ function tick() {
   else watchHost(game);
 }
 
-// ---------- The host's phone moves the game on ----------
+// ---------- The host's device moves the game on ----------
 
 function pickQuestions(game) {
   const used = new Set(usedIds(game));
@@ -354,7 +355,7 @@ function hostDuties(game, phase) {
   if (now() >= M.revealUntil[key]) advance();
 }
 
-/** If the host's phone has gone offline for a while, the first player still here takes over. */
+/** If the host's device has gone offline for a while, the first player still here takes over. */
 function watchHost(game) {
   if (isOnline(game, game.hs)) { M.hostGoneSince = 0; return; }
   M.hostGoneSince ||= now();
@@ -417,7 +418,7 @@ function buildQuestion(game) {
   state.recentQuestionIds = rememberQuestion(state.recentQuestionIds, id, state.questions.length);
   saveRecentQuestionIds(state.recentQuestionIds);
   const difficulty = DIFFICULTY_LABELS[question.difficulty] || { emoji: "", label: question.difficulty };
-  // The same order on this phone every time it's drawn, but different from other phones.
+  // The same order on this device every time it's drawn, but different from other devices.
   const order = shuffled([0, 1, 2, 3], createSeededRandom(`${M.code}|${game.q.r}|${game.q.i}|${M.backend.uid}`));
   body().innerHTML = `
     <section class="mp-question-card">
@@ -443,7 +444,7 @@ function updateQuestion(game) {
   const options = byId("mp-options");
   if (!options) return;
   if (at >= opens && M.unlockedAt === null) {
-    // When the answers unlocked, on this phone's own clock (a late tick doesn't count against you).
+    // When the answers unlocked, on this device's own clock (a late tick doesn't count against you).
     M.unlockedAt = performance.now() - (at - opens);
     options.classList.remove("is-reading");
     if (M.picked === null) options.querySelectorAll(".option").forEach((button) => { button.disabled = false; });
