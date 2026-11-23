@@ -52,7 +52,8 @@
               ".validate": "newData.isString() && newData.val().length <= 128"
             },
             "a": {
-              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 29 && newData.val() % 1 === 0"
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 29 && newData.val() % 1 === 0",
+              ".write": "auth != null && data.exists() && data.parent().child('u').val() === auth.uid"
             },
             "$other": {
               ".validate": false

@@ -113,6 +113,7 @@ export async function createFirebaseBackend(config, appCheckSiteKey = null, appC
       return onValue(gameRef(code), (snapshot) => cb(snapshot.val()), () => cb(null));
     },
     setSettings: (code, settings) => attempt(() => set(gameRef(code, "set"), settings)),
+    setAvatar: (code, avatar, seat) => attempt(() => set(gameRef(code, `p/${seat}/a`), avatar)),
     start: (code, ids) => move(code, (g) => withStart(g, uid, ids, serverNow()), (next) => ({
       st: next.st, [`qs/${next.q.r}`]: next.qs[next.q.r], q: next.q, [`qa/${next.q.r}/${next.q.i}`]: next.q.at,
     })),

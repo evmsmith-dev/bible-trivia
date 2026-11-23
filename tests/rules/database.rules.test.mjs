@@ -121,6 +121,15 @@ test("joining takes an empty seat once; one seat per player; seats are s0–s7 o
   await allowed(put(`${G}/on/s3`, "dan", true));
 });
 
+test("players change only their own picture", async () => {
+  await lobby();
+  await allowed(put(`${G}/p/s1/a`, "bob", 12));
+  await denied(put(`${G}/p/s2/a`, "bob", 5), "not someone else's");
+  await denied(put(`${G}/p/s1/a`, "bob", 30), "only real avatars");
+  await denied(put(`${G}/p/s1/u`, "bob", "mallory"), "the seat's owner can't be changed");
+  await denied(put(`${G}/p/s5/a`, "bob", 1), "not an empty seat");
+});
+
 test("only the host changes settings and starts; the round needs its questions", async () => {
   await lobby();
   await denied(put(`${G}/set`, "bob", { m: "hard", n: 10, s: "everyone" }));

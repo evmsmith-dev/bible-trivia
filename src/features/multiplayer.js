@@ -7,11 +7,11 @@
 // device picks the questions and moves the game on; every device works out the scores itself from
 // the answers stored on the server (src/lib/race.js), so they always agree. If the host's device
 // goes offline, the next player takes over. Only avatars and answers are shared: no names, no chat.
-import { CATEGORY_EMOJIS, DIFFICULTY_LABELS, MODES, MODE_KEYS } from "../config.js";
+import { AVATARS, CATEGORY_EMOJIS, DIFFICULTY_LABELS, MODES, MODE_KEYS } from "../config.js";
 import { questionResult, resultOf, roundWinners, standings, usedIds, roundsWon } from "../lib/race.js";
 import { rememberQuestion, selectQuestionsForMode } from "../lib/selection.js";
 import { splitBlank } from "../lib/blank.js";
-import { getAvatar, normalizeMode } from "../lib/records.js";
+import { normalizeMode } from "../lib/records.js";
 import { bibleGatewayUrl, createSeededRandom, escapeHtml, hasScriptureReference, shuffled } from "../lib/utils.js";
 import {
   answersFor, avatarAt, avatarIndex, bankFingerprint, cleanCode, isHost, isOnline, MAX_SEATS, REACTION_GAP_MS, roundNumber,
@@ -37,7 +37,15 @@ let busy = false;
 
 const body = () => byId("mp-body");
 const myBank = () => (bankPrint ||= bankFingerprint(state.questions));
-const myAvatar = () => avatarIndex(state.profile.avatarId);
+// The picture shown in online games: the player's profile picture unless they picked another one
+// for online play (remembered per player on this device).
+const onlineAvatarKey = () => `bibleTrivia_onlineAvatar_${state.profile.id}`;
+const profileAvatar = () => avatarIndex(state.profile.avatarId);
+const myAvatar = () => {
+  const saved = readJson(onlineAvatarKey());
+  return Number.isInteger(saved) && saved >= 0 && saved < AVATARS.length ? saved : profileAvatar();
+};
+let pickerOpen = false;
 const readJson = (key) => { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } };
 const writeJson = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage full or blocked */ } };
 export const joinLink = (code) => `${location.origin}${location.pathname}?join=${code}`;
@@ -80,6 +88,25 @@ function settingsHtml(set, editable) {
     <fieldset class="mp-field"><legend>Scoring</legend><div class="mp-seg mp-seg-wide">
       ${Object.entries(SCORING).map(([s, info]) => seg("s", s, `<strong>${escapeHtml(info.label)}</strong>`, set.s === s, `<span class="mp-seg-detail">${escapeHtml(info.detail)}</span>`)).join("")}
     </div></fieldset>`;
+}
+
+/** "Your picture" with a Change picture button, and the pictures to pick from when it's open. */
+function avatarPickerHtml({ duplicate = false } = {}) {
+  const mine = myAvatar();
+  const picker = pickerOpen ? `
+    <div class="mp-avatar-picker" role="radiogroup" aria-label="Pick your picture for online games">
+      ${AVATARS.map((avatar, index) => `<button type="button" class="avatar-option tint-${index % 8}${index === mine ? " is-selected" : ""}" data-online-avatar="${index}"
+        role="radio" aria-checked="${index === mine}" aria-label="${escapeHtml(avatar.label)}" title="${escapeHtml(avatar.label)}">${avatarHtml(avatar)}</button>`).join("")}
+    </div>
+    ${mine !== profileAvatar() ? '<button type="button" id="mp-avatar-profile" class="link-button mp-avatar-reset">Use my profile picture</button>' : ""}` : "";
+  return `
+    <div class="mp-you">
+      <span class="mp-you-avatar" aria-hidden="true">${avatarHtml(avatarAt(mine))}</span>
+      <span class="mp-you-text">Your picture. Others see it, never your name.</span>
+      <button type="button" id="mp-avatar-change" class="mp-secondary mp-avatar-change" aria-expanded="${pickerOpen}">${pickerOpen ? "Done" : "Change picture"}</button>
+    </div>
+    ${duplicate ? '<p class="mp-dup" role="status">Someone else has the same picture. Tap <b>Change picture</b> so everyone can tell you apart.</p>' : ""}
+    ${picker}`;
 }
 
 function reactionsHtml() {
@@ -128,7 +155,6 @@ function renderSetup() {
   }
   const saved = readJson(SAVED_GAME_KEY);
   const draft = draftSettings();
-  const avatar = getAvatar(state.profile.avatarId);
   body().innerHTML = `
     ${saved?.code ? `<button type="button" id="mp-rejoin" class="mp-rejoin" data-code="${escapeHtml(saved.code)}">↩ Rejoin game <strong>${escapeHtml(saved.code)}</strong></button>` : ""}
     <section class="mp-card">
@@ -146,7 +172,7 @@ function renderSetup() {
       </div>
       <p id="mp-join-error" class="field-error" aria-live="polite">${escapeHtml(joinError)}</p>
     </section>
-    <p class="mp-you"><span class="mp-you-avatar" aria-hidden="true">${avatarHtml(avatar)}</span> Others see your picture, never your name.</p>`;
+    <section class="mp-card">${avatarPickerHtml()}</section>`;
 }
 
 function setCodeChip(code) {
@@ -379,6 +405,7 @@ function renderLobby(game) {
       <h3 class="mp-subhead">Players (${count} of ${MAX_SEATS})</h3>
       ${playersHtml(game)}
     </section>
+    <section class="mp-card mp-lobby-you">${avatarPickerHtml({ duplicate: seatsTaken(game).some((seat) => seat !== M.seat && game.p[seat].a === game.p[M.seat]?.a) })}</section>
     <section class="mp-card">
       <h3>Game settings</h3>
       <div id="mp-settings">${settingsHtml(game.set, host)}</div>
@@ -626,6 +653,28 @@ function changeSetting(key, value) {
   M.backend.setSettings(M.code, next).then((ok) => { if (!ok) showToast(joinMessages.offline); });
 }
 
+/** Redraws the screen the picture picker is on (keeping a half-typed game code). */
+function redrawAvatar() {
+  if (M?.game) { render(true); return; }
+  const typed = byId("mp-code-input")?.value || "";
+  renderSetup();
+  const input = byId("mp-code-input");
+  if (input) input.value = typed;
+  byId("mp-avatar-change")?.focus();
+}
+
+/** Picks the picture for online games (null: back to the profile picture). In a game, shows it there too. */
+function pickAvatar(index) {
+  if (index === null || index === profileAvatar()) {
+    try { localStorage.removeItem(onlineAvatarKey()); } catch { /* blocked */ }
+  } else {
+    writeJson(onlineAvatarKey(), index);
+  }
+  pickerOpen = false;
+  if (M?.game) M.backend.setAvatar(M.code, myAvatar(), M.seat).then((ok) => { if (!ok) showToast(joinMessages.offline); });
+  redrawAvatar();
+}
+
 async function shareInvite() {
   const url = joinLink(M.code);
   const text = `Play Bible Trivia with me! Game code ${M.code}`;
@@ -642,6 +691,7 @@ async function shareInvite() {
 export function openMultiplayer({ code = null } = {}) {
   if (!state.questions.length) return;
   joinError = "";
+  pickerOpen = false;
   if (!isOverlayOpen("mp-page")) openOverlay("mp-page", { onClose: () => leaveGame() });
   if (M) { render(true); return; }
   renderSetup();
@@ -657,6 +707,9 @@ export function initMultiplayer() {
     if (target.classList.contains("option") && target.dataset.choice !== undefined) pickAnswer(target);
     else if (target.dataset.setting) changeSetting(target.dataset.setting, target.dataset.value);
     else if (target.dataset.react !== undefined) sendReaction(Number(target.dataset.react));
+    else if (target.dataset.onlineAvatar !== undefined) pickAvatar(Number(target.dataset.onlineAvatar));
+    else if (target.id === "mp-avatar-change") { pickerOpen = !pickerOpen; redrawAvatar(); }
+    else if (target.id === "mp-avatar-profile") pickAvatar(null);
     else if (target.id === "mp-create") createGame();
     else if (target.id === "mp-join") joinGame(byId("mp-code-input").value);
     else if (target.id === "mp-rejoin") joinGame(target.dataset.code);

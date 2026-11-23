@@ -133,6 +133,13 @@ export function withJoin(game, uid, avatar, now = Date.now()) {
   return { ...game, p: { ...game.p, [seat]: { u: uid, a: avatar } }, m: { ...game.m, [uid]: seat } };
 }
 
+/** A player changes the picture they show in this game. */
+export function withAvatar(game, uid, avatar) {
+  const seat = seatOf(game, uid);
+  if (!seat || !Number.isInteger(avatar) || avatar < 0 || avatar >= AVATARS.length) return null;
+  return { ...game, p: { ...game.p, [seat]: { ...game.p[seat], a: avatar } } };
+}
+
 export function withSettings(game, uid, settings) {
   if (!isHost(game, uid) || game.st === "playing" || !validSettings(settings)) return null;
   return { ...game, set: { m: settings.m, n: settings.n, s: settings.s } };

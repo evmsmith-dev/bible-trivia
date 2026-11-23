@@ -36,7 +36,7 @@ the same number comes back on the same device, so a player can rejoin a game.
 4. Open the **Rules** tab and delete everything there. Paste the whole contents of
    [`database.rules.json`](../database.rules.json) from this repo, and click **Publish**.
 
-The rules let players change only their own seat, presence, answers and reactions. Each player
+The rules let players change only their own seat, picture, presence, answers and reactions. Each player
 can hold only one seat in a game, and can create at most one new game every 10 seconds. Only the host
 can change the settings and move the game on. Answers are accepted once, only while the question
 is open, and stamped with the server's clock. Anyone may delete a game once it's more than a day
