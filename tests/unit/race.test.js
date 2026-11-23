@@ -30,7 +30,13 @@ function answer(g, who, { correct = true, afterMs = 1000, ms = afterMs } = {}) {
 }
 
 test("codes and the question-bank fingerprint", () => {
-  for (let i = 0; i < 100; i++) assert.match(makeCode(), /^[A-HJKMNP-Z2-9]{6}$/); // same pattern as database.rules.json
+  const seen = new Set();
+  for (let i = 0; i < 500; i++) {
+    const code = makeCode();
+    assert.match(code, /^[A-HJKMNP-Z2-9]{6}$/); // same pattern as database.rules.json
+    for (const letter of code) seen.add(letter);
+  }
+  assert.equal(seen.size, 31, "every letter and digit gets used");
   assert.equal(cleanCode(" k7q f2m "), "K7QF2M");
   assert.equal(cleanCode("K7QF2I"), null);
   const questions = JSON.parse(readFileSync(new URL("../../data/questions.json", import.meta.url), "utf8"));
@@ -47,6 +53,8 @@ test("joining: seats fill in order, up to 8, and rejoining keeps your seat", () 
   for (let i = 1; i < MAX_SEATS; i++) g = withJoin(g, `P${i}`, i, T0);
   assert.equal(Object.keys(g.p).length, MAX_SEATS);
   assert.equal(g.p.s7.u, "P7");
+  assert.equal(g.m.P7, "s7", "who's in lists each player's one seat");
+  assert.equal(g.m.A, "s0");
   assert.equal(withJoin(g, "late", 1, T0), null, "a full game can't be joined");
   assert.equal(withJoin(g, "P3", 1, T0), g, "rejoining is fine");
   assert.equal(withJoin(g, "Z", 1, g.expires + 1), null, "an expired game can't be joined");

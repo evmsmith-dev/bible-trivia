@@ -159,6 +159,7 @@ const joinMessages = {
   full: `That game is full (${MAX_SEATS} players).`,
   version: "That game is on a different version of Bible Trivia. Both phones need the latest version: tap Update on Home, or close and reopen the app.",
   offline: "Couldn't connect. Check your internet connection and try again.",
+  "slow-down": "You just made a game. Wait a few seconds and try again.",
 };
 
 async function withBackend(task) {
@@ -242,9 +243,31 @@ function update(game) {
   }
   const first = !M.game;
   M.game = game;
-  M.seat = seatOf(game, M.backend.uid) || M.seat;
+  const seat = seatOf(game, M.backend.uid);
+  if (seat) M.seat = seat;
+  else retakeSeat();
   showBursts(game, first);
   render(true);
+}
+
+/**
+ * This phone's anonymous id changed (Firebase's clean-up removed the old account and the app
+ * signed in again), so its old seat isn't its own any more: take a new one, once per id.
+ */
+function retakeSeat() {
+  const uid = M.backend.uid;
+  if (M.retookFor === uid) return;
+  M.retookFor = uid;
+  const mine = M;
+  M.backend.join(M.code, myAvatar()).then(({ seat }) => {
+    if (M !== mine) return;
+    M.seat = seat;
+    M.stopPresence?.();
+    M.stopPresence = M.backend.setPresence(M.code, seat);
+    showToast("You were reconnected to the game as a new player.");
+  }).catch((error) => {
+    if (M === mine) showToast(joinMessages[error?.message] || joinMessages.offline);
+  });
 }
 
 const now = () => M.backend.serverNow();

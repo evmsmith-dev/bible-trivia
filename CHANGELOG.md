@@ -15,6 +15,8 @@
 ### Also
 - Fix: long questions now shrink to fit the window the app really has. On some Android phones that report a taller screen, the last answer could end up below the bottom of the screen.
 - Security: a patched version of a Firebase sub-dependency (`@grpc/grpc-js`), and Dependabot opens pull requests for dependency updates each week.
+- Security: one seat per player in an online game (one account can't fill a game to lock others out), at most one new game per player every 10 seconds, and CodeQL code scanning on every push. **The database rules changed:** paste `database.rules.json` into Firebase again.
+- Online play copes with Firebase's automatic clean-up of anonymous accounts: the app signs in again with a new id, and takes a new seat if it was in a game.
 - The built page now carries a Content Security Policy: only the app's own code runs, and it talks only to this site, Firebase and reCAPTCHA.
 
 ## 2.1.0

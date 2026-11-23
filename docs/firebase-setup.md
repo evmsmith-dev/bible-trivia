@@ -36,7 +36,8 @@ the same number comes back on the same phone, so a player can rejoin a game.
 4. Open the **Rules** tab and delete everything there. Paste the whole contents of
    [`database.rules.json`](../database.rules.json) from this repo, and click **Publish**.
 
-The rules let players change only their own seat, presence, answers and reactions. Only the host
+The rules let players change only their own seat, presence, answers and reactions. Each player
+can hold only one seat in a game, and can create at most one new game every 10 seconds. Only the host
 can change the settings and move the game on. Answers are accepted once, only while the question
 is open, and stamped with the server's clock. Anyone may delete a game once it's more than a day
 old. Without these rules, the database refuses everything.
@@ -109,6 +110,11 @@ connect".
 Under **Authentication → Sign-in method → Anonymous** you can turn on **automatic clean-up**,
 which deletes anonymous player numbers 30 days after they were made. It needs the free upgrade to
 *Firebase Authentication with Identity Platform*. Skip it if the console asks for a payment card.
+
+The app handles the clean-up by itself. The 30 days count from when an account was made, so even
+active players get a new player number about once a month. When a phone's saved account is gone,
+the app quietly signs in again. If that happens in the middle of a game, the player takes a new
+seat (starting from 0 points that round). Games only last a day, so nothing else is lost.
 
 ## Good to know
 

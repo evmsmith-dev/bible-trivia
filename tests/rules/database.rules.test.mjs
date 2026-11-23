@@ -42,9 +42,13 @@ const CODE = "K7QF2M";
 const G = `games/${CODE}`;
 const IDS5 = "1,2,3,4,5";
 const settings = { m: "medium", n: 5, s: "first" };
-const newGame = (now) => ({
-  created: TS, expires: now + 86_400_000, bank: "0123456789abcdef", hs: "s0", set: settings, st: "lobby", p: { s0: { u: "host", a: 3 } },
+const newGame = (now, uid = "host") => ({
+  created: TS, expires: now + 86_400_000, bank: "0123456789abcdef", hs: "s0", set: settings, st: "lobby", p: { s0: { u: uid, a: 3 } }, m: { [uid]: "s0" },
 });
+/** Creating a game writes it together with the player's "last created" stamp, as the app does. */
+const create = (uid, game, code = CODE) => patch("", uid, { [`games/${code}`]: game, [`limits/${uid}`]: TS });
+/** Joining writes the seat together with the player's entry in "who's in", as the app does. */
+const join = (uid, seat, avatar = 1) => patch(G, uid, { [`p/${seat}`]: { u: uid, a: avatar }, [`m/${uid}`]: seat });
 
 before(async () => {
   const response = await fetch(`${BASE}/.settings/rules.json?ns=${NS}`, { method: "PUT", headers: { Authorization: "Bearer owner" }, body: RULES });
@@ -57,9 +61,9 @@ beforeEach(async () => {
 
 /** Creates the game, seats `host`, `bob` and `cat`, and returns its record. */
 async function lobby() {
-  await allowed(put(G, "host", newGame(Date.now())), "the host creates a game");
-  await allowed(put(`${G}/p/s1`, "bob", { u: "bob", a: 1 }), "Bob joins");
-  await allowed(put(`${G}/p/s2`, "cat", { u: "cat", a: 2 }), "Cat joins");
+  await allowed(create("host", newGame(Date.now())), "the host creates a game");
+  await allowed(join("bob", "s1"), "Bob joins");
+  await allowed(join("cat", "s2", 2), "Cat joins");
   await allowed(put(`${G}/on/s0`, "host", true));
   return read(G);
 }
@@ -78,24 +82,41 @@ async function openNow(lockMs = 2000) {
 
 test("creating a game: only as seat s0 and host, in the lobby, with a fixed shape", async () => {
   const now = Date.now();
-  await denied(put(G, null, newGame(now)), "signed out");
-  await denied(put(G, "mallory", newGame(now)), "someone else in seat s0");
-  await denied(put("games/bad-code", "host", newGame(now)));
-  await denied(put(G, "host", { ...newGame(now), st: "playing" }));
-  await denied(put(G, "host", { ...newGame(now), expires: now + 9 * 86_400_000 }), "kept longer than a day");
-  await denied(put(G, "host", { ...newGame(now), name: "Bob" }), "no extra fields (no free text)");
-  await denied(put(G, "host", { ...newGame(now), p: { s0: { u: "host", a: 3, name: "x" } } }));
-  await allowed(put(G, "host", newGame(now)));
-  await denied(put(G, "host", newGame(now)), "an existing game can't be overwritten");
+  await denied(create(null, newGame(now)), "signed out");
+  await denied(create("mallory", newGame(now)), "someone else in seat s0");
+  await denied(create("host", newGame(now), "bad-code"));
+  await denied(create("host", { ...newGame(now), st: "playing" }));
+  await denied(create("host", { ...newGame(now), expires: now + 9 * 86_400_000 }), "kept longer than a day");
+  await denied(create("host", { ...newGame(now), name: "Bob" }), "no extra fields (no free text)");
+  await denied(create("host", { ...newGame(now), p: { s0: { u: "host", a: 3, name: "x" } } }));
+  await denied(create("host", { ...newGame(now), m: {} }), "the host must be listed in who's in");
+  await denied(put(G, "host", newGame(now)), "not without the rate-limit stamp");
+  await allowed(create("host", newGame(now)));
+  await denied(patch("", "pat", { [G]: newGame(now, "pat"), "limits/pat": TS }), "an existing game can't be overwritten");
 });
 
-test("joining takes an empty seat once; seats are s0–s7 only", async () => {
+test("one new game per player every 10 seconds", async () => {
+  const now = Date.now();
+  await allowed(create("host", newGame(now)));
+  await denied(create("host", newGame(now), "K7QF2N"), "too soon after the last one");
+  await denied(patch("", "host", { "games/K7QF2N": newGame(now), "limits/host": now - 60_000 }), "the stamp must be the server's time");
+  await denied(put("limits/bob", "host", TS), "only your own stamp");
+  await put("limits/host", "owner", now - 11_000);
+  await allowed(create("host", newGame(now), "K7QF2N"), "fine after 10 seconds");
+});
+
+test("joining takes an empty seat once; one seat per player; seats are s0–s7 only", async () => {
   await lobby();
-  await denied(put(`${G}/p/s1`, "mallory", { u: "mallory", a: 0 }), "a taken seat");
-  await denied(put(`${G}/p/s3`, "mallory", { u: "someone-else", a: 0 }), "only yourself");
-  await denied(put(`${G}/p/s8`, "mallory", { u: "mallory", a: 0 }), "no ninth seat");
-  await denied(put(`${G}/p/s3`, "mallory", { u: "mallory", a: 30 }), "only real avatars");
-  await allowed(put(`${G}/p/s3`, "dan", { u: "dan", a: 29 }));
+  await denied(join("mallory", "s1"), "a taken seat");
+  await denied(patch(G, "mallory", { "p/s3": { u: "someone-else", a: 0 }, "m/mallory": "s3" }), "only yourself");
+  await denied(join("mallory", "s8"), "no ninth seat");
+  await denied(join("mallory", "s3", 30), "only real avatars");
+  await denied(put(`${G}/p/s3`, "mallory", { u: "mallory", a: 0 }), "not without an entry in who's in");
+  await denied(put(`${G}/m/mallory`, "mallory", "s3"), "not without the seat");
+  await denied(join("bob", "s3"), "Bob already has a seat");
+  await allowed(join("dan", "s3", 29));
+  await denied(join("dan", "s4"), "a second seat for the same player");
+  await denied(put(`${G}/m/dan`, "dan", "s4"), "who's in can't be changed");
   await denied(put(`${G}/on/s3`, "bob", true), "only your own presence");
   await allowed(put(`${G}/on/s3`, "dan", true));
 });

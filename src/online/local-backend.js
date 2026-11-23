@@ -3,7 +3,7 @@
 // like phones would through Firebase. Each tab is its own player (its id is in sessionStorage).
 // It applies the same checks as the server rules, through the pure moves in common.js.
 import {
-  makeCode, newGameRecord, seatOf, withAnswer, withFinish, withHostClaim, withJoin, withNext, withReaction, withSettings, withStart,
+  makeCode, newGameRecord, timing, seatOf, withAnswer, withFinish, withHostClaim, withJoin, withNext, withReaction, withSettings, withStart,
 } from "./common.js";
 
 const STORE = "bibleTrivia_localServer";
@@ -38,17 +38,27 @@ function transact(code, change) {
   return Promise.resolve(true);
 }
 
+// Random ids from the browser's secure generator, the same as the codes (this backend only runs in
+// the tests, but there's no reason for weaker randomness here).
+const newUid = () => `local-${Array.from(crypto.getRandomValues(new Uint8Array(6)), (b) => b.toString(16).padStart(2, "0")).join("")}`;
+
 export async function createLocalBackend() {
   let uid = sessionStorage.getItem("bibleTrivia_localUid");
-  if (!uid) { uid = `local-${Math.random().toString(36).slice(2, 10)}`; sessionStorage.setItem("bibleTrivia_localUid", uid); }
+  if (!uid) { uid = newUid(); sessionStorage.setItem("bibleTrivia_localUid", uid); }
   const presence = [];
   const setOn = (code, seat, value) => transact(code, (g) => ({ ...g, on: { ...g.on, [seat]: value } }));
   addEventListener("pagehide", () => { for (const [code, seat] of presence) setOn(code, seat, false); });
+  // For the tests: act as if this tab's anonymous account had been cleaned up and replaced.
+  window.__triviaNewUid = () => { uid = newUid(); sessionStorage.setItem("bibleTrivia_localUid", uid); };
   return {
     kind: "local",
-    uid,
+    get uid() { return uid; },
     serverNow: () => Date.now(),
     async create({ avatar, bank, settings }) {
+      // One new game per player per 10 seconds, as the server rules allow.
+      const limits = read("limits") || {};
+      if (Date.now() - (limits[uid] || 0) < timing().createGapMs) throw new Error("slow-down");
+      write("limits", { ...limits, [uid]: Date.now() });
       let code;
       do code = makeCode(); while (read(code));
       write(code, newGameRecord({ uid, avatar, bank, settings, now: Date.now() }));
