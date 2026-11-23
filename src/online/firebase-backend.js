@@ -47,7 +47,7 @@ export async function createFirebaseBackend(config, appCheckSiteKey = null, appC
     else signInAnonymously(auth).catch(() => {});
   });
   const gameRef = (code, path = "") => ref(db, `games/${code}${path ? `/${path}` : ""}`);
-  // Question times use the server's clock, so a phone with its clock set wrong is still in step.
+  // Question times use the server's clock, so a device with its clock set wrong is still in step.
   let offset = 0;
   onValue(ref(db, ".info/serverTimeOffset"), (snap) => { offset = snap.val() || 0; });
   const serverNow = () => Date.now() + offset;
@@ -126,7 +126,7 @@ export async function createFirebaseBackend(config, appCheckSiteKey = null, appC
     setPresence(code, seat) {
       const mine = gameRef(code, `on/${seat}`);
       // Mark this player online whenever the connection (re)opens; Firebase marks them offline
-      // by itself if the phone loses the connection or the app is closed.
+      // by itself if the device loses the connection or the app is closed.
       const stop = onValue(ref(db, ".info/connected"), (snap) => {
         if (snap.val() !== true) return;
         onDisconnect(mine).set(false).then(() => set(mine, true)).catch(() => {});

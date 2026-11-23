@@ -1,9 +1,9 @@
 // Online multiplayer scoring: who got each question, the scoreboard and the round's winners.
-// Pure functions of the stored game, so every phone works out exactly the same result from the
-// same answers, and no phone (not even the host's) can award points.
+// Pure functions of the stored game, so every device works out exactly the same result from the
+// same answers, and no device (not even the host's) can award points.
 //
-// Speed: each answer carries the phone's own reaction time (`ms`, from when its answers
-// unlocked to the tap) and the server's arrival time (`at`). The phone's figure takes out
+// Speed: each answer carries the device's own reaction time (`ms`, from when its answers
+// unlocked to the tap) and the server's arrival time (`at`). The device's figure takes out
 // network lag, but it's only trusted within CLAMP_MS of what the server saw, so a tampered app
 // can gain at most that much.
 // Ties: everyone right within TIE_MS of the fastest right answer counts as first.

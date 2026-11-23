@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.2
+- Play online: the wording no longer assumes everyone is on a phone. Players can join from any phone, tablet or computer.
+
 ## 2.2.1
 - Play online: the podium's "Wins tonight" is now **Rounds won**, and it lists every player, including those with 0. It now appears from the second round on, even if nobody scored in a round.
 

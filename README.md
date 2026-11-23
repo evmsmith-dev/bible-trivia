@@ -20,11 +20,11 @@ A Bible trivia game that runs in the browser and installs as an app (PWA) on pho
 - Player profile with name, 24 avatars and 12 levels. Levels count correct answers in normal games only.
 - Round review with Bible Gateway links, top scores per mode, game history, lifetime stats and daily results.
 - Keyboard play (keys 1–4), Escape closes dialogs, and animations are reduced for players who ask for less motion.
-- **Play online:** up to 8 players on their own phones answer the same questions at the same time. One player creates a game and shares a 6-character code or link.
+- **Play online:** up to 8 players on their own phones, tablets or computers answer the same questions at the same time. One player creates a game and shares a 6-character code or link.
   - The first right answer gets the point, and anyone right within 250 ms shares it. The most points wins the round, with ties going to more right answers, then the faster total time. With **Everyone scores**, first gets 2 points and any other right answer 1.
   - Answers unlock 2 s after each question appears (2.5 s on Easy), so everyone has time to read. One try per question: a wrong tap locks you out, with no minus points.
   - The host picks the difficulty, 5, 10 or 15 questions, and the scoring. **Play again** keeps everyone together with new questions and shows how many rounds each player has won.
-  - If the host's phone goes offline, the next player takes over. Leaving and coming back rejoins the same seat.
+  - If the host's device goes offline, the next player takes over. Leaving and coming back rejoins the same seat.
   - No names and no chat: only avatars, answers and five emoji reactions are shared. Right answers count toward the player's level.
   - It runs on Firebase's free plan, which needs a one-time setup: see [docs/firebase-setup.md](docs/firebase-setup.md). Until then, the page says online play isn't set up.
 - Everything else is saved on the device (IndexedDB, with localStorage as a fallback). There are no accounts.
@@ -100,7 +100,7 @@ node scripts/merge-questions.mjs data/proposed/batch-01-easy.json --skip 1663,16
 - `local-backend.js` stands in for Firebase in the browser tests, where several tabs play each other.
 - `common.js` holds the stored game's shape and the pure moves (join, start, answer, next…). The local backend applies them directly, and `database.rules.json` makes the Firebase server apply the same checks.
 
-Every phone works out the scores itself from the stored answers (`src/lib/race.js`), so they always agree and no phone, not even the host's, can award points. Each answer carries the phone's own reaction time and the server's arrival time. The phone's figure is trusted only within 300 ms of the server's, which takes out network lag without letting a tampered app gain more than that.
+Every device works out the scores itself from the stored answers (`src/lib/race.js`), so they always agree and no device, not even the host's, can award points. Each answer carries the device's own reaction time and the server's arrival time. The device's figure is trusted only within 300 ms of the server's, which takes out network lag without letting a tampered app gain more than that.
 
 `package.json` overrides `@grpc/grpc-js` to a patched version. It only arrives through Firestore's Node.js code, which the app never bundles, but this keeps `npm audit` clean. Dependabot (`.github/dependabot.yml`) opens pull requests for dependency and GitHub Action updates every week.
 

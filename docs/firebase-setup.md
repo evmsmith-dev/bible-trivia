@@ -25,7 +25,7 @@ left menu. On a phone, the menu is behind the ☰ button.
 2. On the **Sign-in method** tab, choose **Anonymous**, switch it on, and click **Save**.
 
 Players never see a sign-in screen. The app gets a random player number in the background, and
-the same number comes back on the same phone, so a player can rejoin a game.
+the same number comes back on the same device, so a player can rejoin a game.
 
 ## 3. Create the database
 
@@ -63,7 +63,7 @@ protect it.
 2. Add `evmsmith-dev.github.io`.
 
 Push the change from step 4. Once GitHub Pages has deployed it, **👥 Online** works. To try it,
-open the game on two phones (or two browser windows), create a game on one, and join with the
+open the game on two devices (or two browser windows), create a game on one, and join with the
 code on the other.
 
 ## 6. App Check (recommended)
@@ -112,7 +112,7 @@ which deletes anonymous player numbers 30 days after they were made. It needs th
 *Firebase Authentication with Identity Platform*. Skip it if the console asks for a payment card.
 
 The app handles the clean-up by itself. The 30 days count from when an account was made, so even
-active players get a new player number about once a month. When a phone's saved account is gone,
+active players get a new player number about once a month. When a device's saved account is gone,
 the app quietly signs in again. If that happens in the middle of a game, the player takes a new
 seat (starting from 0 points that round). Games only last a day, so nothing else is lost.
 
@@ -127,9 +127,9 @@ seat (starting from 0 points that round). Games only last a day, so nothing else
   database` does the same (it reads `firebase.json`).
 - **Testing the rules:** `npm run test:rules` checks them in the Firebase emulator (it needs Java).
   GitHub Actions runs it on every push.
-- **Trust:** answers are stamped with the server's clock, and every phone works out the scores
+- **Trust:** answers are stamped with the server's clock, and every device works out the scores
   from the stored answers, so nobody can fake a time or a score. The questions and answers do
   ship inside the app, though, so a tampered app could always know the right answer. That's fine
   for family and church games, but not for prizes.
-- **App versions:** every phone must have the same question bank. If someone's app is older or
+- **App versions:** every device must have the same question bank. If someone's app is older or
   newer than the host's, they're asked to update before they can join.
