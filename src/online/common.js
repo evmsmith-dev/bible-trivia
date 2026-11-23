@@ -55,12 +55,18 @@ export const timing = (mode = "medium") => {
 const CODE_LETTERS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 export const CODE_LENGTH = 6;
 
-/** A secure random number in [0, 1): game codes shouldn't be guessable. */
-export const secureRandom = () => crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
-
-export function makeCode(random = secureRandom) {
+/**
+ * A new game code from the browser's secure random generator. Each letter is picked without bias:
+ * random bytes past the last whole multiple of the alphabet's size are thrown away.
+ */
+export function makeCode() {
+  const limit = 256 - (256 % CODE_LETTERS.length);
   let code = "";
-  for (let i = 0; i < CODE_LENGTH; i++) code += CODE_LETTERS[Math.floor(random() * CODE_LETTERS.length)];
+  while (code.length < CODE_LENGTH) {
+    for (const byte of crypto.getRandomValues(new Uint8Array(CODE_LENGTH * 2))) {
+      if (byte < limit && code.length < CODE_LENGTH) code += CODE_LETTERS[byte % CODE_LETTERS.length];
+    }
+  }
   return code;
 }
 

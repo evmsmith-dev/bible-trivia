@@ -30,7 +30,13 @@ function answer(g, who, { correct = true, afterMs = 1000, ms = afterMs } = {}) {
 }
 
 test("codes and the question-bank fingerprint", () => {
-  for (let i = 0; i < 100; i++) assert.match(makeCode(), /^[A-HJKMNP-Z2-9]{6}$/); // same pattern as database.rules.json
+  const seen = new Set();
+  for (let i = 0; i < 500; i++) {
+    const code = makeCode();
+    assert.match(code, /^[A-HJKMNP-Z2-9]{6}$/); // same pattern as database.rules.json
+    for (const letter of code) seen.add(letter);
+  }
+  assert.equal(seen.size, 31, "every letter and digit gets used");
   assert.equal(cleanCode(" k7q f2m "), "K7QF2M");
   assert.equal(cleanCode("K7QF2I"), null);
   const questions = JSON.parse(readFileSync(new URL("../../data/questions.json", import.meta.url), "utf8"));
