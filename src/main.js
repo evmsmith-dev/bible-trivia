@@ -17,6 +17,7 @@ import { initSettings, openHowToPlay, renderModeChip } from "./features/settings
 import { initTheme } from "./ui/theme.js";
 import { initStats } from "./features/stats.js";
 import { initGame, startDailyGame, startPracticeGame } from "./game.js";
+import { initMultiplayer } from "./features/multiplayer.js";
 
 async function loadQuestions() {
   const response = await fetch("data/questions.json");
@@ -78,6 +79,7 @@ async function start() {
   activatePlayer(snapshot, { welcome: !askWhosPlaying });
   document.body.classList.add("is-ready");
   if (askWhosPlaying) openWhosPlaying({ atLaunch: true });
+  initMultiplayer(); // after the questions and the player are loaded (a join link opens it at once)
 
   addEventListener("pagehide", () => saveProfile(state.profile));
   addEventListener("pageshow", renderPlayerCards); // refresh when restored from the back/forward cache

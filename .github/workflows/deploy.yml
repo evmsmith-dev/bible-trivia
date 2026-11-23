@@ -45,6 +45,21 @@ jobs:
         with:
           path: dist
 
+  # The online play security rules (database.rules.json), checked in the Firebase emulator.
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Security rules tests
+        run: npm run test:rules
+
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: test
