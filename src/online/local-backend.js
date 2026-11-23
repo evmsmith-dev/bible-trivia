@@ -3,7 +3,7 @@
 // like separate devices would through Firebase. Each tab is its own player (its id is in sessionStorage).
 // It applies the same checks as the server rules, through the pure moves in common.js.
 import {
-  makeCode, newGameRecord, timing, seatOf, withAnswer, withFinish, withHostClaim, withJoin, withNext, withReaction, withSettings, withStart,
+  makeCode, newGameRecord, timing, withAvatar, seatOf, withAnswer, withFinish, withHostClaim, withJoin, withNext, withReaction, withSettings, withStart,
 } from "./common.js";
 
 const STORE = "bibleTrivia_localServer";
@@ -82,6 +82,7 @@ export async function createLocalBackend() {
       return () => listeners.get(code)?.delete(cb);
     },
     setSettings: (code, settings) => transact(code, (g) => withSettings(g, uid, settings)),
+    setAvatar: (code, avatar) => transact(code, (g) => withAvatar(g, uid, avatar)),
     start: (code, ids) => transact(code, (g) => withStart(g, uid, ids)),
     next: (code) => transact(code, (g) => withNext(g, uid)),
     finish: (code) => transact(code, (g) => withFinish(g, uid)),

@@ -2531,8 +2531,29 @@ button, input, select, textarea { font-family: inherit; }
   color: inherit;
 }
 .mp-join-row .mp-primary { width: auto; margin-top: 0 !important; padding: 10px 22px; }
-.mp-you { display: flex; align-items: center; gap: 10px; justify-content: center; margin: 16px 0 0; color: var(--gray); }
-.mp-you-avatar img, .mp-you-avatar span { width: 32px; height: 32px; font-size: 1.6rem; line-height: 32px; display: inline-block; }
+.mp-you { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; color: var(--gray); }
+.mp-you-avatar { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--bg-f7fff7, #f7fff7); border: 2px solid var(--bd-c8e6c9, #c8e6c9); overflow: hidden; font-size: 1.9rem; }
+.mp-you-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.mp-you-text { flex: 1; min-width: 0; font-size: 1rem; }
+#mp-body .mp-avatar-change {
+  flex: 1 0 100%; /* its own row, under the picture and the words */
+  display: block;
+  width: auto;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 10px 16px;
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+.mp-avatar-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+#mp-body .avatar-option { font-size: clamp(1.4rem, 7vw, 2rem); }
+#mp-body .mp-avatar-reset { display: block; margin: 12px auto 0 !important; }
+.mp-dup { margin: 10px 0 0; padding: 8px 12px; border-radius: 12px; background: var(--bg-fff8e1, #fff8e1); color: var(--fg-5d4037, #5d4037); font-size: 0.95rem; }
 .mp-not-set-up code { font-size: 0.95em; }
 
 /* Settings: rows of choices */

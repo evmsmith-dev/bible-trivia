@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { readFileSync } from "node:fs";
 import {
   bankFingerprint, cleanCode, makeCode, newGameRecord, timing, withAnswer, withFinish, withHostClaim, withJoin, withNext,
-  withReaction, withSettings, withStart, MAX_SEATS,
+  withAvatar, withReaction, withSettings, withStart, MAX_SEATS,
 } from "../../src/online/common.js";
 import { CLAMP_MS, effectiveMs, questionResult, roundWinners, standings, usedIds, roundsWon } from "../../src/lib/race.js";
 
@@ -190,4 +190,14 @@ test("reactions are rate-limited; the host can be replaced only when offline", (
   g = withHostClaim(g, "B");
   assert.equal(g.hs, "s1");
   assert.ok(withNext(g, "B", g.q.at + 20000), "the new host can move on");
+});
+
+test("players can change only their own picture, to one of the avatars", () => {
+  let g = startedGame();
+  g = withAvatar(g, "B", 12);
+  assert.equal(g.p.s1.a, 12);
+  assert.equal(g.p.s1.u, "B");
+  assert.equal(withAvatar(g, "Z", 1), null, "not seated");
+  assert.equal(withAvatar(g, "B", 30), null);
+  assert.equal(withAvatar(g, "B", -1), null);
 });

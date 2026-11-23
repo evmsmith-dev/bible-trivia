@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.4
+- Play online: your profile picture is used by default, and **Change picture** lets you pick a different one for online games (your profile stays as it is). You can also change it in the lobby, which tells you when someone else has the same picture. **The database rules changed:** paste `database.rules.json` into Firebase again.
+- How to Play: "Mode Scoring And Timing" is now "Modes, Scoring and Timing".
+
 ## 2.2.3
 - How to Play: each section's +/− now stays at the right of its heading, even when a long heading (like "Play Online with Friends") wraps on a narrow screen. The open sign is a proper minus, as wide as the +.
 

@@ -25,7 +25,7 @@ A Bible trivia game that runs in the browser and installs as an app (PWA) on pho
   - Answers unlock 2 s after each question appears (2.5 s on Easy), so everyone has time to read. One try per question: a wrong tap locks you out, with no minus points.
   - The host picks the difficulty, 5, 10 or 15 questions, and the scoring. **Play again** keeps everyone together with new questions and shows how many rounds each player has won.
   - If the host's device goes offline, the next player takes over. Leaving and coming back rejoins the same seat.
-  - No names and no chat: only avatars, answers and five emoji reactions are shared. Right answers count toward the player's level.
+  - No names and no chat: only avatars, answers and five emoji reactions are shared. The avatar is the player's profile picture unless they pick another for online play (also from the lobby, which flags two players with the same picture). Right answers count toward the player's level.
   - It runs on Firebase's free plan, which needs a one-time setup: see [docs/firebase-setup.md](docs/firebase-setup.md). Until then, the page says online play isn't set up.
 - Everything else is saved on the device (IndexedDB, with localStorage as a fallback). There are no accounts.
 

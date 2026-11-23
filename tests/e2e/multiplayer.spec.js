@@ -219,6 +219,50 @@ test("a player whose anonymous account was replaced takes a new seat", async ({ 
   await expect(host.locator(".mp-lobby .mp-player")).toHaveCount(3);
 });
 
+test("online play uses the profile picture, which can be changed for online games", async ({ context }) => {
+  await setUp(context);
+  const host = await newPlayer(context);
+  await openOnline(host);
+  const profileImg = await host.locator("#player-entry-avatar").innerHTML();
+  await expect(host.locator(".mp-you-avatar")).toHaveJSProperty("innerHTML", profileImg); // the profile picture by default
+  await host.locator("#mp-avatar-change").click();
+  await expect(host.locator(".mp-avatar-picker .avatar-option.is-selected")).toHaveCount(1);
+  await host.locator('.mp-avatar-picker [data-online-avatar="5"]').click();
+  await expect(host.locator(".mp-avatar-picker")).toHaveCount(0);
+  const chosen = await host.locator(".mp-you-avatar").innerHTML();
+  expect(chosen).not.toBe(profileImg);
+  await expect(host.locator("#player-entry-avatar")).toHaveJSProperty("innerHTML", profileImg); // the profile is unchanged
+  // Remembered, and used in the game.
+  await host.reload();
+  await h.waitForReady(host);
+  await openOnline(host);
+  await expect(host.locator(".mp-you-avatar")).toHaveJSProperty("innerHTML", chosen);
+  await host.locator("#mp-create").click();
+  expect(await host.locator('.mp-player[data-seat="s0"] .mp-player-avatar').innerHTML()).toContain(chosen.match(/src="[^"]+"|<span>[^<]+<\/span>/)[0]);
+  // Back to the profile picture.
+  await host.locator("#mp-leave").click();
+  await host.locator("#mp-avatar-change").click();
+  await host.locator("#mp-avatar-profile").click();
+  await expect(host.locator(".mp-you-avatar")).toHaveJSProperty("innerHTML", profileImg);
+});
+
+test("players with the same picture are told, and can change it in the lobby", async ({ context }) => {
+  await setUp(context);
+  const host = await newPlayer(context);
+  const code = await createGame(host);
+  const p2 = await newPlayer(context);
+  await joinGame(p2, code); // both tabs are the same profile here, so they have the same picture
+  await expect(p2.locator(".mp-dup")).toContainText("Someone else has the same picture");
+  await expect(host.locator(".mp-dup")).toBeVisible();
+  await p2.locator("#mp-avatar-change").click();
+  await p2.locator('.mp-avatar-picker [data-online-avatar="12"]').click();
+  await expect(p2.locator(".mp-dup")).toHaveCount(0);
+  await expect(host.locator(".mp-dup")).toHaveCount(0);
+  const game = await readGame(host, code);
+  expect(game.p.s1.a).toBe(12);
+  expect(game.p.s0.a).not.toBe(12);
+});
+
 test("reactions float up on everyone's screen", async ({ context }) => {
   await setUp(context);
   const host = await newPlayer(context);
