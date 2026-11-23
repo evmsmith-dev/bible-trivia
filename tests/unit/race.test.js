@@ -5,7 +5,7 @@ import {
   bankFingerprint, cleanCode, makeCode, newGameRecord, timing, withAnswer, withFinish, withHostClaim, withJoin, withNext,
   withReaction, withSettings, withStart, MAX_SEATS,
 } from "../../src/online/common.js";
-import { CLAMP_MS, effectiveMs, questionResult, roundWinners, standings, usedIds, winsTonight } from "../../src/lib/race.js";
+import { CLAMP_MS, effectiveMs, questionResult, roundWinners, standings, usedIds, roundsWon } from "../../src/lib/race.js";
 
 const T0 = 1_800_000_000_000;
 const settings = { m: "medium", n: 5, s: "first" };
@@ -131,7 +131,7 @@ test("nobody right: nobody scores", () => {
   assert.equal(r.fastestMs, null);
 });
 
-test("standings, tie-breaks, round winners and wins tonight", () => {
+test("standings, tie-breaks, round winners and rounds won", () => {
   let g = startedGame();
   // Q1: B first. Q2: C first, B right but slower. Q3: B first. Q4: C first. Q5: nobody.
   g = answer(g, "B", { afterMs: 800 }); g = answer(g, "C", { afterMs: 2000 });
@@ -150,18 +150,18 @@ test("standings, tie-breaks, round winners and wins tonight", () => {
   assert.deepEqual(list.map((row) => row.rank), [1, 2, 3]);
   assert.deepEqual(standings(g, bank, "r0", 1).map((row) => row.seat), ["s1", "s2", "s0"], "after the first question");
 
-  assert.deepEqual(winsTonight(g, bank), {}, "the round isn't over yet");
+  assert.deepEqual(roundsWon(g, bank), {}, "the round isn't over yet");
   g = withFinish(g, "A");
   assert.equal(g.st, "over");
   assert.deepEqual(roundWinners(g, bank, "r0"), ["s1"]);
-  assert.deepEqual(winsTonight(g, bank), { s1: 1 });
+  assert.deepEqual(roundsWon(g, bank), { s1: 1 });
 
   // A rematch: a new round with new questions; the scoreboard starts again.
   g = withStart(g, "A", [6, 7, 8, 9, 10], g.q.at + 30000);
   assert.equal(g.q.r, "r1");
   assert.deepEqual(usedIds(g), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   assert.ok(standings(g, bank).every((row) => row.points === 0));
-  assert.deepEqual(winsTonight(g, bank), { s1: 1 }, "last round's win still counts");
+  assert.deepEqual(roundsWon(g, bank), { s1: 1 }, "last round's win still counts");
 });
 
 test("players level on every tie-break share the win", () => {
