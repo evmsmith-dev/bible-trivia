@@ -102,6 +102,8 @@ node scripts/merge-questions.mjs data/proposed/batch-01-easy.json --skip 1663,16
 
 Every phone works out the scores itself from the stored answers (`src/lib/race.js`), so they always agree and no phone, not even the host's, can award points. Each answer carries the phone's own reaction time and the server's arrival time. The phone's figure is trusted only within 300 ms of the server's, which takes out network lag without letting a tampered app gain more than that.
 
+`package.json` overrides `@grpc/grpc-js` to a patched version. It only arrives through Firestore's Node.js code, which the app never bundles, but this keeps `npm audit` clean. Dependabot (`.github/dependabot.yml`) opens pull requests for dependency and GitHub Action updates every week.
+
 `npm run test:rules` checks the security rules in the Firebase emulator (it needs Java). CI runs it on every push. Setup steps are in [docs/firebase-setup.md](docs/firebase-setup.md).
 
 ## Deploying

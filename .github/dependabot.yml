@@ -1,0 +1,18 @@
+# Opens a pull request when a dependency (Firebase, the build and test tools) or a GitHub Action
+# has an update, including security fixes. The tests run on each one.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      firebase:
+        patterns: ["firebase", "@firebase/*"]
+      dev-tools:
+        dependency-type: development
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
