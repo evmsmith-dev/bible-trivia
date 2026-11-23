@@ -7,13 +7,13 @@
 // the answers stored on the server (src/lib/race.js), so they always agree. If the host's phone
 // goes offline, the next player takes over. Only avatars and answers are shared: no names, no chat.
 import { CATEGORY_EMOJIS, DIFFICULTY_LABELS, MODES, MODE_KEYS } from "../config.js";
-import { questionResult, resultOf, roundWinners, standings, usedIds, winsTonight } from "../lib/race.js";
+import { questionResult, resultOf, roundWinners, standings, usedIds, roundsWon } from "../lib/race.js";
 import { rememberQuestion, selectQuestionsForMode } from "../lib/selection.js";
 import { splitBlank } from "../lib/blank.js";
 import { getAvatar, normalizeMode } from "../lib/records.js";
 import { bibleGatewayUrl, createSeededRandom, escapeHtml, hasScriptureReference, shuffled } from "../lib/utils.js";
 import {
-  answersFor, avatarAt, avatarIndex, bankFingerprint, cleanCode, isHost, isOnline, MAX_SEATS, REACTION_GAP_MS,
+  answersFor, avatarAt, avatarIndex, bankFingerprint, cleanCode, isHost, isOnline, MAX_SEATS, REACTION_GAP_MS, roundNumber,
   REACTIONS, roundIds, ROUND_LENGTHS, SCORING, seatNumber, seatOf, seatsTaken, SEATS, timing,
 } from "../online/common.js";
 import { getBackend, onlineConfigured } from "../online/backend.js";
@@ -554,7 +554,7 @@ function creditMe(game, mine, result) {
 function renderPodium(game, fresh) {
   const rows = standings(game, state.questionsById);
   const winners = roundWinners(game, state.questionsById, game.q.r);
-  const wins = winsTonight(game, state.questionsById);
+  const wins = roundsWon(game, state.questionsById); // rounds won in this game, across every Play again
   const host = isHost(game, M.backend.uid);
   const headline = !winners.length ? "Nobody scored this round."
     : winners.length === 1 ? (winners[0] === M.seat ? "You won the round! 🏆" : `${seatName(winners[0])} won the round!`)
@@ -563,7 +563,7 @@ function renderPodium(game, fresh) {
   const podium = rows.filter((row) => row.rank <= 3);
   const rest = rows.filter((row) => row.rank > 3);
   const medal = (rank) => ["🥇", "🥈", "🥉"][rank - 1];
-  const rounds = Object.values(wins).reduce((sum, n) => sum + n, 0);
+  const rounds = roundNumber(game.q.r) + 1; // rounds played in this game (shown from the second one on)
   body().innerHTML = `
     <section class="mp-card mp-podium">
       <p class="mp-reveal-headline" aria-live="polite">${escapeHtml(headline)}</p>
@@ -575,7 +575,7 @@ function renderPodium(game, fresh) {
           <span class="mp-board-points" data-points="${row.points}">${row.points} ${row.points === 1 ? "pt" : "pts"} · ${row.correct} right</span>
         </li>`).join("")}</ol>
       ${rest.length ? `<p class="mp-rest">Also playing: ${rest.map((row) => `<span class="mp-picker" title="${seatName(row.seat)}">${seatAvatar(game, row.seat)}</span>`).join("")}</p>` : ""}
-      ${rounds > 1 ? `<p class="mp-wins">Wins tonight: ${seatsTaken(game).filter((seat) => wins[seat]).map((seat) => `<span class="mp-win">${seatAvatar(game, seat)} ${wins[seat]}</span>`).join(" ")}</p>` : ""}
+      ${rounds > 1 ? `<p class="mp-wins">Rounds won: ${seatsTaken(game).map((seat) => `<span class="mp-win" data-seat="${seat}" aria-label="${seatName(seat)}: ${wins[seat] || 0}">${seatAvatar(game, seat)} ${wins[seat] || 0}</span>`).join(" ")}</p>` : ""}
     </section>
     <section class="mp-card">
       ${host ? `<h3>Play again?</h3><div id="mp-settings">${settingsHtml(game.set, true)}</div>

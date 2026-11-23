@@ -98,8 +98,8 @@ export function roundWinners(game, questionsById, r) {
   return list.filter((row) => row.rank === 1).map((row) => row.seat);
 }
 
-/** Round wins per seat across every finished round in this game ("Wins tonight"). */
-export function winsTonight(game, questionsById) {
+/** Rounds won per seat across every finished round in this game, through every Play again. */
+export function roundsWon(game, questionsById) {
   const wins = {};
   if (!game?.q) return wins;
   const current = roundNumber(game.q.r);

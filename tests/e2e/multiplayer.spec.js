@@ -65,6 +65,7 @@ async function answer(page, code, { correct }) {
 const headline = (page) => page.locator(".mp-reveal-headline");
 
 test("three players: same questions, the first right answer scores, and the most points wins", async ({ context }) => {
+  test.setTimeout(90_000); // two whole rounds
   await setUp(context);
   const host = await newPlayer(context);
   const code = await createGame(host);
@@ -120,6 +121,18 @@ test("three players: same questions, the first right answer scores, and the most
   const first = game.qs.r0.split(",");
   expect(game.qs.r1.split(",").some((id) => first.includes(id))).toBe(false);
   await expect(p3.locator(".mp-qnum")).toHaveText("Question 1 of 5");
+
+  // Round 2: nobody gets anything right. "Rounds won" lists every player, 0s included.
+  for (let n = 1; n <= 5; n++) {
+    await expect(host.locator(".mp-qnum")).toHaveText(`Question ${n} of 5`);
+    for (const page of [host, p2, p3]) await answer(page, code, { correct: false });
+    await expect(headline(host)).toHaveText("Nobody got that one.");
+  }
+  await expect(headline(p2)).toHaveText("Nobody scored this round.");
+  await expect(p2.locator(".mp-wins")).toContainText("Rounds won:");
+  await expect(p2.locator(".mp-win")).toHaveText(["1", "0", "0"].map((n) => new RegExp(`${n}$`)));
+  await expect(p2.locator('.mp-win[data-seat="s0"]')).toHaveAttribute("aria-label", "Player 1: 1");
+  await expect(p2.locator('.mp-win[data-seat="s1"]')).toHaveAttribute("aria-label", "You: 0");
 });
 
 test("a wrong tap locks you out, and the question closes when time runs out", async ({ context }) => {
