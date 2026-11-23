@@ -1,5 +1,6 @@
 // Builds the deployable site into dist/:
-//  - bundles + minifies src/main.js → app.js and the stylesheets → app.css (esbuild)
+//  - bundles + minifies src/main.js → app.js (online play's Firebase code in chunks/, loaded only
+//    when Play online is opened) and the stylesheets → app.css (esbuild)
 //  - minifies data/questions.json and data/verses.json, copies icons, vendor files and manifest
 //  - rewrites index.html to use the bundles
 //  - writes service-worker.js with a precache list and a content-hash version, so every
@@ -21,6 +22,8 @@ await mkdir(DIST, { recursive: true });
 await build({
   entryPoints: { app: join(ROOT, "src/main.js") },
   bundle: true,
+  splitting: true,
+  chunkNames: "chunks/[name]-[hash]",
   format: "esm",
   minify: true,
   target: ["es2020", "safari14"],
@@ -62,7 +65,29 @@ const swap = (from, to) => {
 };
 swap('<link rel="stylesheet" href="src/ui/styles.css">', '<link rel="stylesheet" href="app.css">');
 swap('<script type="module" src="src/main.js"></script>', '<script type="module" src="app.js"></script>');
+
 html = html.replace(/<!--(?!\s*\[if)[\s\S]*?-->/g, "").replace(/\n\s*\n+/g, "\n");
+
+// Content Security Policy: the browser runs only this site's code (plus the inline theme and
+// screen-height scripts, allowed by their hashes) and talks only to this site, Firebase and
+// reCAPTCHA. A safety net if anything unexpected ever got onto the page. GitHub Pages can't send
+// headers, so it's a <meta> tag. tests/e2e/multiplayer.spec.js fails if a screen breaks it.
+const inlineScripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => `'sha256-${createHash("sha256").update(m[1]).digest("base64")}'`);
+const CSP = [
+  "default-src 'self'",
+  `script-src 'self' ${inlineScripts.join(" ")} https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://*.firebaseio.com`,
+  "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://www.google.com",
+  "frame-src https://www.google.com https://recaptcha.google.com https://*.firebaseapp.com",
+  "img-src 'self' data:",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self'",
+  "worker-src 'self'",
+  "manifest-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'none'",
+].join("; ");
+swap('<meta charset="UTF-8">', `<meta charset="UTF-8">\n  <meta http-equiv="Content-Security-Policy" content="${CSP}">`);
 await writeFile(join(DIST, "index.html"), html);
 
 // 4. Service worker with precache list + content hash.

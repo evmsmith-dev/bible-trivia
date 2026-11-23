@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.2.0
+
+### New: Play online with friends
+- **👥 Online** on Home: up to 8 players, each on their own phone, answer the same questions at the same moment. One player creates a game and shares a code or invite link.
+- The first right answer gets the point, and anyone right within a quarter of a second shares it. The most points wins the round. The host can switch to **Everyone scores** instead: 2 points for first, 1 for any other right answer.
+- Answers unlock after 2 seconds (2.5 on Easy), so everyone has time to read. One try per question: a wrong tap locks you out, with no minus points.
+- After each question: the right answer, who picked what, who got it first, the scores and a Bible Gateway link.
+- The podium at the end of a round, then **Play again** with new questions and the wins so far. The host chooses the difficulty, 5, 10 or 15 questions, and the scoring.
+- If the host's phone goes offline, the next player takes over. Leaving and coming back rejoins the same seat.
+- No names and no chat leave the phone: only avatars, answers and five emoji reactions. Right answers count toward your level.
+- Needs a one-time Firebase setup: see [docs/firebase-setup.md](docs/firebase-setup.md).
+
+### Also
+- The built page now carries a Content Security Policy: only the app's own code runs, and it talks only to this site, Firebase and reCAPTCHA.
+
 ## 2.1.0
 
 ### Question bank review
