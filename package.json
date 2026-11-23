@@ -14,8 +14,8 @@
     "test": "npm run validate:questions && npm run test:unit && npm run test:e2e"
   },
   "devDependencies": {
-    "@playwright/test": "1.63.0",
-    "esbuild": "^0.25.10"
+    "@playwright/test": "1.65.1",
+    "esbuild": "^0.28.2"
   },
   "type": "module",
   "dependencies": {
