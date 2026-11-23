@@ -1,7 +1,7 @@
 {
   "name": "bible-trivia",
   "private": true,
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "Bible trivia progressive web app",
   "scripts": {
     "start": "node scripts/serve.mjs . 8080",

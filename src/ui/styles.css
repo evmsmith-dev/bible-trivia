@@ -571,6 +571,12 @@ button {
   font-weight: 700;
   color: var(--fg-1e4c24, #1e4c24);
   padding: 12px 14px;
+  /* The heading on the left, the +/− pinned to the right of the same row, even when a long
+     heading wraps onto two lines. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 #how-to-play-overlay .howto-section summary::-webkit-details-marker {
@@ -579,12 +585,15 @@ button {
 
 #how-to-play-overlay .howto-section summary::after {
   content: '+';
-  float: right;
-  font-size: 1.1rem;
+  flex: none;
+  width: 1.2em;
+  text-align: center;
+  font-size: 1.3rem;
+  line-height: 1;
 }
 
 #how-to-play-overlay .howto-section[open] summary::after {
-  content: '-';
+  content: '\2212'; /* a true minus sign, as wide as the + */
 }
 
 #how-to-play-overlay .howto-section ul {
